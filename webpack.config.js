@@ -5,7 +5,7 @@ var config = {
     devtool: 'eval',
     entry: [
         'webpack/hot/dev-server',
-        'webpack-dev-server/client?http://localhost:8000',
+        'webpack-dev-server/client?http://localhost:8000/',
         path.resolve(__dirname, 'web/app/main.js')
     ],
     output: {
