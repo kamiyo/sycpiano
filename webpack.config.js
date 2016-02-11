@@ -6,7 +6,7 @@ var config = {
     entry: [
         'webpack-dev-server/client?http://localhost:8080/',
         'webpack/hot/dev-server',
-        path.resolve(__dirname, 'web/app/main.js')
+        path.resolve(__dirname, 'web/app/main.js'),
     ],
     output: {
         path: path.resolve(__dirname, 'web/build'),
@@ -23,6 +23,13 @@ var config = {
             query: {
                 presets: ['es2015', 'react'],
             }
+        },
+        {
+            loaders: ['style-loader', 'css-loader', 'less-loader'],
+            test: /\.less$/,
+            include: [
+                path.resolve(__dirname, 'web/app')
+            ],
         }]
     },
     plugins: [new Webpack.HotModuleReplacementPlugin()]

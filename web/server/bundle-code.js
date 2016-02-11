@@ -5,7 +5,7 @@ var WebpackDevServer = require('webpack-dev-server');
 var webpackConfig = require('./../../webpack.config.js');
 
 module.exports = function() {
-    // First we fire up Webpack an pass in the configuration we created.
+    // First we fire up Webpack and pass in the configuration we created.
     var bundleStart = null;
     var compiler = Webpack(webpackConfig);
 
