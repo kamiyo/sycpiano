@@ -4,8 +4,8 @@ var Webpack = require('webpack');
 var config = {
     devtool: 'eval',
     entry: [
+        'webpack-dev-server/client?http://localhost:8080/',
         'webpack/hot/dev-server',
-        'webpack-dev-server/client?http://localhost:8000/',
         path.resolve(__dirname, 'web/app/main.js')
     ],
     output: {
