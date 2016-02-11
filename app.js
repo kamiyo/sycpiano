@@ -1,12 +1,40 @@
 var express = require('express');
+var path = require('path');
+var httpProxy = require('http-proxy');
+
+var proxy = httpProxy.createProxyServer();
 var app = express();
-var Sequelize = require('sequelize');
 
+var isProduction = process.env.NODE_ENV === 'production';
+var port = isProduction ? process.env.PORT : 8000;
 
-app.get('/', function(req, res) {
-    res.send('derp');
+app.use(express.static(__dirname));
+
+// We only want to run the workflow proxying in development.
+if (!isProduction) {
+    var bundleCode = require('./web/server/bundle-code.js');
+    bundleCode();
+
+    // We want to proxy any requests sent to localhost:8000/build
+    // to the webpack-dev-server.
+    app.all('/build/*', function(req, res) {
+        proxy.web(req, res, {
+            target: 'http://localhost:8080'
+        });
+    });
+}
+
+// Catch any errors from the proxy in order to not crash the server.
+// Example: connecting to server when webpack is building.
+proxy.on('error', function(e) {
+    console.log('Could not connect to proxy, please try again...');
 });
 
-app.listen(8000, function() {
+// Actual app code.
+app.get('/', function(req, res) {
+    res.render('index.html');
+});
+
+app.listen(port, function() {
     console.log('App listening on port 8000.');
 });
