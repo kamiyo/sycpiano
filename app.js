@@ -4,15 +4,19 @@ var httpProxy = require('http-proxy');
 
 var proxy = httpProxy.createProxyServer();
 var app = express();
+var mustachex = require('mustachex');
 
 var isProduction = process.env.NODE_ENV === 'production';
 var port = isProduction ? process.env.PORT : 8000;
 
 app.use(express.static(__dirname));
+app.engine('html', mustachex.express);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/web/partials');
 
 // We only want to run the workflow proxying in development.
 if (!isProduction) {
-    var bundleCode = require('./web/server/bundle-code.js');
+    var bundleCode = require('./web/dev-server/bundle-code.js');
     bundleCode();
 
     // We want to proxy any requests sent to localhost:8000/build
@@ -32,7 +36,7 @@ proxy.on('error', function(e) {
 
 // Actual app code.
 app.get('/', function(req, res) {
-    res.render('index.html');
+    res.render('index', { name: 'derp' });
 });
 
 app.listen(port, function() {

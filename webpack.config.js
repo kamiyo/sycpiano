@@ -6,7 +6,7 @@ var config = {
     entry: [
         'webpack-dev-server/client?http://localhost:8080/',
         'webpack/hot/dev-server',
-        path.resolve(__dirname, 'web/app/main.js'),
+        path.resolve(__dirname, 'web/js/main.js'),
     ],
     output: {
         path: path.resolve(__dirname, 'web/build'),
@@ -18,7 +18,7 @@ var config = {
             loader: 'babel-loader',
             test: /\.jsx?$/,
             include: [
-                path.resolve(__dirname, 'web/app')
+                path.resolve(__dirname, 'web/js')
             ],
             query: {
                 presets: ['es2015', 'react'],
@@ -28,7 +28,7 @@ var config = {
             loaders: ['style-loader', 'css-loader', 'less-loader'],
             test: /\.less$/,
             include: [
-                path.resolve(__dirname, 'web/app')
+                path.resolve(__dirname, 'web/less')
             ],
         }]
     },

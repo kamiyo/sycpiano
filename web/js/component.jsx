@@ -1,4 +1,4 @@
-import './component.less';
+import '../less/component.less';
 import React from 'react';
 
 export default class Hello extends React.Component {
