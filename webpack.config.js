@@ -30,6 +30,14 @@ var config = {
             include: [
                 path.resolve(__dirname, 'web/less')
             ],
+        },
+        {
+            loaders: ['url-loader?limit=100000&name=[name]-[hash].[ext]'],
+            test: /\.(ttf|eot|woff|woff2|svg|png|jpg)$/,
+            include: [
+                path.resolve(__dirname, 'web/assets/images'),
+                path.resolve(__dirname, 'web/assets/fonts')
+            ]
         }]
     },
     plugins: [new Webpack.HotModuleReplacementPlugin()]
