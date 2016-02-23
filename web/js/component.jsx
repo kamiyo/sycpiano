@@ -1,8 +1,8 @@
 import '../less/component.less';
 import React from 'react';
 
-export default class Hello extends React.Component {
+export default class Header extends React.Component {
     render() {
-        return <h1>SEAN CHEN</h1>
+        return <div>SEAN CHEN</div>
     }
 }
