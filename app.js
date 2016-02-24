@@ -9,7 +9,7 @@ var mustachex = require('mustachex');
 var isProduction = process.env.NODE_ENV === 'production';
 var port = isProduction ? process.env.PORT : 8000;
 
-app.use(express.static(__dirname));
+app.use(express.static(__dirname + '/web/assets'));
 app.engine('html', mustachex.express);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/web/partials');

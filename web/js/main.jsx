@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import '../less/main.less';
-import Header from './component.jsx';
+import MainBackground from './MainBackground.jsx';
 
 main();
 
 function main() {
-    ReactDOM.render(<Header />, document.getElementById('header'));
+    ReactDOM.render(<MainBackground />, document.getElementById('hero-container'));
 }
