@@ -1,4 +1,5 @@
 var express = require('express');
+var morgan = require('morgan');
 var path = require('path');
 var httpProxy = require('http-proxy');
 
@@ -10,6 +11,7 @@ var isProduction = process.env.NODE_ENV === 'production';
 var port = isProduction ? process.env.PORT : 8000;
 
 app.use(express.static(__dirname + '/web/assets'));
+app.use(morgan('common'));
 app.engine('html', mustachex.express);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/web/partials');
