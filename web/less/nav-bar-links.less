@@ -1,22 +1,23 @@
 @import (reference) "mixins.less";
 @import (reference) "colors.less";
 
-.font-logo {
+.font-nav {
     .include-font('LatoLatinWebThin', 'LatoLatin-Thin', 700, normal);
     font-family: 'LatoLatinWebThin';
     font-size: 20px;
     letter-spacing: 0em;
 }
 
-.navBarLinks {
-    color: @logo-blue;
-}
-
 .navLink {
-    .font-logo;
+    .font-nav;
     display: inline-block;
     margin-right: 18px;
     &:last-child {
         margin-right: 0;
+    }
+
+    a {
+        color: @logo-blue;
+        text-decoration: none;
     }
 }

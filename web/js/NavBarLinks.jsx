@@ -8,8 +8,8 @@ export default class NavBarLinks extends React.Component {
             <div className='navBarLinks'>
                 {this.props.links.map(function(link, i) {
                     return (
-                        <div className='navLink' key={i} href={link.href}>
-                        {link.name}
+                        <div className='navLink' key={i}>
+                            <a href={link.href}>{link.name}</a>
                         </div>
                     );
                 })}
