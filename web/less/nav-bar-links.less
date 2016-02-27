@@ -4,18 +4,19 @@
 .font-logo {
     .include-font('LatoLatinWebThin', 'LatoLatin-Thin', 700, normal);
     font-family: 'LatoLatinWebThin';
-    font-size: 2.5em;
-    letter-spacing: 0.1em;
+    font-size: 20px;
+    letter-spacing: 0em;
 }
 
-.navBarLogo {
-    .font-logo;
-    height: 100%;
+.navBarLinks {
     color: @logo-blue;
 }
 
-.navBarLogoText {
-    position: absolute;
+.navLink {
+    .font-logo;
     display: inline-block;
-    margin-left: 15px;
+    margin-right: 18px;
+    &:last-child {
+        margin-right: 0;
+    }
 }
