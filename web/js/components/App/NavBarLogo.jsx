@@ -1,7 +1,7 @@
-import '../less/nav-bar-logo.less';
+import '@/less/nav-bar-logo.less';
 import React from 'react';
 
-import LogoImage from './LogoImage.jsx';
+import LogoImage from '@/js/components/App/LogoImage.jsx';
 
 
 export default class NavBarLogo extends React.Component {

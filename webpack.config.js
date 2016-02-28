@@ -18,7 +18,8 @@ var config = {
             loader: 'babel-loader',
             test: /\.jsx?$/,
             include: [
-                path.resolve(__dirname, 'web/js')
+                path.resolve(__dirname, 'web/js'),
+                path.resolve(__dirname, 'web/js/*')
             ],
             query: {
                 presets: ['es2015', 'react'],

@@ -1,4 +1,4 @@
-import '../less/nav-bar-links.less';
+import '@/less/nav-bar-links.less';
 import React from 'react';
 
 

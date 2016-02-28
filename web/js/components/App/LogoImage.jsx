@@ -1,4 +1,4 @@
-import '../less/logo-image.less';
+import '@/less/logo-image.less';
 import React from 'react';
 
 

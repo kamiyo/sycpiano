@@ -1,16 +1,14 @@
+import '@/less/main.less';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import '../less/main.less';
-import MainBackground from './MainBackground.jsx';
-import NavBar from './NavBar.jsx';
+import App from '@/js/components/App.jsx';
 
 main();
 
 function main() {
     ReactDOM.render(
-        <MainBackground>
-            <NavBar/>
-        </MainBackground>,
+        <App/>,
         document.getElementById('hero-container')
     );
 }

@@ -1,4 +1,4 @@
-import '../less/main-background.less';
+import '@/less/main-background.less';
 import React from 'react';
 
 

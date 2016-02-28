@@ -1,9 +1,9 @@
-import '../less/nav-bar.less';
-import '../less/nav-bar-layout.less';
+import '@/less/nav-bar.less';
+import '@/less/nav-bar-layout.less';
 import React from 'react';
 
-import NavBarLogo from './NavBarLogo.jsx';
-import NavBarLinks from './NavBarLinks.jsx';
+import NavBarLogo from '@/js/components/App/NavBarLogo.jsx';
+import NavBarLinks from '@/js/components/App/NavBarLinks.jsx';
 
 
 class NavLink {
