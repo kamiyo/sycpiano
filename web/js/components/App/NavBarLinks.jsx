@@ -1,5 +1,6 @@
 import '@/less/nav-bar-links.less';
 import React from 'react';
+import {Link} from 'react-router';
 
 
 export default class NavBarLinks extends React.Component {
@@ -9,7 +10,7 @@ export default class NavBarLinks extends React.Component {
                 {this.props.links.map(function(link, i) {
                     return (
                         <div className='navLink' key={i}>
-                            <a href={link.href}>{link.name}</a>
+                            <Link to={'/' + link}>{link}</Link>
                         </div>
                     );
                 })}
