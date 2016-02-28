@@ -19,7 +19,7 @@ var config = {
             test: /\.jsx?$/,
             include: [
                 path.resolve(__dirname, 'web/js'),
-                path.resolve(__dirname, 'web/js/*')
+                path.resolve(__dirname, 'web/js/components/*')
             ],
             query: {
                 presets: ['es2015', 'react'],
