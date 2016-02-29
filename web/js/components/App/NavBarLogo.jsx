@@ -7,9 +7,9 @@ import LogoImage from '@/js/components/App/LogoImage.jsx';
 export default class NavBarLogo extends React.Component {
     render() {
         return (
-            <div className="navBarLogo">
+            <a href="#" className="navBarLogo">
                 <LogoImage /><div className="navBarLogoText">SEAN CHEN</div>
-            </div>
+            </a>
         )
     }
 };
