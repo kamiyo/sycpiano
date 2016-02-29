@@ -1,15 +1,11 @@
-@import (reference) "mixins.less";
-@import (reference) "colors.less";
-
-.font-nav {
-    .include-font('LatoLatinWebThin', 'LatoLatin-Thin', 700, normal);
-    font-family: 'LatoLatinWebThin';
-    font-size: 20px;
-    letter-spacing: 0em;
-}
+@import "fonts.less";
+@import "mixins.less";
+@import "colors.less";
 
 .navLink {
-    .font-nav;
+    font-family: @latoLatinThin;
+    font-size: 20px;
+    letter-spacing: 0em;
     display: inline-block;
     margin-right: 18px;
 
