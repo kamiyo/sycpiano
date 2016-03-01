@@ -2,6 +2,13 @@
 @import "mixins.less";
 @import "colors.less";
 
+.navBarLinks {
+    transform: translate(0, 50%);
+    ul {
+        margin: 0;
+    }
+}
+
 .navLink {
     font-family: @latoLatinThin;
     font-size: 20px;
@@ -16,7 +23,6 @@
     a {
         color: @logo-blue;
         text-decoration: none;
-        vertical-align: middle;
         cursor: pointer;
         transition: color 0.5s;
 
