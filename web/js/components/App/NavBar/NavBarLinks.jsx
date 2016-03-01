@@ -7,13 +7,15 @@ export default class NavBarLinks extends React.Component {
     render() {
         return (
             <div className='navBarLinks'>
+                <ul>
                 {this.props.links.map(function(link, i) {
                     return (
-                        <div className='navLink' key={i}>
+                        <li className='navLink' key={i}>
                             <Link to={'/' + link}>{link}</Link>
-                        </div>
+                        </li>
                     );
                 })}
+                </ul>
             </div>
         )
     }
