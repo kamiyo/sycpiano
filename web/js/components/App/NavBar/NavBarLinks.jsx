@@ -1,6 +1,6 @@
 import '@/less/nav-bar-links.less';
 import React from 'react';
-import {Link} from 'react-router';
+import {Link, IndexLink} from 'react-router';
 
 
 export default class NavBarLinks extends React.Component {
@@ -11,7 +11,13 @@ export default class NavBarLinks extends React.Component {
                 {this.props.links.map(function(link, i) {
                     return (
                         <li className='navLink' key={i}>
-                            <Link to={'/' + link}>{link}</Link>
+                        {(() => {
+                            if (link === 'home') {
+                                return <IndexLink to='/'>{link}</IndexLink>
+                            } else {
+                                return <Link to={'/' + link}>{link}</Link>
+                            }
+                        })()}
                         </li>
                     );
                 })}
