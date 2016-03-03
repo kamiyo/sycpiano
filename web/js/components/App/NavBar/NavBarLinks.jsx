@@ -13,9 +13,9 @@ export default class NavBarLinks extends React.Component {
                         <li className='navLink' key={i}>
                         {(() => {
                             if (link === 'home') {
-                                return <IndexLink to='/'>{link}</IndexLink>
+                                return <IndexLink to='/'>{link}</IndexLink>;
                             } else {
-                                return <Link to={'/' + link}>{link}</Link>
+                                return <Link to={'/' + link}>{link}</Link>;
                             }
                         })()}
                         </li>

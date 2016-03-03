@@ -37,8 +37,8 @@ proxy.on('error', function(e) {
 });
 
 // Actual app code.
-app.get('/', function(req, res) {
-    res.render('index', { name: 'derp' });
+app.get('*', function(req, res) {
+    res.render('index');
 });
 
 app.listen(port, function() {

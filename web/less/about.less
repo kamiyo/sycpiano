@@ -1,0 +1,28 @@
+@import 'mixins.less';
+@import 'colors.less';
+@import "fonts.less";
+
+.aboutContainer {
+    display: flex;
+    height: 100%;
+    background-color: #000;
+}
+
+.leftContainer {
+    height: 100%;
+    flex: 1;
+    background: url(/images/seanchen_stone.jpg) no-repeat center center fixed;
+    background-size: 82%;
+    background-position: -301px -4px;
+}
+
+.rightContainer {
+    flex: 1;
+    padding: 90px 50px;
+    background-color: #000;
+    font-family: @latoLatinThin;
+    line-height: 21px;
+    color: @logo-blue;
+    overflow: scroll;
+    box-shadow: -67px 0 152px -8px #000;
+}
