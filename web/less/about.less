@@ -4,6 +4,7 @@
 
 .aboutContainer {
     display: flex;
+    height: 100%;
     background-color: #000;
 }
 
@@ -16,10 +17,14 @@
 
 .rightContainer {
     flex: 1;
-    padding: 90px 50px;
+    height: calc(~"100% - 80px");
+    .box-sizing(border-box);
+    margin-top: 80px;
+    padding: 10px 50px;
     background-color: #000;
     font-family: @latoLatinThin;
     line-height: 21px;
     color: @logo-blue;
+    overflow-y: scroll;    
     box-shadow: -67px 0 152px -8px #000;
 }

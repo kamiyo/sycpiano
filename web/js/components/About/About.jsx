@@ -8,9 +8,9 @@ export default class About extends React.Component {
             <div className='aboutContainer'>
                 <div className='leftContainer'></div>
                 <div className='rightContainer'>
-                {blurbs.map(function(blurb, i) {
-                    return <p key={i}>{blurb}</p>;
-                })}
+                    {blurbs.map(function(blurb, i) {
+                        return <p key={i}>{blurb}</p>;
+                    })}
                 </div>
             </div>
         )
