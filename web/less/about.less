@@ -3,23 +3,26 @@
 @import "fonts.less";
 
 .aboutContainer {
-    display: flex;
+    .flex-display();
     height: 100%;
     background-color: #000;
 }
 
 .leftContainer {
-    flex: 1;
+    .flex(1);
     background: url(/images/seanchen_stone.jpg) no-repeat fixed;
     background-size: 70%;
     background-position: -250px -20px;
 }
 
 .rightContainer {
-    flex: 1;
+    .flex(1);
     height: auto;
     .box-sizing(border-box);
     margin-top: 80px;
+    .hdpi({
+        margin-top: 60px;
+    });
     padding: 10px 20px 10px 50px;
     background-color: #000;
     font-family: @latoLatinThin;
@@ -28,6 +31,6 @@
     box-shadow: -67px 0 152px -8px #000;
 
     p {
-        margin: 1.35em 0 1.35em 0;
+        margin: 21px 0 21px 0;
     }
 }
