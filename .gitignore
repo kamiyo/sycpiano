@@ -3,3 +3,4 @@
 .DS_Store
 node_modules
 web/build/
+.vscode/settings.json
