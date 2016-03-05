@@ -1,0 +1,52 @@
+@import 'mixins.less';
+@import 'fonts.less';
+
+.contactContainer {
+    .box-sizing();
+    height: 100%;
+    padding: 100px 50px 50px 50px;
+    background: url(/images/bg_1.jpg) no-repeat center center fixed;
+    background-size: cover;
+    font-family: @latoLatinThin;
+    font-size: 1.1em;
+    color: #fff;
+    .center-children();
+}
+
+.emailContainer {
+    background-color: rgba(0, 0, 0, 0.8);
+    .center-children();
+    min-height: 3.0em;
+    margin: 5px;
+}
+
+.managersContainer {
+    .flex-display();
+    .flex-wrap(wrap);
+}
+
+.managerContainer {
+    .flex(1);
+    .flex-display();
+    .justify-content(center);
+    .align-items(flex-start);
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    margin: 5px;
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        li {
+            line-height: 1.2em;
+        }
+    }
+}
+
+.managerName {
+    padding-bottom: 5px;
+    display: inline-block;
+    font-size: 1.1em;
+    font-weight: 800;
+}

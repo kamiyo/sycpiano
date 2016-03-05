@@ -1,3 +1,5 @@
+@import 'colors.less';
+
 html {
     height: 100%;
     overflow: hidden;
@@ -26,4 +28,15 @@ body {
     position: absolute;
     top: 0;
     left: 0;
+}
+
+a {
+    color: @logo-blue;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.5s;
+
+    &:hover {
+        color: @logo-blue - #444;
+    }
 }
