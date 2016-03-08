@@ -4,3 +4,7 @@
 node_modules
 web/build/
 .vscode/settings.json
+*.BASE
+*.LOCAL
+*.orig
+*.REMOTE
