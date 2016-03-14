@@ -34,12 +34,14 @@ export default class ContactItem extends React.Component {
                 <div className='contactSocial'>
                     {Object.keys(this.props.social).map(function(site, i) {
                         return (
-                            <a className='socialLink' key={i} href={this.props.social[site]}>
-                                <object
-                                    className='{site}'
-                                    type='image/svg+xml'
-                                    data={'/images/soc-logos/' + site + '-color.svg'} />
-                            </a>
+                            <div className='socialLinkContainer' key={i}>
+                                <a className='socialLink' href={this.props.social[site]}>
+                                    <object
+                                        className='{site}'
+                                        type='image/svg+xml'
+                                        data={'/images/soc-logos/' + site + '-color.svg'} />
+                                </a>
+                            </div>
                         );
                     }.bind(this))}
                 </div>
