@@ -21,8 +21,8 @@ let managers = [
         social: {
             facebook: 'https://www.facebook.com/AmericanPianistsAssociation/?ref=search',
             twitter: 'https://twitter.com/APApianists',
-            instagram: 'https://www.instagram.com/apapianists/',
             youtube: 'https://www.youtube.com/user/apaPianists',
+            instagram: 'https://www.instagram.com/apapianists/',
         }
     },
     {
@@ -35,8 +35,8 @@ let managers = [
         social: {
             facebook: 'https://www.facebook.com/thecliburn/',
             twitter: 'https://twitter.com/TheCliburn',
-            instagram: 'https://www.instagram.com/thecliburn/',
             youtube: 'https://www.youtube.com/user/VanCliburnFoundation',
+            instagram: 'https://www.instagram.com/thecliburn/',
         }
     }
 ];
