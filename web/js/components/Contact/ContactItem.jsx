@@ -23,7 +23,7 @@ export default class ContactItem extends React.Component {
                     <div className='personalContact'>
                         {(() => {
                             if (this.props.phone) {
-                                return <div className='phone'>{this.props.phone}</div>
+                                return <div className='phone'><div>{this.props.phone}</div></div>
                             }
                         })()}
                         <div className='email'>
@@ -35,11 +35,10 @@ export default class ContactItem extends React.Component {
                     {Object.keys(this.props.social).map(function(site, i) {
                         return (
                             <div className='socialLinkContainer' key={i}>
-                                <a className='socialLink' href={this.props.social[site]}>
-                                    <object
-                                        className='{site}'
-                                        type='image/svg+xml'
-                                        data={'/images/soc-logos/' + site + '-color.svg'} />
+                                <a className='socialLink' href={this.props.social[site]} target='_blank'>
+                                    <img
+                                        className={site}
+                                        src={'/images/soc-logos/' + site + '-color.svg'} />
                                 </a>
                             </div>
                         );
