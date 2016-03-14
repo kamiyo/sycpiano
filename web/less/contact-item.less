@@ -2,6 +2,7 @@
 @import 'elements.less';
 @import 'fonts.less';
 @import 'mixins.less';
+@import 'screens.less';
 
 a {
     .link(#4e94ba);
@@ -32,9 +33,39 @@ a {
 }
 
 .personalInfo {
-    .flex(0 0 150px);
+    .flex(0 0 125px);
+    .screen-xl({
+        .flex(0 0 150px);
+    });
     .flex-display;
     .flex-direction(column);
+
+    .name {
+        font-size: 28px;
+        font-weight: bold;
+        .flex(0 0 auto);
+
+        .screen-xl({
+            font-size: 37px;
+        })
+    }
+
+    .subInfo {
+        .flex-display;
+        .flex-direction(column);
+        .justify-content(center);
+        .flex(1 0 auto);
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .organization {
+            font-weight: bold;
+        }
+    }
 }
 
 .personalContact {
@@ -43,7 +74,7 @@ a {
     .flex-direction(column);
     .justify-content(flex-start);
     font-family: @lato3;
-    
+
     .phone {
         .flex(1 0 auto);
         .flex-direction(column);
@@ -65,29 +96,6 @@ a {
     margin: 0 85px 15px;
 }
 
-.name {
-    font-size: 37px;
-    font-weight: bold;
-    .flex(0 0 auto);
-}
-
-.subInfo {
-    .flex-display;
-    .flex-direction(column);
-    .justify-content(center);
-    .flex(1 0 auto);
-
-    .title {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-
-    .organization {
-        font-weight: bold;
-    }
-}
-
 .seanChen {
     background: url(/images/sean_bw.jpg) no-repeat;
     background-size: cover;
@@ -103,7 +111,6 @@ a {
 .sandraDoan {
     background: url(/images/test_yukari.png) no-repeat;
     background-size: cover;
-    
 }
 
 .contactSocial {
