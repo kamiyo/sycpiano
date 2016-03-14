@@ -1,22 +1,21 @@
 import '@/less/contact.less'
 import React from 'react';
-import Manager from '@/js/components/Contact/Manager.jsx';
-import managers from '@/js/components/Contact/managers.js';
+import ContactItem from '@/js/components/Contact/ContactItem.jsx';
+import contacts from '@/js/components/Contact/contacts.js';
+
+/**
+ * <div className='emailContainer'>
+    <a href='mailto:seanchen@seanchenpiano.com'>seanchen@seanchenpiano.com</a>
+</div>
+ */
 
 export default class Contact extends React.Component {
     render() {
         return (
             <div className='contactContainer'>
-                <div>
-                    <div className='emailContainer'>
-                        <a href='mailto:seanchen@seanchenpiano.com'>seanchen@seanchenpiano.com</a>
-                    </div>
-                    <div className='managersContainer'>
-                        {managers.map(function(manager, i) {
-                            return <Manager {...manager} key={i} />;
-                        })}
-                    </div>
-                </div>
+                {contacts.map(function(contact, i) {
+                    return <ContactItem {...contact} key={i} />;
+                })}
             </div>
         )
     }

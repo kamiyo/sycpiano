@@ -1,0 +1,121 @@
+@import 'flex.less';
+@import 'elements.less';
+@import 'fonts.less';
+@import 'mixins.less';
+
+a {
+    .link(#4e94ba);
+}
+
+.contactItem {
+    .flex(1 1 auto);
+    height: 100%;
+    background-color: #fff;
+    width: 200px;
+    .flex-display;
+    .flex-direction(column);
+}
+
+.contactImage {
+    .flex(0 0 46%);
+    .box-shadow(inset 0 -15px 15px -15px #555);
+}
+
+.contactInfo {
+    .flex(0 0 31%);
+    text-align: center;
+    padding: 20px 0 10px;
+    font-family: @latoLatinThin;
+    .box-sizing(border-box);
+    .flex-display;
+    .flex-direction(column);
+}
+
+.personalInfo {
+    .flex(0 0 125px);
+    .flex-display;
+    .flex-direction(column);
+}
+
+.personalContact {
+    .flex(1 0 auto);
+    .flex-display;
+    .flex-direction(column);
+    .justify-content(center);
+
+    .phone {
+        .flex(1 0 auto);
+    }
+
+    .email {
+        .flex(0 0 auto);
+    }
+}
+
+.divider {
+    border-top: 1px solid #888;
+    height: 1px;
+    margin: 0 85px 15px;
+}
+
+.name {
+    font-size: 37px;
+    font-weight: bold;
+    .flex(0 0 auto);
+}
+
+.subInfo {
+    .flex-display;
+    .flex-direction(column);
+    .justify-content(center);
+    .flex(1 0 auto);
+
+    .title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .organization {
+        font-weight: bold;
+    }
+}
+
+.seanChen {
+    background: url(/images/test_mario.png) no-repeat fixed;
+    background-size: 46%;
+    background-position: -30px -20px;
+}
+
+.joelHarrison {
+    background: url(/images/test_joel.jpg) no-repeat fixed;
+    background-size: 70%;
+    background-position: 218px 5px;
+}
+
+.sandraDoan {
+    background: url(/images/test_yukari.png) no-repeat fixed;
+    background-size: 63%;
+    background-position: 640px 21px;
+}
+
+.contactSocial {
+    .flex(1 0 auto);
+    padding: 0 82px 10px;
+    .flex-display;
+    .justify-content(space-between);
+
+    .socialLink {
+        .flex(1 0 auto);
+        text-align: center;
+        padding-top: 20px;
+    }
+
+    object {
+        .scale(1.2);
+        transition: 0.2s;
+        &:hover {
+            .scale(1.1);
+        }
+    }
+}

@@ -14,3 +14,20 @@
             @props();
         }
 }
+
+.pushed() {
+    margin-top: 80px;
+    .hdpi({
+        margin-top: 60px;
+    })
+}
+
+.link(@color) {
+    color: @color;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.5s;
+    &:hover {
+        color: @color - #444;
+    }
+}
