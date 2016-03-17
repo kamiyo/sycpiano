@@ -5,7 +5,10 @@
         src: url('/fonts/@{fileName}.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
              url('/fonts/@{fileName}.woff2') format('woff2'), /* Modern Browsers */
              url('/fonts/@{fileName}.woff') format('woff'), /* Modern Browsers */
-             url('/fonts/@{fileName}.ttf') format('truetype');
+             url('/fonts/@{fileName}.ttf') format('truetype'),
+             url('/fonts/@{fileName}.svg#@{fontFamily}') format('svg');
+        font-weight: normal;
+        font-style: normal;
     }
 }
 
@@ -18,12 +21,33 @@
 .include-font('lato-semibold', 'LatoSemibold');
 .include-font('lato-regular', 'LatoRegular');
 .include-font('lato-heavy', 'LatoHeavy');
-@lato0: 'LatoHairline';
-@lato1: 'LatoThin';
-@lato2: 'LatoLight';
-@lato3: 'LatoRegular';
-@lato4: 'LatoMedium';
-@lato5: 'LatoSemibold';
-@lato6: 'LatoBold';
-@lato7: 'LatoHeavy';
-@lato8: 'LatoBlack';
+@lato0: 'LatoHairline', sans-serif;
+@lato1: 'LatoThin', sans-serif;
+@lato2: 'LatoLight', sans-serif;
+@lato3: 'LatoRegular', sans-serif;
+@lato4: 'LatoMedium', sans-serif;
+@lato5: 'LatoSemibold', sans-serif;
+@lato6: 'LatoBold', sans-serif;
+@lato7: 'LatoHeavy', sans-serif;
+@lato8: 'LatoBlack', sans-serif;
+
+/*
+.include-font('lato-hairlineitalic', 'LatoHairlineItalic');
+.include-font('lato-thinitalic', 'LatoThinItalic');
+.include-font('lato-lightitalic', 'LatoLightItalic');
+.include-font('lato-blackitalic', 'LatoBlackItalic');
+.include-font('lato-mediumitalic', 'LatoMediumItalic');
+.include-font('lato-bolditalic', 'LatoBoldItalic');
+.include-font('lato-semibolditalic', 'LatoSemiboldItalic');
+.include-font('lato-regularitalic', 'LatoRegularItalic');
+.include-font('lato-heavyitalic', 'LatoHeavyItalic');
+@lato0i: 'LatoHairlineItalic';
+@lato1i: 'LatoThinItalic';
+@lato2i: 'LatoLightItalic';
+@lato3i: 'LatoRegularItalic';
+@lato4i: 'LatoMediumItalic';
+@lato5i: 'LatoSemiboldItalic';
+@lato6i: 'LatoBoldItalic';
+@lato7i: 'LatoHeavyItalic';
+@lato8i: 'LatoBlackItalic';
+*/
