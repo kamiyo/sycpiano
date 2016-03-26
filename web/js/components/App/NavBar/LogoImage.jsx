@@ -5,9 +5,7 @@ import React from 'react';
 export default class Logo extends React.Component {
     render() {
         return (
-            <object className='logoImage' type='image/svg+xml' data='/images/logo_opt.svg'>
-                {/* fallback goes here */}
-            </object>
+            <img className='logoImage' src='/images/logo_opt.svg' />
         )
     }
 };
