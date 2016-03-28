@@ -5,16 +5,9 @@ import LogoImage from '@/js/components/App/NavBar/LogoImage.jsx';
 
 
 export default class NavBarLogo extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-    }
-    handleClick() {
-        this.props.onSubClicked();
-    }
     render() {
         return (
-            <IndexLink to="/" className="navBarLogo" onClick={this.handleClick}>
+            <IndexLink to="/" className="navBarLogo" onClick={this.props.onClick}>
                 <LogoImage /><div className="navBarLogoText">SEAN CHEN</div>
             </IndexLink>
         )
