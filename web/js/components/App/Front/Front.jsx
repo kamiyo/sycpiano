@@ -13,9 +13,9 @@ export default class Front extends React.Component {
                 <ReactCSSTransitionGroup
                     transitionName='frontLogo'
                     transitionAppear={true}
-                    transitionAppearTimeout={500}
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={500}
+                    transitionAppearTimeout={1000}
+                    transitionEnterTimeout={700}
+                    transitionLeaveTimeout={700}
                 >
                     <LogoGroup/>
                 </ReactCSSTransitionGroup>
