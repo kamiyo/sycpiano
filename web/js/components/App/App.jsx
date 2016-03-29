@@ -7,7 +7,6 @@ import {LogoSVG} from '@/js/components/LogoSVG.jsx';
 import Front from '@/js/components/App/Front/Front.jsx';
 import '@/less/animations/route-animation.less';
 import '@/less/animations/nav-bar-animation.less';
-import '@/less/animations/front-video-animation.less';
 
 
 export default class App extends React.Component {
@@ -30,13 +29,7 @@ export default class App extends React.Component {
         return (
             <div className='appContainer'>
                 <LogoSVG/>
-                <ReactCSSTransitionGroup
-                    transitionName='frontVideo'
-                    transitionEnterTimeout={1000}
-                    transitionLeaveTimeout={1000}
-                >
-                    {this.state.isFront ? <Front/> : null}
-                </ReactCSSTransitionGroup>
+                <Front show={this.state.isFront} />
                 <ReactCSSTransitionGroup
                     transitionName='navBar'
                     transitionEnterTimeout={1000}

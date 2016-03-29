@@ -1,6 +1,6 @@
 import React from 'react';
-import '@/less/front.less';
 import '@/less/animations/front-logo-animation.less';
+import '@/less/animations/front-video-animation.less';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import FrontVideo from '@/js/components/App/Front/FrontVideo.jsx';
 import {LogoInstance} from '@/js/components/LogoSVG.jsx';
@@ -17,9 +17,15 @@ export default class Front extends React.Component {
                     transitionEnterTimeout={700}
                     transitionLeaveTimeout={700}
                 >
-                    <LogoGroup/>
+                    {this.props.show ? <LogoGroup/> : null}
                 </ReactCSSTransitionGroup>
-                <FrontVideo/>
+                <ReactCSSTransitionGroup
+                    transitionName='frontVideo'
+                    transitionEnterTimeout={700}
+                    transitionLeaveTimeout={700}
+                >
+                    {this.props.show ? <FrontVideo/> : null}
+                </ReactCSSTransitionGroup>
             </div>
         )
     }

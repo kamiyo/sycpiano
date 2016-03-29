@@ -1,26 +1,17 @@
 .frontVideo-enter {
-    height: 0%;
+    opacity: 0;
 }
 
 .frontVideo-enter.frontVideo-enter-active {
-    height: 100%;
-    transition: height 0.5s ease-out 0.5s;
+    opacity: 1;
+    transition: all 0.7s ease-out;
 }
 
 .frontVideo-leave {
-    height: 100%;
+    opacity: 1;
 }
 
 .frontVideo-leave.frontVideo-leave-active {
-    height: 0%;
-    transition: height 0.5s ease-out;
-}
-
-.frontVideo-appear {
-    height: 0%;
-}
-
-.frontVideo-appear.frontVideo-appear-active {
-    height: 100%;
-    transition: height 0.5s ease-in;
+    opacity: 0;
+    transition: all 0.7s ease-out;
 }
