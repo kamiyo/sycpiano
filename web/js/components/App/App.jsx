@@ -19,7 +19,6 @@ export default class App extends React.Component {
     }
     showFront() {
         this.setState({isFront: true});
-        console.log('showfront');
     }
     hideFront() {
         this.setState({isFront: false});

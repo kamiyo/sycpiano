@@ -22,7 +22,7 @@ var config = {
                 path.resolve(__dirname, 'web/js/components/*')
             ],
             query: {
-                presets: ['es2015', 'react'],
+                presets: ['es2016', 'react'],
             }
         },
         {
