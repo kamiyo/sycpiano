@@ -3,7 +3,8 @@ import '@/less/app.less';
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import NavBar from '@/js/components/App/NavBar/NavBar.jsx';
-import FrontVideo from '@/js/components/App/FrontVideo.jsx';
+import {LogoSVG} from '@/js/components/LogoSVG.jsx';
+import Front from '@/js/components/App/Front/Front.jsx';
 import '@/less/animations/route-animation.less';
 import '@/less/animations/nav-bar-animation.less';
 import '@/less/animations/front-video-animation.less';
@@ -29,12 +30,13 @@ export default class App extends React.Component {
     render() {
         return (
             <div className='appContainer'>
+                <LogoSVG/>
                 <ReactCSSTransitionGroup
                     transitionName='frontVideo'
                     transitionEnterTimeout={1000}
                     transitionLeaveTimeout={1000}
                 >
-                    {this.state.isFront ? <FrontVideo/> : null}
+                    {this.state.isFront ? <Front/> : null}
                 </ReactCSSTransitionGroup>
                 <ReactCSSTransitionGroup
                     transitionName='navBar'

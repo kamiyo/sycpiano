@@ -11,6 +11,21 @@
     letter-spacing: 0.1em;
     height: 100%;
     color: @logo-blue;
+    fill: @logo-blue;
+    transition: all 0.5s;
+    &:hover {
+        color: @logo-blue + #444;
+        fill: @logo-blue + #444;
+    }
+    
+    svg {
+        height: 100%;
+        .hdpi({
+            width: 40px;
+        });
+        width: 50px;
+        float: left;
+    }
 }
 
 .navBarLogoText {
