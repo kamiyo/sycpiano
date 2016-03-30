@@ -10,19 +10,16 @@ import '@/less/animations/nav-bar-animation.less';
 
 
 export default class App extends React.Component {
-    constructor() {
-        super();
-        this.state = {isFront: true};
-        this.showFront = this.showFront.bind(this);
-        this.hideFront = this.hideFront.bind(this);
-    }
-    showFront() {
+    state = {
+        isFront: true
+    };
+    showFront = () => {
         this.setState({isFront: true});
     }
-    hideFront() {
+    hideFront = () => {
         this.setState({isFront: false});
     }
-    componentDidMount() {
+    componentDidMount = () => {
         window.addEventListener('wheel', this.hideFront);
     }
     render() {
