@@ -17,10 +17,9 @@
     "morgan": "^1.7.0",
     "mustachex": "0.0.3",
     "react": "^0.14.7",
-    "react-addons-css-transition-group": "^0.14.7",
-    "react-addons-transition-group": "^0.14.7",
     "react-dom": "^0.14.7",
-    "react-router": "^2.0.0"
+    "react-router": "^2.0.0",
+    "velocity-react": "^1.1.4"
   },
   "devDependencies": {
     "babel-core": "^6.7.4",

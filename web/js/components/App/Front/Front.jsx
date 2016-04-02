@@ -1,31 +1,53 @@
 import React from 'react';
-import '@/less/animations/front-logo-animation.less';
-import '@/less/animations/front-video-animation.less';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import {VelocityTransitionGroup} from 'velocity-react';
 import FrontVideo from '@/js/components/App/Front/FrontVideo.jsx';
-import {LogoInstance} from '@/js/components/LogoSVG.jsx';
 import LogoGroup from '@/js/components/App/Front/LogoGroup.jsx';
 
 export default class Front extends React.Component {
     render() {
+        let logoEnter = {
+            duration: 500,
+            animation: {
+                translateY: 0,
+                opacity: 1
+            },
+            delay: 500
+        };
+        let logoLeave = {
+            duration: 500,
+            animation: {
+                translateY: -50,
+                opacity: 0
+            }
+        };
+        let videoEnter = {
+            duration: 500,
+            animation: {
+                height: `100%`
+            }
+        };
+        let videoLeave = {
+            duration: 500,
+            animation: {
+                height: 0
+            }
+        };
+
         return (
             <div className='frontContainer'>
-                <ReactCSSTransitionGroup
-                    transitionName='frontLogo'
-                    transitionAppear={true}
-                    transitionAppearTimeout={1000}
-                    transitionEnterTimeout={700}
-                    transitionLeaveTimeout={700}
+                <VelocityTransitionGroup
+                    runOnMount={true}
+                    enter={logoEnter}
+                    leave={logoLeave}
                 >
-                    {this.props.show ? <LogoGroup/> : null}
-                </ReactCSSTransitionGroup>
-                <ReactCSSTransitionGroup
-                    transitionName='frontVideo'
-                    transitionEnterTimeout={700}
-                    transitionLeaveTimeout={700}
+                    {this.props.show && <LogoGroup/>}
+                </VelocityTransitionGroup>
+                <VelocityTransitionGroup
+                    enter={videoEnter}
+                    leave={videoLeave}
                 >
-                    {this.props.show ? <FrontVideo/> : null}
-                </ReactCSSTransitionGroup>
+                    {this.props.show && <FrontVideo/>}
+                </VelocityTransitionGroup>
             </div>
         )
     }

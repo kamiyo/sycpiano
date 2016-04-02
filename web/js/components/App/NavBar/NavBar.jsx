@@ -5,9 +5,8 @@ import React from 'react';
 import NavBarLogo from '@/js/components/App/NavBar/NavBarLogo.jsx';
 import NavBarLinks from '@/js/components/App/NavBar/NavBarLinks.jsx';
 
-
 export default class NavBar extends React.Component {
-    render() {        
+    render() {
         var links = ['home', 'about', 'schedule', 'media', 'press', 'contact']
         return (
             <div className='navBar'>

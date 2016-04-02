@@ -1,13 +1,11 @@
 import '@/less/app.less';
 
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import NavBar from '@/js/components/App/NavBar/NavBar.jsx';
-import {LogoSVG} from '@/js/components/LogoSVG.jsx';
-import Front from '@/js/components/App/Front/Front.jsx';
-import '@/less/animations/route-animation.less';
-import '@/less/animations/nav-bar-animation.less';
+import {VelocityComponent, VelocityTransitionGroup} from 'velocity-react';
 
+import {LogoSVG} from '@/js/components/LogoSVG.jsx';
+import NavBar from '@/js/components/App/NavBar/NavBar.jsx';
+import Front from '@/js/components/App/Front/Front.jsx';
 
 export default class App extends React.Component {
     state = {
@@ -21,30 +19,30 @@ export default class App extends React.Component {
     }
     componentDidMount = () => {
         window.addEventListener('wheel', this.hideFront);
+        window.addEventListener('keydown', (e)=>(e.keyCode == 40 && this.hideFront()))
     }
     render() {
         return (
             <div className='appContainer'>
                 <LogoSVG/>
                 <Front show={this.state.isFront} />
-                <ReactCSSTransitionGroup
-                    transitionName='navBar'
-                    transitionEnterTimeout={1000}
-                    transitionLeaveTimeout={1000}
+                <VelocityComponent
+                    animation={{translateY: !this.state.isFront ? 0 : -90}}
+                    delay={500}
+                    duration={500}
+                    easing={[170, 26]}
                 >
-                    {this.state.isFront ? null : <NavBar onClick={this.showFront} />}
-                </ReactCSSTransitionGroup>
-                <ReactCSSTransitionGroup
-                    transitionName='route'
-                    transitionAppear={true}
-                    transitionAppearTimeout={500}
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={500}
+                    <NavBar onClick={this.showFront} />
+                </VelocityComponent>
+                <VelocityTransitionGroup
+                    enter={{duration: 500, animation: {opacity: 1}}}
+                    leave={{duration: 500, animation: {opacity: 0}}}
+                    runOnMount={true}
                 >
                     {React.cloneElement(this.props.children, {
                         key: this.props.location.pathname
                     })}
-                </ReactCSSTransitionGroup>
+                </VelocityTransitionGroup>
             </div>
         )
     }
