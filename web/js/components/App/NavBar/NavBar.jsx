@@ -10,7 +10,7 @@ export default class NavBar extends React.Component {
         var links = ['home', 'about', 'schedule', 'media', 'press', 'contact']
         return (
             <div className='navBar'>
-                <NavBarLogo onClick={this.props.onClick} />
+                <NavBarLogo {...this.props} />
                 <NavBarLinks links={links} />
             </div>
         )

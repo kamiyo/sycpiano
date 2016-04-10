@@ -11,7 +11,8 @@ export class LogoSVG extends React.Component {
 export class LogoInstance extends React.Component {
     render() {
         return (
-            <svg className={this.props.className} {...this.props} xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+
+            <svg {...this.props} xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
                 <use xlinkHref='#logo_template' />
             </svg>
         )
