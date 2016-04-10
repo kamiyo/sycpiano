@@ -1,9 +1,13 @@
 import React from 'react';
 
 export default class VideoPlaylistItem extends React.Component {
+    onClick() {
+        this.props.onClick(this.props.video.snippet.resourceId.videoId);
+    }
+
     render() {
         return (
-            <li className="videoPlaylistItem">
+            <li className="videoPlaylistItem" onClick={this.onClick.bind(this)}>
                 <img src={this.props.video.snippet.thumbnails.high.url}></img>
             </li>
             );

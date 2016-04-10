@@ -22,6 +22,10 @@ export default class Videos extends React.Component {
         this.setState({ playerReady: true });
     }
 
+    playlistItemOnClick(videoId) {
+        this.setState({ playingVideoId: videoId });
+    }
+
     getVideosOnSuccess(response) {
         this.setState({
             playingVideoId: response.data.items[0].snippet.resourceId.videoId,
@@ -51,7 +55,7 @@ export default class Videos extends React.Component {
     render() {
         return (
             <div className="videos">
-                <VideoPlaylist videos={this.state.videos} />
+                <VideoPlaylist videos={this.state.videos} playlistItemOnClick={this.playlistItemOnClick.bind(this)}/>
             </div>
             );
     }
