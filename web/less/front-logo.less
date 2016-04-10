@@ -1,4 +1,4 @@
-@import 'elements.less';
+@import 'mixins.less';
 
 .frontLogo {
     position: absolute;
@@ -6,8 +6,10 @@
     width: 100%;
     overflow: hidden;
     z-index: 101;
-    
+    pointer-events: none;
+
     svg {
+        pointer-events: auto;
         position: absolute;
         top: 0;
         left: 0;
@@ -15,14 +17,28 @@
         bottom: 0;
         margin: auto;
         overflow: visible;
-        &.blur {
+
+        &.blur, &.blur-hover {
             fill: #FFF;
-            -webkit-filter: blur(10px);
-            filter: blur(10px);
+            z-index: 102;
+            .transition(all 0.5s);
         }
-        
+
+        &.blur {
+            .filter(blur(10px));
+        }
+
+        &.blur-hover {
+            .filter(blur(15px));
+        }
+
         &.solid {
+            z-index: 103;
             fill: #000;
+        }
+
+        &:hover {
+            cursor: pointer;
         }
     }
 }
