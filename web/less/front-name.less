@@ -1,20 +1,25 @@
-@import 'elements.less';
+@import 'flex.less';
+@import 'fonts.less';
+@import 'mixins.less';
 
-.frontLogo {
+.frontName {
     position: absolute;
     height: 100%;
     width: 100%;
     overflow: hidden;
     z-index: 101;
+    color: #FFF;
+    font-family: @lato1;
+    display: flex;
+    .align-content(center);
 
-    svg {
-        position: absolute;
+    div {
+        .flex(1);
         top: 0;
-        left: 0;
-        right: 0;
+        left: 20%;
         bottom: 0;
-        margin: auto;
-        overflow: visible;
+        margin-left: 30px;
+
         &.blur {
             fill: #FFF;
             -webkit-filter: blur(10px);
@@ -29,4 +34,5 @@
             cursor: pointer;
         }
     }
+
 }

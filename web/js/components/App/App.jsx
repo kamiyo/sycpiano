@@ -17,7 +17,7 @@ export default class App extends React.Component {
     hideFront = () => {
         this.setState({isFront: false});
     }
-    componentDidMount = () => {
+    componentDidMount() {
         window.addEventListener('wheel', this.hideFront);
         window.addEventListener('keydown', (e)=>(e.keyCode == 40 && this.hideFront()))
     }
@@ -25,7 +25,7 @@ export default class App extends React.Component {
         return (
             <div className='appContainer'>
                 <LogoSVG/>
-                <Front show={this.state.isFront} />
+                <Front show={this.state.isFront} onClick={this.hideFront} />
                 <VelocityComponent
                     animation={{translateY: !this.state.isFront ? 0 : -90}}
                     delay={500}

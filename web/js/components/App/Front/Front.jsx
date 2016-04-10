@@ -1,7 +1,8 @@
 import React from 'react';
 import {VelocityTransitionGroup} from 'velocity-react';
 import FrontVideo from '@/js/components/App/Front/FrontVideo.jsx';
-import LogoGroup from '@/js/components/App/Front/LogoGroup.jsx';
+import FrontLogo from '@/js/components/App/Front/FrontLogo.jsx';
+import FrontName from '@/js/components/App/Front/FrontName.jsx';
 
 export default class Front extends React.Component {
     render() {
@@ -40,7 +41,7 @@ export default class Front extends React.Component {
                     enter={logoEnter}
                     leave={logoLeave}
                 >
-                    {this.props.show && <LogoGroup/>}
+                    {this.props.show && <FrontLogo onClick={this.props.onClick} />}
                 </VelocityTransitionGroup>
                 <VelocityTransitionGroup
                     enter={videoEnter}
@@ -48,6 +49,7 @@ export default class Front extends React.Component {
                 >
                     {this.props.show && <FrontVideo/>}
                 </VelocityTransitionGroup>
+                {this.props.show && <FrontName onClick={this.props.onClick} />}
             </div>
         )
     }
