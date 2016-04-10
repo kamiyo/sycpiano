@@ -10,10 +10,14 @@ export default class About extends React.Component {
                 <div className='rightContainer'>
                     {blurbs.map(function(blurb, i) {
                         if (i == 0) {
-                            var firstLetter = blurb[0];
-                            var withoutFirstLetter = blurb.slice(1);
+                            let firstLetter = blurb[0];
+                            let withoutFirstLetter = blurb.slice(1);
+                            let nameLocation = withoutFirstLetter.indexOf('Sean Chen');
+                            let name = withoutFirstLetter.slice(nameLocation, nameLocation + 9);
+                            let beforeName = withoutFirstLetter.slice(0, nameLocation);
+                            let afterName = withoutFirstLetter.slice(nameLocation + 9);
                             return (
-                                <p key={i}><span className='firstLetter'>{firstLetter}</span>{withoutFirstLetter}</p>
+                                <p key={i}><span className='firstLetter'>{firstLetter}</span>{beforeName}<span className='name'>{name}</span>{afterName}</p>
                             )
                         }
                         return <p key={i}>{blurb}</p>;
