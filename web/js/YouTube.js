@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import axios from 'axios';
 
 const API_KEY = 'AIzaSyBJm8pj4Ejqw8rHJVgk_0s6w1HlB6RfZ34';
 const PLAYLIST_ID = 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9';
@@ -41,11 +41,10 @@ export default class YouTube {
     }
 
     getVideos() {
-        return $.ajax({
-            url: PLAYLIST_ITEMS_URL,
-            data: {
+        return axios.get(PLAYLIST_ITEMS_URL, {
+            params: {
                 key: API_KEY,
-                part: 'snippet',
+                part: 'id, snippet',
                 playlistId: PLAYLIST_ID,
                 maxResults: MAX_PLAYLIST_ITEMS
             }

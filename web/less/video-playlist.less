@@ -1,0 +1,25 @@
+.videoPlaylist {
+    position: fixed;
+    height: 100%;
+    right: 0;
+    padding-left: 10px;
+    overflow: auto;
+    background-color: rgba(30, 30, 30, 0.7);
+
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+
+    .videoPlaylistItem {
+        list-style: none;
+
+        &:not(:first-child) {
+            margin-top: 10px;
+        }
+
+        img {
+            max-width: 200px;
+        }
+    }
+}

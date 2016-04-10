@@ -3,6 +3,7 @@ import '@/less/videos.less';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import YouTube from '@/js/YouTube.js';
+import VideoPlaylist from '@/js/components/Media/VideoPlaylist.jsx';
 
 export default class Videos extends React.Component {
     constructor(props) {
@@ -21,23 +22,21 @@ export default class Videos extends React.Component {
         this.setState({ playerReady: true });
     }
 
-    getVideosOnSuccess(data, textStatus, jqXHR) {
+    getVideosOnSuccess(response) {
         this.setState({
-            playingVideoId: data.items[0].snippet.resourceId.videoId,
-            videos: data.items
+            playingVideoId: response.data.items[0].snippet.resourceId.videoId,
+            videos: response.data.items
         });
     }
 
-    getVideosOnError(jqXHR, textStatus, errorThrown) {
-        var errors = JSON.parse(jqXHR.responseText).error.errors;
-        errors = errors.map((e) => { return e.message; }).join('\n');
-        console.error(`get videos request failed: ${errors}`);
+    getVideosOnError(response) {
+        console.error(`get videos request failed: ${response}`);
     }
 
     componentWillMount() {
         this.youTube.getVideos()
-            .done(this.getVideosOnSuccess.bind(this))
-            .fail(this.getVideosOnError.bind(this));
+            .then(this.getVideosOnSuccess.bind(this))
+            .catch(this.getVideosOnError.bind(this));
     }
 
     componentDidMount() {
@@ -52,6 +51,7 @@ export default class Videos extends React.Component {
     render() {
         return (
             <div className="videos">
+                <VideoPlaylist videos={this.state.videos} />
             </div>
             );
     }
