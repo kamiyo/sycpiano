@@ -1,0 +1,28 @@
+@import 'elements.less';
+
+.frontLogo {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    z-index: 101;
+    
+    svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        overflow: visible;
+        &.blur {
+            fill: #FFF;
+            -webkit-filter: blur(10px);
+            filter: blur(10px);
+        }
+        
+        &.solid {
+            fill: #000;
+        }
+    }
+}
