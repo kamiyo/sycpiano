@@ -2,7 +2,7 @@ var path = require('path');
 var Webpack = require('webpack');
 
 var config = {
-    devtool: 'eval',
+    devtool: 'source-map',
     entry: [
         'webpack-dev-server/client?http://localhost:8080/',
         'webpack/hot/dev-server',
@@ -22,7 +22,7 @@ var config = {
                 path.resolve(__dirname, 'web/js/components/*')
             ],
             query: {
-                presets: ['react', 'es2016', 'stage-1'],
+                presets: ['react', 'es2016', 'stage-1']
             }
         },
         {

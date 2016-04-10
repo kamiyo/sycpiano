@@ -1,4 +1,4 @@
-import '@/less/home.less'
+import '@/less/home.less';
 import React from 'react';
 
 export default class Home extends React.Component {
@@ -6,6 +6,6 @@ export default class Home extends React.Component {
         return (
             <div className='homeContainer container'>
             </div>
-        )
+        );
     }
 }

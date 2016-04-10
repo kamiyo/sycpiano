@@ -1,0 +1,19 @@
+@import 'variables.less';
+@import 'mixins.less';
+
+.videos {
+    position: absolute;
+    top: @navbarHeight;
+    width: 100%;
+    height: ~"calc(100% - @{navbarHeight})";
+
+    .hdpi({
+        top: @navbarHeightHDPI;
+        height: ~"calc(100% - @{navbarHeightHDPI})";
+    });
+
+    iframe {
+        width: 100%;
+        height: 100%;
+    }
+}
