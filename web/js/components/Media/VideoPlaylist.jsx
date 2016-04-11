@@ -15,6 +15,10 @@ export default class VideoPlaylist extends React.Component {
         el.style.paddingRight = `${paddingRight + scrollbarWidth}px`;
     }
 
+    getWidth() {
+        return ReactDOM.findDOMNode(this).getBoundingClientRect().width;
+    }
+
     render() {
         let playlistItems = this.props.videos.map((video) => {
             return <VideoPlaylistItem key={video.id} video={video} onClick={this.props.playlistItemOnClick}/>

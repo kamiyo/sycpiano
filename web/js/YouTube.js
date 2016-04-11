@@ -17,10 +17,12 @@ export default class YouTube {
         div.id = 'player';
         el.appendChild(div);
 
-        let body = document.body;
-        let script = document.createElement('script');
-        script.src = "https://www.youtube.com/iframe_api";
-        body.insertBefore(script, body.firstChild);
+        if (!this.player) {
+            let body = document.body;
+            let script = document.createElement('script');
+            script.src = "https://www.youtube.com/iframe_api";
+            body.insertBefore(script, body.firstChild);
+        }
     }
 
     onYouTubeIframeAPIReady() {

@@ -2,14 +2,19 @@ import '@/less/videos.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {VelocityComponent} from 'velocity-react';
 import YouTube from '@/js/YouTube.js';
+import VideoPlaylistToggler from '@/js/components/Media/VideoPlaylistToggler.jsx';
 import VideoPlaylist from '@/js/components/Media/VideoPlaylist.jsx';
+
+let PLAYLIST_WIDTH = 220; // includes 10px padding on each side
 
 export default class Videos extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            showPlaylist: false,
             playerReady: false,
             playingVideoId: '',
             videos: []
@@ -24,6 +29,10 @@ export default class Videos extends React.Component {
 
     playlistItemOnClick(videoId) {
         this.setState({ playingVideoId: videoId });
+    }
+
+    playlistToggleOnClick(e) {
+        this.setState({ showPlaylist: !this.state.showPlaylist });
     }
 
     getVideosOnSuccess(response) {
@@ -48,14 +57,26 @@ export default class Videos extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.state.playerReady)
+        if (this.state.playerReady && this.state.showPlaylist === prevState.showPlaylist)
             this.youTube.loadVideoById(this.state.playingVideoId, prevState.playerReady);
     }
 
     render() {
+        let playlistExpandAnimation = {
+            translateX: this.state.showPlaylist ? 0 : PLAYLIST_WIDTH
+        };
+
         return (
             <div className="videos">
-                <VideoPlaylist videos={this.state.videos} playlistItemOnClick={this.playlistItemOnClick.bind(this)}/>
+                <VelocityComponent animation={playlistExpandAnimation} duration={200} >
+                    <VideoPlaylistToggler isPlaylistVisible={this.state.showPlaylist}
+                        onClick={this.playlistToggleOnClick.bind(this)} />
+                </VelocityComponent>
+                <VelocityComponent animation={playlistExpandAnimation} duration={200} >
+                    <VideoPlaylist ref="videoPlaylist"
+                        videos={this.state.videos}
+                        playlistItemOnClick={this.playlistItemOnClick.bind(this)} />
+                </VelocityComponent>
             </div>
             );
     }

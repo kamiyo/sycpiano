@@ -9,18 +9,22 @@ import Front from '@/js/components/App/Front/Front.jsx';
 
 export default class App extends React.Component {
     state = {
-        isFront: true
+        isFront: false // for peaceful dev until we figure out how to show only on home
     };
+
     showFront = () => {
         this.setState({isFront: true});
     }
+
     hideFront = () => {
         this.setState({isFront: false});
     }
+
     componentDidMount() {
         window.addEventListener('wheel', this.hideFront);
         window.addEventListener('keydown', (e)=>(e.keyCode == 40 && this.hideFront()))
     }
+
     render() {
         return (
             <div className='appContainer'>
