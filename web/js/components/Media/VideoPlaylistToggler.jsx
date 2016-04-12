@@ -6,7 +6,7 @@ export default class VideoPlaylistToggler extends React.Component {
     render() {
         return (
             <div className="playlistToggler" onClick={this.props.onClick}>
-                {this.props.isPlaylistVisible ? '\u25C0' : '\u25B6'}
+                {!this.props.isPlaylistVisible ? '\u25C0' : '\u25B6'}
             </div>
             );
     }

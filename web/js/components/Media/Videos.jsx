@@ -33,6 +33,11 @@ export default class Videos extends React.Component {
 
     playlistToggleOnClick(e) {
         this.setState({ showPlaylist: !this.state.showPlaylist });
+        if (!this.state.showPlaylist) {
+            Velocity(document.getElementById('player'), {width: `-=${PLAYLIST_WIDTH}`}, {duration: 400, easing: [170,26]});
+        } else {
+            Velocity(document.getElementById('player'), 'reverse');
+        }
     }
 
     getVideosOnSuccess(response) {
@@ -68,11 +73,11 @@ export default class Videos extends React.Component {
 
         return (
             <div className="videos">
-                <VelocityComponent animation={playlistExpandAnimation} duration={200} >
+                <VelocityComponent animation={playlistExpandAnimation} duration={400} easing={[170,26]} >
                     <VideoPlaylistToggler isPlaylistVisible={this.state.showPlaylist}
                         onClick={this.playlistToggleOnClick.bind(this)} />
                 </VelocityComponent>
-                <VelocityComponent animation={playlistExpandAnimation} duration={200} >
+                <VelocityComponent animation={playlistExpandAnimation} duration={400} easing={[170,26]} >
                     <VideoPlaylist ref="videoPlaylist"
                         videos={this.state.videos}
                         playlistItemOnClick={this.playlistItemOnClick.bind(this)} />
