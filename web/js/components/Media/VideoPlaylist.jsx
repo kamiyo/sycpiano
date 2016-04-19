@@ -12,7 +12,7 @@ export default class VideoPlaylist extends React.Component {
         let scrollbarWidth = el.offsetWidth - el.clientWidth;
         el.style.right = `${-scrollbarWidth}px`;
 
-        el.style.paddingRight = `${paddingRight + scrollbarWidth}px`;
+        // el.style.paddingRight = `${paddingRight + scrollbarWidth}px`;
     }
 
     getWidth() {
@@ -20,8 +20,14 @@ export default class VideoPlaylist extends React.Component {
     }
 
     render() {
-        let playlistItems = this.props.videos.map((video) => {
-            return <VideoPlaylistItem key={video.id} video={video} onClick={this.props.playlistItemOnClick}/>
+        let playlistItems = Object.keys(this.props.videos).map((id) => {
+            let video = this.props.videos[id];
+            return (
+                <VideoPlaylistItem key={video.id}
+                    isActive={this.props.playingVideoId === id}
+                    video={video}
+                    onClick={this.props.playlistItemOnClick}/>
+                );
         });
 
         return (

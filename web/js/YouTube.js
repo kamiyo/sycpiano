@@ -3,7 +3,10 @@ import axios from 'axios';
 
 const API_KEY = 'AIzaSyBJm8pj4Ejqw8rHJVgk_0s6w1HlB6RfZ34';
 const PLAYLIST_ID = 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9';
-const PLAYLIST_ITEMS_URL = 'https://www.googleapis.com/youtube/v3/playlistItems';
+
+const YOUTUBE_BASE_URL = 'https://www.googleapis.com/youtube/v3'; 
+const PLAYLIST_ITEMS_URL = `${YOUTUBE_BASE_URL}/playlistItems`;
+const VIDEOS_URL = `${YOUTUBE_BASE_URL}/videos`;
 const MAX_PLAYLIST_ITEMS = 25;
 
 /* NOTE: We might want to consider moving all properties on the YouTube class
@@ -72,13 +75,23 @@ class YouTube {
         });
     }
 
-    getVideos() {
+    getPlaylistItems() {
         return axios.get(PLAYLIST_ITEMS_URL, {
             params: {
                 key: API_KEY,
                 part: 'id, snippet',
                 playlistId: PLAYLIST_ID,
                 maxResults: MAX_PLAYLIST_ITEMS
+            }
+        });
+    }
+
+    getVideos(listOfIds) {
+        return axios.get(VIDEOS_URL, {
+            params: {
+                key: API_KEY,
+                part: 'id, contentDetails',
+                id: listOfIds.join(',')
             }
         });
     }

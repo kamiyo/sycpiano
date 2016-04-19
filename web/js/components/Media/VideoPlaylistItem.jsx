@@ -6,9 +6,16 @@ export default class VideoPlaylistItem extends React.Component {
     }
 
     render() {
+        let video = this.props.video;
+
         return (
-            <li className="videoPlaylistItem" onClick={this.onClick.bind(this)}>
-                <img src={this.props.video.snippet.thumbnails.high.url}></img>
+            <li className={`videoPlaylistItem${this.props.isActive ? ' active' : ''}`} onClick={this.onClick.bind(this)}>
+                <div className="itemContent">
+                    <img className="section" src={video.snippet.thumbnails.high.url}></img>
+                    <div className="section videoInfo">
+                        <h4>{video.snippet.title}</h4>
+                    </div>
+                </div>
             </li>
             );
     }
