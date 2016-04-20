@@ -8,8 +8,7 @@ import VideoPlaylistToggler from '@/js/components/Media/VideoPlaylistToggler.jsx
 import VideoPlaylist from '@/js/components/Media/VideoPlaylist.jsx';
 import youTube from '@/js/YouTube.js';
 
-let PLAYLIST_PADDING = 10; // 10px on each side
-let PLAYLIST_WIDTH = 550 + PLAYLIST_PADDING;
+let PLAYLIST_WIDTH = 550;
 
 export default class Videos extends React.Component {
     constructor(props) {
@@ -19,7 +18,8 @@ export default class Videos extends React.Component {
             showPlaylist: false,
             playerReady: false,
             playingVideoId: '',
-            videos: {}
+            videos: {},
+            playlistRight: 0 // playlist offset to hide scrollbar if it is visible
         };
     }
 
@@ -38,6 +38,10 @@ export default class Videos extends React.Component {
         // } else {
         //     Velocity(document.getElementById('player'), 'reverse');
         // }
+    }
+
+    playlistRightOnChange(playlistRight) {
+        this.setState({ playlistRight: playlistRight });
     }
 
     getVideosOnSuccess(response) {
@@ -95,7 +99,7 @@ export default class Videos extends React.Component {
 
     render() {
         let overlayLeaveAnimation = { duration: 300, delay: 1000, animation: {opacity: 0} };
-        let playlistExpandAnimation = { translateX: this.state.showPlaylist ? 0 : PLAYLIST_WIDTH };
+        let playlistExpandAnimation = { translateX: this.state.showPlaylist ? 0 : PLAYLIST_WIDTH + this.state.playlistRight };
 
         return (
             <div className="videos">
@@ -104,14 +108,17 @@ export default class Videos extends React.Component {
                 </VelocityTransitionGroup>
 
                 <VelocityComponent animation={playlistExpandAnimation} duration={400} easing={[170,26]}>
-                    <VideoPlaylistToggler isPlaylistVisible={this.state.showPlaylist}
+                    <VideoPlaylistToggler
+                        playlistRight={this.state.playlistRight}
+                        isPlaylistVisible={this.state.showPlaylist}
                         onClick={this.playlistToggleOnClick.bind(this)} />
                 </VelocityComponent>
 
                 <VelocityComponent animation={playlistExpandAnimation} duration={400} easing={[170,26]}>
-                    <VideoPlaylist ref="videoPlaylist"
+                    <VideoPlaylist
                         playingVideoId={this.state.playingVideoId}
                         videos={this.state.videos}
+                        playlistRightOnChange={this.playlistRightOnChange.bind(this)}
                         playlistItemOnClick={this.playlistItemOnClick.bind(this)} />
                 </VelocityComponent>
             </div>

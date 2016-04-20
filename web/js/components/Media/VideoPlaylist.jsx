@@ -4,15 +4,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import VideoPlaylistItem from '@/js/components/Media/VideoPlaylistItem.jsx';
 
-let paddingRight = 10;
-
 export default class VideoPlaylist extends React.Component {
+    shouldComponentUpdate(nextProps, nextState) {
+        // Necessary to prevent infinite updates, since calling props.playlistRightOnChange
+        // causes a state change on the parent.
+        return nextProps.playingVideoId !== this.props.playingVideoId
+            || nextProps.videos !== this.props.videos;
+    }
+
     componentDidUpdate() {
         let el = ReactDOM.findDOMNode(this);
         let scrollbarWidth = el.offsetWidth - el.clientWidth;
-        el.style.right = `${-scrollbarWidth}px`;
+        el.style.right = el.style.paddingRight = `${-scrollbarWidth}px`;
 
-        // el.style.paddingRight = `${paddingRight + scrollbarWidth}px`;
+        this.props.playlistRightOnChange(-scrollbarWidth);
     }
 
     getWidth() {

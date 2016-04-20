@@ -8,8 +8,8 @@
     width: 20px;
     text-align: center;
     position: fixed;
-    top: ~"calc(50% - "(@height / 2 - @navbarHeight)~")";
-    right: @playlistWidth + @playlistPadding * 2;
+    top: ~"calc(50% - "(@height / 2)~" + @{navbarHeight})";
+    right: @playlistWidth;
     background-color: @playlistBackground;
     color: #fff;
     cursor: pointer;
