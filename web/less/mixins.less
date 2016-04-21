@@ -1,5 +1,6 @@
 @import 'elements.less';
 @import 'flex.less';
+@import 'variables.less';
 
 .center-children() {
     .flex-display();
@@ -16,9 +17,9 @@
 }
 
 .pushed() {
-    margin-top: 80px;
+    margin-top: @navbarHeight;
     .hdpi({
-        margin-top: 60px;
+        margin-top: @navbarHeightHDPI;
     })
 }
 

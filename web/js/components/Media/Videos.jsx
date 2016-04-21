@@ -21,10 +21,12 @@ export default class Videos extends React.Component {
             videos: {},
             playlistRight: 0 // playlist offset to hide scrollbar if it is visible
         };
+
+        this.firstLoad = true;
     }
 
     onPlayerReady() {
-        this.setState({ playerReady: true });
+        this.setState({ playerReady: true, playingVideoId: this.state.videos[Object.keys(this.state.videos)[0]].id}, () => this.firstLoad = false);
     }
 
     playlistItemOnClick(videoId) {
@@ -50,7 +52,6 @@ export default class Videos extends React.Component {
         });
 
         this.setState({
-            playingVideoId: response.data.items[0].id,
             videos: this.playlistItems
         }, () => {
             this.playlistItems = null;
@@ -88,9 +89,8 @@ export default class Videos extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.state.playerReady && this.state.showPlaylist === prevState.showPlaylist)
-            youTube.loadVideoById(this.state.playingVideoId,
-                prevState.playingVideoId && prevState.playerReady);
+        if (this.state.showPlaylist === prevState.showPlaylist && this.state.playingVideoId !== prevState.playingVideoId)
+            youTube.loadVideoById(this.state.playingVideoId, !this.firstLoad);
     }
 
     componentWillUnmount() {
