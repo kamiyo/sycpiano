@@ -6,6 +6,6 @@ export default class VideoLoadingOverlay extends React.Component {
             <div className="loading-overlay">
                 <div className="keyboard-gif"></div>
             </div>
-            );
+        );
     }
 }

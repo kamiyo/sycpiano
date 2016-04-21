@@ -31,6 +31,7 @@ export default class Videos extends React.Component {
 
     playlistItemOnClick(videoId) {
         this.setState({ playingVideoId: videoId });
+        setTimeout(this.playlistToggleOnClick.bind(this), 2500);
     }
 
     playlistToggleOnClick(e) {
@@ -84,8 +85,10 @@ export default class Videos extends React.Component {
     }
 
     componentDidMount() {
-        youTube.initializePlayerOnElement(ReactDOM.findDOMNode(this));
-        youTube.executeWhenPlayerReady(this.onPlayerReady.bind(this));
+        setTimeout(() => {
+            youTube.initializePlayerOnElement(ReactDOM.findDOMNode(this));
+            youTube.executeWhenPlayerReady(this.onPlayerReady.bind(this));
+        }, 1200);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -98,7 +101,7 @@ export default class Videos extends React.Component {
     }
 
     render() {
-        let overlayLeaveAnimation = { duration: 300, delay: 1000, animation: {opacity: 0} };
+        let overlayLeaveAnimation = { duration: 300, delay: 1000, animation: 'fadeOut' };
         let playlistExpandAnimation = { translateX: this.state.showPlaylist ? 0 : PLAYLIST_WIDTH + this.state.playlistRight };
 
         return (
