@@ -31,7 +31,11 @@ export default class Videos extends React.Component {
 
     playlistItemOnClick(videoId) {
         this.setState({ playingVideoId: videoId });
-        setTimeout(this.playlistToggleOnClick.bind(this), 2500);
+        this.playlistAutoHideTimeout = setTimeout(this.hidePlaylist.bind(this), 2500);
+    }
+
+    hidePlaylist() {
+        this.setState({ showPlaylist: false });
     }
 
     playlistToggleOnClick(e) {
@@ -85,10 +89,8 @@ export default class Videos extends React.Component {
     }
 
     componentDidMount() {
-        setTimeout(() => {
-            youTube.initializePlayerOnElement(ReactDOM.findDOMNode(this));
-            youTube.executeWhenPlayerReady(this.onPlayerReady.bind(this));
-        }, 1200);
+        youTube.initializePlayerOnElement(ReactDOM.findDOMNode(this));
+        youTube.executeWhenPlayerReady(this.onPlayerReady.bind(this));
     }
 
     componentDidUpdate(prevProps, prevState) {

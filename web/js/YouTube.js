@@ -90,7 +90,7 @@ class YouTube {
         return axios.get(VIDEOS_URL, {
             params: {
                 key: API_KEY,
-                part: 'id, contentDetails',
+                part: 'id, contentDetails, statistics',
                 id: listOfIds.join(',')
             }
         });

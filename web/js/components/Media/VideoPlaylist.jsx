@@ -7,7 +7,7 @@ import VideoPlaylistItem from '@/js/components/Media/VideoPlaylistItem.jsx';
 export default class VideoPlaylist extends React.Component {
     shouldComponentUpdate(nextProps, nextState) {
         // Necessary to prevent infinite updates, since calling props.playlistRightOnChange
-        // causes a state change on the parent.
+        // causes a state change on the parent, which propagates back down to this component.
         return nextProps.playingVideoId !== this.props.playingVideoId
             || nextProps.videos !== this.props.videos;
     }
@@ -16,7 +16,6 @@ export default class VideoPlaylist extends React.Component {
         let el = ReactDOM.findDOMNode(this);
         let scrollbarWidth = el.offsetWidth - el.clientWidth;
         el.style.right = el.style.paddingRight = `${-scrollbarWidth}px`;
-
         this.props.playlistRightOnChange(-scrollbarWidth);
     }
 

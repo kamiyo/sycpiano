@@ -13,6 +13,7 @@
     overflow-y: auto;
     background-color: @playlistBackground;
     width: @playlistWidth;
+    font-family: @lato1;
 
     ul {
         padding: 0;
@@ -22,36 +23,25 @@
 
     .videoPlaylistItem {
         @padding: 10px;
+
         list-style: none;
         cursor: pointer;
         width: 100%;
         height: @itemHeight + @padding * 2;
-        padding: @padding 0 @padding 20px;
+        padding: @padding 0 @padding 15px;
         border-left: 7px solid transparent;
+        border-bottom: @itemBorderColor;
 
         &:hover, &.active {
             background-color: @playlistBackground + rgba(120, 120, 120, 0);
         }
 
         &.active {
-            border-left: 7px solid #4E86A4;
-            border-bottom: @itemBorderColor;
-        }
-
-        &:not(:last-child) {
-            &.active {
-                .itemContent {
-                    border-bottom: none;
-                }
-            }
-
-            .itemContent {
-                padding-bottom: @padding;
-                border-bottom: @itemBorderColor;
-            }
+            border-left-color: #4E86A4;
         }
 
         .itemContent {
+            height: 100%;
             width: 100%;
         }
 
@@ -60,20 +50,48 @@
             display: inline-block;
         }
 
-        .videoInfo {
-            width: ~"calc(80% - 50px)";
+        .imageContainer {
             height: 100%;
-            padding: 10px 15px;
+            width: @thumbnailWidth;
+            position: relative;
+
+            img {
+                width: 100%;
+            }
+
+            .duration {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                color: #fff;
+                background-color: rgba(0, 0, 0, 0.8);
+                padding-right: 3px;
+            }
+        }
+
+        .videoInfo {
+            width: ~"calc(80% - 20px)";
+            height: 100%;
+            padding: 0 20px;
+            position: relative;
 
             h4 {
                 margin: 0;
                 color: white;
-                font-family: @lato1;
-            }
-        }
+                font-size: 15px;
+                position: absolute;
 
-        img {
-            width: @thumbnailWidth;
+                &.text-top {
+                    padding-top: 5px;
+                    top: 0;
+                }
+
+                &.text-bottom {
+                    font-size: 12px;
+                    padding-bottom: 5px;
+                    bottom: 0;
+                }
+            }
         }
     }
 }
