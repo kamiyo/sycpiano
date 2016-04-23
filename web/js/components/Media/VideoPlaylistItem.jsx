@@ -43,10 +43,10 @@ function videoDurationToDisplay(durationString) {
     let h = duration.hours();
 
     let sString = `${s < 10 ? '0' : ''}${s}`;
-    let mString = `${m < 10 ? '0' : ''}${m}`;
+    let mString = `${(m < 10 && h > 0) ? '0' : ''}${m}`;
     let hString = h > 0 ? `${h}:` : '';
 
-    return `${hString}${mString}:${sString}`    
+    return `${hString}${mString}:${sString}`
 }
 
 function publishedDateToDisplay(publishedAt) {

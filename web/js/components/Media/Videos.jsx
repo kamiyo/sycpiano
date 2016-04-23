@@ -31,7 +31,7 @@ export default class Videos extends React.Component {
 
     playlistItemOnClick(videoId) {
         this.setState({ playingVideoId: videoId });
-        this.playlistAutoHideTimeout = setTimeout(this.hidePlaylist.bind(this), 2500);
+        this.playlistAutoHideTimeout = setTimeout(this.hidePlaylist.bind(this), 3000);
     }
 
     hidePlaylist() {
