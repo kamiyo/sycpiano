@@ -5,13 +5,13 @@ import ReactDOM from 'react-dom';
 import {VelocityComponent, VelocityTransitionGroup} from 'velocity-react';
 import VideoLoadingOverlay from '@/js/components/Media/VideoLoadingOverlay.jsx';
 import VideoPlaylistToggler from '@/js/components/Media/VideoPlaylistToggler.jsx';
-import VideoPlaylist from '@/js/components/Media/VideoPlaylist.jsx';
+import VideoPlaylist from '@/js/components/Media/Videos/VideoPlaylist.jsx';
 import ConnectPlaylistHOC from '@/js/components/Media/HigherOrder/ConnectPlaylistHOC.jsx';
 import youTube from '@/js/YouTube.js';
 
 let PLAYLIST_WIDTH = 550;
 
-class Videos extends React.Component {
+class _Videos extends React.Component {
     constructor(props) {
         super(props);
 
@@ -115,7 +115,7 @@ class Videos extends React.Component {
     }
 }
 
-Videos.propTypes = {
+_Videos.propTypes = {
     showPlaylist: React.PropTypes.bool.isRequired,
     playlistRight: React.PropTypes.number.isRequired,
     playlistRightOnChange: React.PropTypes.func.isRequired,
@@ -123,6 +123,6 @@ Videos.propTypes = {
     togglePlaylist: React.PropTypes.func.isRequired
 };
 
-let withPlaylist = ConnectPlaylistHOC(Videos);
+const Videos = ConnectPlaylistHOC(_Videos);
 
-export default withPlaylist;
+export default Videos;
