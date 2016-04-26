@@ -7,7 +7,7 @@ import Home from '@/js/components/Home/Home.jsx';
 import About from '@/js/components/About/About.jsx';
 import Contact from '@/js/components/Contact/Contact.jsx';
 import Media from '@/js/components/Media/Media.jsx';
-import Videos from '@/js/components/Media/Videos.jsx';
+import Videos from '@/js/components/Media/Videos/Videos.jsx';
 
 main();
 
