@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import PlaylistManagerHOC from '@/js/components/Media/HigherOrder/PlaylistManagerHOC.jsx';
 import VideoPlaylistItem from '@/js/components/Media/VideoPlaylistItem.jsx';
 
-class _VideoPlaylist extends React.Component {
+class VideoPlaylist extends React.Component {
     render() {
         let playlistItems = Object.keys(this.props.items).map((id) => {
             let item = this.props.items[id];
@@ -25,6 +25,4 @@ class _VideoPlaylist extends React.Component {
     }
 }
 
-const VideoPlaylist = PlaylistManagerHOC(_VideoPlaylist);
-
-export default VideoPlaylist;
+export default PlaylistManagerHOC(VideoPlaylist);

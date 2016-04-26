@@ -3,15 +3,15 @@ import '@/less/videos.less';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {VelocityComponent, VelocityTransitionGroup} from 'velocity-react';
-import VideoLoadingOverlay from '@/js/components/Media/VideoLoadingOverlay.jsx';
-import VideoPlaylistToggler from '@/js/components/Media/VideoPlaylistToggler.jsx';
+import VideoLoadingOverlay from '@/js/components/Media/LoadingOverlay.jsx';
+import VideoPlaylistToggler from '@/js/components/Media/PlaylistToggler.jsx';
 import VideoPlaylist from '@/js/components/Media/Videos/VideoPlaylist.jsx';
 import ConnectPlaylistHOC from '@/js/components/Media/HigherOrder/ConnectPlaylistHOC.jsx';
 import youTube from '@/js/YouTube.js';
 
-let PLAYLIST_WIDTH = 550;
+const PLAYLIST_WIDTH = 550;
 
-class _Videos extends React.Component {
+class Videos extends React.Component {
     constructor(props) {
         super(props);
 
@@ -25,7 +25,10 @@ class _Videos extends React.Component {
     }
 
     onPlayerReady() {
-        this.setState({ playerReady: true, playingVideoId: this.state.videos[Object.keys(this.state.videos)[0]].id}, () => this.firstLoad = false);
+        this.setState({
+            playerReady: true,
+            playingVideoId: this.state.videos[Object.keys(this.state.videos)[0]].id
+        }, () => this.firstLoad = false);
     }
 
     playlistItemOnClick(videoId) {
@@ -98,6 +101,7 @@ class _Videos extends React.Component {
 
                 <VelocityComponent animation={playlistExpandAnimation} duration={400} easing={[170,26]}>
                     <VideoPlaylistToggler
+                        playlistWidth={PLAYLIST_WIDTH}
                         playlistRight={this.props.playlistRight}
                         isPlaylistVisible={this.props.showPlaylist}
                         onClick={this.props.playlistToggleOnClick} />
@@ -105,8 +109,8 @@ class _Videos extends React.Component {
 
                 <VelocityComponent animation={playlistExpandAnimation} duration={400} easing={[170,26]}>
                     <VideoPlaylist
-                        playingVideoId={this.state.playingVideoId}
-                        videos={this.state.videos}
+                        currentItemId={this.state.playingVideoId}
+                        items={this.state.videos}
                         playlistRightOnChange={this.props.playlistRightOnChange}
                         playlistItemOnClick={this.playlistItemOnClick.bind(this)} />
                 </VelocityComponent>
@@ -115,7 +119,7 @@ class _Videos extends React.Component {
     }
 }
 
-_Videos.propTypes = {
+Videos.propTypes = {
     showPlaylist: React.PropTypes.bool.isRequired,
     playlistRight: React.PropTypes.number.isRequired,
     playlistRightOnChange: React.PropTypes.func.isRequired,
@@ -123,6 +127,4 @@ _Videos.propTypes = {
     togglePlaylist: React.PropTypes.func.isRequired
 };
 
-const Videos = ConnectPlaylistHOC(_Videos);
-
-export default Videos;
+export default ConnectPlaylistHOC(Videos);

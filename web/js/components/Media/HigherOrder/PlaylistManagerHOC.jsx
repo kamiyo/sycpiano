@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 const PlaylistManagerHOC = (Component) => {
     class _PlaylistManagerHOC extends React.Component {
@@ -16,7 +17,7 @@ const PlaylistManagerHOC = (Component) => {
         }
 
         render() {
-            return <Component {...props} {...state} />
+            return <Component {...this.props} {...this.state} />
         }
     }
 
@@ -26,6 +27,8 @@ const PlaylistManagerHOC = (Component) => {
         playlistRightOnChange: React.PropTypes.func.isRequired,
         playlistItemOnClick: React.PropTypes.func.isRequired
     };
+
+    return _PlaylistManagerHOC;
 }
 
 export default PlaylistManagerHOC;
