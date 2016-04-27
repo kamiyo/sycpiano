@@ -1,3 +1,5 @@
+import '@/less/media/loading-overlay.less';
+
 import React from 'react';
 
 export default class LoadingOverlay extends React.Component {

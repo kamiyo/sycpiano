@@ -1,4 +1,4 @@
-import '@/less/video-playlist.less';
+import '@/less/media/videos/video-playlist.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

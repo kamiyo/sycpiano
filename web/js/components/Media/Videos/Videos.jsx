@@ -1,4 +1,5 @@
-import '@/less/videos.less';
+import '@/less/media/media.less';
+import '@/less/media/videos/videos.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -94,7 +95,7 @@ class Videos extends React.Component {
         let playlistExpandAnimation = { translateX: this.props.showPlaylist ? 0 : PLAYLIST_WIDTH + this.props.playlistRight };
 
         return (
-            <div className="videos">
+            <div className="mediaContent videos">
                 <VelocityTransitionGroup leave={overlayLeaveAnimation} runOnMount={false}>
                     { this.state.playerReady ? undefined : <VideoLoadingOverlay/> }
                 </VelocityTransitionGroup>
