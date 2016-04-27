@@ -1,14 +1,58 @@
 @import '../variables.less';
 @import '../mixins.less';
 
-.mediaContent {
-    position: absolute;
-    top: @navbarHeight;
+.mediaContainer {
+    height: 100%;
     width: 100%;
-    height: ~"calc(100% - @{navbarHeight})";
+    background: url(/images/cliburn1.jpg) no-repeat;
+    background-size: cover;
 
-    .hdpi({
-        top: @navbarHeightHDPI;
-        height: ~"calc(100% - @{navbarHeightHDPI})";
-    });
+    .subNav {
+        z-index: 10;
+        padding-left: 15px;
+        position: fixed;
+        top: @navbarHeight;
+
+        .hdpi({
+            top: @navbarHeightHDPI;
+        });
+
+        .subNavLink {
+            display: block;
+            margin-bottom: 10px;
+
+            a {
+                width: 50px;
+                height: 50px;
+                display: inline-block;
+                padding: 5px 10px;
+                background-color: rgba(255, 255, 255, 0.7);
+                border-radius: 5px;
+
+                &.active {
+                    background-color: rgba(78,134,164, 0.7);
+                }
+            }
+
+            .mediaIcon {
+                width: 100%;
+                height: 100%;
+                display: inline-block;
+                background-size: contain;
+                background-repeat: no-repeat;
+
+                &.videos {
+                    background-image: url(/images/media-icons/videos.png);
+                }
+
+                &.music {
+                    background-image: url(/images/media-icons/music.png);
+                }
+
+                &.photos {
+                    background-image: url(/images/media-icons/photos.png);
+                }
+            }
+        }
+    }
 }

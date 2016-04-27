@@ -8,6 +8,8 @@ import About from '@/js/components/About/About.jsx';
 import Contact from '@/js/components/Contact/Contact.jsx';
 import Media from '@/js/components/Media/Media.jsx';
 import Videos from '@/js/components/Media/Videos/Videos.jsx';
+import Music from '@/js/components/Media/Music/Music.jsx';
+import Photos from '@/js/components/Media/Photos/Photos.jsx';
 
 main();
 
@@ -21,6 +23,8 @@ function main() {
                 <Route path='media' component={Media}>
                     <IndexRedirect to='videos' />
                     <Route path='videos' component={Videos} />
+                    <Route path='music' component={Music} />
+                    <Route path='photos' component={Photos} />
                 </Route>
             </Route>
         </Router>
