@@ -4,7 +4,7 @@ import axios from 'axios';
 const API_KEY = 'AIzaSyBJm8pj4Ejqw8rHJVgk_0s6w1HlB6RfZ34';
 const PLAYLIST_ID = 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9';
 
-const YOUTUBE_BASE_URL = 'https://www.googleapis.com/youtube/v3'; 
+const YOUTUBE_BASE_URL = 'https://www.googleapis.com/youtube/v3';
 const PLAYLIST_ITEMS_URL = `${YOUTUBE_BASE_URL}/playlistItems`;
 const VIDEOS_URL = `${YOUTUBE_BASE_URL}/videos`;
 const MAX_PLAYLIST_ITEMS = 25;
@@ -73,6 +73,14 @@ class YouTube {
             else
                 this.player.cueVideoById(videoId);
         });
+    }
+
+    playVideo() {
+        if (this.player.getPlayerState === 5) {
+            this.player.playVideo();
+        } else {
+            console.error("No video cued, please use loadVideoById");
+        }
     }
 
     getPlaylistItems() {
