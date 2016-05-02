@@ -10,9 +10,9 @@ export default class NavBarLink extends React.Component {
             <li className='navBarLink'>
             {(() => {
                 if (link === 'home') {
-                    return <IndexLink to='/' activeClassName={active}>{link}</IndexLink>;
+                    return <IndexLink to='/' activeClassName={active}><div>{link}</div></IndexLink>;
                 } else {
-                    return <Link to={'/' + link} activeClassName={active}>{link}</Link>;
+                    return <Link to={'/' + link} activeClassName={active}><div>{link}</div></Link>;
                 }
             })()}
             </li>
