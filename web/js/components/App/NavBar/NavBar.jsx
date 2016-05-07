@@ -5,7 +5,14 @@ import React from 'react';
 import NavBarLogo from '@/js/components/App/NavBar/NavBarLogo.jsx';
 import NavBarLinks from '@/js/components/App/NavBar/NavBarLinks.jsx';
 
-const links = ['home', 'about', 'schedule', 'media', 'press', 'contact'];
+const links = [
+    'home',
+    'about',
+    'schedule',
+    { name: 'media', subNavLinks: ['video', 'music', 'photos'] },
+    'press',
+    'contact'
+];
 
 export default class NavBar extends React.Component {
     render() {
