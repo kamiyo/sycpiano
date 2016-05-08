@@ -2,11 +2,11 @@ import '@/less/sub-nav.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Link, IndexLink} from 'react-router';
+import {Link, IndexLink, withRouter} from 'react-router';
 import SubNav from '@/js/components/SubNav/SubNav.jsx';
 
 
-export default class NavBarLink extends React.Component {
+class NavBarLink extends React.Component {    
     constructor(props) {
         super(props);
 
@@ -31,21 +31,34 @@ export default class NavBarLink extends React.Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
+    // breaks route updating
+    /*shouldComponentUpdate(nextProps, nextState) {
         return nextState.subNavPosition.top !== this.state.subNavPosition.top
             || nextState.subNavPosition.right !== this.state.subNavPosition.right
             || nextState.subNavPosition.width !== this.state.subNavPosition.width;
-    }
+    }*/
 
     render() {
         var link = this.props.link;
         var active = 'active';
+        var highlightClass = "highlight" +
+            ((link === 'home') 
+                ? (this.props.router.isActive('/', true) ? " active" : "")
+                : (this.props.router.isActive(link, false) ? " active" : "")
+            );
         return (
             <li className='navBarLink'>
                 {
                     (link === 'home')
-                        ? <IndexLink to='/' activeClassName={active}><div>{link}</div></IndexLink>
-                        : <Link to={'/' + link} activeClassName={active}><div>{link}</div></Link>
+                        ? <IndexLink to='/' activeClassName={active}>
+                            <div className={highlightClass}></div>
+                            <div className="hyperlink">{link}</div>
+                          </IndexLink>
+                        
+                        : <Link to={'/' + link} activeClassName={active}>
+                            <div className={highlightClass}></div>
+                            <div className="hyperlink">{link}</div>
+                          </Link>
                 }
                 {
                     this.props.subNavLinks
@@ -56,3 +69,5 @@ export default class NavBarLink extends React.Component {
         );
     }
 };
+
+export default withRouter(NavBarLink);
