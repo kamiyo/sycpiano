@@ -17,7 +17,7 @@ let blurbs = [
     Hall in Taipei, Het Concertgebouw in Amsterdam, and the Salle Cortot in Paris.`,
 
     `As a result of his relationship with both orchestral musicians and audience members, Mr. Chen has been
-    making return appearance with several orchestras, including the San Diego Symphony, Santa Fe Symphony,
+    making return appearances with several orchestras, including the San Diego Symphony, Santa Fe Symphony,
     Carmel Symphony, and Sunriver Festival Orchestras. He will also be traveling across the United States
     for solo and chamber recitals, including concerts in Chicago, Denver, Louisville, and Los Angeles.
     Lauded for his natural charisma and approachable personality, Mr. Chen is particularly in demand for
