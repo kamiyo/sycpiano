@@ -9,17 +9,25 @@ const links = [
     'home',
     'about',
     'schedule',
-    { name: 'media', subNavLinks: ['video', 'music', 'photos'] },
+    { name: 'media', subNavLinks: ['videos', 'music', 'photos'] },
     'press',
     'contact'
 ];
 
 export default class NavBar extends React.Component {
+    state = {
+        showSub: false
+    };
+    
+    toggleSubNav = (arg = !this.state.showSub) => {
+        this.setState({showSub: arg});
+    }
+    
     render() {
         return (
             <div className='navBar'>
                 <NavBarLogo {...this.props} />
-                <NavBarLinks links={links} />
+                <NavBarLinks links={links} showSub={this.state.showSub} toggleSub={this.toggleSubNav} />
             </div>
         )
     }

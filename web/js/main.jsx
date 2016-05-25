@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, IndexRoute, IndexRedirect, browserHistory } from 'react-router';
+import 'velocity-animate';
+import 'velocity-animate/velocity.ui';
 
 import App from '@/js/components/App/App.jsx';
 import Home from '@/js/components/Home/Home.jsx';
@@ -21,7 +23,6 @@ function main() {
                 <Route path='about' component={About} />
                 <Route path='contact' component={Contact} />
                 <Route path='media' component={Media}>
-                    <IndexRedirect to='videos' />
                     <Route path='videos' component={Videos} />
                     <Route path='music' component={Music} />
                     <Route path='photos' component={Photos} />

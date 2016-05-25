@@ -12,7 +12,7 @@ const NavBarLinks = (props) => (
             let subNavLinks = linkIsObj ? link.subNavLinks : null;
             link = linkIsObj ? link.name : link;
             return (
-                <NavBarLink key={i} link={link} subNavLinks={subNavLinks} />
+                <NavBarLink key={i} link={link} subNavLinks={subNavLinks} showSub={props.showSub} toggleSub={props.toggleSub}/>
             );
         })}
         </ul>

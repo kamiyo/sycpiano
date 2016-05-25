@@ -6,28 +6,26 @@ import {Link, IndexLink, withRouter} from 'react-router';
 import SubNav from '@/js/components/SubNav/SubNav.jsx';
 
 
-class NavBarLink extends React.Component {    
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            subNavPosition: { top: 0, right: 0 }
-        };
-    }
+class NavBarLink extends React.Component {
+    state = {
+        subNavPosition: { top: 0, right: 0 },
+    };
 
     componentDidMount() {
         if (this.props.subNavLinks) {
             // TODO: find a way to do this without timeout
             setTimeout(() => {
                 let dims = ReactDOM.findDOMNode(this).getBoundingClientRect();
-                this.setState({ subNavPosition:
+                this.setState({
+                    subNavPosition:
                     {
                         top: dims.top + dims.height,
-                        right: 0,
-                        width: window.outerWidth - dims.left
+                        right: window.outerWidth - dims.left - dims.width,
+                        width: dims.width
                     }
                 });
             }, 100);
+
         }
     }
 
@@ -39,29 +37,52 @@ class NavBarLink extends React.Component {
     }*/
 
     render() {
-        var link = this.props.link;
-        var active = 'active';
-        var highlightClass = "highlight" +
-            ((link === 'home') 
-                ? (this.props.router.isActive('/', true) ? " active" : "")
-                : (this.props.router.isActive(link, false) ? " active" : "")
-            );
+        let link = this.props.link;
+        let highlightClass = "highlight";
+        let active = '';
+        if (link === 'home') {
+            if (this.props.router.isActive('/', true) && !this.props.showSub) {
+                highlightClass += " active";
+                active = 'active';
+            }
+        } else if (link === 'media') {
+            if (this.props.showSub) {
+                highlightClass += " active";
+                active = 'active';
+            }
+        } else {
+            if (this.props.router.isActive(link, false) && !this.props.showSub) {
+                highlightClass += " active";
+                active = 'active';
+
+            }
+        }
+
         return (
             <li className='navBarLink'>
                 {
                     (link === 'home')
-                        ? <IndexLink to='/' activeClassName={active}>
+                        ? <IndexLink to='/' onClick={() => this.props.toggleSub(false)} className={active}>
                             <div className={highlightClass}></div>
                             <div className="hyperlink">{link}</div>
-                          </IndexLink>
-                        
-                        : <Link to={'/' + link} activeClassName={active}>
-                            <div className={highlightClass}></div>
-                            <div className="hyperlink">{link}</div>
-                          </Link>
+                        </IndexLink>
+
+                        : ((link === 'media')
+                            ? <a onClick={() => this.props.toggleSub()} className={active}>
+                                <div className={highlightClass}></div>
+                                <div className="hyperlink">{link}</div>
+                            </a>
+
+                            : (
+                                <Link to={'/' + link} onClick={() => this.props.toggleSub(false)} className={active}>
+                                    <div className={highlightClass}></div>
+                                    <div className="hyperlink">{link}</div>
+                                </Link>
+                            )
+                        )
                 }
                 {
-                    this.props.subNavLinks
+                    (this.props.subNavLinks && (this.props.router.isActive(link, false) || this.props.showSub))
                         ? <SubNav links={this.props.subNavLinks} position={this.state.subNavPosition} />
                         : null
                 }
