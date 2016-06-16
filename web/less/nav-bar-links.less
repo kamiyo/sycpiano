@@ -4,9 +4,13 @@
 @import "variables.less";
 
 @navbar-margin-top: 18px;
+@navbar-margin-top-hdpi: 12px;
 
 .navBarLinks {
     ul {
+        .hdpi({
+            margin-top: @navbar-margin-top-hdpi;
+        });
         padding: 0;
         margin: 0;
     }
@@ -35,6 +39,9 @@
 
         div {
             .transition(all 0.2s);
+            .hdpi({
+                height: @navbarHeightHDPI - @navbar-margin-top-hdpi;
+            });
             height: @navbarHeight - @navbar-margin-top;
             padding: 5px 8px;
         }
