@@ -36,3 +36,15 @@
     -webkit-filter: @params;
     filter: @params;
 }
+
+.set-button-color(@color) {
+    background-color: @color;
+    &:hover {
+        cursor: pointer;
+        background-color: @color + #111;
+    }
+
+    &:active {
+        background-color: @color - #111;
+    }
+}
