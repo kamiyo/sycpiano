@@ -4,6 +4,7 @@ var Webpack = require('webpack');
 var config = {
     devtool: 'source-map',
     entry: [
+        'babel-polyfill',
         'webpack-dev-server/client?http://localhost:8080/',
         'webpack/hot/dev-server',
         path.resolve(__dirname, 'web/js/main.jsx'),
@@ -22,7 +23,8 @@ var config = {
                 path.resolve(__dirname, 'web/js/components/*')
             ],
             query: {
-                presets: ['react', 'es2016', 'stage-1']
+                plugins: ['transform-runtime'],
+                presets: ['es2015', 'stage-0', 'react']
             }
         },
         {
