@@ -8,7 +8,7 @@ export default class About extends React.Component {
             <div className='aboutContainer container'>
                 <div className='leftContainer'></div>
                 <div className='rightContainer'>
-                    {blurbs.map(function(blurb, i) {
+                    {blurbs.map((blurb, i) => {
                         if (i == 0) {
                             let firstLetter = blurb[0];
                             let withoutFirstLetter = blurb.slice(1);

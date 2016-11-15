@@ -36,8 +36,14 @@ proxy.on('error', function(e) {
     console.log('Could not connect to proxy, please try again...');
 });
 
-// Actual app code.
-app.get('*', function(req, res) {
+// Matches the /admin route.
+app.get(/\/admin/, function(req, res) {
+    res.render('calendar-admin');
+})
+
+// Actual app code. A catch-all for everything except /admin.
+// We catch any route first, and then let our front-end routing do the work.
+app.get(/^((?!\/admin).)*$/, function(req, res) {
     res.render('index');
 });
 
