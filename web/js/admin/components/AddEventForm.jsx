@@ -2,7 +2,7 @@
 // Also link to website
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-select/dist/react-select.css';
-import '@/less/Admin/add-event-form.less';
+import '@/less/admin/components/add-event-form.less';
 
 import $ from 'cash-dom';
 import moment from 'moment';
