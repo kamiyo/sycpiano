@@ -1,4 +1,4 @@
-import '@/less/Admin/calendar-admin.less';
+import '@/less/admin/components/calendar-admin.less';
 
 import React from 'react';
 import {validateToken, CLIENT_ID} from '@/js/services/GoogleOAuth.js';
