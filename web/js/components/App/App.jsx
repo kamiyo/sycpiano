@@ -9,7 +9,7 @@ import Front from '@/js/components/App/Front/Front.jsx';
 
 export default class App extends React.Component {
     state = {
-        isFront: true
+        isFront: false
     };
     showFront = () => {
         this.setState({isFront: true});
