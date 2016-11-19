@@ -3,6 +3,7 @@ var Webpack = require('webpack');
 
 function getEntryPoint(entryPointPath) {
     return [
+        'babel-polyfill',
         'webpack-dev-server/client?http://localhost:8080/',
         'webpack/hot/dev-server',
         path.resolve(__dirname, entryPointPath),
@@ -32,7 +33,8 @@ var config = {
                     path.resolve(__dirname, 'web/js/admin/components/*'),
                 ],
                 query: {
-                    presets: ['react', 'es2016', 'stage-1'],
+                    plugins: ['transform-runtime'],
+                    presets: ['es2015', 'stage-0', 'react']
                 }
             },
             {
