@@ -28,9 +28,9 @@ var config = {
                 test: /\.jsx?$/,
                 include: [
                     path.resolve(__dirname, 'web/js'),
-                    path.resolve(__dirname, 'web/js/components/*'),
+                    path.resolve(__dirname, 'web/js/components'),
                     path.resolve(__dirname, 'web/js/admin'),
-                    path.resolve(__dirname, 'web/js/admin/components/*'),
+                    path.resolve(__dirname, 'web/js/admin/components'),
                 ],
                 query: {
                     plugins: ['transform-runtime'],
@@ -61,7 +61,7 @@ var config = {
         ]
     },
     plugins: [
-        new Webpack.HotModuleReplacementPlugin()
+        new Webpack.HotModuleReplacementPlugin(),
     ]
 };
 
