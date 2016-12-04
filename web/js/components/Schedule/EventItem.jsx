@@ -3,10 +3,6 @@ import '@/less/event-item.less';
 import React from 'react';
 
 export default class EventItem extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <div className="event-item">

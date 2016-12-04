@@ -4,13 +4,13 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { dateReducer, eventsByMonthReducer } from '@/js/components/Schedule/ScheduleReducers.js';
+import { dateReducer, eventItemsReducer } from '@/js/components/Schedule/ScheduleReducers.js';
 import SycCalendar from '@/js/components/Schedule/SycCalendar.jsx';
 import EventList from '@/js/components/Schedule/EventList.jsx';
 
 let store = createStore(combineReducers({
     date: dateReducer,
-    eventsByMonth: eventsByMonthReducer
+    eventItems: eventItemsReducer
 }));
 
 export default class Schedule extends React.Component {
