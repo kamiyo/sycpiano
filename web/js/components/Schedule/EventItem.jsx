@@ -5,7 +5,7 @@ import React from 'react';
 export default class EventItem extends React.Component {
     render() {
         return (
-            <div className="event-item">
+            <div className="event-item" style={this.props.style}>
                 <div className="event-item__date-container">
                     <div className="event-item__date">
                         {this.props.event.day}

@@ -1,6 +1,7 @@
 import '@/less/event-list.less';
 
 import _ from 'lodash';
+import $ from 'cash-dom';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, List } from 'react-virtualized';
@@ -8,24 +9,18 @@ import { AutoSizer, CellMeasurer, List } from 'react-virtualized';
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
 
-let scrolling = false;
 
 class EventListPresentation extends React.Component {
-    _renderEventItem(key, index) {
+    _renderEventItem(key, index, style) {
         const item = this.props.eventItems[index];
         if (item.type === 'month') {
-            return <EventMonthItem month={item.month} key={key} />;
+            return <EventMonthItem month={item.month} key={key} style={style} />;
         }
-        return <EventItem event={item} key={key} />;
+        return <EventItem event={item} key={key} style={style} />;
     }
 
     rowItemRenderer({key, index, isScrolling, isVisible, style}) {
-        if (!scrolling && isScrolling) console.log('===SCROLL START===');
-        if (scrolling && !isScrolling) console.log('===SCROLL END===');
-
-        scrolling = isScrolling;
-        console.log('in row item renderer: ' + index + ',' + isScrolling + ',' + isVisible);
-        return this._renderEventItem(key, index);
+        return this._renderEventItem(key, index, style);
     }
 
     cellItemRenderer({columnIndex, rowIndex}) {
