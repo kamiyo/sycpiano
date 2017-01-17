@@ -65,10 +65,18 @@ export const dateReducer = (state = moment(), action) => {
     };
 };
 
-export const eventItemsReducer = (state = dummyEventItems, action) => {
+export const eventItemsReducer = (state = {
+    items: [],
+    isFetching: false,
+}, action) => {
+    console.log('===in reducer===');
+    console.log(action);
+    console.log(state);
     switch (action.type) {
-        case 'UPDATE_EVENTS_BY_MONTH':
-            return action.eventByMonth;
+        case 'FETCH_EVENTS_SUCCESS':
+            return { items: action.fetchedEvents, isFetching: false };
+        case 'FETCH_EVENTS':
+            return state.isFetching ? state : { ...state, isFetching: true }
         default:
             return state;
     };

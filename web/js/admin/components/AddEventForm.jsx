@@ -12,7 +12,7 @@ import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 
 import Button from '@/js/components/reusable/Button.jsx';
-import googleAPI from '@/js/services/GoogleAPI.js'
+import {googleAPI} from '@/js/services/GoogleAPI.js'
 import {CalendarEvent} from '@/js/admin/models.js';
 
 var eventTypes = [

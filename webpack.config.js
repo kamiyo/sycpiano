@@ -11,7 +11,7 @@ function getEntryPoint(entryPointPath) {
 }
 
 var config = {
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
     entry: {
         sycpiano: getEntryPoint('web/js/main.jsx'),
         calendarAdmin: getEntryPoint('web/js/admin/main.jsx'),

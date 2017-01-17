@@ -2,7 +2,7 @@ import '@/less/syc-calendar.less';
 
 import moment from 'moment';
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import Calendar from 'rc-calendar';
 

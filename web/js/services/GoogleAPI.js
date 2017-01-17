@@ -1,10 +1,14 @@
 import axios from 'axios';
+import moment from 'moment';
 
 const tzAPIKey = 'AIzaSyDnJI7CLrfcEDmFG6_AB0PcVXjzqN1nDVM';
 const calAPIKey = 'AIzaSyB1g_4E0UTqwX0TxezROJiNj3cAY0rr16w';
 const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
-const encodedCalendarId = encodeURIComponent(calendarId);
+const uriEncCalId = encodeURIComponent(calendarId);
 
+/**
+ * NOTE: All GoogleAPI functions return promises.
+ */
 class GoogleAPI {
     createEvent(
         summary,
@@ -15,7 +19,7 @@ class GoogleAPI {
         timezone,
         accessToken
     ) {
-        const url = `https://www.googleapis.com/calendar/v3/calendars/${encodedCalendarId}/events`;
+        const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
         const eventResource = {
             summary: summary,
             description: description,
@@ -35,17 +39,20 @@ class GoogleAPI {
         return axios.get(url, {params: {address: address, key: tzAPIKey}});
     }
 
-    getEvents(accessToken) {
-        const url = `https://www.googleapis.com/calendar/v3/calendars/${encodedCalendarId}/events`;
+    /**
+     * Gets Google Calendar events with start times after right now.
+     *
+     * @param {moment} timeMin - the lower bound for start time of events to be returned.
+     */
+    getCalendarEvents(timeMin = moment()) {
+        const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
         return axios.get(url, {
             params: {
                 orderBy: 'startTime',
                 singleEvents: true,
-                fields: 'items',
-            },
-            headers: {
-                'Authorization: Bearer': accessToken,
-            },
+                timeMin: timeMin.format(),
+                key: calAPIKey,
+            }
         });
     }
 
@@ -70,4 +77,4 @@ class GoogleAPI {
     }
 }
 
-export default new GoogleAPI();
+export let googleAPI = new GoogleAPI();
