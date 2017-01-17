@@ -1,0 +1,84 @@
+@import 'fonts.less';
+
+// THE FOLLOWING STYLES ARE FOR THE CALENDAR HEADER
+
+.syc-calendar {
+    display: inline-block;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.syc-calendar-header {
+    text-align: center;
+    font-size: 37px;
+}
+
+.syc-calendar-my-select {
+    font-family: @lato1;
+    margin: 0 13px;
+}
+
+.syc-calendar-month-select {
+    margin-right: 15px;
+}
+
+.syc-calendar-prev-month-btn {
+    position: absolute;
+    left: 10px;
+
+    &:after {
+        content: "«";
+    }
+}
+
+.syc-calendar-next-month-btn {
+    position: absolute;
+    right: 10px;
+
+    &:after {
+        content: "»";
+    }
+}
+
+// THE FOLLOWING STYLES ARE FOR THE CALENDAR BODY
+
+.syc-calendar-table {
+    margin: 0 auto;
+    table-layout: fixed;
+    width: 400px;
+    text-align: center;
+
+    & > thead {
+        font-size: 25px;
+    }
+}
+
+.syc-calendar-column-header {
+    font-family: @lato2;
+    padding: 8px 0;
+    border-bottom: 1px solid #c5c5c5;
+}
+
+.syc-calendar-cell {
+    font-family: @lato1;
+    font-size: 18px;
+    padding: 11px;
+    border: 1px solid transparent;
+}
+
+.syc-calendar-selected-day {
+    background-color: #A73115;
+    color: white;
+}
+
+.syc-calendar-today {
+    border: 1px solid #A73115;
+
+    &.syc-calendar-selected-day {
+        border: 1px solid transparent;
+        background-color: #A73115;
+        color: white;
+    }
+}

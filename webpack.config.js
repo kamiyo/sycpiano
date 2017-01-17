@@ -11,7 +11,7 @@ function getEntryPoint(entryPointPath) {
 }
 
 var config = {
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
     entry: {
         sycpiano: getEntryPoint('web/js/main.jsx'),
         calendarAdmin: getEntryPoint('web/js/admin/main.jsx'),
@@ -28,9 +28,9 @@ var config = {
                 test: /\.jsx?$/,
                 include: [
                     path.resolve(__dirname, 'web/js'),
-                    path.resolve(__dirname, 'web/js/components/*'),
+                    path.resolve(__dirname, 'web/js/components'),
                     path.resolve(__dirname, 'web/js/admin'),
-                    path.resolve(__dirname, 'web/js/admin/components/*'),
+                    path.resolve(__dirname, 'web/js/admin/components'),
                 ],
                 query: {
                     plugins: ['transform-runtime'],
@@ -61,7 +61,7 @@ var config = {
         ]
     },
     plugins: [
-        new Webpack.HotModuleReplacementPlugin()
+        new Webpack.HotModuleReplacementPlugin(),
     ]
 };
 

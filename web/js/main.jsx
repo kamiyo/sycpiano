@@ -6,6 +6,7 @@ import App from '@/js/components/App/App.jsx';
 import Home from '@/js/components/Home/Home.jsx';
 import About from '@/js/components/About/About.jsx';
 import Contact from '@/js/components/Contact/Contact.jsx';
+import Schedule from '@/js/components/Schedule/Schedule.jsx';
 
 main();
 
@@ -16,6 +17,7 @@ function main() {
                 <IndexRoute component={Home}/>
                 <Route path='about' component={About}/>
                 <Route path='contact' component={Contact}/>
+                <Route path='schedule' component={Schedule}/>
             </Route>
         </Router>
     ), document.getElementById('hero-container'));
