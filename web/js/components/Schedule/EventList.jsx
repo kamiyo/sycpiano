@@ -9,7 +9,6 @@ import { AutoSizer, CellMeasurer, List } from 'react-virtualized';
 
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
-import {transformToEventItems} from '@/js/components/Schedule/events-transform.js';
 import {googleAPI} from '@/js/services/GoogleAPI.js';
 
 class EventListPresentation extends React.Component {
@@ -80,10 +79,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     getInitialEventItems().then(items => {
-        dispatch({
-            type: 'FETCH_EVENTS_SUCCESS',
-            fetchedEvents: transformToEventItems(items),
-        });
+        dispatch({type: 'FETCH_EVENTS_SUCCESS', fetchedEvents: items});
     });
     return { fetchEvents: () => dispatch({ type: 'FETCH_EVENTS' }) };
 };
