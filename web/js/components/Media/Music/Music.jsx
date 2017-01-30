@@ -6,9 +6,10 @@ import ReactDOM from 'react-dom';
 import { max, shuffle, sum } from 'lodash';
 import $ from 'cash-dom';
 import { ParticleExplosionsManager } from '@/js/components/Media/Music/Particles.js';
+import ConstantQ from '@/js/components/Media/Music/ConstantQ.js';
 
 // const url = 'http://seanchenpiano.com/musicfiles/composing/improv.mp3';
-const url = '/music/spellbound.mp3';
+const url = '/music/improv.mp3';
 
 class Music extends React.Component {
     componentDidMount() {
@@ -29,20 +30,23 @@ class Music extends React.Component {
 
         this.explosions = new ParticleExplosionsManager(this.visualizationCtx);
 
+        this.cq = new ConstantQ();
+
         this.$audio.on('loadeddata', () => {
             const audioCtx = new AudioContext();
             const audioSrc = audioCtx.createMediaElementSource(this.audio);
             this.analyser = audioCtx.createAnalyser();
             // we have to connect the MediaElementSource with the analyser 
             audioSrc.connect(this.analyser);
+            console.log(audioSrc);
             this.analyser.connect(audioCtx.destination);
-            this.analyser.fftSize = 32;
+            this.analyser.fftSize = 16384;
 
             // frequencyBinCount tells you how many values you'll receive from the analyser
             this.frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
 
             this.audio.volume = 1;
-            // this.audio.play();
+            this.audio.play();
             window.audio = this.audio;
 
             this.lastUpdateTime = null;
@@ -67,23 +71,25 @@ class Music extends React.Component {
 
     onAnalyze() {
         this.analyser.getByteFrequencyData(this.frequencyData);
-        // this.drawCircles(200, this.frequencyData);
+        this.result = [];
+        this.cq.apply(Array.from(this.frequencyData)).then(values => { this.result = values; });
+        this.drawCircles(200, this.result);
 
-        const now = Date.now();
-        const deltaMs = this.lastTimeAboveThresh ? now - this.lastTimeAboveThresh : 0;
+        // const now = Date.now();
+        // const deltaMs = this.lastTimeAboveThresh ? now - this.lastTimeAboveThresh : 0;
 
-        if (max(this.frequencyData) < 150) {
-            if (deltaMs > 1000) {
-                this.createExplosion(this.frequencyData);
-            }
-        } else {
-            this.lastTimeAboveThresh = now;
-            this.createExplosion(this.frequencyData);
-        }
+        // if (max(this.frequencyData) < 150) {
+        //     if (deltaMs > 1000) {
+        //         this.createExplosion(this.frequencyData);
+        //     }
+        // } else {
+        //     this.lastTimeAboveThresh = now;
+        //     this.createExplosion(this.frequencyData);
+        // }
 
-        // this.createExplosion(this.frequencyData);
+        // // this.createExplosion(this.frequencyData);
 
-        this.update();
+        // this.update();
         requestAnimationFrame(this.onAnalyze.bind(this));
     }
 
@@ -112,7 +118,7 @@ class Music extends React.Component {
         const posX = Math.max(this.explosionCenterX + (randX - 0.5) / 0.5 * 100, 0);
         const posY = Math.max(this.explosionCenterY + (randY - 0.5) / 0.5 * 100, 0);
 
-        const sizes = shuffle(data.map(d => 50 * -Math.log10(d / 255)));
+        const sizes = shuffle(data.slice(0, 128).map(d => 50 * -Math.log10(d / 255)));
 
         this.explosions.createExplosion(posX, posY, sizes);
     }
@@ -128,7 +134,8 @@ class Music extends React.Component {
         for (let j = 0; j < 2; j++) {
             for (let i = 0; i < count; i++) {
                 const angle = i * pi / count + j * pi;
-                const scale = radii[i] / 255;
+                // const scale = radii[i] / 255;
+                const scale = radii[i];
 
                 // const rad = radius + scale * radius;
                 const rad = radius;
@@ -136,6 +143,8 @@ class Music extends React.Component {
                 const x = rad * Math.cos(angle) + this.width / 2;
                 const y = rad * Math.sin(angle) + this.height / 2;
                 const r = 20 * scale;
+
+                console.log(r);
 
                 // const x = (100 + radius * scale) * Math.cos(angle) + this.width / 2;
                 // const y = (100 + radius * scale) * Math.sin(angle) + this.height / 2;

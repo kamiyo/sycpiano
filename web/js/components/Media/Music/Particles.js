@@ -1,5 +1,7 @@
 import { max } from 'lodash';
 import randomColor from 'randomColor';
+import ConstantQ from '@/js/components/Media/Music/ConstantQ.js';
+import math from 'mathjs';
 
 function randomFloat (min, max) {
 	return min + Math.random()*(max-min);
@@ -17,7 +19,7 @@ function getRandomColor() {
 export class ParticleExplosionsManager {
     constructor(context2D) {
         this._explosions = [];
-        this._context = context2D; 
+        this._context = context2D;
     }
 
     update(deltaMs) {
