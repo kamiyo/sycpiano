@@ -1,5 +1,6 @@
 @import 'elements.less';
 @import 'flex.less';
+@import 'variables.less';
 
 .center-children() {
     .flex-display();
@@ -8,17 +9,17 @@
 }
 
 .hdpi(@props) {
-    @media only screen and (-webkit-min-device-pixel-ratio: 1.3),
-        only screen and (-o-min-device-pixel-ratio: 13/10),
-        only screen and (min-resolution: 120dpi) {
+    @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+        only screen and (-o-min-device-pixel-ratio: 15/10),
+        only screen and (min-resolution: 138dpi) {
             @props();
         }
 }
 
 .pushed() {
-    margin-top: 80px;
+    margin-top: @navbarHeight;
     .hdpi({
-        margin-top: 60px;
+        margin-top: @navbarHeightHDPI;
     })
 }
 

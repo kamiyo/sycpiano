@@ -1,14 +1,23 @@
 @import "fonts.less";
 @import "mixins.less";
 @import "colors.less";
+@import "variables.less";
+
+@navbar-margin-top: 18px;
+@navbar-margin-top-hdpi: 12px;
 
 .navBarLinks {
     ul {
+        .hdpi({
+            margin-top: @navbar-margin-top-hdpi;
+        });
+        padding: 0;
         margin: 0;
     }
 }
 
 .navBarLink {
+    position: relative;
     font-family: @lato1;
     font-size: 20px;
     .hdpi({
@@ -16,7 +25,8 @@
     });
     letter-spacing: 0em;
     display: inline-block;
-    margin-right: 18px;
+    margin-right: 2px;
+    vertical-align: middle;
 
     &:last-child {
         margin-right: 0;
@@ -26,10 +36,40 @@
         color: @logo-blue;
         text-decoration: none;
         cursor: pointer;
-        transition: color 0.5s;
 
-        &:hover, &.active {
-            color: @logo-blue - #444;
+        div {
+            .transition(all 0.2s);
+            .hdpi({
+                height: @navbarHeightHDPI - @navbar-margin-top-hdpi;
+            });
+            height: @navbarHeight - @navbar-margin-top;
+            padding: 5px 8px;
+        }
+
+        &:hover {
+            color: @logo-blue + #444;
+        }
+
+        &.active div {
+            color: #fff;
+        }
+        
+        .highlight {
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            width: 100%;
+            height: 0%;
+            z-index: -1;
+            background-color: @highlight;
+            
+            &.active {
+                height: 100%;
+            }
+        }
+        
+        .hyperlink {
+            float: left;
         }
     }
 }

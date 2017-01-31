@@ -1,6 +1,7 @@
 @import "fonts.less";
 @import "mixins.less";
 @import "colors.less";
+@import "variables.less";
 
 .navBarLogo {
     .hdpi({
@@ -13,6 +14,10 @@
     color: @logo-blue;
     fill: @logo-blue;
     transition: all 0.5s;
+    
+    .flex-display(inline-flex);
+    .align-items(center);
+    
     &:hover {
         color: @logo-blue + #444;
         fill: @logo-blue + #444;
@@ -20,11 +25,13 @@
     }
 
     svg {
-        height: 100%;
+        
         .hdpi({
             width: 40px;
+            height: 50px;
         });
         width: 50px;
+        height: 50px;
         float: left;
     }
 }
@@ -33,4 +40,5 @@
     display: inline-block;
     margin-left: 15px;
     vertical-align: middle;
+    line-height: @navbarHeight;
 }
