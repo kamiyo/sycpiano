@@ -34,7 +34,7 @@
     "react-redux": "^4.4.6",
     "react-router": "^2.0.0",
     "react-select": "^1.0.0-beta12",
-    "react-virtualized": "^8.5.2",
+    "react-virtualized": "^8.11.4",
     "redux": "^3.6.0",
     "urijs": "^1.17.1",
     "velocity-animate": "^1.2.3",
