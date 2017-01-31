@@ -34,7 +34,7 @@ var config = {
                 ],
                 query: {
                     plugins: ['transform-runtime'],
-                    presets: ['es2016', 'stage-0', 'react']
+                    presets: ['es2015', 'stage-0', 'react']
                 }
             },
             {
