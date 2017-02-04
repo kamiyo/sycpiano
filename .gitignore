@@ -8,3 +8,4 @@ web/build/
 *.LOCAL
 *.orig
 *.REMOTE
+secret.js
