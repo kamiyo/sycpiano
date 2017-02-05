@@ -12,7 +12,7 @@ var Animations = {
                 opacity: 1
             }, 1, {
                     easing: 'ease-out',
-                    display: 'block',
+                    display: 'block'
                 }]
         ],
     }),
@@ -23,7 +23,7 @@ var Animations = {
             }, 1, {
                     easing: 'ease-out',
                     display: 'block'
-                }]
+            }]
         ]
     })
 
@@ -43,7 +43,7 @@ export default class SubNav extends React.Component {
             stagger: 250,
             duration: 500,
             drag: true,
-            display: 'block',
+            display: 'block'
         });
     }
 

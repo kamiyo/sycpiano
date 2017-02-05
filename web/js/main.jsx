@@ -13,6 +13,7 @@ import Schedule from '@/js/components/Schedule/Schedule.jsx';
 import Media from '@/js/components/Media/Media.jsx';
 import Videos from '@/js/components/Media/Videos/Videos.jsx';
 import Music from '@/js/components/Media/Music/Music.jsx';
+import MusicList from '@/js/components/Media/Music/MusicList.jsx';
 import Photos from '@/js/components/Media/Photos/Photos.jsx';
 
 main();
