@@ -15,10 +15,9 @@ class NavBarLink extends React.Component {
         if (this.props.subNavLinks) {
             // TODO: find a way to do this without timeout
             setTimeout(() => {
-                let dims = ReactDOM.findDOMNode(this).getBoundingClientRect();
+                const dims = ReactDOM.findDOMNode(this).getBoundingClientRect();
                 this.setState({
-                    subNavPosition:
-                    {
+                    subNavPosition: {
                         top: dims.top + dims.height,
                         right: window.outerWidth - dims.left - dims.width,
                         width: dims.width
@@ -37,7 +36,7 @@ class NavBarLink extends React.Component {
     }*/
 
     render() {
-        let link = this.props.link;
+        const link = this.props.link;
         let highlightClass = "highlight";
         let active = '';
         if (link === 'home') {
@@ -82,7 +81,7 @@ class NavBarLink extends React.Component {
                         )
                 }
                 {
-                    (this.props.subNavLinks && (this.props.router.isActive(link, false) || this.props.showSub))
+                    (this.props.subNavLinks && this.props.showSub)
                         ? <SubNav links={this.props.subNavLinks} position={this.state.subNavPosition} />
                         : null
                 }
