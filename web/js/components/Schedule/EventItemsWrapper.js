@@ -1,27 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
-const defaultValueHandlers = Object.freeze({
-    array: {
-        set: (target, key, val) => {
-            if (target.hasOwnProperty(key)) {
-                target[key].push(val);
-            } else {
-                target[key] = [val];
-            }
-            return true;
-        }
-    },
-    onlyOne: {
-        set: (target, key, val) => {
-            if (!target.hasOwnProperty(key)) {
-                target[key] = val;
-            }
-            return true;
-        }
-    }
-});
-
 /**
  * Takes an event resource as returned by the Calendar API, and extracts the
  * event's start dateTime into a moment object.
@@ -45,7 +24,7 @@ function _extractEventDescription(event) {
 class DayItem {
     constructor(properties) {
         this.type = 'day';
-        this.name = properties.summary;
+        this.name = properties.name;
         this.day = properties.day;
         this.time = properties.time;
         this.program = properties.program;
@@ -76,65 +55,47 @@ export class EventItemsWrapper {
     /**
      * Creates a wrapper that stores these properties:
      *
-     * @property {object<string,array<DayItem>>} monthToEventsMap
-     * @property {object<string,array<MonthItem>>} monthToMonthMap
-     * @property {array<string>} months - List of month names ordered by time.
+     * @property {array<(DayItem)|(MonthItem)>} eventItems
+     * @property {object<string,int>} monthToRowIndexMap
      *
      * @param {array<object>} events - List of events returned by the Google Calendar API,
      *                                 ordered in ascending chronological order.
      */
     constructor(events) {
-        this.monthToEventsMap = new Proxy({}, defaultValueHandlers.array);
-        this.monthToMonthMap = new Proxy({}, defaultValueHandlers.onlyOne);
-        this.months = [];
-        this._populateMonthMapsAndMonthsList(events);
+        const eventItemsAndMonthToListIndexMap = this._getEventItemsAndMonthToListIndexMap(events);
+        this.eventItems = eventItemsAndMonthToListIndexMap.eventItems;
+        this.monthToListIndexMap = eventItemsAndMonthToListIndexMap.monthToListIndexMap
 
         // Freeze these properties. This class is purely presentational.
-        this.monthToEventsMap = Object.freeze(this.monthToEventsMap);
-        this.monthToMonthMap = Object.freeze(this.monthToMonthMap);
-        this.months = Object.freeze(this.months);
+        this.eventItems = Object.freeze(this.eventItems);
+        this.monthToRowIndexMap = Object.freeze(this.monthToRowIndexMap);
     }
 
     /**
-     * Returns a list item objects (i.e. either a DayItem or MonthItem).
-     * If no month is provided, the list will not be filtered by month.
-     *
-     * @param {string=} month
+     * Gets the list of event items, as well as an object that maps month name to scroll index.
      */
-    getEvents(month = null) {
-        const items = [];
-        const months = !!month ? [month] : this.months;
-        _.forEach(months, (month, index) => {
-            items.push(this.monthToMonthMap[month]);
-            _.forEach(this.monthToEventsMap[month], (event, index) => {
-                items.push(event);
-            });
-        });
-        return items;
-    }
-
-    /**
-     * Initializes this EventItemsWrapper's properties.
-     */
-    _populateMonthMapsAndMonthsList(events) {
+    _getEventItemsAndMonthToListIndexMap(events) {
         const monthsSeen = new Set();
+        const eventItems = [];
+        const monthToListIndexMap = {};
         _.forEach(events, (event, index) => {
             const eventDateTime = _extractEventDateTime(event);
             const description = _extractEventDescription(event);
             const month = eventDateTime.format('MMMM');
-            this.monthToEventsMap[month] = createListItem('day', {
+            if (!monthsSeen.has(month)) {
+                monthToListIndexMap[month] = index + monthsSeen.size;
+                eventItems.push(createListItem('month', {month: month}));
+                monthsSeen.add(month);
+            }
+            eventItems.push(createListItem('day', {
                 name: event.summary,
                 day: parseInt(eventDateTime.format('D')),
                 time: eventDateTime.format('h:mm z'),
                 program: description.program,
                 collaborators: description.collaborators,
                 eventType: description.type.value,
-            });
-            this.monthToMonthMap[month] = createListItem('month', {month: month});
-            if (!monthsSeen.has(month)) {
-                monthsSeen.add(month);
-                this.months.push(month);
-            }
+            }));
         });
+        return { eventItems, monthToListIndexMap }
     }
 }

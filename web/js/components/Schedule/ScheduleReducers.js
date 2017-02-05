@@ -15,13 +15,14 @@ export const eventItemsReducer = (state = {
     items: [],
     eventItemsWrapper: null,
     isFetching: false,
+    currentScrollIndex: 0,
 }, action) => {
     switch (action.type) {
         case 'FETCH_EVENTS_SUCCESS':
             const wrapper = new EventItemsWrapper(action.fetchedEvents);
             return {
                 eventItemsWrapper: wrapper,
-                items: wrapper.getEvents(),
+                items: wrapper.eventItems,
                 isFetching: false,
             };
         case 'FETCH_EVENTS':
@@ -31,7 +32,7 @@ export const eventItemsReducer = (state = {
             const month = action.date.format('MMMM');
             return {
                 ...state,
-                items: state.eventItemsWrapper.getEvents(month),
+                currentScrollIndex: state.eventItemsWrapper.monthToListIndexMap[month],
             };
         default:
             return state;

@@ -16,6 +16,10 @@ class EventListPresentation extends React.Component {
         this.props.fetchEvents();
     }
 
+    componentDidUpdate() {
+        this.List.scrollToRow(this.props.currentScrollIndex || 0);
+    }
+
     _renderEventItem(key, index, style) {
         const item = this.props.eventItems[index];
         if (item.type === 'month') {
@@ -49,11 +53,13 @@ class EventListPresentation extends React.Component {
                                     {
                                         ({getRowHeight}) => {
                                             return <List
+                                                ref={div => this.List = div}
                                                 height={height}
                                                 width={width}
                                                 rowCount={numRows}
                                                 rowHeight={getRowHeight}
                                                 rowRenderer={this.rowItemRenderer.bind(this)}
+                                                scrollToAlignment='start'
                                             />;
                                         }
                                     }
@@ -74,7 +80,10 @@ function getInitialEventItems() {
 }
 
 const mapStateToProps = (state) => {
-    return { eventItems: state.eventItems.items };
+    return {
+        eventItems: state.eventItems.items,
+        currentScrollIndex: state.eventItems.currentScrollIndex,
+    };
 };
 
 const mapDispatchToProps = (dispatch) => {
