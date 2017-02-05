@@ -3,22 +3,28 @@
 .schedule {
     .pushed;
     width: 100%;
-    margin: auto;
-    padding: 15px 50px 0;
+    .hdpi({
+        margin-top: @navbarHeightHDPI;
+    });
+    margin-top: @navbarHeight;
     height: 100%;
     box-sizing: border-box;
+    .flex-display();
+    .justify-content(space-between);
+    .flex-wrap(wrap);
 }
 
 .schedule__events {
-    max-width: 800px;
+    .flex(1);
+    .flex-basis(400px);
     height: 100%;
-    width: 50%;
-    display: inline-block;
+    margin-left: 80px;
 }
 
 .schedule__calendar {
-    width: 50%;
-    display: inline-block;
+    .flex(0);
+    padding: 30px 40px 0 40px;
     vertical-align: top;
     text-align: center;
+    border-right: 1px solid #181818;
 }

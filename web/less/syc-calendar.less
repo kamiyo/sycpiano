@@ -12,11 +12,12 @@
 
 .syc-calendar-header {
     text-align: center;
-    font-size: 37px;
+    font-size: 24px;
+    margin-bottom: 10px;
 }
 
 .syc-calendar-my-select {
-    font-family: @lato1;
+    font-family: @lato2;
     margin: 0 13px;
 }
 
@@ -29,7 +30,7 @@
     left: 10px;
 
     &:after {
-        content: "«";
+        content: "<";
     }
 }
 
@@ -38,7 +39,7 @@
     right: 10px;
 
     &:after {
-        content: "»";
+        content: ">";
     }
 }
 
@@ -81,4 +82,12 @@
         background-color: #A73115;
         color: white;
     }
+}
+
+.syc-calendar-last-month-cell {
+    color: #c5c5c5;
+}
+
+.syc-calendar-next-month-btn-day {
+    color: #c5c5c5;
 }

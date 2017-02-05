@@ -31,7 +31,7 @@ export default class App extends React.Component {
                 <LogoSVG/>
                 <Front show={this.state.isFront} onClick={this.hideFront} />
                 <VelocityComponent
-                    animation={{translateY: !this.state.isFront ? 0 : -90}}
+                    animation={{translateY: !this.state.isFront ? 0 : -90, translateZ: 0}}
                     delay={500}
                     duration={500}
                     easing={[170, 26]}
@@ -39,8 +39,8 @@ export default class App extends React.Component {
                     <NavBar onClick={this.showFront} />
                 </VelocityComponent>
                 <VelocityTransitionGroup
-                    enter={{duration: 500, animation: {opacity: 1}}}
-                    leave={{duration: 500, animation: {opacity: 0}}}
+                    enter={{duration: 500, animation: {opacity: 1, translateZ: 0}}}
+                    leave={{duration: 500, animation: {opacity: 0, translateZ: 0}}}
                     runOnMount={true}
                 >
                     {React.cloneElement(this.props.children, {

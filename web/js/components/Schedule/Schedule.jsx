@@ -24,11 +24,11 @@ export default class Schedule extends React.Component {
         return (
             <Provider store={store}>
                 <div className="schedule">
-                    <div className="schedule__events">
-                        <EventList/>
-                    </div>
                     <div className="schedule__calendar">
                         <SycCalendar/>
+                    </div>
+                    <div className="schedule__events">
+                        <EventList/>
                     </div>
                 </div>
             </Provider>
