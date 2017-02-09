@@ -11,6 +11,8 @@ export default class About extends React.Component {
                     {blurbs.map((blurb, i) => {
                         if (i == 0) {
                             let firstLetter = blurb[0];
+                            let bday = parseInt((new Date() - new Date(1988, 8, 27))/31536000000);
+                            blurb = blurb.replace(/##/, bday);
                             let withoutFirstLetter = blurb.slice(1);
                             let nameLocation = withoutFirstLetter.indexOf('Sean Chen');
                             let name = withoutFirstLetter.slice(nameLocation, nameLocation + 9);
