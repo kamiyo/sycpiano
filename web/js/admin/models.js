@@ -17,8 +17,10 @@ function _setDatetimeTime(datetime, time) {
     // TODO: handle if it doesn't match either format.
     // Don't mutate the argument.
     const newDatetime = moment(datetime);
-    newDatetime.hours(parsedTime.hours());
-    newDatetime.minutes(parsedTime.minutes());
+    if (parsedTime.isValid()) {
+        newDatetime.hours(parsedTime.hours());
+        newDatetime.minutes(parsedTime.minutes());
+    }
     return newDatetime;
 }
 
@@ -35,13 +37,12 @@ function _getTimezone(address, datetime) {
                 const firstMatch = response.data.results[0];
                 const {lat, lng} = firstMatch.geometry.location;
                 const timestamp = datetime.unix();
-                // TODO: figure out what to do if tzData.status !== 'OK'
                 googleAPI.getTimezone(lat, lng, timestamp).then(
                     response => resolve(response.data.timeZoneId)
                 );
             })
             .catch(response => {
-                console.log('error getting tz from google');
+                reject(new Error('Could not get geocode for timezone'));
             });
     });
     return promise;
@@ -50,21 +51,31 @@ function _getTimezone(address, datetime) {
 class CalendarEvent {
     constructor(valuesMap) {
         const date = valuesMap.date;
-        const time = valuesMap.time;
+        const time = (valuesMap.timeTBD) ? null : valuesMap.time;
         const startDatetime = _setDatetimeTime(date, time);
         this.collaborators = valuesMap.collaborators;
         this.eventName = valuesMap.eventName;
         this.location = valuesMap.location;
         this.program = valuesMap.program;
         this.type = valuesMap.type;
+        this.website = valuesMap.website;
+        this.timeTBD = valuesMap.timeTBD;
         this.finishedInitPromise = new Promise((resolve, reject) => {
-            _getTimezone(this.location, startDatetime).then(timezone => {
-                this.timezone = timezone;
-                this.startDatetime = moment.tz(startDatetime.format('YYYY-MM-DD HH:mm'), timezone);
-                // By default, just set it to 3 hours later.
-                this.endDatetime = this.startDatetime.clone().add(3, 'h');
+            if (this.timeTBD) {
+                this.startDatetime = startDatetime;
+                this.endDatetime = this.startDatetime.clone().add(1, 'd');
                 resolve(this);
-            });
+            } else {
+                _getTimezone(this.location, startDatetime).then(timezone => {
+                    this.timezone = timezone;
+                    this.startDatetime = moment.tz(startDatetime.format('YYYY-MM-DD HH:mm'), timezone);
+                    // By default, just set it to 2 hours later.
+                    this.endDatetime = this.startDatetime.clone().add(2, 'h');
+                    resolve(this);
+                }).catch(e => {
+                    reject(e);
+                });
+            }
         });
     }
 
@@ -73,16 +84,17 @@ class CalendarEvent {
      * @return {string}
      */
     get description() {
-        // Turn `collaborators` from CSV to array
+        // Turn `collaborators` from newline-separated values to array
         // and trim leading and trailing whitepsaces.
-        const collabsArray = this.collaborators.split(',').map(str => str.trim());
-        // Turn `programs` from newline-separate value to array
+        const collabsArray = this.collaborators.split('\n').map(str => str.trim());
+        // Turn `programs` from newline-separated values to array
         // and trim leading and trailing whitepsaces.
         const progsArray = this.program.split('\n').map(str => str.trim());
         return JSON.stringify({
             collaborators: collabsArray,
             program: progsArray,
             type: this.type,
+            website: encodeURI(this.website)
         });
     }
 }
