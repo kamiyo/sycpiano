@@ -30,7 +30,7 @@ function importModels(sequelize) {
     return models;
 }
 
-db = Object.assign(db, importModels(sequelize).models);
+db = Object.assign(db, importModels(sequelize));
 db.sequelize = sequelize;
 // In case we ever want to use a different DB connection.
 db.importModels = importModels;

@@ -18,16 +18,16 @@ export const eventItemsReducer = (state = {
     currentScrollIndex: 0,
 }, action) => {
     switch (action.type) {
-        case 'FETCH_EVENTS_SUCCESS':
+        case 'SCHEDULE--FETCH_EVENTS_SUCCESS':
             const wrapper = new EventItemsWrapper(action.fetchedEvents);
             return {
                 eventItemsWrapper: wrapper,
                 items: wrapper.eventItems,
                 isFetching: false,
             };
-        case 'FETCH_EVENTS':
+        case 'SCHEDULE--FETCHING_EVENTS':
             return state.isFetching ? state : { ...state, isFetching: true }
-        case 'UPDATE_DATE':
+        case 'SCHEDULE--UPDATE_DATE':
             if (!state.eventItemsWrapper || state.isFetching) return state;
             const month = action.date.format('MMMM');
             return {

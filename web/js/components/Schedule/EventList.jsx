@@ -9,7 +9,7 @@ import { AutoSizer, CellMeasurer, List } from 'react-virtualized';
 
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
-import {googleAPI} from '@/js/services/GoogleAPI.js';
+import { googleAPI } from '@/js/services/GoogleAPI.js';
 
 class EventListPresentation extends React.Component {
     componentWillMount() {
@@ -79,18 +79,20 @@ function getInitialEventItems() {
     ));
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
     return {
-        eventItems: state.eventItems.items,
-        currentScrollIndex: state.eventItems.currentScrollIndex,
+        eventItems: state.schedule_eventItems.items,
+        currentScrollIndex: state.schedule_eventItems.currentScrollIndex,
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    getInitialEventItems().then(items => {
-        dispatch({type: 'FETCH_EVENTS_SUCCESS', fetchedEvents: items});
-    });
-    return { fetchEvents: () => dispatch({ type: 'FETCH_EVENTS' }) };
+const mapDispatchToProps = dispatch => {
+    return { fetchEvents: () => {
+        getInitialEventItems().then(items => {
+            dispatch({ type: 'SCHEDULE--FETCH_EVENTS_SUCCESS', fetchedEvents: items });
+        });
+        dispatch({ type: 'SCHEDULE--FETCHING_EVENTS' });
+    }};
 };
 
 export default connect(
