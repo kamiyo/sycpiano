@@ -1,3 +1,5 @@
+import '@/less/Press/press.less';
+
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';

@@ -10,17 +10,19 @@
 
 .hdpi(@props) {
     @media only screen and (min-resolution: 2dppx)
-       // only screen and (min-resolution: 138dpi) {
+        // only screen and (min-resolution: 138dpi) {
         {
             @props();
         }
 }
 
 .pushed() {
+    height: calc(~'100% - @{navbarHeight}');
     margin-top: @navbarHeight;
     .hdpi({
+        height: calc(~'100% - @{navbarHeightHDPI}');
         margin-top: @navbarHeightHDPI;
-    })
+    });
 }
 
 .link(@color) {

@@ -12,13 +12,9 @@ import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
 import { googleAPI } from '@/js/services/GoogleAPI.js';
 
 class EventListPresentation extends React.Component {
-    componentWillMount() {
-        this.props.fetchEvents();
-    }
+    componentWillMount() { this.props.fetchEvents(); }
 
-    componentDidUpdate() {
-        this.List.scrollToRow(this.props.currentScrollIndex || 0);
-    }
+    componentDidUpdate() { this.List.scrollToRow(this.props.currentScrollIndex || 0); }
 
     _renderEventItem(key, index, style) {
         const item = this.props.eventItems[index];
@@ -28,12 +24,12 @@ class EventListPresentation extends React.Component {
         return <EventItem event={item} key={key} style={style} />;
     }
 
-    rowItemRenderer({key, index, isScrolling, isVisible, style}) {
-        return this._renderEventItem(key, index, style);
-    }
-
     cellItemRenderer({columnIndex, rowIndex}) {
         return this._renderEventItem(rowIndex, rowIndex);
+    }
+
+    rowItemRenderer({key, index, isScrolling, isVisible, style}) {
+        return this._renderEventItem(key, index, style);
     }
 
     render() {
