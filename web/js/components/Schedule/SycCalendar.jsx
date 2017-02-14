@@ -26,7 +26,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onChange: date => dispatch({type: 'UPDATE_DATE', date})
+        onChange: date => dispatch({type: 'SCHEDULE--UPDATE_DATE', date})
     };
 };
 

@@ -1,41 +1,32 @@
-import '@/less/event-list.less';
+import '@/less/Press/acclaims-list.less';
 
-import _ from 'lodash';
-import $ from 'cash-dom';
-import moment from 'moment-timezone';
 import React from 'react';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, List } from 'react-virtualized';
 
-import EventItem from '@/js/components/Schedule/EventItem.jsx';
-import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
-import { googleAPI } from '@/js/services/GoogleAPI.js';
+import AcclaimsListItem from '@/js/components/Press/AcclaimsListItem.jsx';
 
-class EventListPresentation extends React.Component {
-    componentWillMount() { this.props.fetchEvents(); }
+class AcclaimsListPresentation extends React.Component {
+    componentWillMount() { this.props.fetchAcclaims(); }
 
-    componentDidUpdate() { this.List.scrollToRow(this.props.currentScrollIndex || 0); }
-
-    _renderEventItem(key, index, style) {
-        const item = this.props.eventItems[index];
-        if (item.type === 'month') {
-            return <EventMonthItem month={item.month} key={key} style={style} />;
-        }
-        return <EventItem event={item} key={key} style={style} />;
+    _renderAcclaimItem(key, index, style) {
+        const acclaim = this.props.acclaims[index];
+        return <AcclaimsListItem acclaim={acclaim} key={key} style={style} />;
     }
 
     cellItemRenderer({columnIndex, rowIndex}) {
-        return this._renderEventItem(rowIndex, rowIndex);
+        return this._renderAcclaimItem(rowIndex, rowIndex);
     }
 
     rowItemRenderer({key, index, isScrolling, isVisible, style}) {
-        return this._renderEventItem(key, index, style);
+        return this._renderAcclaimItem(key, index, style);
     }
 
     render() {
-        const numRows = this.props.eventItems.length;
+        const numRows = this.props.acclaims.length;
         return (
-            <div className="event-list">
+            <div className="acclaims-list">
                 <AutoSizer>
                     {
                         ({height, width}) => {
@@ -49,13 +40,11 @@ class EventListPresentation extends React.Component {
                                     {
                                         ({getRowHeight}) => {
                                             return <List
-                                                ref={div => this.List = div}
                                                 height={height}
                                                 width={width}
                                                 rowCount={numRows}
                                                 rowHeight={getRowHeight}
                                                 rowRenderer={this.rowItemRenderer.bind(this)}
-                                                scrollToAlignment='start'
                                             />;
                                         }
                                     }
@@ -69,29 +58,31 @@ class EventListPresentation extends React.Component {
     }
 }
 
-function getInitialEventItems() {
-    return new Promise((resolve, reject) => googleAPI.getCalendarEvents().then(
-        response => resolve(response.data.items)
-    ));
+function getAcclaims() {
+    return axios.get('/api/acclaims');
 }
 
 const mapStateToProps = state => {
-    return {
-        eventItems: state.schedule_eventItems.items,
-        currentScrollIndex: state.schedule_eventItems.currentScrollIndex,
-    };
+    return { acclaims: state.acclaims };
 };
 
 const mapDispatchToProps = dispatch => {
-    return { fetchEvents: () => {
-        getInitialEventItems().then(items => {
-            dispatch({ type: 'SCHEDULE--FETCH_EVENTS_SUCCESS', fetchedEvents: items });
-        });
-        dispatch({ type: 'SCHEDULE--FETCHING_EVENTS' });
-    }};
+    return {
+        fetchAcclaims: () => {
+            dispatch({ type: 'PRESS--FETCHING_ACCLAIMS' });
+            getAcclaims().then(
+                response => {
+                    dispatch({
+                        type: 'PRESS--FETCH_ACCLAIMS_SUCCESS',
+                        acclaims: response.data,
+                    });
+                }
+            );
+        },
+    };
 };
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(EventListPresentation);
+)(AcclaimsListPresentation);

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
@@ -14,7 +15,7 @@ const sequelize = new Sequelize(DBName, username, password, {
     define: { freezeTable: true },
 });
 
-const db = {};
+let db = {};
 
 function importModels(sequelize) {
     const models = {};
@@ -23,12 +24,13 @@ function importModels(sequelize) {
         if (file === 'index.js') return;
 
         const model = sequelize.import(path.join(__dirname, file));
-        models[model.name] = model;
+        // Let's make the model key title-cased.
+        models[_.startCase(model.name)] = model;
     });
     return models;
 }
 
-db.models = importModels(sequelize).models;
+db = Object.assign(db, importModels(sequelize));
 db.sequelize = sequelize;
 // In case we ever want to use a different DB connection.
 db.importModels = importModels;
