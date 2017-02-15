@@ -1,4 +1,4 @@
-import '@/less/media/loading-overlay.less';
+import '@/less/Media/loading-overlay.less';
 
 import React from 'react';
 

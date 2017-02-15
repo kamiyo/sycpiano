@@ -1,4 +1,5 @@
-import '@/less/nav-bar-logo.less';
+import '@/less/App/NavBar/nav-bar-logo.less';
+
 import React from 'react';
 import {IndexLink} from 'react-router';
 import {LogoInstance} from '@/js/components/LogoSVG.jsx'

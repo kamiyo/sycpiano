@@ -1,4 +1,4 @@
-import '@/less/event-list.less';
+import '@/less/Schedule/event-list.less';
 
 import _ from 'lodash';
 import $ from 'cash-dom';

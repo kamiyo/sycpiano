@@ -1,4 +1,4 @@
-import '@/less/event-item.less';
+import '@/less/Schedule/event-item.less';
 
 import React from 'react';
 

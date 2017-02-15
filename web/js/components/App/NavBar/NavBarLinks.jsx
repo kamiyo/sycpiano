@@ -1,4 +1,5 @@
-import '@/less/nav-bar-links.less';
+import '@/less/App/NavBar/nav-bar-links.less';
+
 import React from 'react';
 
 import NavBarLink from '@/js/components/App/NavBar/NavBarLink.jsx';

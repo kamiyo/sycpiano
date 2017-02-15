@@ -1,4 +1,4 @@
-import '@/less/media/media.less';
+import '@/less/Media/media.less';
 
 import React from 'react';
 
