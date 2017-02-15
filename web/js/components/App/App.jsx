@@ -1,4 +1,4 @@
-import '@/less/app.less';
+import '@/less/App/app.less';
 
 import React from 'react';
 import {VelocityComponent, VelocityTransitionGroup} from 'velocity-react';

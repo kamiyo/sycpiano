@@ -1,4 +1,4 @@
-import '@/less/sub-nav.less';
+import '@/less/App/NavBar/sub-nav.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

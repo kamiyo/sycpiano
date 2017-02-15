@@ -1,5 +1,5 @@
-import '@/less/media/media-content.less';
-import '@/less/media/music/music.less';
+import '@/less/Media/media-content.less';
+import '@/less/Media/Music/music.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -33,7 +33,7 @@ class Music extends React.Component {
             const audioCtx = new AudioContext();
             const audioSrc = audioCtx.createMediaElementSource(this.audio);
             this.analyser = audioCtx.createAnalyser();
-            // we have to connect the MediaElementSource with the analyser 
+            // we have to connect the MediaElementSource with the analyser
             audioSrc.connect(this.analyser);
             this.analyser.connect(audioCtx.destination);
             this.analyser.fftSize = 32;
@@ -56,7 +56,7 @@ class Music extends React.Component {
                 this.explosions.createExplosion(this.width / 2, this.height / 2);
                 this.update();
             };
-            
+
             // this.onAnalyze();
 
             this.$audio.on('play', () => {

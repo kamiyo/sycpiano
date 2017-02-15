@@ -1,5 +1,7 @@
-import '@/less/about.less';
+import '@/less/About/about.less';
+
 import React from 'react';
+
 import blurbs from '@/js/components/About/blurbs.js';
 
 export default class About extends React.Component {

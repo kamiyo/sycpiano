@@ -1,6 +1,6 @@
-import React from 'react';
-import '@/less/front-video.less';
+import '@/less/App/Front/front-video.less';
 
+import React from 'react';
 
 export default class FrontVideo extends React.Component {
     render() {

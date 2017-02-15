@@ -1,4 +1,4 @@
-import '@/less/schedule.less';
+import '@/less/Schedule/schedule.less';
 
 import moment from 'moment';
 import React from 'react';

@@ -1,4 +1,4 @@
-import '@/less/syc-calendar.less';
+import '@/less/Schedule/syc-calendar.less';
 
 import moment from 'moment';
 import React from 'react';

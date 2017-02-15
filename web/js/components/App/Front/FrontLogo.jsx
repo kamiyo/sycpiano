@@ -1,5 +1,6 @@
+import '@/less/App/Front/front-logo.less';
+
 import React from 'react';
-import '@/less/front-logo.less';
 import {LogoInstance} from '@/js/components/LogoSVG.jsx';
 
 

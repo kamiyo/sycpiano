@@ -1,4 +1,4 @@
-import '@/less/video-playlist-toggler.less';
+import '@/less/Media/Videos/video-playlist-toggler.less';
 
 import React from 'react';
 

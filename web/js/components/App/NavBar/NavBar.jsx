@@ -1,5 +1,6 @@
-import '@/less/nav-bar.less';
-import '@/less/nav-bar-layout.less';
+import '@/less/App/NavBar/nav-bar.less';
+import '@/less/App/NavBar/nav-bar-layout.less';
+
 import React from 'react';
 
 import NavBarLogo from '@/js/components/App/NavBar/NavBarLogo.jsx';
@@ -18,11 +19,11 @@ export default class NavBar extends React.Component {
     state = {
         showSub: false
     };
-    
+
     toggleSubNav = (arg = !this.state.showSub) => {
         this.setState({showSub: arg});
     }
-    
+
     render() {
         return (
             <div className='navBar'>
