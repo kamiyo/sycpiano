@@ -1,5 +1,6 @@
-var path = require('path');
-var Webpack = require('webpack');
+const path = require('path');
+const HappyPack = require('happypack');
+const Webpack = require('webpack');
 
 function getEntryPoint(entryPointPath) {
     return [
@@ -10,7 +11,7 @@ function getEntryPoint(entryPointPath) {
     ]
 }
 
-var config = {
+const config = {
     devtool: 'inline-source-map',
     entry: {
         sycpiano: getEntryPoint('web/js/main.jsx'),
@@ -24,7 +25,7 @@ var config = {
     module: {
         loaders: [
             {
-                loader: 'babel-loader',
+                loaders: ['happypack/loader?id=babel'],
                 test: /\.jsx?$/,
                 include: [
                     path.resolve(__dirname, 'web/js'),
@@ -32,13 +33,9 @@ var config = {
                     path.resolve(__dirname, 'web/js/admin'),
                     path.resolve(__dirname, 'web/js/admin/components'),
                 ],
-                query: {
-                    plugins: ['transform-runtime'],
-                    presets: ['es2015', 'stage-0', 'react']
-                }
             },
             {
-                loaders: ['style-loader', 'css-loader', 'less-loader'],
+                loaders: ['happypack/loader?id=style'],
                 test: /\.(css|less)$/,
                 include: [
                     path.resolve(__dirname, 'web/less'),
@@ -47,22 +44,41 @@ var config = {
                 ],
             },
             {
-                loaders: ['url-loader?limit=100000&name=[name]-[hash].[ext]'],
+                loaders: ['happypack/loader?id=url'],
                 test: /\.(ttf|eot|woff|woff2|svg|png|jpg)$/,
                 include: [
                     path.resolve(__dirname, 'web/assets/images'),
                     path.resolve(__dirname, 'web/assets/fonts')
-                ]
+                ],
             },
-            {
-                include: /\.json$/,
-                loaders: ['json-loader']
-            }
         ]
     },
     plugins: [
         new Webpack.HotModuleReplacementPlugin(),
-    ]
+        new HappyPack({
+            id: 'babel',
+            threads: 1,
+            loaders: [
+                {
+                    loader: 'babel-loader',
+                    query: {
+                        plugins: ['transform-runtime'],
+                        presets: ['es2015', 'stage-0', 'react']
+                    },
+                },
+            ],
+        }),
+        new HappyPack({
+            id: 'style',
+            threads: 1,
+            loaders: ['style-loader', 'css-loader', 'less-loader'],
+        }),
+        new HappyPack({
+            id: 'url',
+            threads: 1,
+            loaders: ['url-loader?limit=100000&name=[name]-[hash].[ext]'],
+        }),
+    ],
 };
 
 module.exports = config;
