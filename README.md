@@ -30,7 +30,7 @@ mysql> create database sycpiano;
 # This should also automatically switch to using the new database, but whatever.
 mysql> use sycpiano;
 ```
-* In the mysql shell, create a new user, and grant them at all privileges except DROP. Basically, follow this Digital Ocean post :P https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
+* In the mysql shell, create a new user, and grant them all privileges except DROP. Basically, follow this Digital Ocean post :P https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
 * Create a `secret.js` file under the project root that contains this new user's username and password. Don't worry, this file is in our `.gitignore`! Make sure that object exported by `secret.js` contains the keys `username` and `password`. This file will be used when connecting to the database to create tables that do not exist.
 * Run `scripts/seedDB.js`
 ```bash
