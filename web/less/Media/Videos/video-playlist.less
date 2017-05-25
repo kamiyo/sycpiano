@@ -1,0 +1,110 @@
+@import '../../variables.less';
+@import '../../fonts.less';
+@import '../../mixins.less';
+
+@aspectRatio: 4 / 3;
+@thumbnailWidth: @playlistWidth * 0.2;
+@itemHeight: @thumbnailWidth / @aspectRatio;
+@itemBorderColor: 1px solid rgba(120, 120, 120, 0.3);
+
+.videoPlaylist {
+    position: fixed;
+    height: inherit;
+    right: 0;
+    overflow-y: auto;
+    background-color: @playlistBackground;
+    width: @playlistWidth;
+    font-family: @lato1;
+    z-index: 50;
+
+    ul {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .videoPlaylistItem {
+        @padding: 10px;
+
+        list-style: none;
+        cursor: pointer;
+        width: 100%;
+        height: @itemHeight + @padding * 2;
+        padding: @padding 0 @padding 15px;
+        border-left: 7px solid transparent;
+        border-bottom: @itemBorderColor;
+
+        .transition(all 0.15s);
+
+        &:hover, &.active {
+            background-color: @playlistBackground + rgba(120, 120, 120, 0);
+
+            .imageContainer img {
+                .filter(brightness(60%));
+            }
+        }
+
+        &.active {
+            border-left-color: #4E86A4;
+
+            .imageContainer .duration {
+                color: #4E86A4 + #555;
+                font-family: @lato2;
+            }
+        }
+
+        .itemContent {
+            height: 100%;
+            width: 100%;
+        }
+
+        .section {
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        .imageContainer {
+            height: 100%;
+            width: @thumbnailWidth;
+            position: relative;
+
+            img {
+                width: 100%;
+                .filter(saturate(50%) brightness(60%));
+            }
+
+            .duration {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                color: #fff;
+                padding-right: 3px;
+            }
+        }
+
+        .videoInfo {
+            width: ~"calc(80% - 20px)";
+            height: 100%;
+            padding: 0 20px;
+            position: relative;
+
+            h4 {
+                margin: 0;
+                color: black;
+                font-size: 15px;
+                position: absolute;
+
+                &.text-top {
+                    padding-top: 5px;
+                    top: 0;
+                }
+
+                &.text-bottom {
+                    font-size: 12px;
+                    padding-bottom: 5px;
+                    bottom: 0;
+                }
+            }
+        }
+    }
+}
