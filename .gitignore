@@ -10,3 +10,4 @@ web/build/
 *.REMOTE
 secret.js
 .happypack
+npm-debug.log
