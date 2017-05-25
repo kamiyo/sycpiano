@@ -1,5 +1,5 @@
 import { max } from 'lodash';
-import randomColor from 'randomColor';
+import randomColor from 'randomcolor';
 
 function randomFloat (min, max) {
 	return min + Math.random()*(max-min);
