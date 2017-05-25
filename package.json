@@ -9,6 +9,10 @@
     "build": "webpack"
   },
   "author": "",
+  "repository": {
+      "type": "git",
+      "url": "git@github.com:kamiyo/sycpiano.git"
+  },
   "license": "ISC",
   "dependencies": {
     "axios": "^0.15.3",
