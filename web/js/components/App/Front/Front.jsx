@@ -4,7 +4,7 @@ import FrontVideo from '@/js/components/App/Front/FrontVideo.jsx';
 import FrontLogo from '@/js/components/App/Front/FrontLogo.jsx';
 import FrontName from '@/js/components/App/Front/FrontName.jsx';
 
-let logoEnter = {
+const logoEnter = {
     duration: 800,
     animation: {
         translateY: 0,
@@ -14,7 +14,7 @@ let logoEnter = {
     easing: [170, 26],
     delay: 500,
 };
-let logoLeave = {
+const logoLeave = {
     duration: 800,
     animation: {
         translateY: -50,
@@ -23,21 +23,21 @@ let logoLeave = {
     },
     easing: [170, 26]
 };
-let videoEnter = {
+const videoEnter = {
     duration: 500,
     animation: {
         translateZ: 0,
         height: `100%`
     },
 };
-let videoLeave = {
+const videoLeave = {
     duration: 500,
     animation: {
         translateZ: 0,
         height: 0
     }
 };
-let nameEnter = {
+const nameEnter = {
     duration: 800,
     animation: {
         translateZ: 0,
@@ -45,13 +45,13 @@ let nameEnter = {
     },
     delay: 500,
 };
-let nameLeave = {
+const nameLeave = {
     duration: 500,
     animation: {
         translateZ: 0,
         opacity: 0
     }
-}
+};
 
 export default class Front extends React.Component {
     state = {
