@@ -1,0 +1,31 @@
+@import '../../flex.less';
+@import '../../fonts.less';
+@import '../constants.less';
+
+pre {
+    font-family: @lato2;
+}
+
+.EventList {
+    padding-top: 10px;
+    margin: auto;
+    font-family: @lato2;
+
+    .Event {
+        .flex-display();
+        margin-top: 10px;
+
+        .EditEvent__submit-button {
+            .flex(0 1 50px);
+            width: 100%;
+            font-size: 18px;
+            margin-bottom: auto;
+            padding: @input-padding;
+        }
+
+        .EventDetails {
+            margin-left: 10px;
+        }
+    }
+
+}

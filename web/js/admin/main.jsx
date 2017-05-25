@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import URI from 'urijs';
 import CalendarAdmin from '@/js/admin/components/CalendarAdmin.jsx';
-
-var TOKEN_KEY = 'sycpiano-token'
+import { TOKEN_KEY } from '@/js/admin/constants.js';
 
 main();
 
@@ -28,18 +27,12 @@ function getTokenFromHash() {
 
 function main() {
     let token = getTokenFromHash();
-    let calAdmin;
     if (token) {
-        calAdmin = React.createElement(CalendarAdmin, {token});
         localStorage.setItem(TOKEN_KEY, token);
     } else if (localStorage.getItem(TOKEN_KEY)) {
         token = localStorage.getItem(TOKEN_KEY);
-        calAdmin = React.createElement(CalendarAdmin, {
-            token: localStorage.getItem(TOKEN_KEY)
-        });
+    } else {
+        token = null;
     }
-    else {
-        calAdmin = React.createElement(CalendarAdmin);
-    }
-    ReactDOM.render(calAdmin, document.getElementById('main'));
+    ReactDOM.render(<CalendarAdmin token={token}/>, document.getElementById('main'));
 }

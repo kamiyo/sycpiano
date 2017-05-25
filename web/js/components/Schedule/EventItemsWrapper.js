@@ -8,7 +8,11 @@ import moment from 'moment-timezone';
  * @return {moment}
  */
 function _extractEventDateTime(event) {
-    return moment(event.start.dateTime).tz(event.start.timeZone);
+    if (event.start.dateTime) {
+        return moment(event.start.dateTime).tz(event.start.timeZone);
+    } else {
+        return moment(event.start.date);
+    }
 }
 
 /**
@@ -18,7 +22,11 @@ function _extractEventDateTime(event) {
  * @return {object}
  */
 function _extractEventDescription(event) {
-    return event.description ? JSON.parse(event.description) : {};
+    try {
+        return JSON.parse(event.description);
+    } catch (e) {
+        return {};
+    }
 }
 
 class DayItem {
@@ -90,7 +98,7 @@ export class EventItemsWrapper {
             eventItems.push(createListItem('day', {
                 name: event.summary,
                 day: parseInt(eventDateTime.format('D')),
-                time: eventDateTime.format('h:mm z'),
+                time: ((event.start.dateTime) ? eventDateTime.format('h:mm z') : ''),
                 program: description.program,
                 collaborators: description.collaborators,
                 eventType: description.type.value,

@@ -17,6 +17,7 @@ class GoogleAPI {
         startDatetime,
         endDatetime,
         timezone,
+        timeTBD,
         accessToken
     ) {
         const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
@@ -24,10 +25,37 @@ class GoogleAPI {
             summary: summary,
             description: description,
             location: location,
-            start: {dateTime: startDatetime, timeZone: timezone},
-            end: {dateTime: endDatetime, timeZone: timezone},
+            start: (timeTBD) ? {date: startDatetime.format('YYYY-MM-DD')} : {dateTime: startDatetime.format(), timeZone: timezone},
+            end: (timeTBD) ? {date: endDatetime.format('YYYY-MM-DD')} : {dateTime: endDatetime.format(), timeZone: timezone},
         };
         return axios.post(url, eventResource, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+    }
+
+    updateEvent(
+        eventId,
+        summary,
+        description,
+        location,
+        startDatetime,
+        endDatetime,
+        timezone,
+        timeTBD,
+        accessToken
+    ){
+        console.log(startDatetime.format());
+        const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${eventId}`;
+        const eventResource = {
+            summary: summary,
+            description: description,
+            location: location,
+            start: (timeTBD) ? {date: startDatetime.format('YYYY-MM-DD')} : {dateTime: startDatetime.format(), timeZone: timezone},
+            end: (timeTBD) ? {date: endDatetime.format('YYYY-MM-DD')} : {dateTime: endDatetime.format(), timeZone: timezone},
+        };
+        return axios.put(url, eventResource, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             },
@@ -40,9 +68,9 @@ class GoogleAPI {
     }
 
     /**
-     * Gets Google Calendar events with start times after right now.
+     * Gets Google Calendar events with start times after timeMin
      *
-     * @param {moment} timeMin - the lower bound for start time of events to be returned.
+     * @param {moment} timeMin - the lower bound for end time of events to be returned.
      */
     getCalendarEvents(timeMin = moment()) {
         const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
