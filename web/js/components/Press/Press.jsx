@@ -9,14 +9,12 @@ import { acclaimsListReducer } from '@/js/components/Press/reducers.js';
 
 const store = createStore(acclaimsListReducer);
 
-const Press = () => {
-    return (
-        <Provider store={store}>
-            <div className="press">
-                <AcclaimsList />
-            </div>
-        </Provider>
-    );
-};
+const Press = () => (
+    <Provider store={store}>
+        <div className="press">
+            <AcclaimsList />
+        </div>
+    </Provider>
+);
 
 export default Press;
