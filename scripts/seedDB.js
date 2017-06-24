@@ -57,7 +57,7 @@ function promptForInput() {
         jsonfile.readFile(filepath, (err, content) => {
             if (err) throw err;
 
-            const fileName = getFilenameWithoutExtension(filepath);
+            const fileName = _.startCase(getFilenameWithoutExtension(filepath));
             if (!models.hasOwnProperty(fileName)) {
                 console.log('Error: The name of the file must correspond to a model name.');
                 promptForInput();
