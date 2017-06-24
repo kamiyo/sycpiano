@@ -3,6 +3,7 @@ const _ = require('lodash');
 const jsonfile = require('jsonfile');
 const prompt = require('prompt');
 const Sequelize = require('sequelize');
+const initDB = require('../server/initDB.js');
 const importModels = require('../server/models').importModels;
 
 const schema = {
@@ -72,5 +73,7 @@ function promptForInput() {
     });
 }
 
-startPrompt();
-promptForInput();
+initDB().then(() => {
+    startPrompt();
+    promptForInput();
+});
