@@ -27,7 +27,7 @@ class AcclaimsListPresentation extends React.Component {
         const numRows = this.props.acclaims.length;
         return (
             <div className="acclaims-list">
-                <AutoSizer>
+                <AutoSizer disableWidth>
                     {
                         ({height, width}) => {
                             return (
