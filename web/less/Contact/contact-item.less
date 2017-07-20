@@ -9,15 +9,15 @@ a {
 }
 
 .contactItem {
-    .flex(1 1 auto);
+    .flex(0 1 600px);
     height: 100%;
     background-color: #fff;
-    width: 200px;
+    // max-width: 600px;
     .flex-display;
     .flex-direction(column);
     .pushed;
 
-    &:nth-child(2) {
+    &:nth-child(2n) {
         .contactInfo,
         .contactSocial {
             // border-left: 1px solid #c3c3c3;
@@ -28,7 +28,7 @@ a {
 }
 
 .contactImage {
-    .flex(0 0 46%);
+    .flex(0 0 55%);
     .box-shadow(inset 0 -15px 15px -15px #222);
 }
 
@@ -140,10 +140,11 @@ a {
     }
 
     img {
+        .scale(1.5);
         vertical-align: middle;
         .transition(all 0.2s);
         &:hover {
-            .scale(1.1);
+            .scale(1.7);
             cursor: pointer;
         }
     }
