@@ -13,5 +13,3 @@ export default class Button extends React.Component {
         );
     }
 };
-
-Button.onClick = function(e) {};
