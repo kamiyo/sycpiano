@@ -14,12 +14,13 @@
 }
 
 .navBarLink {
-    position: relative;
-    font-family: @lato1;
-    font-size: 22px;
     .hdpi({
         font-size: 16px;
     });
+
+    position: relative;
+    font-family: @lato1;
+    font-size: 22px;
     letter-spacing: 0em;
     display: inline-block;
     margin-right: 2px;
@@ -30,16 +31,18 @@
     }
 
     a {
-        // color: @logo-blue;
-        color: #000000;
+        color: #000;
         text-decoration: none;
         cursor: pointer;
 
         div {
             .transition(all 0.2s);
+
             .hdpi({
                 height: @navbarHeightHDPI;
+                margin-top: 0;
             });
+
             margin-top: @navbar-margin-top;
             height: @navbarHeight - @navbar-margin-top;
             padding: 20px 10px 0 10px;
@@ -55,6 +58,10 @@
         }
 
         .highlight {
+            .hdpi({
+                margin-top: @navbar-margin-top-hdpi;
+            });
+
             padding: 0;
             margin-top: @navbar-margin-top;
             position: absolute;
