@@ -11,7 +11,7 @@ import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
 import { googleAPI } from '@/js/services/GoogleAPI.js';
 
-class EventListPresentation extends React.Component {
+class ConnectedEventList extends React.Component {
     componentWillMount() { this.props.fetchEvents(); }
 
     componentDidUpdate() { this.List.scrollToRow(this.props.currentScrollIndex || 0); }
@@ -38,30 +38,28 @@ class EventListPresentation extends React.Component {
             <div className="event-list">
                 <AutoSizer>
                     {
-                        ({height, width}) => {
-                            return (
-                                <CellMeasurer
-                                    cellRenderer={this.cellItemRenderer.bind(this)}
-                                    columnCount={1}
-                                    rowCount={numRows}
-                                    width={width}
-                                >
-                                    {
-                                        ({getRowHeight}) => {
-                                            return <List
-                                                ref={div => this.List = div}
-                                                height={height}
-                                                width={width}
-                                                rowCount={numRows}
-                                                rowHeight={getRowHeight}
-                                                rowRenderer={this.rowItemRenderer.bind(this)}
-                                                scrollToAlignment='start'
-                                            />;
-                                        }
-                                    }
-                                </CellMeasurer>
-                            );
-                        }
+                        ({height, width}) => (
+                            <CellMeasurer
+                                cellRenderer={this.cellItemRenderer.bind(this)}
+                                columnCount={1}
+                                rowCount={numRows}
+                                width={width}
+                            >
+                                {
+                                    ({getRowHeight}) => (
+                                        <List
+                                            ref={div => this.List = div}
+                                            height={height}
+                                            width={width}
+                                            rowCount={numRows}
+                                            rowHeight={getRowHeight}
+                                            rowRenderer={this.rowItemRenderer.bind(this)}
+                                            scrollToAlignment='start'
+                                        />
+                                    )
+                                }
+                            </CellMeasurer>
+                        )
                     }
                 </AutoSizer>
             </div>
@@ -75,23 +73,24 @@ function getInitialEventItems() {
     ));
 }
 
-const mapStateToProps = state => {
-    return {
-        eventItems: state.schedule_eventItems.items,
-        currentScrollIndex: state.schedule_eventItems.currentScrollIndex,
-    };
-};
+const mapStateToProps = state => ({
+    eventItems: state.schedule_eventItems.items,
+    currentScrollIndex: state.schedule_eventItems.currentScrollIndex,
+});
 
-const mapDispatchToProps = dispatch => {
-    return { fetchEvents: () => {
-        getInitialEventItems().then(items => {
-            dispatch({ type: 'SCHEDULE--FETCH_EVENTS_SUCCESS', fetchedEvents: items });
-        });
+const mapDispatchToProps = dispatch => ({
+    fetchEvents: () => {
+        getInitialEventItems().then(items => (
+            dispatch({
+                type: 'SCHEDULE--FETCH_EVENTS_SUCCESS',
+                fetchedEvents: items,
+            })
+        ));
         dispatch({ type: 'SCHEDULE--FETCHING_EVENTS' });
-    }};
-};
+    }
+});
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(EventListPresentation);
+)(ConnectedEventList);
