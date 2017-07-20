@@ -29,28 +29,26 @@ class ConnectedAcclaimsList extends React.Component {
             <div className="acclaims-list">
                 <AutoSizer disableWidth>
                     {
-                        ({height, width}) => {
-                            return (
-                                <CellMeasurer
-                                    cellRenderer={this.cellItemRenderer.bind(this)}
-                                    columnCount={1}
-                                    rowCount={numRows}
-                                    width={width}
-                                >
-                                    {
-                                        ({getRowHeight}) => (
-                                            <List
-                                                height={height}
-                                                width={width}
-                                                rowCount={numRows}
-                                                rowHeight={getRowHeight}
-                                                rowRenderer={this.rowItemRenderer.bind(this)}
-                                            />
-                                        )
-                                    }
-                                </CellMeasurer>
-                            );
-                        }
+                        ({height, width}) => (
+                            <CellMeasurer
+                                cellRenderer={this.cellItemRenderer.bind(this)}
+                                columnCount={1}
+                                rowCount={numRows}
+                                width={width}
+                            >
+                                {
+                                    ({getRowHeight}) => (
+                                        <List
+                                            height={height}
+                                            width={width}
+                                            rowCount={numRows}
+                                            rowHeight={getRowHeight}
+                                            rowRenderer={this.rowItemRenderer.bind(this)}
+                                        />
+                                    )
+                                }
+                            </CellMeasurer>
+                        )
                     }
                 </AutoSizer>
             </div>
@@ -64,12 +62,12 @@ function getAcclaims() {
 
 const mapStateToProps = state => ({ acclaims: state.press_acclaimsList.acclaims });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
     fetchAcclaims: () => {
         dispatch({ type: 'PRESS--FETCHING_ACCLAIMS' });
 
         getAcclaims().then(
-            (response) => dispatch({
+            response => dispatch({
                 type: 'PRESS--FETCH_ACCLAIMS_SUCCESS',
                 acclaims: response.data,
             })

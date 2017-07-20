@@ -29,6 +29,9 @@ export const eventItemsReducer = (state = {
             return state.isFetching ? state : { ...state, isFetching: true }
         case 'SCHEDULE--UPDATE_DATE':
             if (!state.eventItemsWrapper || state.isFetching) return state;
+
+            // On date update, we want to scroll the events list to the start
+            // of the selected month.
             const month = action.date.format('MMMM');
             return {
                 ...state,
