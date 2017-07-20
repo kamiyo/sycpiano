@@ -7,7 +7,7 @@ import { AutoSizer, CellMeasurer, List } from 'react-virtualized';
 
 import AcclaimsListItem from '@/js/components/Press/AcclaimsListItem.jsx';
 
-class AcclaimsListPresentation extends React.Component {
+class ConnectedAcclaimsList extends React.Component {
     componentWillMount() { this.props.fetchAcclaims(); }
 
     _renderAcclaimItem(key, index, style) {
@@ -38,15 +38,15 @@ class AcclaimsListPresentation extends React.Component {
                                     width={width}
                                 >
                                     {
-                                        ({getRowHeight}) => {
-                                            return <List
+                                        ({getRowHeight}) => (
+                                            <List
                                                 height={height}
                                                 width={width}
                                                 rowCount={numRows}
                                                 rowHeight={getRowHeight}
                                                 rowRenderer={this.rowItemRenderer.bind(this)}
-                                            />;
-                                        }
+                                            />
+                                        )
                                     }
                                 </CellMeasurer>
                             );
@@ -62,27 +62,22 @@ function getAcclaims() {
     return axios.get('/api/acclaims');
 }
 
-const mapStateToProps = state => {
-    return { acclaims: state.acclaims };
-};
+const mapStateToProps = state => ({ acclaims: state.press_acclaimsList.acclaims });
 
-const mapDispatchToProps = dispatch => {
-    return {
-        fetchAcclaims: () => {
-            dispatch({ type: 'PRESS--FETCHING_ACCLAIMS' });
-            getAcclaims().then(
-                response => {
-                    dispatch({
-                        type: 'PRESS--FETCH_ACCLAIMS_SUCCESS',
-                        acclaims: response.data,
-                    });
-                }
-            );
-        },
-    };
-};
+const mapDispatchToProps = (dispatch) => ({
+    fetchAcclaims: () => {
+        dispatch({ type: 'PRESS--FETCHING_ACCLAIMS' });
+
+        getAcclaims().then(
+            (response) => dispatch({
+                type: 'PRESS--FETCH_ACCLAIMS_SUCCESS',
+                acclaims: response.data,
+            })
+        );
+    },
+});
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(AcclaimsListPresentation);
+)(ConnectedAcclaimsList);

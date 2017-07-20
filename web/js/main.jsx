@@ -4,7 +4,7 @@ import { Router, Route, IndexRoute, IndexRedirect, browserHistory } from 'react-
 import 'velocity-animate';
 import 'velocity-animate/velocity.ui';
 
-import createStore from '@/js/store.js';
+import createSycStore from '@/js/store.js';
 
 import App from '@/js/components/App/App.jsx';
 import Home from '@/js/components/Home/Home.jsx';
@@ -21,7 +21,7 @@ import Photos from '@/js/components/Media/Photos/Photos.jsx';
 main();
 
 function main() {
-    const store = createStore();
+    const store = createSycStore();
     ReactDOM.render((
         <Router history={browserHistory}>
             <Route path='/' component={App}>

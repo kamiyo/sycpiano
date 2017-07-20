@@ -4,7 +4,7 @@ import { EventItemsWrapper } from '@/js/components/Schedule/EventItemsWrapper.js
 
 export const dateReducer = (state = moment(), action) => {
     switch (action.type) {
-        case 'UPDATE_DATE':
+        case 'SCHEDULE--UPDATE_DATE':
             return action.date;
         default:
             return state;

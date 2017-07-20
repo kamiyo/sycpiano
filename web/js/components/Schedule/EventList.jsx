@@ -11,7 +11,7 @@ import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
 import { googleAPI } from '@/js/services/GoogleAPI.js';
 
-class EventListPresentation extends React.Component {
+class ConnectedEventList extends React.Component {
     componentWillMount() { this.props.fetchEvents(); }
 
     componentDidUpdate() { this.List.scrollToRow(this.props.currentScrollIndex || 0); }
@@ -47,8 +47,8 @@ class EventListPresentation extends React.Component {
                                     width={width}
                                 >
                                     {
-                                        ({getRowHeight}) => {
-                                            return <List
+                                        ({getRowHeight}) => (
+                                            <List
                                                 ref={div => this.List = div}
                                                 height={height}
                                                 width={width}
@@ -56,8 +56,8 @@ class EventListPresentation extends React.Component {
                                                 rowHeight={getRowHeight}
                                                 rowRenderer={this.rowItemRenderer.bind(this)}
                                                 scrollToAlignment='start'
-                                            />;
-                                        }
+                                            />
+                                        )
                                     }
                                 </CellMeasurer>
                             );
@@ -94,4 +94,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(EventListPresentation);
+)(ConnectedEventList);

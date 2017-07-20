@@ -6,31 +6,25 @@ import { connect } from 'react-redux';
 
 import Calendar from 'rc-calendar';
 
-class SycCalendarPresentation extends React.Component {
-    render() {
-        return <Calendar
-            prefixCls='syc-calendar'
-            showDateInput={false}
-            showToday={false}
-            enablePrev={true}
-            enableNext={true}
-            onChange={this.props.onChange}
-            value={this.props.date}
-        />
-    }
-}
+const ConnectedSycCalendar = ({ date, onChange }) => (
+    <Calendar
+        prefixCls='syc-calendar'
+        showDateInput={false}
+        showToday={false}
+        enablePrev={true}
+        enableNext={true}
+        onChange={onChange}
+        value={date}
+    />
+);
 
-const mapStateToProps = (state) => {
-    return state;
-};
+const mapStateToProps = state => ({ date: state.schedule_date });
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onChange: date => dispatch({type: 'SCHEDULE--UPDATE_DATE', date})
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    onChange: date => dispatch({type: 'SCHEDULE--UPDATE_DATE', date})
+});
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(SycCalendarPresentation);
+)(ConnectedSycCalendar);
