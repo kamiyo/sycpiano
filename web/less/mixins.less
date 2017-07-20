@@ -9,11 +9,9 @@
 }
 
 .hdpi(@props) {
-    @media only screen and (min-resolution: 2dppx)
-        // only screen and (min-resolution: 138dpi) {
-        {
-            @props();
-        }
+    @media only screen and (min-resolution: 192dpi) {
+        @props();
+    }
 }
 
 .pushed() {
