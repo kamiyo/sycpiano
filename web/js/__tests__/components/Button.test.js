@@ -6,7 +6,9 @@ import Button from '@/js/components/_reusable/Button.jsx';
 
 it('renders correctly', () => {
     const tree = renderer.create(
-        <Button />
+        <Button>
+            <div className="child" />
+        </Button>
     ).toJSON();
     expect(tree).toMatchSnapshot();
 });
