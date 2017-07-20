@@ -11,3 +11,4 @@ web/build/
 secret.js
 .happypack
 npm-debug.log
+coverage/
