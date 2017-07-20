@@ -38,3 +38,9 @@ mysql> use sycpiano;
 $ node scripts/seedDB.js
 ```
 When it asks for your usename and password, you can provide those of any MySQL user that has INSERT privilege. The file path you provide (as the third argument) must be a JSON file, and the objects of that JSON file must match the schema of the sequelize models defined under `server/models/`.
+
+Remember, before running `npm start`, make sure the mysql server is running:
+```bash
+# start the mysql server
+$ sudo /etc/init.d/mysql start
+```
