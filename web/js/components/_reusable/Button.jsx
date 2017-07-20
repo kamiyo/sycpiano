@@ -1,15 +1,15 @@
 import '@/less/_reusable/button.less';
 
 import React from 'react';
+import classNames from 'classnames';
 
-export default class Button extends React.Component {
-    render() {
-        var extraClasses = this.props.extraClasses;
-        var extraClassesString = extraClasses ? ` ${extraClasses}` : '';
-        return (
-            <div className={`Button${extraClassesString}`} onClick={this.props.onClick}>
-                {this.props.children}
-            </div>
-        );
-    }
-};
+const Button = ({ children, extraClasses, onClick }) => (
+    <div
+        className={classNames('Button', { [extraClasses]: !!extraClasses })}
+        onClick={onClick}
+    >
+        {children}
+    </div>
+);
+
+export default Button;
