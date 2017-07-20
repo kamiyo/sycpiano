@@ -19,12 +19,20 @@ export default class EventItem extends React.Component {
                         {this.props.event.time}
                     </div>
                     <div className="event-item__info-body">
-                        <p className="event-item__info-program">
-                            {this.props.event.program.join(', ')}
-                        </p>
-                        <p className="event-item__info-collaborators">
-                            {this.props.event.collaborators.join(', ')}
-                        </p>
+                        <ul className="event-item__info-program">
+                        {
+                            Object.keys(this.props.event.program).map((key) => {
+                                return <li key={key}>{this.props.event.program[key]}</li>
+                            })
+                        }
+                        </ul>
+                        <ul className="event-item__info-collaborators">
+                        {
+                            Object.keys(this.props.event.collaborators).map((key) => {
+                                return <li key={key}>{this.props.event.collaborators[key]}</li>
+                            })
+                        }
+                        </ul>
                     </div>
                 </div>
             </div>
