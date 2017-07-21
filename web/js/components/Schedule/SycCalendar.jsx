@@ -1,20 +1,15 @@
-import '@/less/Schedule/syc-calendar.less';
+import 'react-dates/lib/css/_datepicker.css';
 
 import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
+import { DayPicker } from 'react-dates';
 
 import Calendar from 'rc-calendar';
 
 const ConnectedSycCalendar = ({ date, onChange }) => (
-    <Calendar
-        prefixCls='syc-calendar'
-        showDateInput={false}
-        showToday={false}
-        enablePrev={true}
-        enableNext={true}
-        onChange={onChange}
-        value={date}
+    <DayPicker
+        numberOfMonths={1}
     />
 );
 

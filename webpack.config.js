@@ -40,6 +40,7 @@ const config = {
                 include: [
                     path.resolve(__dirname, 'web/less'),
                     path.resolve(__dirname, 'node_modules/react-datepicker/dist'),
+                    path.resolve(__dirname, 'node_modules/react-dates/lib/css'),
                     path.resolve(__dirname, 'node_modules/react-select/dist')
                 ],
             },
