@@ -14,15 +14,25 @@ export default class App extends React.Component {
 
     showFront = () => {
         this.setState({isFront: true});
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        window.addEventListener('keydown', this.checkDownArrow);
     }
 
     hideFront = () => {
         this.setState({isFront: false});
+        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront));
+        window.removeEventListener('keydown', this.checkDownArrow);
+    }
+
+    checkDownArrow = event => {
+        console.log(event);
+        if (event.keyCode == 40)
+            this.hideFront();
     }
 
     componentDidMount() {
-        window.addEventListener('wheel', this.hideFront);
-        window.addEventListener('keydown', (e)=>(e.keyCode == 40 && this.hideFront()))
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        window.addEventListener('keydown', this.checkDownArrow);
     }
 
     render() {
