@@ -3,14 +3,14 @@ import 'react-dates/lib/css/_datepicker.css';
 import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
-import { SingleDatePicker } from 'react-dates';
+import { DayPickerSingleDateController } from 'react-dates';
 
 const ConnectedSycCalendar = ({ date, onDateChange }) => (
-    <SingleDatePicker
+    <DayPickerSingleDateController
         numberOfMonths={1}
+        focused={true}
         date={date}
-        keepOpenOnDateSelect={true}
-        onDateChange={onDateChange}
+        onDateChange={onChange}
         onFocusChange={() => {}}
     />
 );
