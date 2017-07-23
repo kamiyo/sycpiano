@@ -33,8 +33,11 @@ export default class App extends React.Component {
     componentDidMount() {
         ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
         window.addEventListener('keydown', this.checkDownArrow);
+<<<<<<< HEAD
         // window.addEventListener('scroll', this.hideFront);
         // window.addEventListener('touchmove', this.hideFront);
+=======
+>>>>>>> 71122e3f2e15dcfc8a5f8f3e40618b3190aa8224
     }
 
     render() {
