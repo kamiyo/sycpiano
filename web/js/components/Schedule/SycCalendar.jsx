@@ -10,8 +10,7 @@ const ConnectedSycCalendar = ({ date, onDateChange }) => (
         numberOfMonths={1}
         focused={true}
         date={date}
-        onDateChange={onChange}
-        onFocusChange={() => {}}
+        onDateChange={onDateChange}
     />
 );
 
