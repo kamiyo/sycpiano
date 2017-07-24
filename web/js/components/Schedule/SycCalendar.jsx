@@ -5,19 +5,43 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { DayPickerSingleDateController } from 'react-dates';
 
-const ConnectedSycCalendar = ({ date, onDateChange }) => (
-    <DayPickerSingleDateController
-        numberOfMonths={1}
-        focused={true}
-        date={date}
-        onDateChange={onDateChange}
-    />
-);
+class ConnectedSycCalendar extends React.Component {
+    onPrevMonthClick = () => {
+        const newDate = moment(this.props.date).subtract(1, 'month');
+        this.props.onDateChange(newDate);
+    }
 
-const mapStateToProps = state => ({ date: state.schedule_date });
+    onNextMonthClick = () => {
+        const newDate = moment(this.props.date).add(1, 'month');
+        this.props.onDateChange(newDate);
+    }
+
+    isDayHighlighted = (date) => {
+
+    }
+
+    render() {
+        return (
+            <DayPickerSingleDateController
+                numberOfMonths={1}
+                focused={true}
+                date={this.props.date}
+                onDateChange={this.props.onDateChange}
+                onPrevMonthClick={this.onPrevMonthClick}
+                onNextMonthClick={this.onNextMonthClick}
+                isDayHighlighted={this.isDayHighlighted}
+            />
+
+        )
+    }
+}
+
+const mapStateToProps = state => ({
+    date: state.schedule_date,
+});
 
 const mapDispatchToProps = dispatch => ({
-    onDateChange: date => dispatch({type: 'SCHEDULE--UPDATE_DATE', date})
+    onDateChange: date => dispatch({type: 'SCHEDULE--UPDATE_DATE', date}),
 });
 
 export default connect(

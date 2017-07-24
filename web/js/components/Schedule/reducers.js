@@ -6,6 +6,10 @@ export const dateReducer = (state = moment(), action) => {
     switch (action.type) {
         case 'SCHEDULE--UPDATE_DATE':
             return action.date;
+        case 'SCHEDULE--PREV_MONTH':
+            return moment(state).subtract(1, 'month');
+        case 'SCHEDULE--NEXT_MONTH':
+            return moment(state).add(1, 'month');
         default:
             return state;
     };
@@ -27,6 +31,8 @@ export const eventItemsReducer = (state = {
             };
         case 'SCHEDULE--FETCHING_EVENTS':
             return state.isFetching ? state : { ...state, isFetching: true }
+        case 'SCHEDULE--PREV_MONTH':
+        case 'SCHEDULE--NEXT_MONTH':
         case 'SCHEDULE--UPDATE_DATE':
             if (!state.eventItemsWrapper || state.isFetching) return state;
 

@@ -24,9 +24,7 @@ class ConnectedEventList extends React.Component {
 
     componentWillMount() { this.props.fetchEvents(); }
 
-    componentDidUpdate() {
-        this.List.scrollToRow(this.props.currentScrollIndex || 0);
-    }
+    componentDidUpdate() { this.List.scrollToRow(this.props.currentScrollIndex || 0); }
 
     _renderEventItem(key, index, style, measure) {
         const item = this.props.eventItems[index];
@@ -45,7 +43,7 @@ class ConnectedEventList extends React.Component {
                 rowIndex={index}
                 parent={parent}
             >
-                {({ measure }) => {return this._renderEventItem(key, index, style, measure);}}
+                {({ measure }) => { return this._renderEventItem(key, index, style, measure); }}
             </CellMeasurer>
         )
     }
