@@ -5,31 +5,49 @@ import $ from 'cash-dom';
 import moment from 'moment-timezone';
 import React from 'react';
 import { connect } from 'react-redux';
-import { AutoSizer, CellMeasurer, List } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
 import { googleAPI } from '@/js/services/GoogleAPI.js';
 
 class ConnectedEventList extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.cache = new CellMeasurerCache({
+            fixedWidth: true
+        });
+
+        this._renderEventItem = this._renderEventItem.bind(this);
+    }
+
     componentWillMount() { this.props.fetchEvents(); }
 
-    componentDidUpdate() { this.List.scrollToRow(this.props.currentScrollIndex || 0); }
+    componentDidUpdate() {
+        this.List.scrollToRow(this.props.currentScrollIndex || 0);
+    }
 
-    _renderEventItem(key, index, style) {
+    _renderEventItem(key, index, style, measure) {
         const item = this.props.eventItems[index];
         if (item.type === 'month') {
-            return <EventMonthItem month={item.month} key={key} style={style} />;
+            return <EventMonthItem month={item.month} key={key} style={style} measure={measure}/>;
         }
-        return <EventItem event={item} key={key} style={style} />;
+        return <EventItem event={item} key={key} style={style} measure={measure}/>;
     }
 
-    cellItemRenderer({columnIndex, rowIndex}) {
-        return this._renderEventItem(rowIndex, rowIndex);
-    }
-
-    rowItemRenderer({key, index, isScrolling, isVisible, style}) {
-        return this._renderEventItem(key, index, style);
+    rowItemRenderer = ({index, isScrolling, isVisible, key, parent, style}) => {
+        return (
+            <CellMeasurer
+                cache={this.cache}
+                columnIndex={0}
+                key={key}
+                rowIndex={index}
+                parent={parent}
+            >
+                {({ measure }) => {return this._renderEventItem(key, index, style, measure);}}
+            </CellMeasurer>
+        )
     }
 
     render() {
@@ -39,26 +57,16 @@ class ConnectedEventList extends React.Component {
                 <AutoSizer>
                     {
                         ({height, width}) => (
-                            <CellMeasurer
-                                cellRenderer={this.cellItemRenderer.bind(this)}
-                                columnCount={1}
-                                rowCount={numRows}
+                            <List
+                                ref={div => this.List = div}
+                                height={height}
                                 width={width}
-                            >
-                                {
-                                    ({getRowHeight}) => (
-                                        <List
-                                            ref={div => this.List = div}
-                                            height={height}
-                                            width={width}
-                                            rowCount={numRows}
-                                            rowHeight={getRowHeight}
-                                            rowRenderer={this.rowItemRenderer.bind(this)}
-                                            scrollToAlignment='start'
-                                        />
-                                    )
-                                }
-                            </CellMeasurer>
+                                rowCount={numRows}
+                                rowHeight={this.cache.rowHeight}
+                                deferredMeasurementCache={this.cache}
+                                rowRenderer={this.rowItemRenderer}
+                                scrollToAlignment='start'
+                            />
                         )
                     }
                 </AutoSizer>
