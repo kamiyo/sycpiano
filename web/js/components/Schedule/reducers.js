@@ -33,10 +33,12 @@ export const eventItemsReducer = (state = {
             // On date update, we want to scroll the events list to the start
             // of the selected month.
             const month = action.date.format('MMMM');
-            return {
-                ...state,
-                currentScrollIndex: state.eventItemsWrapper.monthToListIndexMap[month],
-            };
+            const monthIndex = (
+                state.eventItemsWrapper.monthToListIndexMap.hasOwnProperty(month) ?
+                state.eventItemsWrapper.monthToListIndexMap[month] :
+                state.currentScrollIndex
+            );
+            return { ...state, currentScrollIndex: monthIndex };
         default:
             return state;
     };
