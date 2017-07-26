@@ -38,6 +38,7 @@ class DayItem {
         this.program = properties.program;
         this.collaborators = properties.collaborators;
         this.eventType = properties.eventType;
+        this.dateTime = properties.dateTime;
     }
 }
 
@@ -70,13 +71,11 @@ export class EventItemsWrapper {
      *                                 ordered in ascending chronological order.
      */
     constructor(events) {
-        const eventItemsAndMonthToListIndexMap = this._getEventItemsAndMonthToListIndexMap(events);
-        this.eventItems = eventItemsAndMonthToListIndexMap.eventItems;
-        this.monthToListIndexMap = eventItemsAndMonthToListIndexMap.monthToListIndexMap
+        const { eventItems, monthToListIndexMap } = this._getEventItemsAndMonthToListIndexMap(events);
 
         // Freeze these properties. This class is purely presentational.
-        this.eventItems = Object.freeze(this.eventItems);
-        this.monthToRowIndexMap = Object.freeze(this.monthToRowIndexMap);
+        this.eventItems = Object.freeze(eventItems);
+        this.monthToListIndexMap = Object.freeze(monthToListIndexMap);
     }
 
     /**
@@ -92,7 +91,7 @@ export class EventItemsWrapper {
             const month = eventDateTime.format('MMMM');
             if (!monthsSeen.has(month)) {
                 monthToListIndexMap[month] = index + monthsSeen.size;
-                eventItems.push(createListItem('month', {month: month}));
+                eventItems.push(createListItem('month', { month }));
                 monthsSeen.add(month);
             }
             eventItems.push(createListItem('day', {
@@ -102,8 +101,9 @@ export class EventItemsWrapper {
                 program: description.program,
                 collaborators: description.collaborators,
                 eventType: description.type.value,
+                dateTime: eventDateTime,
             }));
         });
-        return { eventItems, monthToListIndexMap }
+        return { eventItems, monthToListIndexMap };
     }
 }

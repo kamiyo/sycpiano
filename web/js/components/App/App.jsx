@@ -25,7 +25,6 @@ export default class App extends React.Component {
     }
 
     checkDownArrow = event => {
-        console.log(event);
         if (event.keyCode == 40)
             this.hideFront();
     }

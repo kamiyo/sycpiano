@@ -3,51 +3,57 @@ import '@/less/Press/acclaims-list.less';
 import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { AutoSizer, CellMeasurer, List } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 
 import AcclaimsListItem from '@/js/components/Press/AcclaimsListItem.jsx';
 
+const cache = new CellMeasurerCache({
+    fixedWidth: true
+})
+
 class ConnectedAcclaimsList extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this._renderAcclaimItem = this._renderAcclaimItem.bind(this);
+    }
+
     componentWillMount() { this.props.fetchAcclaims(); }
 
-    _renderAcclaimItem(key, index, style) {
+    _renderAcclaimItem (key, index, style, measure) {
         const acclaim = this.props.acclaims[index];
-        return <AcclaimsListItem acclaim={acclaim} key={key} style={style} />;
+        return <AcclaimsListItem acclaim={acclaim} key={key} style={style} measure={measure}/>;
     }
 
-    cellItemRenderer({columnIndex, rowIndex}) {
-        return this._renderAcclaimItem(rowIndex, rowIndex);
-    }
-
-    rowItemRenderer({key, index, isScrolling, isVisible, style}) {
-        return this._renderAcclaimItem(key, index, style);
+    rowItemRenderer = ({key, index, isScrolling, isVisible, parent, style}) => {
+        return (
+            <CellMeasurer
+                cache={cache}
+                key={key}
+                columnIndex={0}
+                rowIndex={index}
+                parent={parent}
+            >
+                {({ measure }) => { return this._renderAcclaimItem(key, index, style, measure); }}
+            </CellMeasurer>
+        )
     }
 
     render() {
         const numRows = this.props.acclaims.length;
         return (
             <div className="acclaims-list">
-                <AutoSizer disableWidth>
+                <AutoSizer>
                     {
-                        ({height, width}) => (
-                            <CellMeasurer
-                                cellRenderer={this.cellItemRenderer.bind(this)}
-                                columnCount={1}
-                                rowCount={numRows}
+                        ({ height, width }) => (
+                            <List
+                                height={height}
                                 width={width}
-                            >
-                                {
-                                    ({getRowHeight}) => (
-                                        <List
-                                            height={height}
-                                            width={width}
-                                            rowCount={numRows}
-                                            rowHeight={getRowHeight}
-                                            rowRenderer={this.rowItemRenderer.bind(this)}
-                                        />
-                                    )
-                                }
-                            </CellMeasurer>
+                                rowCount={numRows}
+                                rowHeight={cache.rowHeight}
+                                deferredMeasurementCache={cache}
+                                rowRenderer={this.rowItemRenderer}
+                            />
                         )
                     }
                 </AutoSizer>
