@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 const PlaylistManagerHOC = (Component) => {
     class _PlaylistManagerHOC extends React.Component {
@@ -22,10 +23,10 @@ const PlaylistManagerHOC = (Component) => {
     }
 
     _PlaylistManagerHOC.propTypes = {
-        currentItemId: React.PropTypes.string.isRequired,
-        items: React.PropTypes.object.isRequired,
-        playlistRightOnChange: React.PropTypes.func.isRequired,
-        playlistItemOnClick: React.PropTypes.func.isRequired
+        currentItemId: PropTypes.string.isRequired,
+        items: PropTypes.object.isRequired,
+        playlistRightOnChange: PropTypes.func.isRequired,
+        playlistItemOnClick: PropTypes.func.isRequired
     };
 
     return _PlaylistManagerHOC;
