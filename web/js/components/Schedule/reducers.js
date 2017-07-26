@@ -2,14 +2,19 @@ import moment from 'moment';
 
 import { EventItemsWrapper } from '@/js/components/Schedule/EventItemsWrapper.js';
 
-export const dateReducer = (state = moment(), action) => {
+export const dateReducer = (state = {
+    date: moment(),
+    eventsFetched: false
+}, action) => {
     switch (action.type) {
         case 'SCHEDULE--UPDATE_DATE':
-            return action.date;
+            return { ...state, date: action.date};
         case 'SCHEDULE--PREV_MONTH':
-            return moment(state).subtract(1, 'month');
+            return { ...state, date: state.date.subtract(1, 'month')};
         case 'SCHEDULE--NEXT_MONTH':
-            return moment(state).add(1, 'month');
+            return { ...state, date: state.date.add(1, 'month')};
+        case 'SCHEDULE--FETCH_EVENTS_SUCCESS':
+            return { ...state, eventsFetched: true};
         default:
             return state;
     };

@@ -11,18 +11,20 @@ import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
 import { googleAPI } from '@/js/services/GoogleAPI.js';
 
+const cache = new CellMeasurerCache({
+    fixedWidth: true
+});
+
 class ConnectedEventList extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.cache = new CellMeasurerCache({
-            fixedWidth: true
-        });
-
         this._renderEventItem = this._renderEventItem.bind(this);
     }
 
-    componentWillMount() { this.props.fetchEvents(); }
+    componentWillMount() {
+        this.props.fetchEvents();
+    }
 
     componentDidUpdate() { this.List.scrollToRow(this.props.currentScrollIndex || 0); }
 
@@ -37,7 +39,7 @@ class ConnectedEventList extends React.Component {
     rowItemRenderer = ({index, isScrolling, isVisible, key, parent, style}) => {
         return (
             <CellMeasurer
-                cache={this.cache}
+                cache={cache}
                 columnIndex={0}
                 key={key}
                 rowIndex={index}
@@ -60,8 +62,8 @@ class ConnectedEventList extends React.Component {
                                 height={height}
                                 width={width}
                                 rowCount={numRows}
-                                rowHeight={this.cache.rowHeight}
-                                deferredMeasurementCache={this.cache}
+                                rowHeight={cache.rowHeight}
+                                deferredMeasurementCache={cache}
                                 rowRenderer={this.rowItemRenderer}
                                 scrollToAlignment='start'
                             />

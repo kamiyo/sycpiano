@@ -38,6 +38,7 @@ class DayItem {
         this.program = properties.program;
         this.collaborators = properties.collaborators;
         this.eventType = properties.eventType;
+        this.dateTime = properties.dateTime;
     }
 }
 
@@ -100,6 +101,7 @@ export class EventItemsWrapper {
                 program: description.program,
                 collaborators: description.collaborators,
                 eventType: description.type.value,
+                dateTime: eventDateTime,
             }));
         });
         return { eventItems, monthToListIndexMap };

@@ -3,10 +3,6 @@ import '@/less/Schedule/event-item.less';
 import React from 'react';
 
 export default class EventItem extends React.Component {
-    componentDidMount() {
-        this.props.measure();
-    }
-
     render() {
         return (
             <div className="event-item" style={this.props.style}>
