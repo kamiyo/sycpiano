@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "start": "supervisor -i web app",
+    "start": "node app.js",
+    "start-dev": "supervisor -i web app",
+    "start-prod": "./bin/start.sh",
     "test": "jest --config='web/js/__tests__/' --coverage",
     "test-watch": "jest --config='web/js/__tests__/' --coverage --watchAll"
   },
