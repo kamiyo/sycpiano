@@ -13,6 +13,8 @@ initDB().then(() => {
     const app = express();
 
     app.use(express.static(__dirname + '/web/assets'));
+    app.use(express.static(__dirname + '/web/build'));
+
     app.use(morgan('common'));
     app.engine('html', mustachex.express);
     app.set('view engine', 'html');
