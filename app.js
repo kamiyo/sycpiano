@@ -20,16 +20,6 @@ initDB().then(() => {
     app.set('view engine', 'html');
     app.set('views', __dirname + '/web/partials');
 
-    // We only want to run the workflow proxying in development.
-    if (!isProduction) {
-        const bundler = require('./server/bundle-code.js');
-        bundler.bundleCode();
-
-        // We want to proxy any requests sent to localhost:8000/build
-        // to the webpack-dev-server.
-        app.use(bundler.router);
-    }
-
     // Matches the /admin route.
     app.get(/\/admin/, (req, res) => res.render('calendar-admin'));
 
