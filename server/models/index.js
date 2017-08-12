@@ -21,7 +21,7 @@ if (!isProduction) {
         password,
         _host,
         _dbName,
-    ] = dbUrl.match(/mysql:\/\/(.+):(.+)@(.+)\/(.+)/);
+    ] = dbUrl.match(/mysql:\/\/(.+):(.+)@(.+)\/(.+)\?reconnect=true/);
 
     secret = { username, password }
     host = _host;
