@@ -2,14 +2,37 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const secret = require('../../secret.js');
 
-const DBName = 'sycpiano';
+const isProduction = process.env.NODE_ENV === 'production';
+
+let secret;
+let host;
+let dbName;
+
+if (!isProduction) {
+    secret = require('../../secret.js');
+    host = 'localhost';
+    dbName = 'sycpiano';
+} else {
+    const dbUrl = process.env.CLEARDB_DATABASE_URL;
+    const [
+        entire,
+        username,
+        password,
+        host,
+        dbName,
+    ] = dbUrl.match(/mysql:\/\/(.+):(.+)@(.+)\/(.+)/);
+
+    secret = { username, password }
+    host = host;
+    dbName = dbName;
+}
+
 const username = secret.username;
 const password = secret.password;
 
-const sequelize = new Sequelize(DBName, username, password, {
-    host: 'localhost',
+const sequelize = new Sequelize(dbName, username, password, {
+    host,
     dialect: 'mysql',
     pool: { max: 5, min: 0, idle: 10000 },
     define: { freezeTable: true },
