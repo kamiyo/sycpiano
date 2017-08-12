@@ -8,11 +8,11 @@ After you've cloned the repository and have navigated to the project root, run:
 ```
 $ npm install
 ```
-After installing your node dependencies, you're ready to start the webpack dev server.
+After installing your node dependencies, you're ready to start dev process.
 ```
-$ npm start
+$ npm run start-dev
 ```
-Voila! Now, any changes you make to your code will trigger a hot-reload by the webpack dev server. Keep in mind that some changes require an actual manual refresh on your browser.
+Voila! This command will run a gulp task that starts the server and watches for changes you make to your code, in which case it will trigger a rebuild.
 
 ## Seeding the database
 sycpiano uses a MySQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).
