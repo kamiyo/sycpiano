@@ -19,13 +19,13 @@ if (!isProduction) {
         entire,
         username,
         password,
-        host,
-        dbName,
+        _host,
+        _dbName,
     ] = dbUrl.match(/mysql:\/\/(.+):(.+)@(.+)\/(.+)/);
 
     secret = { username, password }
-    host = host;
-    dbName = dbName;
+    host = _host;
+    dbName = _dbName;
 }
 
 const username = secret.username;
