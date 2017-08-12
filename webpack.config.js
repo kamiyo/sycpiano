@@ -20,7 +20,6 @@ const config = {
     output: {
         path: path.resolve(__dirname, 'web/build'),
         filename: '[name].bundle.js',
-        publicPath: '/build/',
     },
     module: {
         loaders: [

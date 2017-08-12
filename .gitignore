@@ -1,6 +1,7 @@
 *.sublime-project
 *.sublime-workspace
 .DS_Store
+.env
 node_modules
 web/build/
 .vscode/settings.json

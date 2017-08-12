@@ -28,7 +28,7 @@ module.exports.bundleCode = () => {
     const bundler = new WebpackDevServer(compiler, {
         // Tell Webpack to serve our bundled app from the build path.
         // When proxying: http://localhost:8000/build -> http://localhost:8080/build
-        publicPath: '/build/',
+        publicPath: '/web/build/',
         hot: true,
 
         // Terminal configs.
