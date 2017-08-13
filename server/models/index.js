@@ -14,14 +14,14 @@ if (!isProduction) {
     host = 'localhost';
     dbName = 'sycpiano';
 } else {
-    const dbUrl = process.env.CLEARDB_DATABASE_URL;
+    const dbUrl = process.env.DATABASE_URL;
     const [
         entire,
         username,
         password,
         _host,
         _dbName,
-    ] = dbUrl.match(/mysql:\/\/(.+):(.+)@(.+)\/(.+)\?reconnect=true/);
+    ] = dbUrl.match(/postgres:\/\/(.+):(.+)@(.+)\/(.+)/);
 
     secret = { username, password }
     host = _host;
