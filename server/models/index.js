@@ -33,7 +33,7 @@ const password = secret.password;
 
 const sequelize = new Sequelize(dbName, username, password, {
     host,
-    dialect: 'mysql',
+    dialect: 'postgres',
     pool: { max: 5, min: 0, idle: 10000 },
     define: { freezeTable: true },
 });

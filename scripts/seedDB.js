@@ -45,7 +45,7 @@ function promptForInput() {
         // The corresponding user should have INSERT permission to the database.
         const sequelize = new Sequelize(DBName, username, password, {
             host: 'localhost',
-            dialect: 'mysql',
+            dialect: 'postgres',
             pool: { max: 5, min: 0, idle: 10000 },
         });
         const models = importModels(sequelize);
