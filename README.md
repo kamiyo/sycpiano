@@ -18,10 +18,9 @@ Voila! This command will run a gulp task that starts the server and watches for 
 sycpiano uses a PostgreSQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).
 Here are the steps for seeding the database:
 * Install PostgreSQL for your OS
-* Using the root user (`postgres` by default), open up a psql shell
+* Using the root user, open up a psql shell. On windows, the user's name will be `postgres`. On OSX, if you installed postgres through `brew`, then it'll be whatever your root user's name is. One way to find out is to do `psql -l` and see who the owner of the `postgres` database is.
 ```bash
-# This will prompt you for root's password
-$ psql -U postgres
+$ psql -U <username>
 ```
 * In the psql shell, create a new database called `sycpiano`
 ```psql
