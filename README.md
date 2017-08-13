@@ -1,6 +1,6 @@
 The official web page of pianist Sean Chen.
 
-It is an [express](http://expressjs.com/) app with a MySQL database, with the express app serving very little HTML. In fact, most of the app is on the client, built with [react](https://facebook.github.io/react/) and bundled with [webpack](https://webpack.github.io/).
+It is an [express](http://expressjs.com/) app with a PostgreSQL database, with the express app serving very little HTML. In fact, most of the app is on the client, built with [react](https://facebook.github.io/react/) and bundled with [webpack](https://webpack.github.io/).
 
 ### Getting Started
 Make sure the latest stable version of Node.js is installed.
@@ -15,32 +15,36 @@ $ npm run start-dev
 Voila! This command will run a gulp task that starts the server and watches for changes you make to your code, in which case it will trigger a rebuild.
 
 ## Seeding the database
-sycpiano uses a MySQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).
+sycpiano uses a PostgreSQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).
 Here are the steps for seeding the database:
-* Install MySQL for your OS
-* Set up a root user
-* Using the root user, open up a mysql shell
+* Install PostgreSQL for your OS
+* Using the root user (`postgres` by default), open up a psql shell
 ```bash
 # This will prompt you for root's password
-$ mysql -u root -p
+$ psql -U postgres
 ```
-* In the mysql shell, create a new database called `sycpiano`
-```mysql
-mysql> create database sycpiano;
+* In the psql shell, create a new database called `sycpiano`
+```psql
+postgres=# create database sycpiano;
 # This should also automatically switch to using the new database, but whatever.
-mysql> use sycpiano;
+postgres=# \connect sycpiano;
 ```
-* In the mysql shell, create a new user, and grant them all privileges except DROP. Basically, follow this Digital Ocean post :P https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
-* Create a `secret.js` file under the project root that contains this new user's username and password. Don't worry, this file is in our `.gitignore`! Make sure that object exported by `secret.js` contains the keys `username` and `password`. This file will be used when connecting to the database to create tables that do not exist.
+* In the postgres shell, create a new user
+```
+create role <username> with login password '<quoted password>'
+```
+* Create a `secret.js` file under the project root that contains this new user's username and password. Don't worry, this file is in our `.gitignore`! Make sure that object exported by `secret.js` contains the keys `username` and `password`. This file will be used when connecting to the database to create tables that do not exist. It will look something like this:
+```
+modules.export = {
+  username: <username>,
+  password: <password>
+};
+```
 * Run `scripts/seedDB.js`
 ```bash
 # From project root
 $ node scripts/seedDB.js
 ```
-When it asks for your usename and password, you can provide those of any MySQL user that has INSERT privilege. The file path you provide (as the third argument) must be a JSON file, and the objects of that JSON file must match the schema of the sequelize models defined under `server/models/`.
+When it asks for your usename and password, you can provide those of any postgres user that has INSERT privilege. The file path you provide (as the third argument) must be a JSON file, and the objects of that JSON file must match the schema of the sequelize models defined under `server/models/`.
 
-Remember, before running `npm start`, make sure the mysql server is running:
-```bash
-# start the mysql server
-$ sudo /etc/init.d/mysql start
-```
+Remember, before running `npm run start` or `npm run start-dev`, make sure the postgres server is running.
