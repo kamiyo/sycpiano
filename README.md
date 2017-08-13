@@ -46,4 +46,4 @@ $ node scripts/seedDB.js
 ```
 When it asks for your usename and password, you can provide those of any postgres user that has INSERT privilege. The file path you provide (as the third argument) must be a JSON file, and the objects of that JSON file must match the schema of the sequelize models defined under `server/models/`.
 
-Remember, before running `npm run start` or `npm run start-dev`, make sure the postgres server is running.
+Remember, before running `npm run start-dev`, make sure the postgres server is running.
