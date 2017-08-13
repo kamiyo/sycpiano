@@ -34,7 +34,7 @@
     "moment-timezone": "^0.5.11",
     "morgan": "^1.7.0",
     "mustachex": "0.0.3",
-    "mysql": "^2.13.0",
+    "pg": "^6.4.2",
     "q": "^1.4.1",
     "randomcolor": "^0.4.4",
     "rc-calendar": "8.3.3",
