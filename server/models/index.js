@@ -20,8 +20,9 @@ if (!isProduction) {
         username,
         password,
         _host,
+        _port,
         _dbName,
-    ] = dbUrl.match(/postgres:\/\/(.+):(.+)@(.+)\/(.+)/);
+    ] = dbUrl.match(/postgres:\/\/(.+):(.+)@(.+):(.+)\/(.+)/);
 
     secret = { username, password }
     host = _host;
