@@ -76,12 +76,8 @@
     "babel-jest": "^20.0.3",
     "enzyme": "^2.9.1",
     "eslint": "^3.14.1",
-    "file-loader": "^0.10.0",
-    "http-proxy": "^1.13.1",
     "jest": "^20.0.4",
-    "json-loader": "^0.5.4",
     "nodemon": "^1.11.0",
-    "react-dom": "^15.6.1",
     "react-test-renderer": "^15.6.1",
     "redux-devtools": "^3.3.1"
   }

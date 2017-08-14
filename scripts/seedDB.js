@@ -3,17 +3,12 @@ const _ = require('lodash');
 const jsonfile = require('jsonfile');
 const prompt = require('prompt');
 const Sequelize = require('sequelize');
+
 const initDB = require('../server/initDB.js');
+const sequelize = require('../sequelize.js');
 const importModels = require('../server/models').importModels;
 
-const schema = {
-    properties: {
-        username: { required: true },
-        password: { required: true, hidden: true },
-        // Should be a JSON file.
-        JSONFilePath: { required: true },
-    }
-};
+const schema = { properties: { JSONFilePath: { required: true } } };
 
 /**
  * Given a file path, extracts the file name excluding the extension.
@@ -29,25 +24,14 @@ function getFilenameWithoutExtension(filepath) {
 
 function startPrompt() {
     prompt.start();
-    console.log('Please provide a user and password for the sycpiano DB');
+    console.log('Please provide the file name containing the data to seed.');
 }
 
 function promptForInput() {
     prompt.get(schema, (err, result) => {
         if (err) throw err;
 
-        const DBName = 'sycpiano';
-        const username = result.username;
-        const password = result.password;
         const filepath = result.JSONFilePath;
-
-        // Create a database connection using the given username/pw.
-        // The corresponding user should have INSERT permission to the database.
-        const sequelize = new Sequelize(DBName, username, password, {
-            host: 'localhost',
-            dialect: 'postgres',
-            pool: { max: 5, min: 0, idle: 10000 },
-        });
         const models = importModels(sequelize);
 
         // Read from the provided JSON file path.
