@@ -4,6 +4,7 @@ import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 import { DayPickerSingleDateController } from 'react-dates';
+import '@/less/Schedule/syc-calendar.less';
 
 class ConnectedSycCalendar extends React.Component {
     onPrevMonthClick = () => {

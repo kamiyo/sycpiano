@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import '@/less/Schedule/event-item.less';
 
 import React from 'react';
@@ -15,6 +16,9 @@ const EventItem = ({ style, event }) => (
             </div>
             <div className="event-item__info-time">
                 {event.time}
+                    </div>
+                    <div className="event-item__info-type">
+                        {_.startCase(this.props.event.eventType)}
             </div>
             <div className="event-item__info-body">
                 <ul className="event-item__info-program">
