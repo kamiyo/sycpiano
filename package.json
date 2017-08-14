@@ -10,7 +10,8 @@
     "start-dev": "gulp run",
     "start-prod": "./bin/start.sh",
     "test": "jest --config='web/js/__tests__/' --coverage",
-    "test-watch": "jest --config='web/js/__tests__/' --coverage --watchAll"
+    "test-watch": "jest --config='web/js/__tests__/' --coverage --watchAll",
+    "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress"
   },
   "author": "",
   "repository": {
