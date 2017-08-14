@@ -12,13 +12,13 @@ initDB().then(() => {
 
     const app = express();
 
-    app.use(express.static(__dirname + '/web/assets'));
-    app.use(express.static(__dirname + '/web/build'));
+    app.use(express.static(path.join(__dirname, '/web/assets')));
+    app.use(express.static(path.join(__dirname, '/web/build')));
 
     app.use(morgan('common'));
     app.engine('html', mustachex.express);
     app.set('view engine', 'html');
-    app.set('views', __dirname + '/web/partials');
+    app.set('views', path.join(__dirname, '/web/partials'));
 
     // Matches the /admin route.
     app.get(/\/admin/, (req, res) => res.render('calendar-admin'));
