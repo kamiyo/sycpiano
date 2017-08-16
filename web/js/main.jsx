@@ -28,7 +28,7 @@ function main() {
                 <IndexRoute component={Home} />
                 <Route path='about' component={About} />
                 <Route path='contact' component={Contact} />
-                <Route path='schedule' component={() => <Schedule store={store} />} />
+                <Route path='schedule(/:id)' component={(match) => <Schedule store={store} match={match} />} />
                 <Route path='media' component={Media}>
                     <Route path='videos' component={Videos} />
                     <Route path='music' component={Music} />

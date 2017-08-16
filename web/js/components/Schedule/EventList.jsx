@@ -6,7 +6,6 @@ import moment from 'moment-timezone';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
-
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
 import { googleAPI } from '@/js/services/GoogleAPI.js';
@@ -33,7 +32,9 @@ class ConnectedEventList extends React.Component {
         if (item.type === 'month') {
             return <EventMonthItem month={item.month} key={key} style={style} measure={measure}/>;
         }
-        return <EventItem event={item} key={key} style={style} measure={measure}/>;
+        return (
+            <EventItem event={item} key={key} style={style} measure={measure}/>
+        );
     }
 
     rowItemRenderer({index, isScrolling, isVisible, key, parent, style}) {

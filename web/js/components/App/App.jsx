@@ -34,6 +34,13 @@ export default class App extends React.Component {
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
+    // we don't want animation here to trigger when going from /schedule to /schedule/[date]
+    _checkClonePathname = () => {
+        const secondSlashIndex = this.props.location.pathname.indexOf('/', 1);
+        if (secondSlashIndex == -1) return this.props.location.pathname;
+        else return this.props.location.pathname.substr(0, secondSlashIndex);
+    }
+
     render() {
         return (
             <div className='appContainer'>
@@ -53,7 +60,7 @@ export default class App extends React.Component {
                     runOnMount={true}
                 >
                     {React.cloneElement(this.props.children, {
-                        key: this.props.location.pathname
+                        key: this._checkClonePathname()
                     })}
                 </VelocityTransitionGroup>
             </div>

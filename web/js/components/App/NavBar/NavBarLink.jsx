@@ -5,6 +5,12 @@ import ReactDOM from 'react-dom';
 import {Link, IndexLink, withRouter} from 'react-router';
 import SubNav from '@/js/components/SubNav/SubNav.jsx';
 
+const Highlight = ({ highlightClass, link }) => (
+    <div>
+        <div className={highlightClass}></div>
+        <div className="hyperlink">{link}</div>
+    </div>
+);
 
 class NavBarLink extends React.Component {
     state = {
@@ -62,20 +68,17 @@ class NavBarLink extends React.Component {
                 {
                     (link === 'home')
                         ? <IndexLink to='/' onClick={() => this.props.toggleSub(false)} className={active}>
-                            <div className={highlightClass}></div>
-                            <div className="hyperlink">{link}</div>
+                            <Highlight highlightClass={highlightClass} link={link} />
                         </IndexLink>
 
                         : ((link === 'media')
                             ? <a onClick={() => this.props.toggleSub()} className={active}>
-                                <div className={highlightClass}></div>
-                                <div className="hyperlink">{link}</div>
+                                <Highlight highlightClass={highlightClass} link={link} />
                             </a>
 
                             : (
                                 <Link to={'/' + link} onClick={() => this.props.toggleSub(false)} className={active}>
-                                    <div className={highlightClass}></div>
-                                    <div className="hyperlink">{link}</div>
+                                    <Highlight highlightClass={highlightClass} link={link} />
                                 </Link>
                             )
                         )
