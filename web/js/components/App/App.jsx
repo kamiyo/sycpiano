@@ -34,20 +34,13 @@ export default class App extends React.Component {
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
-    // we don't want animation here to trigger when going from /schedule to /schedule/[date]
-    _checkClonePathname = () => {
-        const secondSlashIndex = this.props.location.pathname.indexOf('/', 1);
-        if (secondSlashIndex == -1) return this.props.location.pathname;
-        else return this.props.location.pathname.substr(0, secondSlashIndex);
-    }
-
     render() {
         return (
             <div className='appContainer'>
-                <LogoSVG/>
+                <LogoSVG />
                 <Front show={this.state.isFront} onClick={this.hideFront} />
                 <VelocityComponent
-                    animation={{translateY: !this.state.isFront ? 0 : -90, translateZ: 0}}
+                    animation={{ translateY: !this.state.isFront ? 0 : -90, translateZ: 0 }}
                     delay={500}
                     duration={500}
                     easing={[170, 26]}
@@ -55,12 +48,13 @@ export default class App extends React.Component {
                     <NavBar onClick={this.showFront} />
                 </VelocityComponent>
                 <VelocityTransitionGroup
-                    enter={{duration: 500, animation: {opacity: 1, translateZ: 0}}}
-                    leave={{duration: 500, animation: {opacity: 0, translateZ: 0}}}
+                    enter={{ duration: 500, animation: { opacity: 1, translateZ: 0 } }}
+                    leave={{ duration: 500, animation: { opacity: 0, translateZ: 0 } }}
                     runOnMount={true}
                 >
                     {React.cloneElement(this.props.children, {
-                        key: this._checkClonePathname()
+                        // we don't want animation here to trigger when going from /schedule to /schedule/[date]
+                        key: this.props.location.pathname.split('/')[1]
                     })}
                 </VelocityTransitionGroup>
             </div>
