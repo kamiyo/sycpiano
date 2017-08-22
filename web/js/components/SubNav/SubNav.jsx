@@ -4,26 +4,23 @@ import SubNavLink from '@/js/components/SubNav/SubNavLink.jsx';
 import {velocityHelpers, VelocityTransitionGroup} from 'velocity-react';
 import Velocity from 'velocity-animate/velocity';
 
-var Animations = {
+const Animations = {
     RightIn: velocityHelpers.registerEffect({
         calls: [
-            [{
-                translateX: [0, 150],
-                opacity: 1
-            }, 1, {
-                    easing: 'ease-out',
-                    display: 'block',
-                }]
+            [
+                { translateX: [0, 150], opacity: 1 },
+                1,
+                { easing: 'ease-out', display: 'block' },
+            ],
         ],
     }),
     HeightIn: velocityHelpers.registerEffect({
         calls: [
-            [{
-                scaleY: [1, 0]
-            }, 1, {
-                    easing: 'ease-out',
-                    display: 'block'
-                }]
+            [
+                { scaleY: [1, 0] },
+                1,
+                { easing: 'ease-out', display: 'block' },
+            ],
         ]
     })
 
@@ -31,8 +28,8 @@ var Animations = {
 
 export default class SubNav extends React.Component {
     componentDidMount() {
-        let component = ReactDOM.findDOMNode(this);
-        let subs = component.getElementsByClassName('subNavLink');
+        const component = ReactDOM.findDOMNode(this);
+        const subs = component.getElementsByClassName('subNavLink');
         Velocity(component, Animations.HeightIn, {
             duration: 250,
             delay: 200,
@@ -50,7 +47,7 @@ export default class SubNav extends React.Component {
     render() {
         return (
             <ul className='subNav' style={this.props.position}>
-                {this.props.links.map((link) => <SubNavLink key={link} link={link} />) }
+                {this.props.links.map(link => <SubNavLink key={link} link={link} />) }
             </ul>
         );
     }
