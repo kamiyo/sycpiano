@@ -12,11 +12,12 @@ const ContactItem = ({
     social,
 }) => (
     <div className='contactItem'>
-        <div className={`contactImage ${cssClass}`}>
-        </div>
+        <div className={`contactImage ${cssClass}`} />
+
         <div className='contactInfo'>
             <div className='personalInfo'>
                 <div className='name'>{name}</div>
+
                 <div className='subInfo'>
                     <div className='title'>{title}</div>
                     {
@@ -27,14 +28,17 @@ const ContactItem = ({
                     }
                 </div>
             </div>
-            <div className='divider'></div>
+
+            <div className='divider' />
             <div className='personalContact'>
                 {phone && <div className='phone'><div>{phone}</div></div>}
+
                 <div className='email'>
                     <a href={`mailto:${email}`}>{email}</a>
                 </div>
             </div>
         </div>
+
         <div className='contactSocial'>
             {
                 Object.keys(social).map((site, i) => (
