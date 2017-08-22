@@ -17,8 +17,12 @@ class ConnectedSycCalendar extends React.Component {
         this.props.onDateChange(newDate);
     }
 
+    onDayClick = (date) => {
+        this.props.onDateChange(date);
+    }
+
     isDayBlocked = (date) => {
-        return this.props.events.items.every((element) => (element.type === 'month' || !date.isSame(element.dateTime, 'day')));
+        return !this.isDayHighlighted(date);
     }
 
     isDayHighlighted = (date) => {
@@ -31,11 +35,10 @@ class ConnectedSycCalendar extends React.Component {
                 numberOfMonths={1}
                 focused={this.props.date.eventsFetched}
                 date={this.props.date.date}
-                onDateChange={this.props.onDateChange}
+                onDateChange={this.onDayClick}
                 onPrevMonthClick={this.onPrevMonthClick}
                 onNextMonthClick={this.onNextMonthClick}
                 isOutsideRange={this.isDayBlocked}
-                onFocusChange={this.onFocusChange}
             />
         )
     }

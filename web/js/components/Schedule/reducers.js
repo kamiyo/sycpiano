@@ -25,6 +25,7 @@ export const eventItemsReducer = (state = {
     eventItemsWrapper: null,
     isFetching: false,
     currentScrollIndex: 0,
+    scrollTop: 0
 }, action) => {
     switch (action.type) {
         case 'SCHEDULE--FETCH_EVENTS_SUCCESS':
@@ -50,6 +51,8 @@ export const eventItemsReducer = (state = {
                 state.currentScrollIndex
             );
             return { ...state, currentScrollIndex: monthIndex };
+        case 'SCHEDULE--STORE_SCROLL':
+            return { ...state, scrollTop: action.scrollTop };
         default:
             return state;
     };

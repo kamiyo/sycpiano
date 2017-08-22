@@ -45,7 +45,6 @@ class NavBarLink extends React.Component {
         const link = this.props.link;
         let highlightClass = "highlight";
         let active = '';
-        console.log(this.props.router);
         if (link === 'home') {
             if (this.props.router.isActive('/', true) && !this.props.showSub) {
                 highlightClass += " active";
