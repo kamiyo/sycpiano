@@ -8,14 +8,17 @@ let db = {};
 function importModels(sequelize) {
     const models = {};
     const modelFiles = fs.readdirSync(__dirname);
-    modelFiles.forEach(file => {
-        if (file === 'index.js') return;
+
+    return modelFiles.reduce((runningMap, file) => {
+        if (file === 'index.js') return runningMap;
 
         const model = sequelize.import(path.join(__dirname, file));
-        // Let's make the model key title-cased.
-        models[_.startCase(model.name)] = model;
-    });
-    return models;
+        return {
+            ...runningMap,
+            // Let's make the model key title-cased.
+            [_.startCase(model.name)]: model,
+        };
+    }, {});
 }
 
 db = Object.assign(db, importModels(sequelize));
