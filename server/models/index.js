@@ -3,10 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const sequelize = require('../../sequelize.js');
 
-let db = {};
-
 function importModels(sequelize) {
-    const models = {};
     const modelFiles = fs.readdirSync(__dirname);
 
     return modelFiles.reduce((runningMap, file) => {
@@ -21,9 +18,12 @@ function importModels(sequelize) {
     }, {});
 }
 
-db = Object.assign(db, importModels(sequelize));
-db.sequelize = sequelize;
-// In case we ever want to use a different DB connection.
-db.importModels = importModels;
+const db = {
+    ...importModels(sequelize),
+    sequelize,
+    // Export the function, in case we ever want to use it with
+    // a different DB connection.
+    importModels,
+};
 
 module.exports = db;
