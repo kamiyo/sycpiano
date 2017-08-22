@@ -1,4 +1,4 @@
-let managers = [
+const managers = [
     // {
     //     name: '',
     //     cssClass: 'placeHolder',

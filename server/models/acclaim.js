@@ -1,5 +1,5 @@
-const Acclaim = (sequelize, DataTypes) => {
-    return sequelize.define('acclaim', {
+const Acclaim = (sequelize, DataTypes) => (
+    sequelize.define('acclaim', {
         quote: {
             type: DataTypes.TEXT,
             field: 'quote',
@@ -20,7 +20,7 @@ const Acclaim = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             field: 'date',
         },
-    });
-};
+    })
+);
 
 module.exports = Acclaim;
