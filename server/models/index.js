@@ -3,7 +3,11 @@ const fs = require('fs');
 const path = require('path');
 const sequelize = require('../../sequelize.js');
 
-function importModels(sequelize) {
+/**
+ * Loops through a list of model files, and transforms them into a map that
+ * maps each model name to the corresponding sequelize model.
+ */
+importModels = (sequelize) => {
     const modelFiles = fs.readdirSync(__dirname);
 
     return modelFiles.reduce((runningMap, file) => {
