@@ -36,7 +36,7 @@ class ConnectedEventList extends React.Component {
         return <EventItem event={item} key={key} style={style} measure={measure}/>;
     }
 
-    rowItemRenderer = ({index, isScrolling, isVisible, key, parent, style}) => {
+    rowItemRenderer({index, isScrolling, isVisible, key, parent, style}) {
         return (
             <CellMeasurer
                 cache={cache}
@@ -45,9 +45,9 @@ class ConnectedEventList extends React.Component {
                 rowIndex={index}
                 parent={parent}
             >
-                {({ measure }) => { return this._renderEventItem(key, index, style, measure); }}
+                {({ measure }) => this._renderEventItem(key, index, style, measure)}
             </CellMeasurer>
-        )
+        );
     }
 
     render() {
@@ -75,11 +75,12 @@ class ConnectedEventList extends React.Component {
     }
 }
 
-function getInitialEventItems() {
-    return new Promise((resolve, reject) => googleAPI.getCalendarEvents().then(
-        response => resolve(response.data.items)
-    ));
-}
+const getInitialEventItems = () => (
+    new Promise((resolve, reject) => (
+        googleAPI.getCalendarEvents()
+            .then(response => resolve(response.data.items))
+    ))
+);
 
 const mapStateToProps = state => ({
     eventItems: state.schedule_eventItems.items,
@@ -88,12 +89,12 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     fetchEvents: () => {
-        getInitialEventItems().then(items => (
-            dispatch({
+        getInitialEventItems()
+            .then(items => dispatch({
                 type: 'SCHEDULE--FETCH_EVENTS_SUCCESS',
                 fetchedEvents: items,
-            })
-        ));
+            }));
+
         dispatch({ type: 'SCHEDULE--FETCHING_EVENTS' });
     }
 });

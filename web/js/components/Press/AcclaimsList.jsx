@@ -7,9 +7,7 @@ import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtuali
 
 import AcclaimsListItem from '@/js/components/Press/AcclaimsListItem.jsx';
 
-const cache = new CellMeasurerCache({
-    fixedWidth: true
-})
+const cache = new CellMeasurerCache({ fixedWidth: true });
 
 class ConnectedAcclaimsList extends React.Component {
     constructor(props, context) {
@@ -25,7 +23,7 @@ class ConnectedAcclaimsList extends React.Component {
         return <AcclaimsListItem acclaim={acclaim} key={key} style={style} measure={measure}/>;
     }
 
-    rowItemRenderer = ({key, index, isScrolling, isVisible, parent, style}) => {
+    rowItemRenderer({key, index, isScrolling, isVisible, parent, style}) {
         return (
             <CellMeasurer
                 cache={cache}
@@ -34,9 +32,9 @@ class ConnectedAcclaimsList extends React.Component {
                 rowIndex={index}
                 parent={parent}
             >
-                {({ measure }) => { return this._renderAcclaimItem(key, index, style, measure); }}
+                {({ measure }) => this._renderAcclaimItem(key, index, style, measure)}
             </CellMeasurer>
-        )
+        );
     }
 
     render() {
