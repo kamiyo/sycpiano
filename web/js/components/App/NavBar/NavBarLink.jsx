@@ -2,7 +2,7 @@ import '@/less/App/NavBar/sub-nav.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { NavLink, Link, IndexLink, withRouter} from 'react-router';
+import { Link, IndexLink, withRouter} from 'react-router';
 import SubNav from '@/js/components/SubNav/SubNav.jsx';
 
 const Highlight = ({ highlightClass, link }) => (
