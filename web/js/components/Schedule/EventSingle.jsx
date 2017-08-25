@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
 
-const EventNoExist = ({ date }) => (
+const NoEventsScheduled = ({ date }) => (
     <div className="event-item">
         <div className="event-item__date-container">
             <div className="event-item__date">
@@ -67,7 +67,7 @@ const EventSingle = ({ id, eventItems }) => {
             <EventMonthItem month={date.format('MMMM')} />
             {
                 event ? <EventInfo event={event} />
-                    : <EventNoExist date={date} />
+                    : <NoEventsScheduled date={date} />
             }
         </div>
     );
@@ -80,5 +80,5 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    null
+    () => ({})
 )(EventSingle);

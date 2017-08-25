@@ -2,7 +2,7 @@ import '@/less/App/NavBar/sub-nav.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Link, IndexLink, withRouter} from 'react-router';
+import { Link, IndexLink, withRouter } from 'react-router';
 import SubNav from '@/js/components/SubNav/SubNav.jsx';
 
 const Highlight = ({ highlightClass, link }) => (
@@ -56,7 +56,7 @@ class NavBarLink extends React.Component {
                 active = 'active';
             }
         } else {
-            if (this.props.link == this.props.router.location.pathname.split('/')[1] && !this.props.showSub) {
+            if (this.props.link === this.props.router.location.pathname.split('/')[1] && !this.props.showSub) {
                 highlightClass += " active";
                 active = 'active';
             }

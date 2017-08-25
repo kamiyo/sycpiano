@@ -13,3 +13,4 @@ secret.js
 .happypack
 npm-debug.log
 coverage/
+.vscode

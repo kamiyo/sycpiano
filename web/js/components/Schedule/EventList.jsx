@@ -21,10 +21,10 @@ class ConnectedEventList extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         // want to prevent 'scrollToRow' when transitioning between eventList and eventSingle
-        if (nextProps.currentScrollIndex == this.props.currentScrollIndex)
-            if (nextProps.eventItems == this.props.eventItems)
-                return false;
-        return true;
+        return (
+            nextProps.currentScrollIndex !== this.props.currentScrollIndex ||
+            nextProps.eventItems !== this.props.eventItems
+        );
     }
 
     componentDidUpdate() {
@@ -33,7 +33,7 @@ class ConnectedEventList extends React.Component {
 
     componentDidMount() {
         //without timeout, scrollToPosition does not work correctly
-        setTimeout(() => {this.List.scrollToPosition(this.props.scrollTop);}, 100);
+        setTimeout(() => this.List.scrollToPosition(this.props.scrollTop), 100);
     }
 
     _renderEventItem(key, index, style, measure) {
@@ -89,5 +89,5 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    null
+    () => ({})
 )(ConnectedEventList);
