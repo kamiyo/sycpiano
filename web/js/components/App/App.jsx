@@ -12,6 +12,8 @@ export default class App extends React.Component {
         isFront: false // for peaceful dev until we figure out how to show only on home
     };
 
+    getRouteBase = () => this.props.location.pathname.split('/')[1];
+
     showFront = () => {
         this.setState({isFront: true});
         ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
@@ -50,11 +52,11 @@ export default class App extends React.Component {
                 <VelocityTransitionGroup
                     enter={{ duration: 500, animation: { opacity: 1, translateZ: 0 } }}
                     leave={{ duration: 500, animation: { opacity: 0, translateZ: 0 } }}
-                    runOnMount={true}
+                    runOnMount
                 >
                     {React.cloneElement(this.props.children, {
                         // we don't want animation here to trigger when going from /schedule to /schedule/[date]
-                        key: this.props.location.pathname.split('/')[1]
+                        key: this.getRouteBase()
                     })}
                 </VelocityTransitionGroup>
             </div>

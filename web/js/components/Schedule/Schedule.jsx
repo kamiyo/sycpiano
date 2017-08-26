@@ -26,7 +26,8 @@ class Schedule extends React.Component {
                         runOnMount={true}
                     >
                         {React.cloneElement(this.props.children, {
-                            key: this.props.location.pathname.split('/')[2] || '/'
+                            // TODO: maybe we can use this.props.match.params.id
+                            key: this.props.params.id || '/'
                         })}
                     </VelocityTransitionGroup>
                 </div>

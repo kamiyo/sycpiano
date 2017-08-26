@@ -43,7 +43,7 @@ function main() {
                         <Route path='music' component={Music} />
                         <Route path='photos' component={Photos} />
                     </Route>
-                    <Route path='press' component={() => <Press />} />
+                    <Route path='press' component={Press} />
                 </Route>
             </Router>
         </Provider>

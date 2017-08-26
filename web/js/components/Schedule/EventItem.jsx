@@ -17,9 +17,7 @@ const DateContainer = ({ day }) => (
 const EventName = ({ date, name, storeScroll, gridState }) => (
     <Link
         to={`/schedule/${date.format('YYYY-MM-DD')}`}
-        onClick={(e) => {
-            storeScroll(gridState.scrollTop);
-        }}
+        onClick={e => storeScroll(gridState.scrollTop)}
     >
         <div className="event-item__info-name">
             {name}
@@ -79,4 +77,5 @@ export default withRouter(
     connect(
         () => ({}),
         mapDispatchToProps
-    )(EventItem));
+    )(EventItem)
+);
