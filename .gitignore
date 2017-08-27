@@ -4,7 +4,6 @@
 .env
 node_modules
 web/build/
-.vscode/settings.json
 *.BASE
 *.LOCAL
 *.orig
@@ -13,3 +12,4 @@ secret.js
 .happypack
 npm-debug.log
 coverage/
+.vscode

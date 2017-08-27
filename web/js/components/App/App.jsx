@@ -12,6 +12,8 @@ export default class App extends React.Component {
         isFront: false // for peaceful dev until we figure out how to show only on home
     };
 
+    getRouteBase = () => this.props.location.pathname.split('/')[1];
+
     showFront = () => {
         this.setState({isFront: true});
         ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
@@ -37,10 +39,10 @@ export default class App extends React.Component {
     render() {
         return (
             <div className='appContainer'>
-                <LogoSVG/>
+                <LogoSVG />
                 <Front show={this.state.isFront} onClick={this.hideFront} />
                 <VelocityComponent
-                    animation={{translateY: !this.state.isFront ? 0 : -90, translateZ: 0}}
+                    animation={{ translateY: !this.state.isFront ? 0 : -90, translateZ: 0 }}
                     delay={500}
                     duration={500}
                     easing={[170, 26]}
@@ -48,12 +50,13 @@ export default class App extends React.Component {
                     <NavBar onClick={this.showFront} />
                 </VelocityComponent>
                 <VelocityTransitionGroup
-                    enter={{duration: 500, animation: {opacity: 1, translateZ: 0}}}
-                    leave={{duration: 500, animation: {opacity: 0, translateZ: 0}}}
-                    runOnMount={true}
+                    enter={{ duration: 500, animation: { opacity: 1, translateZ: 0 } }}
+                    leave={{ duration: 500, animation: { opacity: 0, translateZ: 0 } }}
+                    runOnMount
                 >
                     {React.cloneElement(this.props.children, {
-                        key: this.props.location.pathname
+                        // we don't want animation here to trigger when going from /schedule to /schedule/[date]
+                        key: this.getRouteBase()
                     })}
                 </VelocityTransitionGroup>
             </div>

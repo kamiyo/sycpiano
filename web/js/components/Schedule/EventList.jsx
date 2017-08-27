@@ -6,10 +6,8 @@ import moment from 'moment-timezone';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
-
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
-import { googleAPI } from '@/js/services/GoogleAPI.js';
 
 const cache = new CellMeasurerCache({
     fixedWidth: true
@@ -18,25 +16,35 @@ const cache = new CellMeasurerCache({
 class ConnectedEventList extends React.Component {
     constructor(props, context) {
         super(props, context);
-
         this._renderEventItem = this._renderEventItem.bind(this);
     }
 
-    componentWillMount() {
-        this.props.fetchEvents();
+    shouldComponentUpdate(nextProps, nextState) {
+        // want to prevent 'scrollToRow' when transitioning between eventList and eventSingle
+        return (
+            nextProps.currentScrollIndex !== this.props.currentScrollIndex ||
+            nextProps.eventItems !== this.props.eventItems
+        );
     }
 
-    componentDidUpdate() { this.List.scrollToRow(this.props.currentScrollIndex || 0); }
+    componentDidUpdate() {
+        this.List.scrollToRow(this.props.currentScrollIndex || 0);
+    }
+
+    componentDidMount() {
+        //without timeout, scrollToPosition does not work correctly
+        setTimeout(() => this.List.scrollToPosition(this.props.scrollTop), 100);
+    }
 
     _renderEventItem(key, index, style, measure) {
         const item = this.props.eventItems[index];
         if (item.type === 'month') {
-            return <EventMonthItem month={item.month} key={key} style={style} measure={measure}/>;
+            return <EventMonthItem month={item.month} key={key} style={style} measure={measure} />;
         }
-        return <EventItem event={item} key={key} style={style} measure={measure}/>;
+        return <EventItem event={item} key={key} style={style} measure={measure} gridState={this.List && this.List.Grid.state}/>;
     }
 
-    rowItemRenderer({index, isScrolling, isVisible, key, parent, style}) {
+    rowItemRenderer = ({index, isScrolling, isVisible, key, parent, style}) => {
         return (
             <CellMeasurer
                 cache={cache}
@@ -45,61 +53,41 @@ class ConnectedEventList extends React.Component {
                 rowIndex={index}
                 parent={parent}
             >
-                {({ measure }) => this._renderEventItem(key, index, style, measure)}
+                {({ measure }) => { return this._renderEventItem(key, index, style, measure); }}
             </CellMeasurer>
-        );
+        )
     }
 
     render() {
         const numRows = this.props.eventItems.length;
         return (
-            <div className="event-list">
+            <div className="event-list container">
                 <AutoSizer>
-                    {
-                        ({height, width}) => (
-                            <List
-                                ref={div => this.List = div}
-                                height={height}
-                                width={width}
-                                rowCount={numRows}
-                                rowHeight={cache.rowHeight}
-                                deferredMeasurementCache={cache}
-                                rowRenderer={this.rowItemRenderer}
-                                scrollToAlignment='start'
-                            />
-                        )
-                    }
+                    {({ height, width }) => (
+                        <List
+                            ref={div => this.List = div}
+                            height={height}
+                            width={width}
+                            rowCount={numRows}
+                            rowHeight={cache.rowHeight}
+                            deferredMeasurementCache={cache}
+                            rowRenderer={this.rowItemRenderer}
+                            scrollToAlignment='start'
+                        />
+                    )}
                 </AutoSizer>
             </div>
         );
     }
 }
 
-const getInitialEventItems = () => (
-    new Promise((resolve, reject) => (
-        googleAPI.getCalendarEvents()
-            .then(response => resolve(response.data.items))
-    ))
-);
-
 const mapStateToProps = state => ({
     eventItems: state.schedule_eventItems.items,
     currentScrollIndex: state.schedule_eventItems.currentScrollIndex,
-});
-
-const mapDispatchToProps = dispatch => ({
-    fetchEvents: () => {
-        getInitialEventItems()
-            .then(items => dispatch({
-                type: 'SCHEDULE--FETCH_EVENTS_SUCCESS',
-                fetchedEvents: items,
-            }));
-
-        dispatch({ type: 'SCHEDULE--FETCHING_EVENTS' });
-    }
+    scrollTop: state.schedule_eventItems.scrollTop,
 });
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    () => ({})
 )(ConnectedEventList);

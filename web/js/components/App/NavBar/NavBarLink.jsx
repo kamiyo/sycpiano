@@ -2,9 +2,15 @@ import '@/less/App/NavBar/sub-nav.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Link, IndexLink, withRouter} from 'react-router';
+import { Link, IndexLink, withRouter } from 'react-router';
 import SubNav from '@/js/components/SubNav/SubNav.jsx';
 
+const Highlight = ({ highlightClass, link }) => (
+    <div>
+        <div className={highlightClass}></div>
+        <div className="hyperlink">{link}</div>
+    </div>
+);
 
 class NavBarLink extends React.Component {
     state = {
@@ -50,10 +56,9 @@ class NavBarLink extends React.Component {
                 active = 'active';
             }
         } else {
-            if (this.props.router.isActive(link, false) && !this.props.showSub) {
+            if (this.props.link === this.props.router.location.pathname.split('/')[1] && !this.props.showSub) {
                 highlightClass += " active";
                 active = 'active';
-
             }
         }
 
@@ -62,20 +67,21 @@ class NavBarLink extends React.Component {
                 {
                     (link === 'home')
                         ? <IndexLink to='/' onClick={() => this.props.toggleSub(false)} className={active}>
-                            <div className={highlightClass}></div>
-                            <div className="hyperlink">{link}</div>
+                            <Highlight highlightClass={highlightClass} link={link} />
                         </IndexLink>
 
                         : ((link === 'media')
                             ? <a onClick={() => this.props.toggleSub()} className={active}>
-                                <div className={highlightClass}></div>
-                                <div className="hyperlink">{link}</div>
+                                <Highlight highlightClass={highlightClass} link={link} />
                             </a>
 
                             : (
-                                <Link to={'/' + link} onClick={() => this.props.toggleSub(false)} className={active}>
-                                    <div className={highlightClass}></div>
-                                    <div className="hyperlink">{link}</div>
+                                <Link
+                                    to={'/' + link}
+                                    onClick={() => this.props.toggleSub(false)}
+                                    className={active}
+                                >
+                                    <Highlight highlightClass={highlightClass} link={link} />
                                 </Link>
                             )
                         )
