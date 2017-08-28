@@ -3,7 +3,7 @@ The official web page of pianist Sean Chen.
 It is an [express](http://expressjs.com/) app with a PostgreSQL database, with the express app serving very little HTML. In fact, most of the app is on the client, built with [react](https://facebook.github.io/react/) and bundled with [webpack](https://webpack.github.io/).
 
 ### Getting Started
-Make sure the latest stable version of Node.js is installed.
+Make sure at least version 8.4.0 of Node.js is installed.
 After you've cloned the repository and have navigated to the project root, run:
 ```
 $ npm install
