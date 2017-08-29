@@ -31,14 +31,14 @@ function _extractEventDescription(event) {
 
 class DayItem {
     constructor(properties) {
+        this.id = properties.id;
         this.type = 'day';
         this.name = properties.name;
-        this.day = properties.day;
-        this.time = properties.time;
         this.program = properties.program;
         this.collaborators = properties.collaborators;
         this.eventType = properties.eventType;
         this.dateTime = properties.dateTime;
+        this.location = properties.location;
     }
 }
 
@@ -65,13 +65,14 @@ export class EventItemsWrapper {
      * Creates a wrapper that stores these properties:
      *
      * @property {array<(DayItem)|(MonthItem)>} eventItems
+     * @property {object<string,object>} eventIdsToItemsMap
      * @property {object<string,int>} monthToRowIndexMap
      *
      * @param {array<object>} events - List of events returned by the Google Calendar API,
      *                                 ordered in ascending chronological order.
      */
     constructor(events) {
-        const { eventItems, monthToListIndexMap } = this._getEventItemsAndMonthToListIndexMap(events);
+        const { eventItems, monthToListIndexMap } = this.getEventDataStructures(events);
 
         // Freeze these properties. This class is purely presentational.
         this.eventItems = Object.freeze(eventItems);
@@ -79,31 +80,38 @@ export class EventItemsWrapper {
     }
 
     /**
-     * Gets the list of event items, as well as an object that maps month name to scroll index.
+     * Takes gcal events, and extracts:
+     * - a the list of event items
+     * - an object that maps event id to its index in the list
      */
-    _getEventItemsAndMonthToListIndexMap(events) {
+    getEventDataStructures(events) {
         const monthsSeen = new Set();
+
         const eventItems = [];
-        const monthToListIndexMap = {};
+        const eventIdToScrollIndexMap = {};
+
         _.forEach(events, (event, index) => {
             const eventDateTime = _extractEventDateTime(event);
-            const description = _extractEventDescription(event);
             const month = eventDateTime.format('MMMM');
+            const description = _extractEventDescription(event);
+
             if (!monthsSeen.has(month)) {
-                monthToListIndexMap[month] = index + monthsSeen.size;
                 eventItems.push(createListItem('month', { month }));
                 monthsSeen.add(month);
             }
+
             eventItems.push(createListItem('day', {
+                id: event.id,
                 name: event.summary,
-                day: parseInt(eventDateTime.format('D')),
-                time: ((event.start.dateTime) ? eventDateTime.format('h:mm z') : ''),
-                program: description.program,
+                dateTime: eventDateTime,
                 collaborators: description.collaborators,
                 eventType: description.type.value,
-                dateTime: eventDateTime,
+                location: event.location,
+                program: description.program,
             }));
+
+            eventIdToScrollIndexMap[event.id] = index + monthsSeen.size;
         });
-        return { eventItems, monthToListIndexMap };
+        return { eventItems, eventIdToScrollIndexMap };
     }
 }

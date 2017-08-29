@@ -1,23 +1,23 @@
-import _ from 'lodash'
 import '@/less/Schedule/event-item.less';
 
+import _ from 'lodash'
 import React from 'react';
-import { Link, withRouter } from 'react-router';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import moment from 'moment-timezone';
 
-const DateContainer = ({ day }) => (
+const DateContainer = ({ dateTime }) => (
     <div className="event-item__date-container">
         <div className="event-item__date">
-            {day}
+            {parseInt(dateTime.format('D'))}
         </div>
     </div>
 );
 
-const EventName = ({ date, name, storeScroll, gridState }) => (
+const EventName = ({ dateTime, name, storeScroll, gridState, handleSelect }) => (
     <Link
-        to={`/schedule/${date.format('YYYY-MM-DD')}`}
-        onClick={e => storeScroll(gridState.scrollTop)}
+        to={`/schedule/${dateTime.format('YYYY-MM-DD')}`}
+        onClick={handleSelect}
     >
         <div className="event-item__info-name">
             {name}
@@ -29,35 +29,40 @@ const EventBody = ({ program, collaborators }) => (
     <div className="event-item__info-body">
         <ul className="event-item__info-program">
             {
-                Object.keys(program).map((key) => {
-                    return <li key={key}>{program[key]}</li>
-                })
+                Object.keys(program).map(key => (
+                    <li key={key}>{program[key]}</li>
+                ))
             }
         </ul>
         <ul className="event-item__info-collaborators">
             {
-                Object.keys(collaborators).map((key) => {
-                    return <li key={key}>{collaborators[key]}</li>
-                })
+                Object.keys(collaborators).map(key => (
+                    <li key={key}>{collaborators[key]}</li>
+                ))
             }
         </ul>
     </div>
 )
 
-const EventItem = ({ event, style, storeScroll, gridState }) => {
-    const date = moment(event.dateTime);
+const EventItem = ({
+    event,
+    style,
+    gridState,
+    handleSelect,
+}) => {
+    const time = event.dateTime.format('h:mm z');
     return (
         <div className="event-item" style={style}>
-            <DateContainer day={event.day} />
+            <DateContainer dateTime={event.dateTime} />
             <div className="event-item__info">
                 <EventName
-                    date={date}
+                    dateTime={event.dateTime}
                     name={event.name}
-                    storeScroll={storeScroll}
                     gridState={gridState}
+                    handleSelect={handleSelect}
                 />
                 <div className="event-item__info-time">
-                    {event.time}
+                    {time}
                 </div>
                 <div className="event-item__info-type">
                     {_.startCase(event.eventType)}
@@ -67,15 +72,4 @@ const EventItem = ({ event, style, storeScroll, gridState }) => {
     );
 }
 
-const mapDispatchToProps = dispatch => ({
-    storeScroll: scrollTop => {
-        dispatch({type: 'SCHEDULE--STORE_SCROLL', scrollTop});
-    },
-});
-
-export default withRouter(
-    connect(
-        () => ({}),
-        mapDispatchToProps
-    )(EventItem)
-);
+export default EventItem;

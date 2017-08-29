@@ -9,9 +9,7 @@ import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtuali
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
 
-const cache = new CellMeasurerCache({
-    fixedWidth: true
-});
+const cache = new CellMeasurerCache({ fixedWidth: true });
 
 class ConnectedEventList extends React.Component {
     constructor(props, context) {
@@ -19,32 +17,43 @@ class ConnectedEventList extends React.Component {
         this._renderEventItem = this._renderEventItem.bind(this);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        // want to prevent 'scrollToRow' when transitioning between eventList and eventSingle
-        return (
-            nextProps.currentScrollIndex !== this.props.currentScrollIndex ||
-            nextProps.eventItems !== this.props.eventItems
-        );
-    }
-
     componentDidUpdate() {
-        this.List.scrollToRow(this.props.currentScrollIndex || 0);
-    }
+        const scrollIndex = _.findIndex(
+            this.props.eventItems,
+            item => (
+                item.type === 'day' &&
+                item.dateTime.format('YYYY-MM-DD') === this.props.params.date
+            )
+        );
 
-    componentDidMount() {
-        //without timeout, scrollToPosition does not work correctly
-        setTimeout(() => this.List.scrollToPosition(this.props.scrollTop), 100);
+        if (!this.props.hasEventBeenSelected) {
+            // Only scroll to the index of the current event if the user hasn't manually selected
+            // an event (meaning, right after the events are initially loaded).
+            this.List.scrollToRow(scrollIndex || 0);
+        }
     }
 
     _renderEventItem(key, index, style, measure) {
         const item = this.props.eventItems[index];
         if (item.type === 'month') {
-            return <EventMonthItem month={item.month} key={key} style={style} measure={measure} />;
+            return <EventMonthItem
+                month={item.month}
+                key={key}
+                style={style}
+                measure={measure}
+            />;
         }
-        return <EventItem event={item} key={key} style={style} measure={measure} gridState={this.List && this.List.Grid.state}/>;
+        return <EventItem
+            event={item}
+            key={key}
+            style={style}
+            measure={measure}
+            gridState={this.List && this.List.Grid.state}
+            handleSelect={this.props.dispatchSelectEventAction(item)}
+        />;
     }
 
-    rowItemRenderer = ({index, isScrolling, isVisible, key, parent, style}) => {
+    rowItemRenderer = ({ index, isScrolling, isVisible, key, parent, style }) => {
         return (
             <CellMeasurer
                 cache={cache}
@@ -72,7 +81,7 @@ class ConnectedEventList extends React.Component {
                             rowHeight={cache.rowHeight}
                             deferredMeasurementCache={cache}
                             rowRenderer={this.rowItemRenderer}
-                            scrollToAlignment='start'
+                            scrollToAlignment="start"
                         />
                     )}
                 </AutoSizer>
@@ -83,11 +92,19 @@ class ConnectedEventList extends React.Component {
 
 const mapStateToProps = state => ({
     eventItems: state.schedule_eventItems.items,
-    currentScrollIndex: state.schedule_eventItems.currentScrollIndex,
-    scrollTop: state.schedule_eventItems.scrollTop,
+    hasEventBeenSelected: state.schedule_eventItems.hasEventBeenSelected,
+});
+
+const mapDispatchToProps = dispatch => ({
+    dispatchSelectEventAction: eventItem => (
+        () => dispatch({
+            type: 'SCHEDULE--SELECT_EVENT',
+            eventItem,
+        })
+    ),
 });
 
 export default connect(
     mapStateToProps,
-    () => ({})
+    mapDispatchToProps
 )(ConnectedEventList);

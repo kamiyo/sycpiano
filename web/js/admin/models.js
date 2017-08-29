@@ -1,6 +1,6 @@
 import moment from 'moment';
 import 'moment-timezone';
-import {googleAPI} from '@/js/services/GoogleAPI.js'
+import { googleAPI } from '@/js/services/GoogleAPI.js'
 
 /**
  * Set the hour and minute components of given datetime.
@@ -35,7 +35,7 @@ function _getTimezone(address, datetime) {
         googleAPI.geocode(address)
             .then(response => {
                 const firstMatch = response.data.results[0];
-                const {lat, lng} = firstMatch.geometry.location;
+                const { lat, lng } = firstMatch.geometry.location;
                 const timestamp = datetime.unix();
                 googleAPI.getTimezone(lat, lng, timestamp).then(
                     response => resolve(response.data.timeZoneId)
@@ -108,4 +108,4 @@ CalendarEvent.createPromise = (valuesMap) => {
     return (new CalendarEvent(valuesMap)).finishedInitPromise;
 }
 
-export {CalendarEvent};
+export { CalendarEvent };
