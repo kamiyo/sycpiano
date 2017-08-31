@@ -65,42 +65,34 @@ export class EventItemsWrapper {
      * Creates a wrapper that stores these properties:
      *
      * @property {array<(DayItem)|(MonthItem)>} eventItems
-     * @property {object<string,object>} eventIdsToItemsMap
-     * @property {object<string,int>} monthToRowIndexMap
-     *
      * @param {array<object>} events - List of events returned by the Google Calendar API,
      *                                 ordered in ascending chronological order.
      */
     constructor(events) {
-        const { eventItems, monthToListIndexMap } = this.getEventDataStructures(events);
+        const eventItems = this.getEventItems(events);
 
         // Freeze these properties. This class is purely presentational.
         this.eventItems = Object.freeze(eventItems);
-        this.monthToListIndexMap = Object.freeze(monthToListIndexMap);
     }
 
     /**
-     * Takes gcal events, and extracts:
-     * - a the list of event items
-     * - an object that maps event id to its index in the list
+     * Takes gcal events, and processes them into a list of list items (i.e. DayItem or MonthItem).
      */
-    getEventDataStructures(events) {
+    getEventItems(events) {
         const monthsSeen = new Set();
 
-        const eventItems = [];
-        const eventIdToScrollIndexMap = {};
-
-        _.forEach(events, (event, index) => {
+        return events.reduce((runningEventsArr, event) => {
             const eventDateTime = _extractEventDateTime(event);
             const month = eventDateTime.format('MMMM');
             const description = _extractEventDescription(event);
 
+            const nextEventsArr = [];
             if (!monthsSeen.has(month)) {
-                eventItems.push(createListItem('month', { month }));
                 monthsSeen.add(month);
+                nextEventsArr.push(createListItem('month', { month }));
             }
 
-            eventItems.push(createListItem('day', {
+            nextEventsArr.push(createListItem('day', {
                 id: event.id,
                 name: event.summary,
                 dateTime: eventDateTime,
@@ -110,8 +102,7 @@ export class EventItemsWrapper {
                 program: description.program,
             }));
 
-            eventIdToScrollIndexMap[event.id] = index + monthsSeen.size;
-        });
-        return { eventItems, eventIdToScrollIndexMap };
+            return [ ...runningEventsArr, ...nextEventsArr ];
+        }, []);
     }
 }

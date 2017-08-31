@@ -17,22 +17,6 @@ class ConnectedEventList extends React.Component {
         this._renderEventItem = this._renderEventItem.bind(this);
     }
 
-    componentDidUpdate() {
-        const scrollIndex = _.findIndex(
-            this.props.eventItems,
-            item => (
-                item.type === 'day' &&
-                item.dateTime.format('YYYY-MM-DD') === this.props.params.date
-            )
-        );
-
-        if (!this.props.hasEventBeenSelected) {
-            // Only scroll to the index of the current event if the user hasn't manually selected
-            // an event (meaning, right after the events are initially loaded).
-            this.List.scrollToRow(scrollIndex || 0);
-        }
-    }
-
     _renderEventItem(key, index, style, measure) {
         const item = this.props.eventItems[index];
         if (item.type === 'month') {
@@ -53,38 +37,53 @@ class ConnectedEventList extends React.Component {
         />;
     }
 
-    rowItemRenderer = ({ index, isScrolling, isVisible, key, parent, style }) => {
-        return (
-            <CellMeasurer
-                cache={cache}
-                columnIndex={0}
-                key={key}
-                rowIndex={index}
-                parent={parent}
-            >
-                {({ measure }) => { return this._renderEventItem(key, index, style, measure); }}
-            </CellMeasurer>
-        )
-    }
+    rowItemRenderer = ({ index, isScrolling, isVisible, key, parent, style }) => (
+        <CellMeasurer
+            cache={cache}
+            columnIndex={0}
+            key={key}
+            rowIndex={index}
+            parent={parent}
+        >
+            {({ measure }) => this._renderEventItem(key, index, style, measure)}
+        </CellMeasurer>
+    );
 
     render() {
         const numRows = this.props.eventItems.length;
+
+        const scrollIndex = _.findIndex(
+            this.props.eventItems,
+            item => (
+                item.type === 'day' &&
+                item.dateTime.format('YYYY-MM-DD') === this.props.params.date
+            )
+        );
+
         return (
             <div className="event-list container">
-                <AutoSizer>
-                    {({ height, width }) => (
-                        <List
-                            ref={div => this.List = div}
-                            height={height}
-                            width={width}
-                            rowCount={numRows}
-                            rowHeight={cache.rowHeight}
-                            deferredMeasurementCache={cache}
-                            rowRenderer={this.rowItemRenderer}
-                            scrollToAlignment="start"
-                        />
-                    )}
-                </AutoSizer>
+                {
+                    <AutoSizer>
+                        {({ height, width }) => (
+                            <List
+                                ref={div => this.List = div}
+                                height={height}
+                                width={width}
+                                rowCount={numRows}
+                                rowHeight={cache.rowHeight}
+                                deferredMeasurementCache={cache}
+                                rowRenderer={this.rowItemRenderer}
+                                scrollToAlignment="start"
+                                scrollToIndex={scrollIndex || 0}
+                                noRowsRenderer={() => <div />}
+                                // react-virtualized needs estimatedRowSize to be a close approximation
+                                // to the actual calculated row size:
+                                // https://github.com/bvaughn/react-virtualized/blob/master/source/Grid/utils/CellSizeAndPositionManager.js#L152
+                                estimatedRowSize={250}
+                            />
+                        )}
+                    </AutoSizer>
+                }
             </div>
         );
     }
