@@ -20,7 +20,6 @@ import Music from '@/js/components/Media/Music/Music.jsx';
 import Photos from '@/js/components/Media/Photos/Photos.jsx';
 
 import EventList from '@/js/components/Schedule/EventList.jsx';
-import EventSingle from '@/js/components/Schedule/EventSingle.jsx';
 
 main();
 
