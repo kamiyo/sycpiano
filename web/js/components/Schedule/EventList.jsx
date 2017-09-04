@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
+import { SCHEDULE } from '@/js/components/Schedule/actions.js';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
@@ -110,7 +111,6 @@ class ConnectedEventList extends React.Component {
     );
 
     render() {
-        console.log(this.props);
         return (
             <div className="event-list container">
                 {
@@ -150,7 +150,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     dispatchSelectEventAction: eventItem => (
         dispatch({
-            type: 'SCHEDULE--SELECT_EVENT',
+            type: SCHEDULE.SELECT_EVENT,
             eventItem,
         })
     ),

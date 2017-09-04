@@ -1,5 +1,6 @@
-import { EventItemsWrapper } from '@/js/components/Schedule/EventItemsWrapper.js';
 import _ from 'lodash';
+import { transformGCalEventsToListItems } from '@/js/components/Schedule/utils.js';
+import { googleAPI } from '@/js/services/GoogleAPI.js';
 
 export const SCHEDULE = {
     FETCH_EVENTS_SUCCESS: 'SCHEDULE--FETCH_EVENTS_SUCCESS',
@@ -9,17 +10,44 @@ export const SCHEDULE = {
     SELECT_EVENT: 'SCHEDULE--SELECT_EVENT',
 };
 
-fetchEventsRequest = () => ({
+const fetchEventsRequest = () => ({
     type: SCHEDULE.FETCH_EVENTS_REQUEST
-})
+});
 
-fetchEventsSuccess = (events) => {
-    const wrapper = new EventItemsWrapper(events);
+const fetchEventsSuccess = (listItems, currentItem) => ({
+    type: SCHEDULE.FETCH_EVENTS_SUCCESS,
+    listItems: listItems,
     // Initially default to the closest upcoming event.
-    const currentItem = wrapper.eventItems.find(item => item.type !== 'month');
-    return {
-        type: SCHEDULE.FETCH_EVENTS_SUCCESS,
-        fetchedEvents: events,
-        currentItem: currentItem
-    };
+    currentItem: currentItem
+});
+
+const shouldFetchEvents = (state) => {
+    const eventItemsReducer = state.schedule_eventItems;
+    // should not call api if have items or isFetching
+    // will update if we need to add functionality to get more events
+    return (eventItemsReducer.items.length === 0 && !eventItemsReducer.isFetching);
 }
+
+const _fetchEvents = () => (
+    dispatch => {
+        dispatch(fetchEventsRequest());
+        return googleAPI.getCalendarEvents()
+            .then(response => {
+                const listItems = transformGCalEventsToListItems(response.data.items);
+                const currentItem = listItems.find(item => item.type !== 'month');
+                return dispatch(fetchEventsSuccess(listItems, currentItem));
+            });
+    }
+);
+
+export const fetchEvents = () => (
+    (dispatch, getState) => {
+        if (shouldFetchEvents(getState())) {
+            // need to fetch items
+            return dispatch(_fetchEvents());
+        } else {
+            // already have items
+            return Promise.resolve();
+        }
+    }
+);

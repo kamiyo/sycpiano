@@ -7,7 +7,8 @@
  * We make sure to namespace the states by their corresponding reducers.
  */
 
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk'
 import { acclaimsListReducer } from '@/js/components/Press/reducers.js';
 import { eventItemsReducer } from '@/js/components/Schedule/reducers.js';
 
@@ -16,4 +17,4 @@ const reducersMap = {
     press_acclaimsList: acclaimsListReducer,
 };
 
-export default () => createStore(combineReducers(reducersMap));
+export default () => createStore(combineReducers(reducersMap), applyMiddleware(thunk));
