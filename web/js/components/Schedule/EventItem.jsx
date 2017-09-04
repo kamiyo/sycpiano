@@ -9,11 +9,11 @@ import moment from 'moment-timezone';
 const DateContainer = ({ dateTime }) => (
     <div className="event-item__date-container">
         <div className="event-item__date">
-            <div className="event-item__day-of-week">
-                {dateTime.format('ddd')}
-            </div>
             <div className="event-item__day">
                 {parseInt(dateTime.format('D'))}
+            </div>
+            <div className="event-item__day-of-week">
+                {dateTime.format('ddd')}
             </div>
         </div>
     </div>
