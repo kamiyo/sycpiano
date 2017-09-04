@@ -1,6 +1,8 @@
 @import '../colors.less';
 @import '../fonts.less';
 
+@date-container-dimension: 107px;
+
 .event-item {
     padding-top: 30px;
     display: flex;
@@ -21,15 +23,22 @@
 }
 
 .event-item__date {
-    font-size: 35px;
     text-align: center;
     background-color: @light-blue;
     color: white;
-    height: 80px;
-    width: 80px;
-    line-height: 80px;
+    height: @date-container-dimension;
+    width: @date-container-dimension;
+    line-height: 43px;
     border-radius: 50%;
+    padding: 12px;
+}
 
+.event-item__day {
+    font-size: 35px;
+}
+
+.event-item__day-of-week {
+    font-size: 20px;
 }
 
 .event-item__info {
