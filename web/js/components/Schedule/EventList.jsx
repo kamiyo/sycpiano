@@ -1,7 +1,6 @@
 import '@/less/Schedule/event-list.less';
 
 import _ from 'lodash';
-import $ from 'cash-dom';
 import moment from 'moment-timezone';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -15,7 +14,66 @@ class ConnectedEventList extends React.Component {
     constructor(props, context) {
         super(props, context);
         this._renderEventItem = this._renderEventItem.bind(this);
+
+        this.currentOffset = 0;
     }
+
+    componentDidUpdate() {
+        if (this.props.hasEventBeenSelected) {
+            this._scrollToSelectedRow();
+            return;
+        }
+
+        if (this.props.params.date) {
+            const scrollIndex = this._getScrollIndex();
+            this.currentRow = scrollIndex;
+            this.List.scrollToPosition(this.List.getOffsetForRow({ index: scrollIndex }));
+        } else {
+            this.List.scrollToRow(0);
+        }
+    }
+
+    _scrollToSelectedRow = () => {
+        const targetIndex = this._getScrollIndex();
+        const targetOffset = this.List.getOffsetForRow({ index: targetIndex });
+
+        let prevTimestamp = null;
+        let currentOffset = this.currentOffset;
+        const scrollVelocity = 0.3;
+
+        const scrollStep = timestamp => {
+            const direction = targetOffset < this.currentOffset ? -1 : 1;
+
+            if (
+                (direction === 1 && this.currentOffset >= targetOffset) ||
+                (direction === -1 && this.currentOffset <= targetOffset)
+            ) {
+                return;
+            }
+
+            if (!prevTimestamp) prevTimestamp = timestamp;
+            const timeDiff = timestamp - prevTimestamp;
+
+            currentOffset += timeDiff * scrollVelocity * direction;
+
+            this.List.scrollToPosition(currentOffset);
+
+            prevTimestamp = timestamp;
+            window.requestAnimationFrame(scrollStep);
+        };
+
+        window.requestAnimationFrame(scrollStep);
+    }
+
+    _getScrollIndex = () => (
+        Math.max(0, _.findIndex(
+            this.props.eventItems,
+            item => (
+                item.type === 'day' &&
+                item.dateTime.format('YYYY-MM-DD') === this.props.params.date
+            )
+        ))
+    );
 
     _renderEventItem(key, index, style, measure) {
         const item = this.props.eventItems[index];
@@ -33,7 +91,9 @@ class ConnectedEventList extends React.Component {
             style={style}
             measure={measure}
             gridState={this.List && this.List.Grid.state}
-            handleSelect={this.props.dispatchSelectEventAction(item)}
+            handleSelect={(e) => {
+                this.props.dispatchSelectEventAction(item);
+            }}
         />;
     }
 
@@ -50,16 +110,7 @@ class ConnectedEventList extends React.Component {
     );
 
     render() {
-        const numRows = this.props.eventItems.length;
-
-        const scrollIndex = _.findIndex(
-            this.props.eventItems,
-            item => (
-                item.type === 'day' &&
-                item.dateTime.format('YYYY-MM-DD') === this.props.params.date
-            )
-        );
-
+        console.log(this.props);
         return (
             <div className="event-list container">
                 {
@@ -69,17 +120,19 @@ class ConnectedEventList extends React.Component {
                                 ref={div => this.List = div}
                                 height={height}
                                 width={width}
-                                rowCount={numRows}
+                                rowCount={this.props.eventItems.length}
                                 rowHeight={cache.rowHeight}
                                 deferredMeasurementCache={cache}
                                 rowRenderer={this.rowItemRenderer}
                                 scrollToAlignment="start"
-                                scrollToIndex={scrollIndex || 0}
                                 noRowsRenderer={() => <div />}
                                 // react-virtualized needs estimatedRowSize to be a close approximation
                                 // to the actual calculated row size:
                                 // https://github.com/bvaughn/react-virtualized/blob/master/source/Grid/utils/CellSizeAndPositionManager.js#L152
-                                estimatedRowSize={250}
+                                estimatedRowSize={300}
+                                onScroll={({ clientHeight, scrollHeight, scrollTop }) => {
+                                    this.currentOffset = scrollTop;
+                                }}
                             />
                         )}
                     </AutoSizer>
@@ -96,7 +149,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     dispatchSelectEventAction: eventItem => (
-        () => dispatch({
+        dispatch({
             type: 'SCHEDULE--SELECT_EVENT',
             eventItem,
         })

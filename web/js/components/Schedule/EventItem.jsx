@@ -23,7 +23,7 @@ const EventName = ({ dateTime, name, storeScroll, gridState, handleSelect }) => 
             {name}
         </div>
     </Link>
-)
+);
 
 const EventBody = ({ program, collaborators }) => (
     <div className="event-item__info-body">
@@ -42,7 +42,7 @@ const EventBody = ({ program, collaborators }) => (
             }
         </ul>
     </div>
-)
+);
 
 const EventItem = ({
     event,

@@ -1,29 +1,10 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import { EventItemsWrapper } from '@/js/components/Schedule/EventItemsWrapper.js';
-
-export const dateReducer = (state = {
-    date: moment(),
-    eventsFetched: false
-}, action) => {
-    switch (action.type) {
-        case 'SCHEDULE--UPDATE_DATE':
-            return { ...state, date: action.date};
-        case 'SCHEDULE--PREV_MONTH':
-            return { ...state, date: state.date.subtract(1, 'month')};
-        case 'SCHEDULE--NEXT_MONTH':
-            return { ...state, date: state.date.add(1, 'month')};
-        case 'SCHEDULE--FETCH_EVENTS_SUCCESS':
-            return { ...state, eventsFetched: true};
-        default:
-            return state;
-    };
-};
+import { transformGCalEventsToListItems } from '@/js/components/Schedule/utils.js';
 
 export const eventItemsReducer = (state = {
     items: [],
-    eventItemsWrapper: null,
     isFetching: false,
     hasEventBeenSelected: false,
     currentItem: null,
@@ -31,16 +12,17 @@ export const eventItemsReducer = (state = {
 }, action) => {
     switch (action.type) {
         case 'SCHEDULE--FETCH_EVENTS_SUCCESS':
-            const wrapper = new EventItemsWrapper(action.fetchedEvents);
+            const listItems = transformGCalEventsToListItems(action.fetchedEvents);
+
             return {
-                eventItemsWrapper: wrapper,
-                items: wrapper.eventItems,
+                ...state,
+                items: listItems,
                 isFetching: false,
                 // Initially default to the closest upcoming event.
-                currentItem: _.find(wrapper.eventItems, item => item.type !== 'month'),
+                currentItem: _.find(listItems, item => item.type !== 'month'),
             };
         case 'SCHEDULE--FETCHING_EVENTS':
-            return state.isFetching ? state : { ...state, isFetching: true }
+            return state.isFetching ? state : { ...state, isFetching: true };
         case 'SCHEDULE--LAT_LNG_FETCHING':
             return { ...state, isFetchingLatLng: true };
         case 'SCHEDULE--LAT_LNG_FETCHED':
@@ -52,12 +34,12 @@ export const eventItemsReducer = (state = {
         case 'SCHEDULE--SELECT_EVENT':
             return {
                 ...state,
-                currentItem: action.eventItem,
                 hasEventBeenSelected: true,
                 // Reset lat, long every time a new item is selected.
                 // The EventDetails component is responsible for setting the
                 // currentLatLng state via async dispatch.
                 currentLatLng: null,
+                currentItem: action.eventItem,
             };
         default:
             return state;
