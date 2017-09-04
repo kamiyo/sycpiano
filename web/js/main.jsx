@@ -20,8 +20,6 @@ import Music from '@/js/components/Media/Music/Music.jsx';
 import Photos from '@/js/components/Media/Photos/Photos.jsx';
 
 import EventList from '@/js/components/Schedule/EventList.jsx';
-import EventSingle from '@/js/components/Schedule/EventSingle.jsx';
-
 
 main();
 
@@ -36,7 +34,7 @@ function main() {
                     <Route path='contact' component={Contact} />
                     <Route path='schedule' component={Schedule} >
                         <IndexRoute component={EventList} />
-                        <Route path=':id' component={(match) => <EventSingle id={match.params.id} />} />
+                        <Route path=':date' component={EventList} />
                     </Route>
                     <Route path='media' component={Media}>
                         <Route path='videos' component={Videos} />

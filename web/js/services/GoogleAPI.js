@@ -6,6 +6,9 @@ const calAPIKey = 'AIzaSyB1g_4E0UTqwX0TxezROJiNj3cAY0rr16w';
 const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
 const uriEncCalId = encodeURIComponent(calendarId);
 
+const mapsApiKey = 'AIzaSyCrouLkU4nuAFy1CRBU4qkAtxTXyjvrcFQ';
+export const googleMapsUrl = `https://maps.googleapis.com/maps/api/js?v=3.28&libraries=places,geometry&key=${mapsApiKey}`;
+
 /**
  * NOTE: All GoogleAPI functions return promises.
  */
@@ -63,8 +66,8 @@ class GoogleAPI {
     }
 
     geocode(address) {
-        const url = `https://maps.googleapis.com/maps/api/geocode/json`;
-        return axios.get(url, {params: {address: address, key: tzAPIKey}});
+        const url = 'https://maps.googleapis.com/maps/api/geocode/json';
+        return axios.get(url, { params: { address: address, key: tzAPIKey }});
     }
 
     /**
