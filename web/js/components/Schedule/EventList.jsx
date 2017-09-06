@@ -43,13 +43,12 @@ class ConnectedEventList extends React.Component {
 
         let prevTimestamp = null;
         let currentOffset = this.currentOffset;
-        let direction = null;
         const scrollVelocity = 0.5;
 
         const scrollStep = timestamp => {
             if (currentOffset === targetOffset) return;
 
-            direction = targetOffset < currentOffset ? -1 : 1;
+            const direction = targetOffset < currentOffset ? -1 : 1;
 
             if (!prevTimestamp) prevTimestamp = timestamp;
             const timeDiff = timestamp - prevTimestamp;
