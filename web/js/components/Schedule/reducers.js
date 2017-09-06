@@ -1,6 +1,3 @@
-import _ from 'lodash';
-import moment from 'moment';
-
 import { SCHEDULE } from '@/js/components/Schedule/actions.js';
 
 export const eventItemsReducer = (state = {
