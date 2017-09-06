@@ -1,5 +1,6 @@
 import '@/less/Schedule/event-list.less';
 
+// should we just use es6 array functions instead of lodash?
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import React from 'react';
@@ -7,7 +8,7 @@ import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
-import { SCHEDULE } from '@/js/components/Schedule/actions.js';
+import { SCHEDULE, selectEvent } from '@/js/components/Schedule/actions.js';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
@@ -34,28 +35,32 @@ class ConnectedEventList extends React.Component {
         }
     }
 
+    // TODO: change to duration-based animation.
+    // TODO: add easing
     _scrollToSelectedRow = () => {
         const targetIndex = this._getScrollIndex();
         const targetOffset = this.List.getOffsetForRow({ index: targetIndex });
 
         let prevTimestamp = null;
         let currentOffset = this.currentOffset;
-        const scrollVelocity = 0.3;
+        let direction = null;
+        const scrollVelocity = 0.5;
 
         const scrollStep = timestamp => {
-            const direction = targetOffset < this.currentOffset ? -1 : 1;
+            if (currentOffset === targetOffset) return;
 
-            if (
-                (direction === 1 && this.currentOffset >= targetOffset) ||
-                (direction === -1 && this.currentOffset <= targetOffset)
-            ) {
-                return;
-            }
+            direction = targetOffset < currentOffset ? -1 : 1;
 
             if (!prevTimestamp) prevTimestamp = timestamp;
             const timeDiff = timestamp - prevTimestamp;
 
+            const prevToGo = targetOffset - currentOffset;
             currentOffset += timeDiff * scrollVelocity * direction;
+            const postToGo = targetOffset - currentOffset;
+
+            if (prevToGo * postToGo < 0) {      // negative product means overshoot
+                currentOffset = targetOffset;   // if update will cause overshoot, set to target
+            }
 
             this.List.scrollToPosition(currentOffset);
 
@@ -93,7 +98,7 @@ class ConnectedEventList extends React.Component {
             measure={measure}
             gridState={this.List && this.List.Grid.state}
             handleSelect={(e) => {
-                this.props.dispatchSelectEventAction(item);
+                this.props.selectEvent(item);
             }}
         />;
     }
@@ -147,16 +152,7 @@ const mapStateToProps = state => ({
     hasEventBeenSelected: state.schedule_eventItems.hasEventBeenSelected,
 });
 
-const mapDispatchToProps = dispatch => ({
-    dispatchSelectEventAction: eventItem => (
-        dispatch({
-            type: SCHEDULE.SELECT_EVENT,
-            eventItem,
-        })
-    ),
-});
-
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    { selectEvent }
 )(ConnectedEventList);

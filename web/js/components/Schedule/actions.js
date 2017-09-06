@@ -1,6 +1,6 @@
-import _ from 'lodash';
 import { transformGCalEventsToListItems } from '@/js/components/Schedule/utils.js';
 import { googleAPI } from '@/js/services/GoogleAPI.js';
+import moment from 'moment-timezone';
 
 export const SCHEDULE = {
     FETCH_EVENTS_SUCCESS: 'SCHEDULE--FETCH_EVENTS_SUCCESS',
@@ -28,26 +28,71 @@ const shouldFetchEvents = (state) => {
     return (eventItemsReducer.items.length === 0 && !eventItemsReducer.isFetching);
 }
 
-const _fetchEvents = () => (
+const _fetchEvents = (initialEventDateString) => (
     dispatch => {
         dispatch(fetchEventsRequest());
-        return googleAPI.getCalendarEvents()
-            .then(response => {
-                const listItems = transformGCalEventsToListItems(response.data.items);
-                const currentItem = listItems.find(item => item.type !== 'month');
-                return dispatch(fetchEventsSuccess(listItems, currentItem));
-            });
+        return googleAPI.getCalendarEvents().then(response => {
+            const listItems = transformGCalEventsToListItems(response.data.items);
+            const currentItem = listItems.find(
+                item => item.type !== 'month'
+                && moment(initialEventDateString).isSame(item.dateTime, 'day')
+            ) || listItems.find(item => item.type !== 'month');
+            return dispatch(fetchEventsSuccess(listItems, currentItem));
+        });
     }
 );
 
-export const fetchEvents = () => (
+export const fetchEvents = (initialEventDateString) => (
     (dispatch, getState) => {
         if (shouldFetchEvents(getState())) {
             // need to fetch items
-            return dispatch(_fetchEvents());
+            return dispatch(_fetchEvents(initialEventDateString));
         } else {
             // already have items
             return Promise.resolve();
         }
     }
+);
+
+const fetchLatLngRequest = () => ({
+    type: SCHEDULE.FETCH_LAT_LNG_REQUEST
+});
+
+const fetchLatLngSuccess = (match) => ({
+    type: SCHEDULE.FETCH_LAT_LNG_SUCCESS,
+    ...match.geometry.location
+})
+
+const shouldFetchLatLng = (state) => {
+    const eventItemsReducer = state.schedule_eventItems;
+    return (!eventItemsReducer.isFetchingLatLng);
+}
+
+const _fetchLatLng = (location) => (
+    dispatch => {
+        dispatch(fetchLatLngRequest());
+        return googleAPI.geocode(location).then(response => {
+            const firstMatch = response.data.results[0];
+            return dispatch(fetchLatLngSuccess(firstMatch));
+        });
+    }
+);
+
+export const fetchLatLng = (location) => (
+    (dispatch, getState) => {
+        if (shouldFetchLatLng(getState())) {
+            return dispatch(_fetchLatLng(location));
+        } else {
+            return Promise.resolve();
+        }
+    }
+);
+
+export const selectEvent = (eventItem) => (
+    dispatch => (
+        dispatch({
+            type: SCHEDULE.SELECT_EVENT,
+            eventItem: eventItem
+        })
+    )
 );

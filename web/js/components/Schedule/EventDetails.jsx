@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import withScriptJs from "react-google-maps/lib/async/withScriptjs";
 
-import { googleAPI, googleMapsUrl } from '@/js/services/GoogleAPI.js'
+import { googleAPI, googleMapsUrl } from '@/js/services/GoogleAPI.js';
+import { SCHEDULE, fetchLatLng } from '@/js/components/Schedule/actions.js';
+
 
 const EventMap = withScriptJs(
     withGoogleMap(({ lat, lng }) => {
@@ -24,7 +26,7 @@ const EventMap = withScriptJs(
 class EventDetails extends React.Component {
     componentWillUpdate(nextProps) {
         if (nextProps.currentItem && !nextProps.currentLatLng) {
-            nextProps.getLatLong(nextProps.currentItem.location);
+            nextProps.fetchLatLng(nextProps.currentItem.location);
         }
     }
 
@@ -71,21 +73,7 @@ const mapStateToProps = state => ({
     currentLatLng: state.schedule_eventItems.currentLatLng,
 });
 
-const mapDispatchToProps = dispatch => ({
-    getLatLong: (location) => {
-        googleAPI.geocode(location).then(response => {
-            const firstMatch = response.data.results[0];
-            dispatch({
-                type: 'SCHEDULE--LAT_LNG_FETCHED',
-                // geometry.location is an obj that looks like { lat, long }
-                ...firstMatch.geometry.location,
-            });
-        });
-        dispatch({ type: 'SCHEDULE--LAT_LNG_FETCHING' });
-    },
-});
-
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    { fetchLatLng }
 )(EventDetails);

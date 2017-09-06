@@ -6,10 +6,9 @@ import { connect } from 'react-redux';
 import { fetchEvents } from '@/js/components/Schedule/actions.js'
 import ConnectedEventDetails from '@/js/components/Schedule/EventDetails.jsx';
 
-
 class Schedule extends React.Component {
     componentWillMount() {
-        this.props.fetchEvents();
+        this.props.fetchEvents(this.props.params.date);
     }
 
     render () {

@@ -20,12 +20,12 @@ export const eventItemsReducer = (state = {
             };
         case SCHEDULE.FETCH_EVENTS_REQUEST:
             return state.isFetching ? state : { ...state, isFetching: true };
-        case SCHEDULE.LAT_LNG_FETCHING:
+        case SCHEDULE.FETCH_LAT_LNG_REQUEST:
             return {
                 ...state,
                 isFetchingLatLng: true
             };
-        case SCHEDULE.LAT_LNG_FETCHED:
+        case SCHEDULE.FETCH_LAT_LNG_SUCCESS:
             return {
                 ...state,
                 isFetchingLatLng: false,
