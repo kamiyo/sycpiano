@@ -1,6 +1,5 @@
 import '@/less/Schedule/schedule.less';
 
-import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 import { fetchEvents } from '@/js/components/Schedule/actions.js'
