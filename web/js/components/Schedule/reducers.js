@@ -6,6 +6,7 @@ export const eventItemsReducer = (state = {
     hasEventBeenSelected: false,
     currentItem: null,
     isFetchingLatLng: false,
+    isAnimatingScroll: false
 }, action) => {
     switch (action.type) {
         case SCHEDULE.FETCH_EVENTS_SUCCESS:
@@ -38,6 +39,16 @@ export const eventItemsReducer = (state = {
                 currentLatLng: null,
                 currentItem: action.eventItem,
             };
+        case SCHEDULE.ANIMATE_SCROLL_START:
+            return {
+                ...state,
+                isAnimatingScroll: true
+            };
+        case SCHEDULE.ANIMATE_SCROLL_STOP:
+            return {
+                ...state,
+                isAnimatingScroll: false
+            }
         default:
             return state;
     };
