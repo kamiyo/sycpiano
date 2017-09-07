@@ -39,12 +39,12 @@ export const eventItemsReducer = (state = {
                 currentLatLng: null,
                 currentItem: action.eventItem,
             };
-        case SCHEDULE.ANIMATE_SCROLL_START:
+        case SCHEDULE.SCROLL_START:
             return {
                 ...state,
                 isAnimatingScroll: true
             };
-        case SCHEDULE.ANIMATE_SCROLL_STOP:
+        case SCHEDULE.SCROLL_FINISH:
             return {
                 ...state,
                 isAnimatingScroll: false

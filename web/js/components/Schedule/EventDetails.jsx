@@ -54,7 +54,7 @@ class EventDetails extends React.Component {
                 <div>{program}</div>
 
                 {
-                    this.props.currentLatLng &&
+                    this.props.currentLatLng && !this.props.isAnimatingScroll &&
                     <EventMap
                         containerElement={<div />}
                         mapElement={<div className="event-map" />}
@@ -71,6 +71,7 @@ class EventDetails extends React.Component {
 const mapStateToProps = state => ({
     currentItem: state.schedule_eventItems.currentItem,
     currentLatLng: state.schedule_eventItems.currentLatLng,
+    isAnimatingScroll: state.schedule_eventItems.isAnimatingScroll
 });
 
 export default connect(

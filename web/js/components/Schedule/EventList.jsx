@@ -40,13 +40,16 @@ class ConnectedEventList extends React.Component {
     _scrollToSelectedRow = () => {
         const targetIndex = this._getScrollIndex();
         const targetOffset = this.List.getOffsetForRow({ index: targetIndex });
-
+        this.props.animateStart();
         animateFn(
             this.currentOffset,
             targetOffset,
             500,
             (position) => this.List.scrollToPosition(position),
             easeQuadOut,
+            () => {
+                this.props.animateStop();
+            }
         );
     }
 
@@ -135,7 +138,7 @@ export default connect(
     mapStateToProps,
     {
         selectEvent,
-        animateStart: () => (dispatch({type: SCHEDULE.ANIMATE_SCROLL_START})),
-        animateStop: () => (dispatch({type: SCHEDULE.ANIMATE_SCROLL_STOP}))
+        animateStart: () => (dispatch) => (dispatch({type: SCHEDULE.SCROLL_START})),
+        animateStop: () => (dispatch) => (dispatch({type: SCHEDULE.SCROLL_FINISH}))
     }
 )(ConnectedEventList);
