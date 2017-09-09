@@ -75,7 +75,6 @@ const fetchLatLng = (location) => (dispatch) => {
     });
 }
 
-
 export const createFetchLatLngAction = (location) => (dispatch, getState) => {
     if (shouldFetchLatLng(getState())) {
         return dispatch(fetchLatLng(location));
@@ -84,10 +83,21 @@ export const createFetchLatLngAction = (location) => (dispatch, getState) => {
     }
 }
 
-
-export const selectEvent = (eventItem) => (dispatch) => (
+export const dispatchSelectEvent = (eventItem) => (dispatch) => (
     dispatch({
         type: SCHEDULE_ACTIONS.SELECT_EVENT,
         eventItem: eventItem
+    })
+);
+
+export const dispatchAnimateStart = () => (dispatch) => (
+    dispatch({
+        type: SCHEDULE_ACTIONS.SCROLL_START
+    })
+);
+
+export const dispatchAnimateFinish = () => (dispatch) => (
+    dispatch({
+        type: SCHEDULE_ACTIONS.SCROLL_FINISH
     })
 );

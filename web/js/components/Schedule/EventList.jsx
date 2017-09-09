@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
-import { SCHEDULE_ACTIONS, selectEvent } from '@/js/components/Schedule/actions.js';
+import { dispatchSelectEvent, dispatchAnimateStart, dispatchAnimateFinish } from '@/js/components/Schedule/actions.js';
 import animateFn from '@/js/components/animate.js';
 import { easeQuadOut } from 'd3-ease';
 
@@ -40,16 +40,14 @@ class ConnectedEventList extends React.Component {
     _scrollToSelectedRow = () => {
         const targetIndex = this._getScrollIndex();
         const targetOffset = this.List.getOffsetForRow({ index: targetIndex });
-        this.props.animateStart();
+        this.props.dispatchAnimateStart();
         animateFn(
             this.currentOffset,
             targetOffset,
             500,
             (position) => this.List.scrollToPosition(position),
             easeQuadOut,
-            () => {
-                this.props.animateStop();
-            }
+            () => {this.props.dispatchAnimateFinish();}
         );
     }
 
@@ -80,7 +78,7 @@ class ConnectedEventList extends React.Component {
             measure={measure}
             gridState={this.List && this.List.Grid.state}
             handleSelect={(e) => {
-                this.props.selectEvent(item);
+                this.props.dispatchSelectEvent(item);
             }}
         />;
     }
@@ -137,8 +135,8 @@ const mapStateToProps = state => ({
 export default connect(
     mapStateToProps,
     {
-        selectEvent,
-        animateStart: () => (dispatch) => (dispatch({type: SCHEDULE_ACTIONS.SCROLL_START})),
-        animateStop: () => (dispatch) => (dispatch({type: SCHEDULE_ACTIONS.SCROLL_FINISH}))
+        dispatchSelectEvent,
+        dispatchAnimateStart,
+        dispatchAnimateFinish
     }
 )(ConnectedEventList);
