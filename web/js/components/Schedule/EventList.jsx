@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
-import { SCHEDULE, selectEvent } from '@/js/components/Schedule/actions.js';
+import { SCHEDULE_ACTIONS, selectEvent } from '@/js/components/Schedule/actions.js';
 import animateFn from '@/js/components/animate.js';
 import { easeQuadOut } from 'd3-ease';
 
@@ -138,7 +138,7 @@ export default connect(
     mapStateToProps,
     {
         selectEvent,
-        animateStart: () => (dispatch) => (dispatch({type: SCHEDULE.SCROLL_START})),
-        animateStop: () => (dispatch) => (dispatch({type: SCHEDULE.SCROLL_FINISH}))
+        animateStart: () => (dispatch) => (dispatch({type: SCHEDULE_ACTIONS.SCROLL_START})),
+        animateStop: () => (dispatch) => (dispatch({type: SCHEDULE_ACTIONS.SCROLL_FINISH}))
     }
 )(ConnectedEventList);

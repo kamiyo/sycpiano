@@ -2,7 +2,7 @@ import { transformGCalEventsToListItems } from '@/js/components/Schedule/utils.j
 import { googleAPI } from '@/js/services/GoogleAPI.js';
 import moment from 'moment-timezone';
 
-export const SCHEDULE = {
+export const SCHEDULE_ACTIONS = {
     FETCH_EVENTS_SUCCESS: 'SCHEDULE--FETCH_EVENTS_SUCCESS',
     FETCH_EVENTS_REQUEST: 'SCHEDULE--FETCH_EVENTS_REQUEST',
     FETCH_LAT_LNG_REQUEST: 'SCHEDULE--FETCH_LAT_LNG_REQUEST',
@@ -13,11 +13,11 @@ export const SCHEDULE = {
 };
 
 const fetchEventsRequest = () => ({
-    type: SCHEDULE.FETCH_EVENTS_REQUEST
+    type: SCHEDULE_ACTIONS.FETCH_EVENTS_REQUEST
 });
 
 const fetchEventsSuccess = (listItems, currentItem) => ({
-    type: SCHEDULE.FETCH_EVENTS_SUCCESS,
+    type: SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS,
     listItems: listItems,
     // Initially default to the closest upcoming event.
     currentItem: currentItem
@@ -30,71 +30,64 @@ const shouldFetchEvents = (state) => {
     return (eventItemsReducer.items.length === 0 && !eventItemsReducer.isFetching);
 }
 
-const _fetchEvents = (initialEventDateString) => (
-    dispatch => {
-        dispatch(fetchEventsRequest());
-        return googleAPI.getCalendarEvents().then(response => {
-            const listItems = transformGCalEventsToListItems(response.data.items);
-            const currentItem = listItems.find(
-                item => item.type !== 'month'
+const fetchEvents = (initialEventDateString) => (dispatch) => {
+    dispatch(fetchEventsRequest());
+    return googleAPI.getCalendarEvents().then(response => {
+        const listItems = transformGCalEventsToListItems(response.data.items);
+        const currentItem = listItems.find(
+            item => item.type !== 'month'
                 && moment(initialEventDateString).isSame(item.dateTime, 'day')
-            ) || listItems.find(item => item.type !== 'month');
-            return dispatch(fetchEventsSuccess(listItems, currentItem));
-        });
-    }
-);
+        ) || listItems.find(item => item.type !== 'month');
+        return dispatch(fetchEventsSuccess(listItems, currentItem));
+    });
+}
 
-export const fetchEvents = (initialEventDateString) => (
-    (dispatch, getState) => {
-        if (shouldFetchEvents(getState())) {
-            // need to fetch items
-            return dispatch(_fetchEvents(initialEventDateString));
-        } else {
-            // already have items
-            return Promise.resolve();
-        }
+
+export const createFetchEventsAction = (initialEventDateString) => (dispatch, getState) => {
+    if (shouldFetchEvents(getState())) {
+        // need to fetch items
+        return dispatch(fetchEvents(initialEventDateString));
+    } else {
+        // already have items
+        return Promise.resolve();
     }
-);
+}
 
 const fetchLatLngRequest = () => ({
-    type: SCHEDULE.FETCH_LAT_LNG_REQUEST
+    type: SCHEDULE_ACTIONS.FETCH_LAT_LNG_REQUEST
 });
 
 const fetchLatLngSuccess = (match) => ({
-    type: SCHEDULE.FETCH_LAT_LNG_SUCCESS,
+    type: SCHEDULE_ACTIONS.FETCH_LAT_LNG_SUCCESS,
     ...match.geometry.location
-})
+});
 
 const shouldFetchLatLng = (state) => {
     const eventItemsReducer = state.schedule_eventItems;
-    return (!eventItemsReducer.isFetchingLatLng);
+    return !eventItemsReducer.isFetchingLatLng;
 }
 
-const _fetchLatLng = (location) => (
-    dispatch => {
-        dispatch(fetchLatLngRequest());
-        return googleAPI.geocode(location).then(response => {
-            const firstMatch = response.data.results[0];
-            return dispatch(fetchLatLngSuccess(firstMatch));
-        });
-    }
-);
+const fetchLatLng = (location) => (dispatch) => {
+    dispatch(fetchLatLngRequest());
+    return googleAPI.geocode(location).then(response => {
+        const firstMatch = response.data.results[0];
+        return dispatch(fetchLatLngSuccess(firstMatch));
+    });
+}
 
-export const fetchLatLng = (location) => (
-    (dispatch, getState) => {
-        if (shouldFetchLatLng(getState())) {
-            return dispatch(_fetchLatLng(location));
-        } else {
-            return Promise.resolve();
-        }
-    }
-);
 
-export const selectEvent = (eventItem) => (
-    dispatch => (
-        dispatch({
-            type: SCHEDULE.SELECT_EVENT,
-            eventItem: eventItem
-        })
-    )
+export const createFetchLatLngAction = (location) => (dispatch, getState) => {
+    if (shouldFetchLatLng(getState())) {
+        return dispatch(fetchLatLng(location));
+    } else {
+        return Promise.resolve();
+    }
+}
+
+
+export const selectEvent = (eventItem) => (dispatch) => (
+    dispatch({
+        type: SCHEDULE_ACTIONS.SELECT_EVENT,
+        eventItem: eventItem
+    })
 );

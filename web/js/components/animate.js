@@ -14,7 +14,7 @@ const animateFn = (
     }
 
     let startTimestamp = null;
-    const duration_inv = 1 / duration;    // to avoid dividing in the loop
+    const durationInv = 1 / duration;    // to avoid dividing in the loop
     const startToEndValue = endValue - startValue;
 
     const animationStep = timestamp => {
@@ -23,13 +23,13 @@ const animateFn = (
             window.requestAnimationFrame(animationStep);
         } else {
             // elapsed time normalized to [0, 1]
-            const t_elapsed = (timestamp - startTimestamp) * duration_inv;
-            if (t_elapsed >= 1.0) {
+            const tElapsed = (timestamp - startTimestamp) * durationInv;
+            if (tElapsed >= 1.0) {
                 if (callback) callback();
                 return;
             }
-            const t_eased = easing(t_elapsed);
-            const currentValue = startValue + startToEndValue * t_eased;
+            const tEased = easing(tElapsed);
+            const currentValue = startValue + startToEndValue * tEased;
             fn(currentValue);
             window.requestAnimationFrame(animationStep);
         }

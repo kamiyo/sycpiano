@@ -2,12 +2,12 @@ import '@/less/Schedule/schedule.less';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { fetchEvents } from '@/js/components/Schedule/actions.js'
+import { createFetchEventsAction } from '@/js/components/Schedule/actions.js'
 import ConnectedEventDetails from '@/js/components/Schedule/EventDetails.jsx';
 
 class Schedule extends React.Component {
     componentWillMount() {
-        this.props.fetchEvents(this.props.params.date);
+        this.props.createFetchEventsAction(this.props.params.date);
     }
 
     render () {
@@ -30,5 +30,5 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    { fetchEvents }
+    { createFetchEventsAction }
 )(Schedule);

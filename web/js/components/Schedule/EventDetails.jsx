@@ -6,7 +6,7 @@ import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import withScriptJs from "react-google-maps/lib/async/withScriptjs";
 
 import { googleMapsUrl } from '@/js/services/GoogleAPI.js';
-import { SCHEDULE, fetchLatLng } from '@/js/components/Schedule/actions.js';
+import { createFetchLatLngAction } from '@/js/components/Schedule/actions.js';
 
 
 const EventMap = withScriptJs(
@@ -26,7 +26,7 @@ const EventMap = withScriptJs(
 class EventDetails extends React.Component {
     componentWillUpdate(nextProps) {
         if (nextProps.currentItem && !nextProps.currentLatLng) {
-            nextProps.fetchLatLng(nextProps.currentItem.location);
+            nextProps.createFetchLatLngAction(nextProps.currentItem.location);
         }
     }
 
@@ -76,5 +76,5 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    { fetchLatLng }
+    { createFetchLatLngAction }
 )(EventDetails);
