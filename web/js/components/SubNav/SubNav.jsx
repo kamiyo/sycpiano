@@ -19,9 +19,10 @@ const Animations = {
             [
                 { scaleY: [1, 0] },
                 1,
-                { easing: 'ease-out', display: 'block' },
+                { easing: 'ease-out', display: 'inline-block' },
             ],
-        ]
+        ],
+        reset: { display: 'inline-block' }
     })
 
 };
@@ -33,7 +34,7 @@ export default class SubNav extends React.Component {
         Velocity(component, Animations.HeightIn, {
             duration: 250,
             delay: 200,
-            display: 'block'
+            display: 'inline-block'
         });
         Velocity(subs, Animations.RightIn, {
             delay: 250,

@@ -18,20 +18,20 @@ class NavBarLink extends React.Component {
     };
 
     componentDidMount() {
-        if (this.props.subNavLinks) {
-            // TODO: find a way to do this without timeout
-            setTimeout(() => {
-                const dims = ReactDOM.findDOMNode(this).getBoundingClientRect();
-                this.setState({
-                    subNavPosition: {
-                        top: dims.top + dims.height,
-                        right: window.outerWidth - dims.left - dims.width,
-                        width: dims.width
-                    }
-                });
-            }, 100);
+        // if (this.props.subNavLinks) {
+        //     // TODO: find a way to do this without timeout
+        //     setTimeout(() => {
+        //         const dims = ReactDOM.findDOMNode(this).getBoundingClientRect();
+        //         this.setState({
+        //             subNavPosition: {
+        //                 top: dims.top + dims.height,
+        //                 right: window.outerWidth - dims.left - dims.width,
+        //                 width: dims.width
+        //             }
+        //         });
+        //     }, 100);
 
-        }
+        // }
     }
 
     // breaks route updating
@@ -88,7 +88,9 @@ class NavBarLink extends React.Component {
                 }
                 {
                     (this.props.subNavLinks && this.props.showSub)
-                        ? <SubNav links={this.props.subNavLinks} position={this.state.subNavPosition} />
+                        ? <SubNav links={this.props.subNavLinks}
+                        //position={this.state.subNavPosition}
+                        />
                         : null
                 }
             </li>
