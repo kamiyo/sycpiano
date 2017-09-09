@@ -12,79 +12,50 @@ const Highlight = ({ highlightClass, link }) => (
     </div>
 );
 
-class NavBarLink extends React.Component {
-    state = {
-        subNavPosition: { top: 0, right: 0 },
-    };
-
-    componentDidMount() {
-        // if (this.props.subNavLinks) {
-        //     // TODO: find a way to do this without timeout
-        //     setTimeout(() => {
-        //         const dims = ReactDOM.findDOMNode(this).getBoundingClientRect();
-        //         this.setState({
-        //             subNavPosition: {
-        //                 top: dims.top + dims.height,
-        //                 right: window.outerWidth - dims.left - dims.width,
-        //                 width: dims.width
-        //             }
-        //         });
-        //     }, 100);
-
-        // }
+const NavBarLink = (props) => {
+    const link = props.link;
+    let highlightClass = "highlight";
+    let active = '';
+    if (link === 'home') {
+        if (props.router.isActive('/', true) && !props.showSub) {
+            highlightClass += " active";
+            active = 'active';
+        }
+    } else if (link === 'media') {
+        if (props.showSub) {
+            highlightClass += " active";
+            active = 'active';
+        }
+    } else {
+        if (props.link === props.router.location.pathname.split('/')[1] && !props.showSub) {
+            highlightClass += " active";
+            active = 'active';
+        }
     }
 
-    // breaks route updating
-    /*shouldComponentUpdate(nextProps, nextState) {
-        return nextState.subNavPosition.top !== this.state.subNavPosition.top
-            || nextState.subNavPosition.right !== this.state.subNavPosition.right
-            || nextState.subNavPosition.width !== this.state.subNavPosition.width;
-    }*/
+    return (
+        <li className='navBarLink'>
+            {
+                (link === 'home')
+                    ? <IndexLink to='/' onClick={() => props.toggleSub(false)} className={active}>
+                        <Highlight highlightClass={highlightClass} link={link} />
+                    </IndexLink>
 
-    render() {
-        const link = this.props.link;
-        let highlightClass = "highlight";
-        let active = '';
-        if (link === 'home') {
-            if (this.props.router.isActive('/', true) && !this.props.showSub) {
-                highlightClass += " active";
-                active = 'active';
-            }
-        } else if (link === 'media') {
-            if (this.props.showSub) {
-                highlightClass += " active";
-                active = 'active';
-            }
-        } else {
-            if (this.props.link === this.props.router.location.pathname.split('/')[1] && !this.props.showSub) {
-                highlightClass += " active";
-                active = 'active';
-            }
-        }
-
-        return (
-            <li className='navBarLink'>
-                {
-                    (link === 'home')
-                        ? <IndexLink to='/' onClick={() => this.props.toggleSub(false)} className={active}>
+                    : ((link === 'media')
+                        ? <a onClick={() => props.toggleSub()} className={active}>
                             <Highlight highlightClass={highlightClass} link={link} />
-                        </IndexLink>
+                        </a>
 
-                        : ((link === 'media')
-                            ? <a onClick={() => this.props.toggleSub()} className={active}>
+                        : (
+                            <Link
+                                to={'/' + link}
+                                onClick={() => props.toggleSub(false)}
+                                className={active}
+                            >
                                 <Highlight highlightClass={highlightClass} link={link} />
-                            </a>
-
-                            : (
-                                <Link
-                                    to={'/' + link}
-                                    onClick={() => this.props.toggleSub(false)}
-                                    className={active}
-                                >
-                                    <Highlight highlightClass={highlightClass} link={link} />
-                                </Link>
-                            )
+                            </Link>
                         )
+<<<<<<< 8dab8d5a4be659c0279157cb5b2b690a2ed90e27
                 }
                 {
                     (this.props.subNavLinks && this.props.showSub)
@@ -97,5 +68,17 @@ class NavBarLink extends React.Component {
         );
     }
 };
+=======
+                    )
+            }
+            {
+                (props.subNavLinks && props.showSub)
+                    ? <SubNav links={props.subNavLinks} />
+                    : null
+            }
+        </li>
+    );
+}
+>>>>>>> convert NavBarLink to stateless class, clean up unneeded code
 
 export default withRouter(NavBarLink);
