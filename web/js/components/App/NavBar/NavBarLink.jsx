@@ -13,33 +13,6 @@ const Highlight = ({ highlightClass, link }) => (
 );
 
 class NavBarLink extends React.Component {
-    state = {
-        subNavPosition: { top: 0, right: 0 },
-    };
-
-    componentDidMount() {
-        // if (this.props.subNavLinks) {
-        //     // TODO: find a way to do this without timeout
-        //     setTimeout(() => {
-        //         const dims = ReactDOM.findDOMNode(this).getBoundingClientRect();
-        //         this.setState({
-        //             subNavPosition: {
-        //                 top: dims.top + dims.height,
-        //                 right: window.outerWidth - dims.left - dims.width,
-        //                 width: dims.width
-        //             }
-        //         });
-        //     }, 100);
-
-        // }
-    }
-
-    // breaks route updating
-    /*shouldComponentUpdate(nextProps, nextState) {
-        return nextState.subNavPosition.top !== this.state.subNavPosition.top
-            || nextState.subNavPosition.right !== this.state.subNavPosition.right
-            || nextState.subNavPosition.width !== this.state.subNavPosition.width;
-    }*/
 
     render() {
         const link = this.props.link;
@@ -88,9 +61,7 @@ class NavBarLink extends React.Component {
                 }
                 {
                     (this.props.subNavLinks && this.props.showSub)
-                        ? <SubNav links={this.props.subNavLinks}
-                        //position={this.state.subNavPosition}
-                        />
+                        ? <SubNav links={this.props.subNavLinks} />
                         : null
                 }
             </li>
