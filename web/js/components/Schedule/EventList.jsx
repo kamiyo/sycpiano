@@ -19,6 +19,7 @@ class ConnectedEventList extends React.Component {
         super(props, context);
         this._renderEventItem = this._renderEventItem.bind(this);
 
+        // Current scroll offset of the list.
         this.currentOffset = 0;
     }
 
@@ -30,7 +31,6 @@ class ConnectedEventList extends React.Component {
 
         if (this.props.params.date) {
             const scrollIndex = this._getScrollIndex();
-            this.currentRow = scrollIndex;
             this.List.scrollToPosition(this.List.getOffsetForRow({ index: scrollIndex }));
         } else {
             this.List.scrollToRow(0);
@@ -77,9 +77,8 @@ class ConnectedEventList extends React.Component {
             style={style}
             measure={measure}
             gridState={this.List && this.List.Grid.state}
-            handleSelect={(e) => {
-                this.props.dispatchSelectEvent(item);
-            }}
+            handleSelect={e => this.props.dispatchSelectEvent(item)}
+            active={item.id === this.props.currentItem.id}
         />;
     }
 
@@ -129,6 +128,7 @@ class ConnectedEventList extends React.Component {
 
 const mapStateToProps = state => ({
     eventItems: state.schedule_eventItems.items,
+    currentItem: state.schedule_eventItems.currentItem,
     hasEventBeenSelected: state.schedule_eventItems.hasEventBeenSelected,
 });
 

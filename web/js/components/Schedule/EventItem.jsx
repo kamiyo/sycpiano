@@ -5,6 +5,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import moment from 'moment-timezone';
+import classNames from 'classnames';
 
 const DateContainer = ({ dateTime }) => (
     <div className="event-item__date-container">
@@ -54,10 +55,14 @@ const EventItem = ({
     style,
     gridState,
     handleSelect,
+    active,
 }) => {
     const time = event.dateTime.format('h:mm z');
     return (
-        <div className="event-item" style={style}>
+        <div
+            className={classNames('event-item', { 'event-item--active': active })}
+            style={style}
+        >
             <DateContainer dateTime={event.dateTime} />
             <div className="event-item__info">
                 <EventName

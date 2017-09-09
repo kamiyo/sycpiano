@@ -59,4 +59,4 @@ export const transformGCalEventsToListItems = (events) => {
 
         return [ ...runningEventsArr, ...nextEventsArr ];
     }, []);
-}
+};
