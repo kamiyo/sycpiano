@@ -13,29 +13,13 @@ const Animations = {
                 { easing: 'ease-out', display: 'block' },
             ],
         ],
-    }),
-    HeightIn: velocityHelpers.registerEffect({
-        calls: [
-            [
-                { scaleY: [1, 0], translateX: ["-50%", "-50%"] },
-                1,
-                { easing: 'ease-out', display: 'inline-block' },
-            ],
-        ],
-        reset: { display: 'inline-block' }
     })
-
 };
 
 export default class SubNav extends React.Component {
     componentDidMount() {
         const component = ReactDOM.findDOMNode(this);
         const subs = component.getElementsByClassName('subNavLink');
-        // Velocity(component, Animations.HeightIn, {
-        //     duration: 0,
-        //     delay: 0,
-        //     display: 'inline-block'
-        // });
         Velocity(subs, Animations.RightIn, {
             delay: 100,
             stagger: 100,

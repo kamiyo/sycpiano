@@ -12,61 +12,58 @@ const Highlight = ({ highlightClass, link }) => (
     </div>
 );
 
-class NavBarLink extends React.Component {
-
-    render() {
-        const link = this.props.link;
-        let highlightClass = "highlight";
-        let active = '';
-        if (link === 'home') {
-            if (this.props.router.isActive('/', true) && !this.props.showSub) {
-                highlightClass += " active";
-                active = 'active';
-            }
-        } else if (link === 'media') {
-            if (this.props.showSub) {
-                highlightClass += " active";
-                active = 'active';
-            }
-        } else {
-            if (this.props.link === this.props.router.location.pathname.split('/')[1] && !this.props.showSub) {
-                highlightClass += " active";
-                active = 'active';
-            }
+const NavBarLink = (props) => {
+    const link = props.link;
+    let highlightClass = "highlight";
+    let active = '';
+    if (link === 'home') {
+        if (props.router.isActive('/', true) && !props.showSub) {
+            highlightClass += " active";
+            active = 'active';
         }
-
-        return (
-            <li className='navBarLink'>
-                {
-                    (link === 'home')
-                        ? <IndexLink to='/' onClick={() => this.props.toggleSub(false)} className={active}>
-                            <Highlight highlightClass={highlightClass} link={link} />
-                        </IndexLink>
-
-                        : ((link === 'media')
-                            ? <a onClick={() => this.props.toggleSub()} className={active}>
-                                <Highlight highlightClass={highlightClass} link={link} />
-                            </a>
-
-                            : (
-                                <Link
-                                    to={'/' + link}
-                                    onClick={() => this.props.toggleSub(false)}
-                                    className={active}
-                                >
-                                    <Highlight highlightClass={highlightClass} link={link} />
-                                </Link>
-                            )
-                        )
-                }
-                {
-                    (this.props.subNavLinks && this.props.showSub)
-                        ? <SubNav links={this.props.subNavLinks} />
-                        : null
-                }
-            </li>
-        );
+    } else if (link === 'media') {
+        if (props.showSub) {
+            highlightClass += " active";
+            active = 'active';
+        }
+    } else {
+        if (props.link === props.router.location.pathname.split('/')[1] && !props.showSub) {
+            highlightClass += " active";
+            active = 'active';
+        }
     }
-};
+
+    return (
+        <li className='navBarLink'>
+            {
+                (link === 'home')
+                    ? <IndexLink to='/' onClick={() => props.toggleSub(false)} className={active}>
+                        <Highlight highlightClass={highlightClass} link={link} />
+                    </IndexLink>
+
+                    : ((link === 'media')
+                        ? <a onClick={() => props.toggleSub()} className={active}>
+                            <Highlight highlightClass={highlightClass} link={link} />
+                        </a>
+
+                        : (
+                            <Link
+                                to={'/' + link}
+                                onClick={() => props.toggleSub(false)}
+                                className={active}
+                            >
+                                <Highlight highlightClass={highlightClass} link={link} />
+                            </Link>
+                        )
+                    )
+            }
+            {
+                (props.subNavLinks && props.showSub)
+                    ? <SubNav links={props.subNavLinks} />
+                    : null
+            }
+        </li>
+    );
+}
 
 export default withRouter(NavBarLink);
