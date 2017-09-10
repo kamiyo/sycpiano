@@ -10,20 +10,14 @@ import AcclaimsListItem from '@/js/components/Press/AcclaimsListItem.jsx';
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
 class ConnectedAcclaimsList extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this._renderAcclaimItem = this._renderAcclaimItem.bind(this);
-    }
-
     componentWillMount() { this.props.fetchAcclaims(); }
 
-    _renderAcclaimItem (key, index, style, measure) {
+    _renderAcclaimItem = (key, index, style, measure) => {
         const acclaim = this.props.acclaims[index];
         return <AcclaimsListItem acclaim={acclaim} key={key} style={style} measure={measure}/>;
-    }
+    };
 
-    rowItemRenderer({key, index, isScrolling, isVisible, parent, style}) {
+    rowItemRenderer = ({key, index, isScrolling, isVisible, parent, style}) => {
         return (
             <CellMeasurer
                 cache={cache}
@@ -35,7 +29,7 @@ class ConnectedAcclaimsList extends React.Component {
                 {({ measure }) => this._renderAcclaimItem(key, index, style, measure)}
             </CellMeasurer>
         );
-    }
+    };
 
     render() {
         const numRows = this.props.acclaims.length;
