@@ -1,6 +1,3 @@
-import _ from 'lodash';
-import moment from 'moment-timezone';
-
 class DayItem {
     constructor(properties) {
         this.id = properties.id;

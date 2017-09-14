@@ -1,5 +1,6 @@
 import '@/less/Schedule/event-list.less';
 
+// should we just use es6 array functions instead of lodash?
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import React from 'react';
@@ -7,6 +8,9 @@ import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
+import { dispatchSelectEvent, dispatchAnimateStart, dispatchAnimateFinish } from '@/js/components/Schedule/actions.js';
+import animateFn from '@/js/components/animate.js';
+import { easeQuadOut } from 'd3-ease';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
@@ -36,41 +40,23 @@ class ConnectedEventList extends React.Component {
     _scrollToSelectedRow = () => {
         const targetIndex = this._getScrollIndex();
         const targetOffset = this.List.getOffsetForRow({ index: targetIndex });
-
-        let prevTimestamp = null;
-        let currentOffset = this.currentOffset;
-        const scrollVelocity = 0.3;
-
-        const scrollStep = timestamp => {
-            const direction = targetOffset < this.currentOffset ? -1 : 1;
-
-            if (
-                (direction === 1 && this.currentOffset >= targetOffset) ||
-                (direction === -1 && this.currentOffset <= targetOffset)
-            ) {
-                return;
-            }
-
-            if (!prevTimestamp) prevTimestamp = timestamp;
-            const timeDiff = timestamp - prevTimestamp;
-
-            currentOffset += timeDiff * scrollVelocity * direction;
-
-            this.List.scrollToPosition(currentOffset);
-
-            prevTimestamp = timestamp;
-            window.requestAnimationFrame(scrollStep);
-        };
-
-        window.requestAnimationFrame(scrollStep);
+        this.props.dispatchAnimateStart();
+        animateFn(
+            this.currentOffset,
+            targetOffset,
+            500,
+            (position) => this.List.scrollToPosition(position),
+            easeQuadOut,
+            () => {this.props.dispatchAnimateFinish();}
+        );
     }
 
     _getScrollIndex = () => (
-        Math.max(0, _.findIndex(
-            this.props.eventItems,
+        Math.max(0, this.props.eventItems.findIndex(
             item => (
                 item.type === 'day' &&
-                item.dateTime.format('YYYY-MM-DD') === this.props.params.date
+                // in case we change parameter format, compare using moment
+                item.dateTime.isSame(moment(this.props.params.date), 'day')
             )
         ))
     );
@@ -92,7 +78,7 @@ class ConnectedEventList extends React.Component {
             measure={measure}
             gridState={this.List && this.List.Grid.state}
             handleSelect={(e) => {
-                this.props.dispatchSelectEventAction(item);
+                this.props.dispatchSelectEvent(item);
             }}
         />;
     }
@@ -110,7 +96,6 @@ class ConnectedEventList extends React.Component {
     );
 
     render() {
-        console.log(this.props);
         return (
             <div className="event-list container">
                 {
@@ -147,16 +132,11 @@ const mapStateToProps = state => ({
     hasEventBeenSelected: state.schedule_eventItems.hasEventBeenSelected,
 });
 
-const mapDispatchToProps = dispatch => ({
-    dispatchSelectEventAction: eventItem => (
-        dispatch({
-            type: 'SCHEDULE--SELECT_EVENT',
-            eventItem,
-        })
-    ),
-});
-
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    {
+        dispatchSelectEvent,
+        dispatchAnimateStart,
+        dispatchAnimateFinish
+    }
 )(ConnectedEventList);

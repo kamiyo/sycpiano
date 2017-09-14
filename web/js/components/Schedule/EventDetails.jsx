@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import withScriptJs from "react-google-maps/lib/async/withScriptjs";
 
-import { googleAPI, googleMapsUrl } from '@/js/services/GoogleAPI.js'
+import { googleMapsUrl } from '@/js/services/GoogleAPI.js';
+import { createFetchLatLngAction } from '@/js/components/Schedule/actions.js';
+
 
 const EventMap = withScriptJs(
     withGoogleMap(({ lat, lng }) => {
@@ -24,7 +26,7 @@ const EventMap = withScriptJs(
 class EventDetails extends React.Component {
     componentWillUpdate(nextProps) {
         if (nextProps.currentItem && !nextProps.currentLatLng) {
-            nextProps.getLatLong(nextProps.currentItem.location);
+            nextProps.createFetchLatLngAction(nextProps.currentItem.location);
         }
     }
 
@@ -52,7 +54,7 @@ class EventDetails extends React.Component {
                 <div>{program}</div>
 
                 {
-                    this.props.currentLatLng &&
+                    this.props.currentLatLng && !this.props.isAnimatingScroll &&
                     <EventMap
                         containerElement={<div />}
                         mapElement={<div className="event-map" />}
@@ -69,23 +71,10 @@ class EventDetails extends React.Component {
 const mapStateToProps = state => ({
     currentItem: state.schedule_eventItems.currentItem,
     currentLatLng: state.schedule_eventItems.currentLatLng,
-});
-
-const mapDispatchToProps = dispatch => ({
-    getLatLong: (location) => {
-        googleAPI.geocode(location).then(response => {
-            const firstMatch = response.data.results[0];
-            dispatch({
-                type: 'SCHEDULE--LAT_LNG_FETCHED',
-                // geometry.location is an obj that looks like { lat, long }
-                ...firstMatch.geometry.location,
-            });
-        });
-        dispatch({ type: 'SCHEDULE--LAT_LNG_FETCHING' });
-    },
+    isAnimatingScroll: state.schedule_eventItems.isAnimatingScroll
 });
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    { createFetchLatLngAction }
 )(EventDetails);
