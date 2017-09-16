@@ -23,12 +23,7 @@ export default class SubNav extends React.Component {
         Velocity(subs, Animations.RightIn, {
             delay: 100,
             stagger: 100,
-            display: 'inline-block'
-        });
-        Velocity(subs, Animations.RightIn, {
-            delay: 250,
-            stagger: 250,
-            duration: 500,
+            duration: 250,
             drag: true,
             display: 'block',
         });

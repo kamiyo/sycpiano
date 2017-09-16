@@ -4,14 +4,14 @@
 
 .subNav {
     z-index: 10;
-    position: relative;
+    position: absolute;
     list-style: none;
     padding-left: 0;
     margin-top: 0;
     overflow: hidden;
-    //border-right: @highlight 10px solid;
     display: inline-block;
     transform-origin: top;
+    transform: translateX(-50%);
 
     .subNavLink {
         .transform(translateX(150px));
@@ -19,10 +19,8 @@
             width: 100%;
             height: 50px;
             display: block;
-            //display: none;
             padding: 10px;
             background-color: rgba(255, 255, 255, 0.9);
-            //border-radius: 5px;
             text-align: center;
             &.active {
                 background-color: @highlight;
@@ -35,18 +33,6 @@
             display: block;
             background-size: contain;
             background-repeat: no-repeat;
-
-            // &.videos {
-            //     background-image: url(/images/media-icons/videos.png);
-            // }
-
-            // &.music {
-            //     background-image: url(/images/media-icons/music.png);
-            // }
-
-            // &.photos {
-            //     background-image: url(/images/media-icons/photos.png);
-            // }
         }
     }
 }

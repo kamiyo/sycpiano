@@ -55,20 +55,6 @@ const NavBarLink = (props) => {
                                 <Highlight highlightClass={highlightClass} link={link} />
                             </Link>
                         )
-<<<<<<< 8dab8d5a4be659c0279157cb5b2b690a2ed90e27
-                }
-                {
-                    (this.props.subNavLinks && this.props.showSub)
-                        ? <SubNav links={this.props.subNavLinks}
-                        //position={this.state.subNavPosition}
-                        />
-                        : null
-                }
-            </li>
-        );
-    }
-};
-=======
                     )
             }
             {
@@ -79,6 +65,5 @@ const NavBarLink = (props) => {
         </li>
     );
 }
->>>>>>> convert NavBarLink to stateless class, clean up unneeded code
 
 export default withRouter(NavBarLink);
