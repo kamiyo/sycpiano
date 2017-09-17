@@ -2,7 +2,7 @@ import '@/less/App/NavBar/sub-nav.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Link, IndexLink, withRouter } from 'react-router';
+import { NavLink, Link, IndexLink, withRouter } from 'react-router-dom';
 import SubNav from '@/js/components/SubNav/SubNav.jsx';
 
 const Highlight = ({ highlightClass, link }) => (
@@ -13,30 +13,22 @@ const Highlight = ({ highlightClass, link }) => (
 );
 
 const NavBarLink = (props) => {
-    const link = props.link;
-    let highlightClass = "highlight";
-    let active = '';
-    if (link === 'home') {
-        if (props.router.isActive('/', true) && !props.showSub) {
-            highlightClass += " active";
-            active = 'active';
-        }
-    } else if (link === 'media') {
-        if (props.showSub) {
-            highlightClass += " active";
-            active = 'active';
-        }
-    } else {
-        if (props.link === props.router.location.pathname.split('/')[1] && !props.showSub) {
-            highlightClass += " active";
-            active = 'active';
-        }
-    }
-
     return (
         <li className='navBarLink'>
-            {
-                (link === 'home')
+            {(props.link === 'media') ?
+                <a onClick={() => props.toggleSub()} className={(props.isActive) ? 'active' : ''}>
+                    <Highlight highlightClass={`highlight${(props.showSub) ? ' active' : ''}`} link={props.link} />
+                </a> :
+                <NavLink
+                    to={props.to}
+                    onClick={() => props.toggleSub(false)}
+                    activeClassName='active'
+                >
+                    <Highlight highlightClass={`highlight${(props.isActive) ? ' active' : ''}`} link={props.link} />
+                </NavLink>
+
+
+                /* (link === 'home')
                     ? <IndexLink to='/' onClick={() => props.toggleSub(false)} className={active}>
                         <Highlight highlightClass={highlightClass} link={link} />
                     </IndexLink>
@@ -55,7 +47,7 @@ const NavBarLink = (props) => {
                                 <Highlight highlightClass={highlightClass} link={link} />
                             </Link>
                         )
-                    )
+                    ) */
             }
             {
                 (props.subNavLinks && props.showSub)

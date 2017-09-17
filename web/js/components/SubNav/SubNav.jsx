@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SubNavLink from '@/js/components/SubNav/SubNavLink.jsx';
-import {velocityHelpers, VelocityTransitionGroup} from 'velocity-react';
+import { velocityHelpers } from 'velocity-react';
 import Velocity from 'velocity-animate/velocity';
 
 const Animations = {
@@ -13,7 +13,7 @@ const Animations = {
                 { easing: 'ease-out', display: 'block' },
             ],
         ],
-    })
+    }),
 };
 
 export default class SubNav extends React.Component {
