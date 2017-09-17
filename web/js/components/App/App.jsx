@@ -47,7 +47,10 @@ export default class App extends React.Component {
                     duration={500}
                     easing={[170, 26]}
                 >
-                    <NavBar onClick={this.showFront} />
+                    <NavBar
+                        onClick={this.showFront}
+                        currentPath={this.props.location.pathname}
+                    />
                 </VelocityComponent>
                 <VelocityTransitionGroup
                     enter={{ duration: 500, animation: { opacity: 1, translateZ: 0 } }}

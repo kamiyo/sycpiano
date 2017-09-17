@@ -1,12 +1,11 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router';
 
 const SubNavLink = ({ link }) => (
     <li className="subNavLink">
-        <NavLink to={`/media/${link}`} activeClassName="active">
+        <Link to={`/media/${link}`} activeClassName="active">
             {link}
-            {/* <span className={`mediaIcon ${link}`}></span> */}
-        </NavLink>
+        </Link>
     </li>
 );
 
