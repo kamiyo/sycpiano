@@ -2,9 +2,9 @@ import '@/less/App/app.less';
 
 import React from 'react';
 
-import { VelocityComponent } from 'velocity-react';
 import { Route, Switch } from 'react-router-dom';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { TransitionGroup, Transition } from 'react-transition-group';
+import { TweenLite } from 'gsap';
 
 import { LogoSVG } from '@/js/components/LogoSVG.jsx';
 import Front from '@/js/components/App/Front/Front.jsx';
@@ -17,6 +17,23 @@ import Media from '@/js/components/Media/Media.jsx';
 import Press from '@/js/components/Press/Press.jsx';
 import Schedule from '@/js/components/Schedule/Schedule.jsx';
 
+
+const fadeOnEnter = (element) => {
+    TweenLite.fromTo(element, 0.2, { opacity: 0 }, { opacity: 1 });
+}
+
+const fadeOnExit = (element) => {
+    TweenLite.fromTo(element, 0.2, { opacity: 1 }, { opacity: 0 });
+}
+
+const slideDownOnEnter = (element) => {
+    TweenLite.fromTo(element, 0.5, { y: -90 }, { y: 0, delay: 0.55, ease: "Power3.easeOut" });
+}
+
+const slideUpOnExit = (element) => {
+    TweenLite.fromTo(element, 0.5, { y: 0 }, { y: -90, delay: 0.55, ease: "Power3.easeOut" });
+}
+
 export default class App extends React.Component {
     constructor(props) {
         super(props);
@@ -26,6 +43,10 @@ export default class App extends React.Component {
             //isFront: initialFront
             isFront: false
         }
+    }
+
+    componentDidMount() {
+        fadeOnEnter(this);
     }
 
     getRouteBase = () => {
@@ -61,19 +82,26 @@ export default class App extends React.Component {
             <div className='appContainer'>
                 <LogoSVG />
                 <Front show={this.state.isFront} onClick={this.hideFront} />
-                <VelocityComponent
-                    animation={{ translateY: !this.state.isFront ? 0 : -90, translateZ: 0 }}
-                    delay={500}
-                    duration={500}
-                    easing={[170, 26]}
+                <Transition in={!this.state.isFront}
+                    onEnter={slideDownOnEnter}
+                    onExit={slideUpOnExit}
+                    timeout={200}
                 >
                     <NavBar
                         onClick={this.showFront}
                         currentPath={this.getRouteBase()}
                     />
-                </VelocityComponent>
+                </Transition>
                 <TransitionGroup>
-                    <CSSTransition key={this.getRouteBase()} timeout={160} classNames="fade" mountOnEnter={true} unmountOnExit={true}>
+                    <Transition
+                        key={this.getRouteBase()}
+                        mountOnEnter={true}
+                        unmountOnExit={true}
+                        onEnter={fadeOnEnter}
+                        onExit={fadeOnExit}
+                        timeout={200}
+                        appear={true}
+                    >
                         <main>
                             <Switch location={this.props.location}>
                                 <Route path='/about' exact component={About} />
@@ -84,7 +112,7 @@ export default class App extends React.Component {
                                 <Route path='/' exact component={Home} />
                             </Switch>
                         </main>
-                    </CSSTransition>
+                    </Transition>
                 </TransitionGroup>
             </div>
         )

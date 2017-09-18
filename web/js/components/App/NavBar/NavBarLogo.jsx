@@ -1,16 +1,12 @@
 import '@/less/App/NavBar/nav-bar-logo.less';
 
 import React from 'react';
-import { IndexLink } from 'react-router-dom';
 import { LogoInstance } from '@/js/components/LogoSVG.jsx'
 
+const NavBarLogo = (props) => (
+    <div className="navBarLogo" onClick={props.onClick}>
+        <LogoInstance /><div className="navBarLogoText unselectable"><span>SEAN CHEN</span></div>
+    </div>
+)
 
-export default class NavBarLogo extends React.Component {
-    render() {
-        return (
-            <div className="navBarLogo" onClick={this.props.onClick}>
-                <LogoInstance /><div className="navBarLogoText"><span>SEAN CHEN</span></div>
-            </div>
-        )
-    }
-};
+export default NavBarLogo;
