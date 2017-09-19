@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import URI from 'urijs';
 import CalendarAdmin from '@/js/admin/components/CalendarAdmin.jsx';
 import { TOKEN_KEY } from '@/js/admin/constants.js';

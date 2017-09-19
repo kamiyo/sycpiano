@@ -10,12 +10,12 @@ const PlaylistManagerHOC = (Component) => {
             return nextProps.currentItemId !== this.props.currentItemId;
         }
 
-        componentDidUpdate() {
-            let el = ReactDOM.findDOMNode(this);
-            let scrollbarWidth = el.offsetWidth - el.clientWidth;
-            el.style.right = el.style.paddingRight = `${-scrollbarWidth}px`;
-            this.props.playlistRightOnChange(-scrollbarWidth);
-        }
+        // componentDidUpdate() {
+        //     let el = ReactDOM.findDOMNode(this);
+        //     let scrollbarWidth = el.offsetWidth - el.clientWidth;
+        //     //el.style.right = el.style.paddingRight = `${-scrollbarWidth}px`;
+        //     //this.props.playlistRightOnChange(-scrollbarWidth);
+        // }
 
         render() {
             return <Component {...this.props} {...this.state} />

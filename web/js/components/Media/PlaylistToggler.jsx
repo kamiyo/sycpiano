@@ -5,10 +5,10 @@ import React from 'react';
 
 export default class PlaylistToggler extends React.Component {
     render() {
-        let style = { right: this.props.playlistWidth + this.props.playlistRight };
+//        let style = { right: this.props.playlistWidth + this.props.playlistRight };
 
         return (
-            <div className="playlistToggler" style={style} onClick={this.props.onClick}>
+            <div className="playlistToggler" onClick={this.props.onClick}>
                 {!this.props.isPlaylistVisible ? '\u25C0' : '\u25B6'}
             </div>
             );
