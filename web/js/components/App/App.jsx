@@ -28,15 +28,7 @@ export default class App extends React.Component {
         }
     }
 
-<<<<<<< HEAD
-    getRouteBase = () => {
-        const indexOfSecondSlash = this.props.location.pathname.indexOf('/', 1);
-        if (indexOfSecondSlash != -1) return this.props.location.pathname.substr(0, indexOfSecondSlash);
-        return this.props.location.pathname;
-    }
-=======
     getRouteBase = () => this.props.location.pathname.match(/^(\/\w*)(\/.*)*$/)[1];
->>>>>>> master
 
     showFront = () => {
         this.setState({ isFront: true });
@@ -73,11 +65,7 @@ export default class App extends React.Component {
                 >
                     <NavBar
                         onClick={this.showFront}
-<<<<<<< HEAD
-                        currentPath={this.getRouteBase()}
-=======
                         currentBasePath={this.getRouteBase()}
->>>>>>> master
                     />
                 </VelocityComponent>
                 <TransitionGroup>
