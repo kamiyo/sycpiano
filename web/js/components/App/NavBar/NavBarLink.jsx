@@ -15,7 +15,7 @@ const Highlight = ({ activeName, link }) => (
 const NavBarLink = (props) => (
     <li className='navBarLink'>
         {
-            (props.link === 'media') ?
+            (props.subNavLinks) ?
                 <a onClick={() => props.toggleSub()} className={props.activeName}>
                     <Highlight activeName={props.activeName} link={props.link} />
                 </a> :
