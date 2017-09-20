@@ -16,7 +16,10 @@ const NavBarLink = (props) => (
     <li className='navBarLink'>
         {
             (props.link === 'media') ?
-                <a onClick={() => props.toggleSub()} className={`${props.activeName} unselectable`}>
+                <a
+                    onClick={() => props.toggleSub()}
+                    className={`${props.activeName} unselectable`}
+                >
                     <Highlight activeName={props.activeName} link={props.link} />
                 </a> :
                 <NavLink

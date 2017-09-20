@@ -137,8 +137,6 @@ class Videos extends React.Component {
                     timeout={400}
                 >
                     <VideoPlaylistToggler
-                        playlistWidth={PLAYLIST_WIDTH}
-                        playlistRight={this.props.playlistRight}
                         isPlaylistVisible={this.props.showPlaylist}
                         onClick={this.props.playlistToggleOnClick} />
                 </Transition>

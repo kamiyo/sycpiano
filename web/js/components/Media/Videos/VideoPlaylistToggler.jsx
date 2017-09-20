@@ -6,8 +6,6 @@ let PLAYLIST_WIDTH = 550;
 
 export default class VideoPlaylistToggler extends React.Component {
     render() {
-        // let style = { right: PLAYLIST_WIDTH + this.props.playlistRight };
-
         return (
             <div className="playlistToggler" onClick={this.props.onClick}>
                 {!this.props.isPlaylistVisible ? '\u25C0' : '\u25B6'}
