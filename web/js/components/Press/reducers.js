@@ -1,4 +1,5 @@
 export const acclaimsListReducer = (state = {
+    playerReady: false,
     isFetching: false,
     acclaims: [],
 }, action) => {

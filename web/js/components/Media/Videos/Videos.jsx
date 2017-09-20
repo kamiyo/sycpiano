@@ -6,11 +6,13 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { TweenLite } from 'gsap';
 import { Transition } from 'react-transition-group';
+import { connect } from 'react-redux';
 import VideoLoadingOverlay from '@/js/components/Media/LoadingOverlay.jsx';
 import PreviewOverlay from '@/js/components/Media/PreviewOverlay.jsx';
 import VideoPlaylistToggler from '@/js/components/Media/PlaylistToggler.jsx';
 import VideoPlaylist from '@/js/components/Media/Videos/VideoPlaylist.jsx';
-import ConnectPlaylistHOC from '@/js/components/Media/HigherOrder/ConnectPlaylistHOC.jsx';
+//import ConnectPlaylistHOC from '@/js/components/Media/HigherOrder/ConnectPlaylistHOC.jsx';
+import { createFetchPlaylistAction, playerIsReady } from '@/js/components/Media/Videos/actions.js';
 import youTube from '@/js/YouTube.js';
 
 const PLAYLIST_WIDTH = 550;
@@ -73,6 +75,7 @@ class Videos extends React.Component {
     }
 
     getPlaylistItemsOnSuccess = (response) => {
+        console.log(response);
         this.playlistItems = {};
         response.data.items.forEach((item) => {
             this.playlistItems[item.snippet.resourceId.videoId] = item;
@@ -166,4 +169,10 @@ Videos.propTypes = {
     togglePlaylist: PropTypes.func.isRequired
 };
 
-export default ConnectPlaylistHOC(Videos);
+export default connect(
+    null,
+    {
+        createFetchPlaylistAction,
+        playerIsReady
+    }
+)(Videos);
