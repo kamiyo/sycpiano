@@ -1,16 +1,16 @@
 import '@/less/Press/acclaims-list.less';
 
 import React from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
+import { createFetchAcclaimsAction } from '@/js/components/Press/actions.js'
 
 import AcclaimsListItem from '@/js/components/Press/AcclaimsListItem.jsx';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
 class ConnectedAcclaimsList extends React.Component {
-    componentWillMount() { this.props.fetchAcclaims(); }
+    componentWillMount() { this.props.createFetchAcclaimsAction(); }
 
     _renderAcclaimItem = (key, index, style, measure) => {
         const acclaim = this.props.acclaims[index];
@@ -54,26 +54,9 @@ class ConnectedAcclaimsList extends React.Component {
     }
 }
 
-function getAcclaims() {
-    return axios.get('/api/acclaims');
-}
-
-const mapStateToProps = state => ({ acclaims: state.press_acclaimsList.acclaims });
-
-const mapDispatchToProps = dispatch => ({
-    fetchAcclaims: () => {
-        dispatch({ type: 'PRESS--FETCHING_ACCLAIMS' });
-
-        getAcclaims().then(
-            response => dispatch({
-                type: 'PRESS--FETCH_ACCLAIMS_SUCCESS',
-                acclaims: response.data,
-            })
-        );
-    },
-});
+const mapStateToProps = state => ({ acclaims: state.press_acclaimsList.items });
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    { createFetchAcclaimsAction }
 )(ConnectedAcclaimsList);
