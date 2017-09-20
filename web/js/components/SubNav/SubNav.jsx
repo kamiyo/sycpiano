@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SubNavLink from '@/js/components/SubNav/SubNavLink.jsx';
-import {velocityHelpers, VelocityTransitionGroup} from 'velocity-react';
+import { velocityHelpers } from 'velocity-react';
 import Velocity from 'velocity-animate/velocity';
 
 const Animations = {
@@ -14,31 +14,16 @@ const Animations = {
             ],
         ],
     }),
-    HeightIn: velocityHelpers.registerEffect({
-        calls: [
-            [
-                { scaleY: [1, 0] },
-                1,
-                { easing: 'ease-out', display: 'block' },
-            ],
-        ]
-    })
-
 };
 
 export default class SubNav extends React.Component {
     componentDidMount() {
         const component = ReactDOM.findDOMNode(this);
         const subs = component.getElementsByClassName('subNavLink');
-        Velocity(component, Animations.HeightIn, {
-            duration: 250,
-            delay: 200,
-            display: 'block'
-        });
         Velocity(subs, Animations.RightIn, {
-            delay: 250,
-            stagger: 250,
-            duration: 500,
+            delay: 100,
+            stagger: 100,
+            duration: 250,
             drag: true,
             display: 'block',
         });

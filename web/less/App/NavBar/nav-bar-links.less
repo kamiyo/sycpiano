@@ -24,7 +24,8 @@
     letter-spacing: 0em;
     display: inline-block;
     margin-right: 2px;
-    vertical-align: middle;
+    vertical-align: top;
+    text-align: center;
 
     &:last-child {
         margin-right: 0;
@@ -48,12 +49,15 @@
             padding: 20px 10px 0 10px;
         }
 
+        .mediaLink {
+            padding: 20px 20px 0 20px;
+        }
+
         &:hover {
             color: @logo-blue + #444;
         }
 
         &.active div {
-            //color: #fff;
             color: @logo-blue;
         }
 
@@ -62,24 +66,20 @@
                 margin-top: @navbar-margin-top-hdpi;
             });
 
+            width: 100%;
+            top: 0;
             padding: 0;
             margin-top: @navbar-margin-top;
             position: absolute;
-            width: 0%;
+            opacity: 0;
             height: 5px;
             z-index: -1;
             background-color: @light-blue;
             transform: translate3d(0, 0, 0);
 
             &.active {
-                //height: @navbarHeight - @navbar-margin-top;
-                //height: 10px;
-                width: 100%
+                opacity: 1.0;
             }
-        }
-
-        .hyperlink {
-            float: left;
         }
     }
 }

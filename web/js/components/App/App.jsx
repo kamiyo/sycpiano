@@ -12,7 +12,7 @@ export default class App extends React.Component {
         isFront: false // for peaceful dev until we figure out how to show only on home
     };
 
-    getRouteBase = () => this.props.location.pathname.split('/')[1];
+    getRouteBase = () => this.props.location.pathname.match(/^(\/\w*)(\/.*)*$/)[1];
 
     showFront = () => {
         this.setState({isFront: true});
@@ -47,7 +47,10 @@ export default class App extends React.Component {
                     duration={500}
                     easing={[170, 26]}
                 >
-                    <NavBar onClick={this.showFront} />
+                    <NavBar
+                        onClick={this.showFront}
+                        currentBasePath={this.getRouteBase()}
+                    />
                 </VelocityComponent>
                 <VelocityTransitionGroup
                     enter={{ duration: 500, animation: { opacity: 1, translateZ: 0 } }}
