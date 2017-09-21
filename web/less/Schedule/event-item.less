@@ -1,0 +1,73 @@
+@import '../colors.less';
+@import '../fonts.less';
+
+@date-container-dimension: 107px;
+
+.event-item {
+    padding-top: 30px;
+    display: flex;
+    max-width: 780px;
+    font-family: @lato1;
+}
+
+.event-link {
+    height: 100%;
+}
+
+.event-single {
+    width: 100%;
+}
+
+.event-item__date-container {
+    flex: 0 0 100px;
+}
+
+.event-item__date {
+    text-align: center;
+    background-color: @light-blue;
+    color: white;
+    height: @date-container-dimension;
+    width: @date-container-dimension;
+    line-height: 43px;
+    border-radius: 50%;
+    padding: 12px;
+}
+
+.event-item__day {
+    font-size: 35px;
+}
+
+.event-item__day-of-week {
+    font-size: 20px;
+}
+
+.event-item__info {
+    flex: 1 1 auto;
+    padding-left: 35px;
+    margin-bottom: 50px;
+}
+
+.event-item__info-name {
+    font-size: 35px;
+    margin-bottom: 8px;
+}
+
+.event-item__info-type {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.event-item__info-time {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.event-item__info-program {
+    list-style: none;
+    padding: 0;
+}
+
+.event-item__info-collaborators {
+    list-style: none;
+    padding: 0;
+}

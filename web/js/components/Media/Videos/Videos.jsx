@@ -1,8 +1,9 @@
-import '@/less/media/media-content.less';
-import '@/less/media/videos/videos.less';
+import '@/less/Media/media-content.less';
+import '@/less/Media/Videos/videos.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import {VelocityComponent, VelocityTransitionGroup} from 'velocity-react';
 import VideoLoadingOverlay from '@/js/components/Media/LoadingOverlay.jsx';
 import PreviewOverlay from '@/js/components/Media/PreviewOverlay.jsx';
@@ -131,11 +132,11 @@ class Videos extends React.Component {
 }
 
 Videos.propTypes = {
-    showPlaylist: React.PropTypes.bool.isRequired,
-    playlistRight: React.PropTypes.number.isRequired,
-    playlistRightOnChange: React.PropTypes.func.isRequired,
-    playlistToggleOnClick: React.PropTypes.func.isRequired,
-    togglePlaylist: React.PropTypes.func.isRequired
+    showPlaylist: PropTypes.bool.isRequired,
+    playlistRight: PropTypes.number.isRequired,
+    playlistRightOnChange: PropTypes.func.isRequired,
+    playlistToggleOnClick: PropTypes.func.isRequired,
+    togglePlaylist: PropTypes.func.isRequired
 };
 
 export default ConnectPlaylistHOC(Videos);

@@ -79,7 +79,7 @@ export class ParticleExplosion {
             particle.scaleSpeed = randomFloat(minScaleSpeed, maxScaleSpeed);
 
             const speed = randomFloat(minSpeed, maxSpeed);
-            
+
             // velocity is rotated by 'angle'
             const angle = i * twoPi / numParticles
             particle.velocityX = speed * Math.cos(angle);

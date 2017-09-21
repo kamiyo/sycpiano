@@ -1,5 +1,5 @@
-import '@/less/media/media-content.less';
-import '@/less/media/music/music.less';
+import '@/less/Media/media-content.less';
+import '@/less/Media/Music/music.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

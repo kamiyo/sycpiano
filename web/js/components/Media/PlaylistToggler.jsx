@@ -1,4 +1,5 @@
-import '@/less/playlist-toggler.less';
+import '@/less/Media/Videos/playlist-toggler.less';
+import PropTypes from 'prop-types';
 
 import React from 'react';
 
@@ -15,8 +16,8 @@ export default class PlaylistToggler extends React.Component {
 }
 
 PlaylistToggler.propTypes = {
-    playlistWidth: React.PropTypes.number.isRequired,
-    playlistRight: React.PropTypes.number.isRequired,
-    isPlaylistVisible: React.PropTypes.bool.isRequired,
-    onClick: React.PropTypes.func.isRequired
+    playlistWidth: PropTypes.number.isRequired,
+    playlistRight: PropTypes.number.isRequired,
+    isPlaylistVisible: PropTypes.bool.isRequired,
+    onClick: PropTypes.func.isRequired
 };

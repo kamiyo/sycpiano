@@ -4,5 +4,6 @@
             "rootPathPrefix": "@",
             "rootPathSuffix": "web"
         }]
-    ]
+    ],
+    "presets": ["es2015", "react"]
 }

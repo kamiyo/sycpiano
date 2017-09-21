@@ -5,8 +5,8 @@
         "ecmaVersion": 6,
         "ecmaFeatures": {
             "jsx": true,
-            "experimentalObjectRestSpread ": true,
-            "arrowFunctions": true
+            "modules": true,
+            "experimentalObjectRestSpread ": true
         }
     },
     "env": {

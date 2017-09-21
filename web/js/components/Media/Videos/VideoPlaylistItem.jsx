@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 
 const VideoPlaylistItem = (props) => {
@@ -29,9 +30,9 @@ const VideoPlaylistItem = (props) => {
 }
 
 VideoPlaylistItem.propTypes = {
-    isActive: React.PropTypes.bool.isRequired,
-    onClick: React.PropTypes.func.isRequired,
-    video: React.PropTypes.object.isRequired
+    isActive: PropTypes.bool.isRequired,
+    onClick: PropTypes.func.isRequired,
+    video: PropTypes.object.isRequired
 };
 
 export default VideoPlaylistItem;
@@ -49,7 +50,7 @@ function videoDurationToDisplay(durationString) {
     let mString = `${m < 10 ? '0' : ''}${m}`;
     let hString = h > 0 ? `${h}:` : '';
 
-    return `${hString}${mString}:${sString}`    
+    return `${hString}${mString}:${sString}`
 }
 
 function publishedDateToDisplay(publishedAt) {

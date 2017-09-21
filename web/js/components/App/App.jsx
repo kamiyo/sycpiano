@@ -1,4 +1,4 @@
-import '@/less/app.less';
+import '@/less/App/app.less';
 
 import React from 'react';
 import {VelocityComponent, VelocityTransitionGroup} from 'velocity-react';
@@ -12,39 +12,54 @@ export default class App extends React.Component {
         isFront: false // for peaceful dev until we figure out how to show only on home
     };
 
+    getRouteBase = () => this.props.location.pathname.match(/^(\/\w*)(\/.*)*$/)[1];
+
     showFront = () => {
         this.setState({isFront: true});
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        window.addEventListener('keydown', this.checkDownArrow);
     }
 
     hideFront = () => {
         this.setState({isFront: false});
+        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront));
+        window.removeEventListener('keydown', this.checkDownArrow);
+    }
+
+    checkDownArrow = event => {
+        if (event.keyCode == 40)
+            this.hideFront();
     }
 
     componentDidMount() {
-        window.addEventListener('wheel', this.hideFront);
-        window.addEventListener('keydown', (e)=>(e.keyCode == 40 && this.hideFront()))
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        window.addEventListener('keydown', this.checkDownArrow);
     }
 
     render() {
         return (
             <div className='appContainer'>
-                <LogoSVG/>
+                <LogoSVG />
                 <Front show={this.state.isFront} onClick={this.hideFront} />
                 <VelocityComponent
-                    animation={{translateY: !this.state.isFront ? 0 : -90}}
+                    animation={{ translateY: !this.state.isFront ? 0 : -90, translateZ: 0 }}
                     delay={500}
                     duration={500}
                     easing={[170, 26]}
                 >
-                    <NavBar onClick={this.showFront} />
+                    <NavBar
+                        onClick={this.showFront}
+                        currentBasePath={this.getRouteBase()}
+                    />
                 </VelocityComponent>
                 <VelocityTransitionGroup
-                    enter={{duration: 500, animation: {opacity: 1}}}
-                    leave={{duration: 500, animation: {opacity: 0}}}
-                    runOnMount={true}
+                    enter={{ duration: 500, animation: { opacity: 1, translateZ: 0 } }}
+                    leave={{ duration: 500, animation: { opacity: 0, translateZ: 0 } }}
+                    runOnMount
                 >
                     {React.cloneElement(this.props.children, {
-                        key: this.props.location.pathname
+                        // we don't want animation here to trigger when going from /schedule to /schedule/[date]
+                        key: this.getRouteBase()
                     })}
                 </VelocityTransitionGroup>
             </div>

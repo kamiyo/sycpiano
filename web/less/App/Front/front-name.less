@@ -1,0 +1,55 @@
+@import '../../fonts.less';
+@import '../../mixins.less';
+
+.frontName {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    z-index: 101;
+    color: #000;
+    font-family: @lato2;
+    font-size: 80px;
+
+    .blur, .blur-hover, .solid {
+        position: absolute;
+        z-index: 102;
+        height: 100%;
+        width: 100%;
+        margin-top:5px;
+        .flex-display();
+        .align-items(center);
+
+        .left, .right {
+            .flex(1);
+            .flex-display();
+            span:hover {
+                cursor: pointer;
+            }
+        }
+
+        .left {
+            .justify-content(flex-end);
+            margin-right: 100px;
+        }
+
+        .right {
+            .justify-content(flex-start);
+            margin-left: 100px;
+        }
+    }
+
+    .blur, .blur-hover {
+        font-family: @lato3;
+        color: #FFF;
+        .transition(all 0.5s);
+    }
+
+    .blur {
+        .filter(blur(10px));
+    }
+
+    .blur-hover {
+        .filter(blur(15px));
+    }
+}

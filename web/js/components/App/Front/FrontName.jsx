@@ -1,5 +1,6 @@
+import '@/less/App/Front/front-name.less';
+
 import React from 'react';
-import '@/less/front-name.less';
 
 export default class FrontName extends React.Component {
     render() {

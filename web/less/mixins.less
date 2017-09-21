@@ -9,18 +9,18 @@
 }
 
 .hdpi(@props) {
-    @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
-        only screen and (-o-min-device-pixel-ratio: 15/10),
-        only screen and (min-resolution: 138dpi) {
-            @props();
-        }
+    @media only screen and (min-resolution: 192dpi) {
+        @props();
+    }
 }
 
 .pushed() {
+    height: calc(~'100% - @{navbarHeight}');
     margin-top: @navbarHeight;
     .hdpi({
+        height: calc(~'100% - @{navbarHeightHDPI}');
         margin-top: @navbarHeightHDPI;
-    })
+    });
 }
 
 .link(@color) {
@@ -36,4 +36,16 @@
 .filter(@params) {
     -webkit-filter: @params;
     filter: @params;
+}
+
+.set-button-color(@color) {
+    background-color: @color;
+    &:hover {
+        cursor: pointer;
+        background-color: @color + #111;
+    }
+
+    &:active {
+        background-color: @color - #111;
+    }
 }

@@ -1,11 +1,6 @@
-import '@/less/home.less';
+import '@/less/Home/home.less';
 import React from 'react';
 
-export default class Home extends React.Component {
-    render() {
-        return (
-            <div className='homeContainer container'>
-            </div>
-        );
-    }
-}
+const Home = () => <div className='homeContainer container' />;
+
+export default Home;

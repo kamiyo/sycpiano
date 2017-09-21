@@ -1,0 +1,54 @@
+@import '../../fonts.less';
+@import '../../mixins.less';
+@import '../../colors.less';
+@import '../../variables.less';
+
+// EXPERIMENTING WITH TEXT SPACING AND FONT AND LOGO SIZE
+
+.navBarLogo {
+    .hdpi({
+        font-size: 35px;
+    });
+    font-family: @lato1;
+    font-size: 34px;
+    letter-spacing: 0.05em;
+    height: 100%;
+    color: @logo-blue;
+    fill: @logo-blue;
+    transition: all 0.5s;
+    overflow: hidden;
+
+    .flex-display(inline-flex);
+    .align-items(center);
+
+    &:hover {
+        color: @logo-blue + #444;
+        fill: @logo-blue + #444;
+        cursor: pointer;
+    }
+
+    svg {
+
+        .hdpi({
+            width: 40px;
+            height: 50px;
+        });
+        width: 150px;
+        height: 150px;
+        float: left;
+    }
+}
+
+.navBarLogoText {
+    display: inline-block;
+    margin-left: 20px;
+    vertical-align: middle;
+    .hdpi({
+        line-height: @navbarHeightHDPI;
+    });
+    line-height: @navbarHeight;
+
+    span {
+        vertical-align: -3px;
+    }
+}

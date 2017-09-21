@@ -1,46 +1,34 @@
-var express = require('express');
-var morgan = require('morgan');
-var path = require('path');
-var httpProxy = require('http-proxy');
+const express = require('express');
+const morgan = require('morgan');
+const path = require('path');
+const mustachex = require('mustachex');
+const initDB = require('./server/initDB.js');
+const apiRouter = require('./server/api-router.js');
 
-var proxy = httpProxy.createProxyServer();
-var app = express();
-var mustachex = require('mustachex');
+const isProduction = process.env.NODE_ENV === 'production';
 
-var isProduction = process.env.NODE_ENV === 'production';
-var port = isProduction ? process.env.PORT : 8000;
+initDB().then(() => {
+    const port = isProduction ? process.env.PORT : 8000;
 
-app.use(express.static(__dirname + '/web/assets'));
-app.use(morgan('common'));
-app.engine('html', mustachex.express);
-app.set('view engine', 'html');
-app.set('views', __dirname + '/web/partials');
+    const app = express();
 
-// We only want to run the workflow proxying in development.
-if (!isProduction) {
-    var bundleCode = require('./web/dev-server/bundle-code.js');
-    bundleCode();
+    app.use(express.static(path.join(__dirname, '/web/assets')));
+    app.use(express.static(path.join(__dirname, '/web/build')));
 
-    // We want to proxy any requests sent to localhost:8000/build
-    // to the webpack-dev-server.
-    app.all('/build/*', function(req, res) {
-        proxy.web(req, res, {
-            target: 'http://localhost:8080/'
-        });
-    });
-}
+    app.use(morgan('common'));
+    app.engine('html', mustachex.express);
+    app.set('view engine', 'html');
+    app.set('views', path.join(__dirname, '/web/partials'));
 
-// Catch any errors from the proxy in order to not crash the server.
-// Example: connecting to server when webpack is building.
-proxy.on('error', function(e) {
-    console.log('Could not connect to proxy, please try again...');
-});
+    // Matches the /admin route.
+    app.get(/\/admin/, (req, res) => res.render('calendar-admin'));
 
-// Actual app code.
-app.get('*', function(req, res) {
-    res.render('index');
-});
+    // Non-admin routes.
+    app.use(/\/api/, apiRouter);
 
-app.listen(port, function() {
-    console.log('App listening on port 8000.');
+    // A catch-all for everything except /admin.
+    // Generally we catch any route first, and then let our front-end routing do the work.
+    app.get(/^((?!\/admin).)*$/, (req, res) => res.render('index'));
+
+    app.listen(port, () => console.log(`App listening on port ${port}.`));
 });
