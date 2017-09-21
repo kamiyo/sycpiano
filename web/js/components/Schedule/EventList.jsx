@@ -1,7 +1,5 @@
 import '@/less/Schedule/event-list.less';
 
-// should we just use es6 array functions instead of lodash?
-import _ from 'lodash';
 import moment from 'moment-timezone';
 import React from 'react';
 import { connect } from 'react-redux';
