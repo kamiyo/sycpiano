@@ -4,11 +4,21 @@ import moment from 'moment-timezone';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
+import { easeQuadOut } from 'd3-ease';
+
 import EventItem from '@/js/components/Schedule/EventItem.jsx';
 import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
-import { dispatchSelectEvent, dispatchAnimateStart, dispatchAnimateFinish } from '@/js/components/Schedule/actions.js';
+import {
+    dispatchSelectEvent,
+    dispatchAnimateStart,
+    dispatchAnimateFinish
+} from '@/js/components/Schedule/actions.js';
 import animateFn from '@/js/components/animate.js';
-import { easeQuadOut } from 'd3-ease';
+
+// How much less to scroll than the target offset when scrolling to an element.
+// This leaves a bit of room at the top, so that the currently selected element
+// isn't right against the top.
+const TARGET_OFFSET_MARGIN = 120;
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
@@ -41,11 +51,11 @@ class ConnectedEventList extends React.Component {
         this.props.dispatchAnimateStart();
         animateFn(
             this.currentOffset,
-            targetOffset,
+            targetOffset - TARGET_OFFSET_MARGIN,
             500,
-            (position) => this.List.scrollToPosition(position),
+            position => this.List.scrollToPosition(position),
             easeQuadOut,
-            () => {this.props.dispatchAnimateFinish();}
+            () => this.props.dispatchAnimateFinish()
         );
     }
 

@@ -21,11 +21,7 @@ const DateContainer = ({ dateTime }) => (
     </div>
 );
 
-const EventName = ({ dateTime, name, storeScroll, gridState, handleSelect }) => (
-    <div className="event-item__info-name">
-        {name}
-    </div>
-);
+const EventName = ({ name }) => <div className="event-item__info-name">{name}</div>;
 
 const EventBody = ({ program, collaborators }) => (
     <div className="event-item__info-body">
@@ -60,9 +56,7 @@ const EventItem = ({
             onClick={handleSelect}
             style={style}
         >
-            <div
-                className={classNames('event-item', { 'event-item--active': active })}
-            >
+            <div className={classNames('event-item', { 'event-item--active': active })}>
                 <DateContainer dateTime={event.dateTime} />
                 <div className="event-item__info">
                     <EventName name={event.name} />
