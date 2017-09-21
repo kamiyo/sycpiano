@@ -94,6 +94,7 @@ class YouTube {
         });
     }
 
+    //technically not needed; getPlaylistItems response already contains contentDetails and statistics
     getVideos(listOfIds) {
         return axios.get(VIDEOS_URL, {
             params: {

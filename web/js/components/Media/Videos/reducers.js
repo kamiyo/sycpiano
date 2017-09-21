@@ -1,10 +1,10 @@
 import { VIDEO_ACTIONS } from '@/js/components/Media/Videos/actions.js';
 
-export const playerReducer = (state = {
+export const videoPlayerReducer = (state = {
     isPlayerReady: false,
     videoId: '',
     shouldPlay: false,
-    isPreviewOverlay: false
+    isPreviewOverlay: false,
 }, action) => {
     switch (action.type) {
         case VIDEO_ACTIONS.PLAYER_IS_READY:
@@ -24,14 +24,27 @@ export const playerReducer = (state = {
                 ...state,
                 videoId: action.video[0].id
             }
+        case VIDEO_ACTIONS.RESET_PLAYER:
+            return {
+                ...state,
+                isPlayerReady: false,
+                videoId: '',
+                shouldPlay: false,
+                isPreviewOverlay: false
+            }
+        case VIDEO_ACTIONS.HIDE_PREVIEW_OVERLAY:
+            return {
+                ...state,
+                isPreviewOverlay: false
+            }
         default: return state;
     }
 };
 
-export const playlistReducer = (state = {
+export const videoPlaylistReducer = (state = {
     items: [],
     isFetching: false,
-    isPlaylistShow: false
+    isShow: false
 }, action) => {
     switch (action.type) {
         case VIDEO_ACTIONS.FETCH_PLAYLIST_REQUEST:
@@ -43,7 +56,12 @@ export const playlistReducer = (state = {
                 ...state,
                 isFetching: false,
                 items: action.videos,
-                isPlaylistShow: true
+                isShow: true
+            }
+        case VIDEO_ACTIONS.TOGGLE_PLAYLIST:
+            return {
+                ...state,
+                isShow: action.isShow
             }
         default: return state;
     };
