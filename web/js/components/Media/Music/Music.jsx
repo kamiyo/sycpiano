@@ -30,13 +30,11 @@ class Music extends React.Component {
 
         this.explosions = new ParticleExplosionsManager(this.visualizationCtx);
 
-        this.cq = new ConstantQ();
-
         this.$audio.on('loadeddata', () => {
             const audioCtx = new AudioContext();
             const audioSrc = audioCtx.createMediaElementSource(this.audio);
             this.analyser = audioCtx.createAnalyser();
-            // we have to connect the MediaElementSource with the analyser 
+            // we have to connect the MediaElementSource with the analyser
             audioSrc.connect(this.analyser);
             console.log(audioSrc);
             this.analyser.connect(audioCtx.destination);
@@ -60,7 +58,7 @@ class Music extends React.Component {
                 this.explosions.createExplosion(this.width / 2, this.height / 2);
                 this.update();
             };
-            
+
             // this.onAnalyze();
 
             this.$audio.on('play', () => {
@@ -71,8 +69,7 @@ class Music extends React.Component {
 
     onAnalyze() {
         this.analyser.getByteFrequencyData(this.frequencyData);
-        this.result = [];
-        this.cq.apply(Array.from(this.frequencyData)).then(values => { this.result = values; });
+        this.result = ConstantQ.apply(Array.from(this.frequencyData));
         this.drawCircles(200, this.result);
 
         // const now = Date.now();

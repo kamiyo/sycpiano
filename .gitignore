@@ -8,3 +8,5 @@ web/build/
 *.LOCAL
 *.orig
 *.REMOTE
+.happypack/
+.vscode/
