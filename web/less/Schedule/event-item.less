@@ -1,23 +1,19 @@
 @import '../colors.less';
 @import '../fonts.less';
+@import '../mixins.less';
 
 @date-container-dimension: 107px;
 
 .event-item {
-    padding: 30px 0 30px 10px;
+    padding: 30px 0 30px 30px;
     display: flex;
     font-family: @lato1;
     align-items: center;
 }
 
 .event-item--active {
-    background-color: @light-blue;
-    color: white;
-
-    .event-item__date {
-        background-color: white;
-        color: @light-blue;
-    }
+    background-color: #d1cfe2;
+    color: @light-blue;
 }
 
 .event-item__date-container {
