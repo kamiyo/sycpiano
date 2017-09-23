@@ -4,12 +4,14 @@ import math from 'mathjs';
 
 class ConstantQ {
     constructor() {
-        this._pmatrix = null
-        this.loadMatrix();
+        this._pmatrix = null;
+        this.loaded = this.loadMatrix();
+        this.firstNonZero = null;
     }
-    loadFile(filename, type, type_numbytes) {
-        return new Promise((resolve, reject) => {
-            jbinary.loadData(filename, function (error, data) {
+
+    loadFile = (filename, type, type_numbytes) => (
+        new Promise((resolve, reject) => {
+            jbinary.loadData(filename, (error, data) => {
                 const temp = [];
                 let j = new jbinary(new jdv(data, 0, data.byteLength, true));
                 let size = data.byteLength / type_numbytes;
@@ -18,13 +20,14 @@ class ConstantQ {
                 }
                 resolve(temp);
             });
-        });
-    }
+        })
+    )
+
     loadMatrix() {
-        const pvalues = this.loadFile('/binary/values.dat', 'float64', 8);
+        const pvalues = this.loadFile('/binary/values.dat', 'float32', 4);
         const pindices = this.loadFile('/binary/indices.dat', 'int32', 4);
         const ppointers = this.loadFile('/binary/pointers.dat', 'int32', 4);
-        Promise.all([pvalues, pindices, ppointers]).then(data => {
+        return Promise.all([pvalues, pindices, ppointers]).then(data => {
             let o = {
                 mathjs: "SparseMatrix",
                 values: data[0],
@@ -33,13 +36,19 @@ class ConstantQ {
                 size: [8192, 42],
                 datatype: 'number'
             };
-            this._pmatrix = math.transpose(math.type.SparseMatrix.fromJSON(o));
+            this._pmatrix = math.type.SparseMatrix.fromJSON(o);
+            this.firstNonZero = data[1][0];
+            console.log(this._pmatrix.toArray());
         });
     }
+
     apply(input) {
         if (this._pmatrix) {
-            return math.transpose(math.matrix(math.multiply(this._pmatrix, input), 'dense')).toArray();
+            const inputMatrix = new math.type.DenseMatrix.fromJSON({"mathjs": "DenseMatrix", data: [input], size: [1, 8192], datatype: 'number'});
+            const result = math.multiply(inputMatrix, this._pmatrix).toArray();
+            return result[0];
         }
+        return new Array();
     }
 }
 

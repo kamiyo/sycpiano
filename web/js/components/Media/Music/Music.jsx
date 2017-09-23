@@ -12,12 +12,24 @@ import ConstantQ from '@/js/components/Media/Music/ConstantQ.js';
 const url = '/music/improv.mp3';
 
 class Music extends React.Component {
+    togglePlaying = (event) => {
+        if (event.keyCode == 32) {
+            if (this.isPlaying) {
+                this.audio.pause();
+            } else {
+                this.audio.play();
+            }
+            this.isPlaying = !this.isPlaying;
+        }
+    }
+
     componentDidMount() {
         this.$el = $(ReactDOM.findDOMNode(this));
         this.$audio = this.$el.find('audio').first();
         this.audio = this.$audio.get(0);
         this.audio.src = url;
-
+        this.requestId = null;
+        this.isPlaying = false;
         this.$visualization = this.$el.find('.visualization').first();
         this.visualization = this.$visualization.get(0);
 
@@ -36,41 +48,43 @@ class Music extends React.Component {
             this.analyser = audioCtx.createAnalyser();
             // we have to connect the MediaElementSource with the analyser
             audioSrc.connect(this.analyser);
-            console.log(audioSrc);
             this.analyser.connect(audioCtx.destination);
             this.analyser.fftSize = 16384;
+            this.analyser.smoothingTimeConstant = 0.5;
 
             // frequencyBinCount tells you how many values you'll receive from the analyser
             this.frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
 
             this.audio.volume = 1;
-            this.audio.play();
+            ConstantQ.loaded.then(() => {this.audio.play(); this.isPlaying = true;});
             window.audio = this.audio;
 
             this.lastUpdateTime = null;
             this.lastTimeAboveThresh = null;
-            this.newCenterIn = 1 + Math.random() * 25;
-            this.explosionCenterX = this.width / 2;
-            this.explosionCenterY = this.height / 2;
-
-
-            window.createExplosion = () => {
-                this.explosions.createExplosion(this.width / 2, this.height / 2);
-                this.update();
-            };
-
-            // this.onAnalyze();
+            // this.newCenterIn = 1 + Math.random() * 25;
+            // this.explosionCenterX = this.width / 2;
+            // this.explosionCenterY = this.height / 2;
+            this.minDb = this.analyser.minDecibels;
+            this.rangeDb = this.analyser.maxDecibels - this.minDb;
 
             this.$audio.on('play', () => {
                 this.onAnalyze();
             });
+
+            window.addEventListener('keydown', this.togglePlaying);
         });
     }
 
     onAnalyze() {
-        this.analyser.getByteFrequencyData(this.frequencyData);
-        this.result = ConstantQ.apply(Array.from(this.frequencyData));
-        this.drawCircles(200, this.result);
+        this.analyser.getByteFrequencyData(this.frequencyData)
+        const normalizedData = Float32Array.from(this.frequencyData, (number, index) => number / 255);
+        let average = 0;
+        let highFreq = 0;
+        normalizedData.forEach((value, index) => { average += value; if (index >= 1600) highFreq += value; });
+        average /= normalizedData.length;
+        highFreq /= (normalizedData.length - 1600);
+        this.result = ConstantQ.apply(normalizedData);
+        this.drawCircles(250 + average * 100, this.result, highFreq);
 
         // const now = Date.now();
         // const deltaMs = this.lastTimeAboveThresh ? now - this.lastTimeAboveThresh : 0;
@@ -87,7 +101,7 @@ class Music extends React.Component {
         // // this.createExplosion(this.frequencyData);
 
         // this.update();
-        requestAnimationFrame(this.onAnalyze.bind(this));
+        this.requestId = requestAnimationFrame(this.onAnalyze.bind(this));
     }
 
     update() {
@@ -120,7 +134,7 @@ class Music extends React.Component {
         this.explosions.createExplosion(posX, posY, sizes);
     }
 
-    drawCircles(radius, radii) {
+    drawCircles(radius, radii, lightness) {
         const context = this.visualization.getContext('2d');
         context.clearRect(0, 0, this.width, this.height);
 
@@ -139,9 +153,7 @@ class Music extends React.Component {
 
                 const x = rad * Math.cos(angle) + this.width / 2;
                 const y = rad * Math.sin(angle) + this.height / 2;
-                const r = 20 * scale;
-
-                console.log(r);
+                const r = 40 * scale;
 
                 // const x = (100 + radius * scale) * Math.cos(angle) + this.width / 2;
                 // const y = (100 + radius * scale) * Math.sin(angle) + this.height / 2;
@@ -149,7 +161,7 @@ class Music extends React.Component {
 
                 context.beginPath();
                 context.arc(x, y, r, 0, twoPi, false);
-                context.fillStyle = '#fff';
+                context.fillStyle = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
                 context.fill();
             }
         }
@@ -161,6 +173,10 @@ class Music extends React.Component {
         context.clip();
         context.clearRect(0, 0, this.width, this.height);
         context.restore();
+    }
+
+    componentWillUnmount() {
+        cancelAnimationFrame(this.requestId);
     }
 
     render() {
