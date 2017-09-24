@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 const AudioInfo = ({ title, composer, contributing }) => (
     <div className="audioInfoContainer">
-        <div className="audioInfo">{`${composer} | ${title} | ${contributing}`}</div>
+        <div className="audioInfo">{`${composer} | ${title} ${(contributing)?'| ':''}${contributing}`}</div>
     </div>
 );
 

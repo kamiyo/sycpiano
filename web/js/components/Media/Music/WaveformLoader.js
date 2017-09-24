@@ -16,9 +16,19 @@ export function loadWaveformFile(filename) {
             const body = j.read({
                 values: ['array', type]
             });
-            console.log(header);
-            console.log(body);
             resolve({ header: header, body: body });
         });
-    })
+    });
+}
+
+export function loadFIRFile() {
+    return new Promise((resolve, reject) => {
+        jbinary.loadData('/binary/fir.dat', (error, data) => {
+            const j = new jbinary(new jdv(data, 0, data.byteLength, true));
+            const body = j.read({
+                values: ['array', 'float64']
+            });
+            resolve(body.values);
+        });
+    });
 }
