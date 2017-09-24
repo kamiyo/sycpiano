@@ -1,0 +1,24 @@
+@import '../../mixins.less';
+@import '../../fonts.less';
+
+.audioInfoContainer {
+    width: 75%;
+    height: 100%;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    .flex-display();
+    .flex-direction(column);
+    .align-items(center);
+    .justify-content(flex-end);
+
+    font-family: @lato1;
+    font-size: 30px;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+}
+
+.audioInfo {
+    padding-bottom: 150px;
+}
