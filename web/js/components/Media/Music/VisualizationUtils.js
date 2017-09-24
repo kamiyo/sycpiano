@@ -26,9 +26,11 @@ export function loadFIRFile() {
         jbinary.loadData('/binary/fir.dat', (error, data) => {
             const j = new jbinary(new jdv(data, 0, data.byteLength, true));
             const body = j.read({
+                numCrossings: 'uint32',
+                samplesPerCrossing: 'uint32',
                 values: ['array', 'float64']
             });
-            resolve(body.values);
+            resolve(body);
         });
     });
 }
