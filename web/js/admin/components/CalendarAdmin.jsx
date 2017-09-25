@@ -8,7 +8,7 @@ import { combineReducers, createStore } from 'redux';
 import {
     eventFormReducer,
     eventListReducer,
-} from '@/js/admin/components/Reducers.js';
+} from '@/js/admin/components/reducers.js';
 
 import { validateToken, CLIENT_ID } from '@/js/services/GoogleOAuth.js';
 import AuthInterface from '@/js/admin/components/AuthInterface.jsx';
