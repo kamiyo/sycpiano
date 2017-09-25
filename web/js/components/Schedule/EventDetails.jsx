@@ -23,6 +23,17 @@ const EventMap = withScriptJs(
     })
 );
 
+const Collaborators = ({ collaborators }) => (
+    collaborators.length ? (
+        <div className="collaborators">
+            <div>with</div>
+            {collaborators.map((collab, idx) => (
+                <div key={idx} className="collaborator__item">{collab}</div>
+            ))}
+        </div>
+    ) : <div>This is a solo concert.</div>
+);
+
 class EventDetails extends React.Component {
     componentWillUpdate(nextProps) {
         if (nextProps.currentItem && !nextProps.currentLatLng) {
@@ -46,14 +57,17 @@ class EventDetails extends React.Component {
 
         return (
             <div className="event-details">
-                <h2>{name}</h2>
-                <div>{dateTime.format('dddd, MMMM M')}</div>
-                <div>{collaborators}</div>
+                <h1 className="event-details__name">{name}</h1>
+
+                <Collaborators collaborators={collaborators} />
+
+                {/* <div>{dateTime.format('dddd, MMMM M')}</div> */}
+                {/* <div>{collaborators}</div>
 
                 <div>{location}</div>
-                <div>{program}</div>
+                <div>{program}</div> */}
 
-                {
+                {/* {
                     this.props.currentLatLng && !this.props.isAnimatingScroll &&
                     <EventMap
                         containerElement={<div />}
@@ -62,7 +76,7 @@ class EventDetails extends React.Component {
                         loadingElement={<div />}
                         {...this.props.currentLatLng}
                     />
-                }
+                } */}
             </div>
         );
     }
