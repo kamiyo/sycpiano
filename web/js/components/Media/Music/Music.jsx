@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { WaveformLoader, firLoader, constantQ, CONSTANTS } from '@/js/components/Media/Music/VisualizationUtils.js';
-import { storeAnalyzers, updatePlaybackPosition, setIsPlaying, storeDuration } from '@/js/components/Media/Music/actions.js';
+import { storeWaveformLoader, storeAnalyzers, updatePlaybackPosition, setIsPlaying, storeDuration } from '@/js/components/Media/Music/actions.js';
 import Visualizer from '@/js/components/Media/Music/Visualizer.jsx';
 import AudioInfo from '@/js/components/Media/Music/AudioInfo.jsx';
 
@@ -35,6 +35,7 @@ class Music extends React.Component {
         this.audio = this.el.getElementsByTagName('audio')[0];
         this.audio.src = demo.url;
         this.waveformLoader = new WaveformLoader(demo.waveform);
+        this.props.storeWaveformLoader(this.waveformLoader);
 
         this.audio.addEventListener('loadeddata', this.audioOnLoad);
         this.audio.addEventListener('playing', this.onPlaying);
@@ -57,21 +58,21 @@ class Music extends React.Component {
         // split src into channels to analyze separately, then merge back to destination
         const audioCtx = new AudioContext();
         const audioSrc = audioCtx.createMediaElementSource(this.audio);
-        this.analyserL = audioCtx.createAnalyser();
-        this.analyserR = audioCtx.createAnalyser();
+        this.analyzerL = audioCtx.createAnalyser();
+        this.analyzerR = audioCtx.createAnalyser();
         this.splitter = audioCtx.createChannelSplitter(2);
         this.merger = audioCtx.createChannelMerger(2);
         audioSrc.connect(this.splitter);
-        this.splitter.connect(this.analyserL, 0);
-        this.splitter.connect(this.analyserR, 1);
-        this.analyserL.connect(this.merger, 0, 0);
-        this.analyserR.connect(this.merger, 0, 1);
+        this.splitter.connect(this.analyzerL, 0);
+        this.splitter.connect(this.analyzerR, 1);
+        this.analyzerL.connect(this.merger, 0, 0);
+        this.analyzerR.connect(this.merger, 0, 1);
         this.merger.connect(audioCtx.destination);
 
-        this.analyserL.fftSize = this.analyserR.fftSize = CONSTANTS.FFT_SIZE;
-        this.analyserL.smoothingTimeConstant = this.analyserR.smoothingTimeConstant = CONSTANTS.SMOOTHING_CONSTANT;
+        this.analyzerL.fftSize = this.analyzerR.fftSize = CONSTANTS.FFT_SIZE;
+        this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = CONSTANTS.SMOOTHING_CONSTANT;
 
-        this.props.storeAnalyzers([analyzerL, analyzerR]);
+        this.props.storeAnalyzers([this.analyzerL, this.analyzerR]);
         this.props.storeDuration(this.audio.duration);
 
         this.audio.volume = 1;
@@ -90,22 +91,21 @@ class Music extends React.Component {
 
     registerPlayingCallback = (func) => {
         this.playingCallback = func;
-        this.audio.addEventListener('playing', this.playingCallback);
-        //manually call func if audio already playing
+        // manually call func if audio already playing
         if (this.props.isPlaying) {
-            func();
+            this.playingCallback();
         }
     }
 
     onPause = () => {
-        this.setIsPlaying(this.audio.currentTime, performance.now());
+        this.props.setIsPlaying(this.audio.currentTime, performance.now());
         setTimeout(() => cancelAnimationFrame(this.requestId), 500);
     }
 
     onPlaying = () => {
-        this.setIsPlaying(this.audio.currentTime, performance.now());
-        this.audioDuration = this.audio.duration;
-        this.prevTimestamp = performance.now();
+        this.props.setIsPlaying(this.audio.currentTime, performance.now());
+        if (this.playingCallback)
+            this.playingCallback();
     }
 
     componentDidMount() {
@@ -120,8 +120,7 @@ class Music extends React.Component {
                 <AudioInfo />
                 <audio id="audio" crossOrigin="anonymous" />
                 <Visualizer
-                    waveformLoader={this.waveformLoader}
-                    registerPlayingCallback={registerPlayingCallback}
+                    registerPlayingCallback={this.registerPlayingCallback}
                 />
             </div>
         );
@@ -136,6 +135,7 @@ const mapStateToProps = state => ({
 export default connect(
     mapStateToProps,
     {
+        storeWaveformLoader,
         storeAnalyzers,
         updatePlaybackPosition,
         setIsPlaying,

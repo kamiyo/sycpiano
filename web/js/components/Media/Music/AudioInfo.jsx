@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 const AudioInfo = (props) => {
-    const { title, composer, contributing, ...rest } = this.props.currentTrack;
+    const { title, composer, contributing, ...rest } = props.currentTrack;
     return (
         <div className="audioInfoContainer">
             <div className="audioInfo">{`${composer} | ${title} ${(contributing) ? '| ' : ''}${contributing}`}</div>
@@ -17,9 +17,9 @@ AudioInfo.PropTypes = {
     currentTrack: PropTypes.object.isRequired,
 };
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
     currentTrack: state.audio_player.currentTrack
-})
+});
 
 export default connect(
     mapStateToProps,

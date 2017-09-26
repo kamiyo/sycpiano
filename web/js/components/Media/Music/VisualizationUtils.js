@@ -2,26 +2,45 @@ import jbinary from 'jbinary';
 import jdv from 'jdataview';
 import math from 'mathjs';
 
+// Constants so we don't have to calculate in time-sensitive loops
+// includes reciprocals so we just have to multiply instead of divide
+// uses lazy getters/memoization
+const FFT_SIZE = 16384;
+const FFT_HALF_SIZE = FFT_SIZE / 2;
+const HIGH_PASS_BIN = 1600;
+const SMOOTHING_CONSTANT = 0.5;
+const TWO_PI = 2 * Math.PI;
+const HALF_PI = Math.PI / 2;
+const PI = Math.PI;
+const CIRCLE_SAMPLES = 2048;
+const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI / CIRCLE_SAMPLES;
+const CQ_BINS = 84;
+const OVERSAMPLING_RATIO = CIRCLE_SAMPLES / CQ_BINS;
+const STEP_SIZE = 1 / OVERSAMPLING_RATIO;
+const GLOBAL_SCALE = 40;
+const WAVEFORM_HALF_HEIGHT = 50;
+const FFT_2_SCALE = 1 / (2 * FFT_HALF_SIZE);
+const FFT_2_SCALE_HF = 1 / (2 * (FFT_HALF_SIZE - HIGH_PASS_BIN));
+
 export const CONSTANTS = {
-    // Constants so we don't have to calculate in time-sensitive loops
-    // includes reciprocals so we just have to multiply instead of divide
-    FFT_SIZE: 16384,
-    FFT_HALF_SIZE: FFT_SIZE / 2,
-    HIGH_PASS_BIN: 1600,
-    SMOOTHING_CONSTANT: 0.5,
-    TWO_PI: 2 * Math.PI,
-    HALF_PI: Math.PI / 2,
-    PI: Math.PI,
-    CIRCLE_SAMPLES: 2048,
-    TWO_PI_PER_CIRCLE_SAMPLES: TWO_PI / CIRCLE_SAMPLES,
-    CQ_BINS: 84,
-    OVERSAMPLING_RATIO: CIRCLE_SAMPLES / CQ_BINS,
-    STEP_SIZE: 1 / OVERSAMPLING_RATIO,
-    GLOBAL_SCALE: 40,
-    WAVEFORM_HALF_HEIGHT: 50,
-    FFT_2_SCALE: 1 / (2 * FFT_HALF_SIZE),
-    FFT_2_SCALE_HF: 1 / (2 * (FFT_HALF_SIZE - HIGH_PASS_BIN))
+    FFT_SIZE: FFT_SIZE,
+    FFT_HALF_SIZE: FFT_HALF_SIZE,
+    HIGH_PASS_BIN: HIGH_PASS_BIN,
+    SMOOTHING_CONSTANT: SMOOTHING_CONSTANT,
+    TWO_PI: TWO_PI,
+    HALF_PI: HALF_PI,
+    PI: PI,
+    CIRCLE_SAMPLES: CIRCLE_SAMPLES,
+    TWO_PI_PER_CIRCLE_SAMPLES: TWO_PI_PER_CIRCLE_SAMPLES,
+    CQ_BINS: CQ_BINS,
+    OVERSAMPLING_RATIO: OVERSAMPLING_RATIO,
+    STEP_SIZE: STEP_SIZE,
+    GLOBAL_SCALE: GLOBAL_SCALE,
+    WAVEFORM_HALF_HEIGHT: WAVEFORM_HALF_HEIGHT,
+    FFT_2_SCALE: FFT_2_SCALE,
+    FFT_2_SCALE_HF: FFT_2_SCALE_HF,
 }
+
 
 export const polarToCartesian = (radius, angle, offset) => (
     [
@@ -33,8 +52,12 @@ export const polarToCartesian = (radius, angle, offset) => (
 export class WaveformLoader {
     constructor(filename) {
         this.header = null;
-        this.waveform = null;
-        this.loaded = loadWaveformFile(filename);
+        this.waveform = [];
+        if (this.filename)
+            this.loaded = this.loadWaveformFile(filename);
+        else {
+            this.loaded = Promise.resolve();
+        }
     }
 
     loadWaveformFile = (filename) => {
@@ -67,7 +90,7 @@ class FIRLoader {
         this.numCrossings = null;
         this.samplesPerCrossing = null;
         this.FIR = null;
-        this.loaded = loadFIRFile();
+        this.loaded = this.loadFIRFile();
     }
 
     loadFIRFile = () => (
@@ -80,7 +103,7 @@ class FIRLoader {
                     values: ['array', 'float64']
                 });
                 this.numCrossings = body.numCrossings;
-                this.samplesPerCrossing = bady.samplesPerCrossing;
+                this.samplesPerCrossing = body.samplesPerCrossing;
                 this.FIR = body.values;
                 resolve();
             });

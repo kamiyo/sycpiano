@@ -1,4 +1,3 @@
-import ConstantQ from '@/js/components/Media/Music/ConstantQ.js';
 import { loadFIRFile } from '@/js/components/Media/Music/VisualizationUtils.js';
 
 export const AUDIO_ACTIONS = {
@@ -6,8 +5,16 @@ export const AUDIO_ACTIONS = {
     UPDATE_POSITION: 'AUDIO_ACTIONS--UPDATE_POSITION',
     SET_IS_PLAYING: 'AUDIO_ACTIONS--SET_IS_PLAYING',
     STORE_ANIMATION_REQUEST_ID: 'AUDIO_ACTIONS--STORE_ANIMATION_REQUEST_ID',
-    STORE_DURATION: 'AUDIO_ACTIONS--STORE_DURATION'
+    STORE_DURATION: 'AUDIO_ACTIONS--STORE_DURATION',
+    STORE_WAVEFORM_LOADER: 'AUDIO_ACTIONS--STORE_WAVEFORM_LOADER'
 };
+
+export const storeWaveformLoader = (waveformLoader) => (dispatch) => (
+    dispatch({
+        type: AUDIO_ACTIONS.STORE_WAVEFORM_LOADER,
+        waveformLoader: waveformLoader
+    })
+)
 
 export const storeAnalyzers = (analyzers) => (dispatch) => (
     dispatch({
@@ -42,7 +49,7 @@ export const togglePlaying = () => (dispatch, getState) => (
 
 export const storeAnimationRequestId = (requestId) => (dispatch) => (
     dispatch({
-        type: AUDIO_ACTIONS.STORE_ANIMATION_ID,
+        type: AUDIO_ACTIONS.STORE_ANIMATION_REQUEST_ID,
         animationRequestId: requestId
     })
 );

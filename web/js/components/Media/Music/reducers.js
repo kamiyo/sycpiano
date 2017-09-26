@@ -1,11 +1,12 @@
 import { AUDIO_ACTIONS } from '@/js/components/Media/Music/actions.js';
+import { WaveformLoader } from '@/js/components/Media/Music/VisualizationUtils.js';
 
 export const audioPlayerReducer = (state = {
-    audio: null,
+    waveformLoader: new WaveformLoader(),
     currentPosition: 0,
     currentTrack: {},
     isPlaying: false,
-    analyzers: null,
+    analyzers: [],
     updateTimestamp: null,
     duration: null
 }, action) => {
@@ -31,6 +32,11 @@ export const audioPlayerReducer = (state = {
                 ...state,
                 isPlaying: action.isPlaying,
                 currentTrack: (action.track) ? action.track : state.currentTrack
+            }
+        case AUDIO_ACTIONS.STORE_WAVEFORM_LOADER:
+            return {
+                ...state,
+                waveformLoader: action.waveformLoader
             }
         default: return state;
     }

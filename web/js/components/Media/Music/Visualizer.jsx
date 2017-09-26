@@ -3,7 +3,7 @@ import '@/less/Media/Music/visualizer.less';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { constantQ,  waveformLoader, firLoader, CONSTANTS, polarToCartesian } from '@/js/components/Media/Music/VisualizationUtils.js'
+import { constantQ, firLoader, CONSTANTS, polarToCartesian } from '@/js/components/Media/Music/VisualizationUtils.js'
 import { storeAnimationRequestId } from '@/js/components/Media/Music/actions.js'
 
 class Visualizer extends React.Component {
@@ -13,6 +13,7 @@ class Visualizer extends React.Component {
     }
 
     initializeVisualizer = () => {
+        console.log(CONSTANTS);
         this.el = ReactDOM.findDOMNode(this);
         this.visualization = this.el.getElementsByClassName('visualization')[0];
         this.height = this.visualization.offsetHeight;
@@ -24,15 +25,16 @@ class Visualizer extends React.Component {
         this.visualizationCtx = this.visualization.getContext('2d');
         this.visualizationCtx.globalCompositionOperation = "lighter";
         this.lastPosition = 0;
-        this.frequencyData = new Uint8Array(CONSTANTS.FFT_SIZE);
+        this.frequencyData = new Uint8Array(CONSTANTS.FFT_HALF_SIZE);
 
         Promise.all([constantQ.loaded, firLoader.loaded, this.props.waveformLoader.loaded]).then((data) => {
             const cq = constantQ.matrix;
-            const maxAbs = waveform.body.values.reduce((acc, value) => {
+            const waveform = this.props.waveformLoader.waveform;
+            const maxAbs = waveform.reduce((acc, value) => {
                 if (Math.abs(value) > acc) acc = value;
                 return acc;
             }, 0);
-            this.waveform = Float32Array.from(this.props.waveformLoader.waveform, (number, index) => number / maxAbs);
+            this.waveform = Float32Array.from(waveform, (number, index) => number / maxAbs);
             this.NUM_CROSSINGS = firLoader.numCrossings;
             this.SAMPLES_PER_CROSSING = firLoader.samplesPerCrossing;
             this.FIR = Float32Array.from(firLoader.FIR);
@@ -66,10 +68,10 @@ class Visualizer extends React.Component {
             return acc;
         }, { average: 0, highFreq: 0 });
         const resultR = constantQ.apply(normalizedDataR).reverse();
-
         const result = Float32Array.from([...resultL, ...resultR]);
         const average = (accumulatorL.average + accumulatorR.average) * CONSTANTS.FFT_2_SCALE;
         const highFreq = (accumulatorL.highFreq + accumulatorR.highFreq) * CONSTANTS.FFT_2_SCALE_HF;
+        console.log(CONSTANTS.FFT_2_SCALE, CONSTANTS.FFT_2_SCALE_HF);
         this.drawVisualization(this.visualizationCtx, average, result, highFreq, timestamp);
 
         this.requestId = requestAnimationFrame(this.onAnalyze);
@@ -88,9 +90,9 @@ class Visualizer extends React.Component {
             for (let i = -this.HALF_CROSSINGS; i < this.HALF_CROSSINGS; i++) {
                 let input = currentInput + i;
                 if (input < 0) {
-                    input += CQ_BINS;
-                } else if (input >= CQ_BINS) {
-                    input -= CQ_BINS;
+                    input += CONSTANTS.CQ_BINS;
+                } else if (input >= CONSTANTS.CQ_BINS) {
+                    input -= CONSTANTS.CQ_BINS;
                 }
                 const scale = values[input];
                 let indexToCoeff = Math.floor((i + currentFractionFrom1) * this.SAMPLES_PER_CROSSING + this.FILTER_CENTER);
@@ -124,7 +126,7 @@ class Visualizer extends React.Component {
     drawCircleMask = (context, radius) => {
         context.save();
         context.beginPath();
-        context.arc(this.center_x, this.center_y, radius, 0, TWO_PI);
+        context.arc(this.center_x, this.center_y, radius, 0, CONSTANTS.TWO_PI);
         context.closePath();
         context.clip();
         context.clearRect(0, 0, this.width, this.height);
@@ -133,12 +135,12 @@ class Visualizer extends React.Component {
 
     drawWaveForm = (context, centerAxis, color) => {
         const waveformLength = this.waveform.length / 2;
-        const twoPiPerWaveformLength = TWO_PI / waveformLength;
+        const twoPiPerWaveformLength = CONSTANTS.TWO_PI / waveformLength;
         context.beginPath();
         // going through mins from start to end
         for (let j = 0; j < waveformLength; j++) {
-            const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + this.waveform[j * 2] * WAVEFORM_HALF_HEIGHT;
+            const angle = -CONSTANTS.HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
+            const scale = centerAxis + this.waveform[j * 2] * CONSTANTS.WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.center_x, this.center_y]);
 
             if (j === 0) {
@@ -150,8 +152,8 @@ class Visualizer extends React.Component {
 
         // looping around maxes from end to start
         for (let j = waveformLength - 1; j >= 0; j--) {
-            const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + this.waveform[j * 2 + 1] * WAVEFORM_HALF_HEIGHT;
+            const angle = -CONSTANTS.HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
+            const scale = centerAxis + this.waveform[j * 2 + 1] * CONSTANTS.WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.center_x, this.center_y]);
 
             context.lineTo(x, y);
@@ -161,9 +163,9 @@ class Visualizer extends React.Component {
     }
 
     drawPlaybackHead = (context, playbackHead, minRad, maxRad) => {
-        const angle = (this.props.duration) ? -HALF_PI + TWO_PI * playbackHead / this.props.duration : 0;
-        const [xStart, yStart] = this.polarToCartesian(minRad, angle, [this.center_x, this.center_y]);
-        const [xEnd, yEnd] = this.polarToCartesian(maxRad, angle, [this.center_x, this.center_y]);
+        const angle = (this.props.duration) ? -CONSTANTS.HALF_PI + CONSTANTS.TWO_PI * playbackHead / this.props.duration : 0;
+        const [xStart, yStart] = polarToCartesian(minRad, angle, [this.center_x, this.center_y]);
+        const [xEnd, yEnd] = polarToCartesian(maxRad, angle, [this.center_x, this.center_y]);
         context.beginPath();
         context.moveTo(xStart, yStart);
         context.lineTo(xEnd, yEnd);
@@ -172,7 +174,7 @@ class Visualizer extends React.Component {
     }
 
     drawSeekArea = (context, radius, color, timestamp) => {
-        const WAVEFORM_CENTER_AXIS = radius - WAVEFORM_HALF_HEIGHT;
+        const WAVEFORM_CENTER_AXIS = radius - CONSTANTS.WAVEFORM_HALF_HEIGHT;
         this.drawWaveForm(context, WAVEFORM_CENTER_AXIS, color);
 
         let playbackHead = this.props.currentPosition;
@@ -189,8 +191,8 @@ class Visualizer extends React.Component {
         this.drawPlaybackHead(
             context,
             playbackHead,
-            WAVEFORM_CENTER_AXIS - WAVEFORM_HALF_HEIGHT,
-            WAVEFORM_CENTER_AXIS + WAVEFORM_HALF_HEIGHT
+            WAVEFORM_CENTER_AXIS - CONSTANTS.WAVEFORM_HALF_HEIGHT,
+            WAVEFORM_CENTER_AXIS + CONSTANTS.WAVEFORM_HALF_HEIGHT
         );
     }
 
@@ -214,8 +216,8 @@ class Visualizer extends React.Component {
         cancelAnimationFrame(this.requestId);
     }
 
-    componentShouldUpdate(prevProps, nextProps) {
-        return false;
+    shouldComponentUpdate(nextProps) {
+        return this.props.waveformLoader !== nextProps.waveformLoader;
     }
 
     render() {
@@ -228,6 +230,7 @@ class Visualizer extends React.Component {
 }
 
 const mapStateToProps = state => ({
+    waveformLoader: state.audio_player.waveformLoader,
     currentPosition: state.audio_player.currentPosition,
     analyzers: state.audio_player.analyzers,
     isPlaying: state.audio_player.isPlaying,
