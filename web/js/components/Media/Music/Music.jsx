@@ -35,6 +35,7 @@ class Music extends React.Component {
         this.audio = this.el.getElementsByTagName('audio')[0];
         this.audio.src = demo.url;
         this.waveformLoader = new WaveformLoader(demo.waveform);
+        console.log(this.waveformLoader);
         this.props.storeWaveformLoader(this.waveformLoader);
 
         this.audio.addEventListener('loadeddata', this.audioOnLoad);

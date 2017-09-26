@@ -13,7 +13,6 @@ class Visualizer extends React.Component {
     }
 
     initializeVisualizer = () => {
-        console.log(CONSTANTS);
         this.el = ReactDOM.findDOMNode(this);
         this.visualization = this.el.getElementsByClassName('visualization')[0];
         this.height = this.visualization.offsetHeight;
@@ -27,14 +26,8 @@ class Visualizer extends React.Component {
         this.lastPosition = 0;
         this.frequencyData = new Uint8Array(CONSTANTS.FFT_HALF_SIZE);
 
-        Promise.all([constantQ.loaded, firLoader.loaded, this.props.waveformLoader.loaded]).then((data) => {
+        Promise.all([constantQ.loaded, firLoader.loaded]).then((data) => {
             const cq = constantQ.matrix;
-            const waveform = this.props.waveformLoader.waveform;
-            const maxAbs = waveform.reduce((acc, value) => {
-                if (Math.abs(value) > acc) acc = value;
-                return acc;
-            }, 0);
-            this.waveform = Float32Array.from(waveform, (number, index) => number / maxAbs);
             this.NUM_CROSSINGS = firLoader.numCrossings;
             this.SAMPLES_PER_CROSSING = firLoader.samplesPerCrossing;
             this.FIR = Float32Array.from(firLoader.FIR);
@@ -45,6 +38,7 @@ class Visualizer extends React.Component {
     }
 
     onAnalyze = (timestamp = 0) => {
+        console.log(this.props.analyzers);
         this.props.analyzers[0].getByteFrequencyData(this.frequencyData);
         const normalizedDataL = Float32Array.from(this.frequencyData, (number, index) => number / 255);
 
@@ -71,7 +65,6 @@ class Visualizer extends React.Component {
         const result = Float32Array.from([...resultL, ...resultR]);
         const average = (accumulatorL.average + accumulatorR.average) * CONSTANTS.FFT_2_SCALE;
         const highFreq = (accumulatorL.highFreq + accumulatorR.highFreq) * CONSTANTS.FFT_2_SCALE_HF;
-        console.log(CONSTANTS.FFT_2_SCALE, CONSTANTS.FFT_2_SCALE_HF);
         this.drawVisualization(this.visualizationCtx, average, result, highFreq, timestamp);
 
         this.requestId = requestAnimationFrame(this.onAnalyze);
@@ -134,13 +127,15 @@ class Visualizer extends React.Component {
     }
 
     drawWaveForm = (context, centerAxis, color) => {
-        const waveformLength = this.waveform.length / 2;
+        // console.log(this.props.waveformLoader);
+        const waveform = this.props.waveformLoader.waveform;
+        const waveformLength = waveform.length / 2;
         const twoPiPerWaveformLength = CONSTANTS.TWO_PI / waveformLength;
         context.beginPath();
         // going through mins from start to end
         for (let j = 0; j < waveformLength; j++) {
             const angle = -CONSTANTS.HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + this.waveform[j * 2] * CONSTANTS.WAVEFORM_HALF_HEIGHT;
+            const scale = centerAxis + waveform[j * 2] * CONSTANTS.WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.center_x, this.center_y]);
 
             if (j === 0) {
@@ -153,7 +148,7 @@ class Visualizer extends React.Component {
         // looping around maxes from end to start
         for (let j = waveformLength - 1; j >= 0; j--) {
             const angle = -CONSTANTS.HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + this.waveform[j * 2 + 1] * CONSTANTS.WAVEFORM_HALF_HEIGHT;
+            const scale = centerAxis + waveform[j * 2 + 1] * CONSTANTS.WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.center_x, this.center_y]);
 
             context.lineTo(x, y);

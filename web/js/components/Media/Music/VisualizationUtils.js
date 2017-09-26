@@ -4,7 +4,6 @@ import math from 'mathjs';
 
 // Constants so we don't have to calculate in time-sensitive loops
 // includes reciprocals so we just have to multiply instead of divide
-// uses lazy getters/memoization
 const FFT_SIZE = 16384;
 const FFT_HALF_SIZE = FFT_SIZE / 2;
 const HIGH_PASS_BIN = 1600;
@@ -53,7 +52,7 @@ export class WaveformLoader {
     constructor(filename) {
         this.header = null;
         this.waveform = [];
-        if (this.filename)
+        if (filename)
             this.loaded = this.loadWaveformFile(filename);
         else {
             this.loaded = Promise.resolve();
@@ -77,8 +76,12 @@ export class WaveformLoader {
                 const body = j.read({
                     values: ['array', type]
                 });
+                const maxAbs = body.values.reduce((acc, value) => {
+                    if (Math.abs(value) > acc) acc = value;
+                    return acc;
+                }, 0);
+                this.waveform = Float32Array.from(body.values, (number, index) => number / maxAbs);
                 this.header = header;
-                this.waveform = body.values;
                 return resolve();
             });
         })
