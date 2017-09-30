@@ -4,7 +4,7 @@ import '@/less/Media/Music/music.less';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { WaveformLoader, firLoader, constantQ, CONSTANTS } from '@/js/components/Media/Music/VisualizationUtils.js';
+import { WaveformLoader, firLoader, constantQ } from '@/js/components/Media/Music/VisualizationUtils.js';
 import { storeWaveformLoader, storeAnalyzers, updatePlaybackPosition, setIsPlaying, storeDuration } from '@/js/components/Media/Music/actions.js';
 import Visualizer from '@/js/components/Media/Music/Visualizer.jsx';
 import AudioInfo from '@/js/components/Media/Music/AudioInfo.jsx';
@@ -35,7 +35,6 @@ class Music extends React.Component {
         this.audio = this.el.getElementsByTagName('audio')[0];
         this.audio.src = demo.url;
         this.waveformLoader = new WaveformLoader(demo.waveform);
-        console.log(this.waveformLoader);
         this.props.storeWaveformLoader(this.waveformLoader);
 
         this.audio.addEventListener('loadeddata', this.audioOnLoad);
@@ -70,10 +69,7 @@ class Music extends React.Component {
         this.analyzerR.connect(this.merger, 0, 1);
         this.merger.connect(audioCtx.destination);
 
-        this.analyzerL.fftSize = this.analyzerR.fftSize = CONSTANTS.FFT_SIZE;
-        this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = CONSTANTS.SMOOTHING_CONSTANT;
-
-        this.props.storeAnalyzers([this.analyzerL, this.analyzerR]);
+        this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(audioCtx.sampleRate / 192000, 2);
         this.props.storeDuration(this.audio.duration);
 
         this.audio.volume = 1;
@@ -83,6 +79,10 @@ class Music extends React.Component {
             firLoader.loaded,
             this.waveformLoader.loaded
         ]).then(() => {
+            console.log(constantQ);
+            this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
+            this.props.storeAnalyzers([this.analyzerL, this.analyzerR]);
+
             this.audio.play();
             this.props.setIsPlaying(true, demo);
         });

@@ -3,8 +3,16 @@ import '@/less/Media/Music/visualizer.less';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { constantQ, firLoader, CONSTANTS, polarToCartesian } from '@/js/components/Media/Music/VisualizationUtils.js'
+import { constantQ, firLoader, polarToCartesian } from '@/js/components/Media/Music/VisualizationUtils.js'
 import { storeAnimationRequestId } from '@/js/components/Media/Music/actions.js'
+
+const TWO_PI = 2 * Math.PI;
+const HALF_PI = Math.PI / 2;
+const PI = Math.PI;
+const CIRCLE_SAMPLES = 2048;
+const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI / CIRCLE_SAMPLES;
+const GLOBAL_SCALE = 40;
+const WAVEFORM_HALF_HEIGHT = 50;
 
 class Visualizer extends React.Component {
     constructor(props) {
@@ -24,21 +32,31 @@ class Visualizer extends React.Component {
         this.visualizationCtx = this.visualization.getContext('2d');
         this.visualizationCtx.globalCompositionOperation = "lighter";
         this.lastPosition = 0;
-        this.frequencyData = new Uint8Array(CONSTANTS.FFT_HALF_SIZE);
 
         Promise.all([constantQ.loaded, firLoader.loaded]).then((data) => {
             const cq = constantQ.matrix;
+            this.frequencyData = new Uint8Array(constantQ.numRows);
+
+            this.FFT_HALF_SIZE = constantQ.numRows;
+            this.CQ_BINS = constantQ.numCols * 2;
+            this.HIGH_PASS_BIN = constantQ.maxF * this.FFT_HALF_SIZE / (constantQ.sampleRate / 2);
+            this.LOW_PASS_BIN = constantQ.minF * this.FFT_HALF_SIZE / (constantQ.sampleRate / 2);
+
+            console.log(this.HIGH_PASS_BIN, this.LOW_PASS_BIN);
             this.NUM_CROSSINGS = firLoader.numCrossings;
             this.SAMPLES_PER_CROSSING = firLoader.samplesPerCrossing;
             this.FIR = Float32Array.from(firLoader.FIR);
             this.HALF_CROSSINGS = Math.floor(this.NUM_CROSSINGS / 2);
             this.FILTER_SIZE = this.SAMPLES_PER_CROSSING * (this.NUM_CROSSINGS - 1) - 1;
             this.FILTER_CENTER = this.SAMPLES_PER_CROSSING * this.HALF_CROSSINGS - 1;
+            this.FFT_2_SCALE = 1 / (2 * this.FFT_HALF_SIZE);
+            this.FFT_2_SCALE_HF = 1 / (2 * (this.FFT_HALF_SIZE - this.HIGH_PASS_BIN))
+            this.OVERSAMPLING_RATIO = CIRCLE_SAMPLES / this.CQ_BINS;
+            this.STEP_SIZE = 1 / this.OVERSAMPLING_RATIO;
         });
     }
 
     onAnalyze = (timestamp = 0) => {
-        console.log(this.props.analyzers);
         this.props.analyzers[0].getByteFrequencyData(this.frequencyData);
         const normalizedDataL = Float32Array.from(this.frequencyData, (number, index) => number / 255);
 
@@ -46,27 +64,61 @@ class Visualizer extends React.Component {
         const normalizedDataR = Float32Array.from(this.frequencyData, (number, index) => number / 255);
 
         const accumulatorL = normalizedDataL.reduce((acc, value, index) => {
-            acc.average += value;
-            if (index >= CONSTANTS.HIGH_PASS_BIN) {
-                acc.highFreq += value;
+            if (value !== 0) {
+                acc.average += value;
+                acc.averageCount++;
+                if (index >= this.HIGH_PASS_BIN) {
+                    acc.highFreq += value;
+                    acc.highFreqCount++;
+                }
+                if (index < this.LOW_PASS_BIN) {
+                    acc.lowFreq += value;
+                    acc.lowFreqCount++;
+                }
             }
             return acc;
-        }, { average: 0, highFreq: 0 });
+        }, {
+            average: 0,
+            highFreq: 0,
+            lowFreq: 0,
+            averageCount: 0,
+            highFreqCount: 0,
+            lowFreqCount :0
+        });
         const resultL = constantQ.apply(normalizedDataL);
 
         const accumulatorR = normalizedDataR.reduce((acc, value, index) => {
-            acc.average += value;
-            if (index >= CONSTANTS.HIGH_PASS_BIN) {
-                acc.highFreq += value;
+            if (value !== 0) {
+                acc.average += value;
+                acc.averageCount++;
+                if (index >= this.HIGH_PASS_BIN) {
+                    acc.highFreq += value;
+                    acc.highFreqCount++;
+                }
+                if (index < this.LOW_PASS_BIN) {
+                    acc.lowFreq += value;
+                    acc.lowFreqCount++;
+                }
             }
             return acc;
-        }, { average: 0, highFreq: 0 });
+        }, {
+            average: 0,
+            highFreq: 0,
+            lowFreq: 0,
+            averageCount: 0,
+            highFreqCount: 0,
+            lowFreqCount :0
+        });
         const resultR = constantQ.apply(normalizedDataR).reverse();
         const result = Float32Array.from([...resultL, ...resultR]);
-        const average = (accumulatorL.average + accumulatorR.average) * CONSTANTS.FFT_2_SCALE;
-        const highFreq = (accumulatorL.highFreq + accumulatorR.highFreq) * CONSTANTS.FFT_2_SCALE_HF;
-        this.drawVisualization(this.visualizationCtx, average, result, highFreq, timestamp);
-
+        const average = (accumulatorL.averageCount !== 0 && accumulatorR.averageCount !== 0)
+            ? (accumulatorL.average + accumulatorR.average) / (accumulatorL.averageCount + accumulatorR.averageCount)
+            : 0;
+        const highFreq = (accumulatorL.highFreqCount !== 0 && accumulatorR.highFreqCount !== 0)
+            ? (accumulatorL.highFreq + accumulatorR.highFreq) / (accumulatorL.highFreqCount + accumulatorR.highFreqCount)
+            : 0;
+        const lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.LOW_PASS_BIN);
+        this.drawVisualization(this.visualizationCtx, lowFreq, result, highFreq, timestamp);
         this.requestId = requestAnimationFrame(this.onAnalyze);
         this.props.storeAnimationRequestId(this.requestId);
     }
@@ -77,15 +129,15 @@ class Visualizer extends React.Component {
         let currentSample = 0;
         let currentFraction = 0.5;
         //interpolate between bins using FIR so we get smooth surface
-        while (currentSample < CONSTANTS.CIRCLE_SAMPLES && currentInput < CONSTANTS.CQ_BINS) {
+        while (currentSample < CIRCLE_SAMPLES && currentInput < this.CQ_BINS) {
             let sum = 0;
             const currentFractionFrom1 = 1 - currentFraction;
             for (let i = -this.HALF_CROSSINGS; i < this.HALF_CROSSINGS; i++) {
                 let input = currentInput + i;
                 if (input < 0) {
-                    input += CONSTANTS.CQ_BINS;
-                } else if (input >= CONSTANTS.CQ_BINS) {
-                    input -= CONSTANTS.CQ_BINS;
+                    input += this.CQ_BINS;
+                } else if (input >= this.CQ_BINS) {
+                    input -= this.CQ_BINS;
                 }
                 const scale = values[input];
                 let indexToCoeff = Math.floor((i + currentFractionFrom1) * this.SAMPLES_PER_CROSSING + this.FILTER_CENTER);
@@ -95,8 +147,8 @@ class Visualizer extends React.Component {
                 sum += result;
             }
 
-            const result = sum * CONSTANTS.GLOBAL_SCALE;
-            const angle = (currentSample * CONSTANTS.TWO_PI_PER_CIRCLE_SAMPLES) + CONSTANTS.HALF_PI;    // 2pi * currentSample / CIRCLE_SAMPLES
+            const result = sum * GLOBAL_SCALE;
+            const angle = (currentSample * TWO_PI_PER_CIRCLE_SAMPLES) + HALF_PI;    // 2pi * currentSample / CIRCLE_SAMPLES
             const [x, y] = polarToCartesian((radius + result), angle, [this.center_x, this.center_y]);
 
             if (currentSample === 0) {
@@ -106,7 +158,7 @@ class Visualizer extends React.Component {
             }
             // update for next sample
             currentSample += 1;
-            currentFraction += CONSTANTS.STEP_SIZE;
+            currentFraction += this.STEP_SIZE;
             if (currentFraction >= 1) {
                 currentInput += 1;
                 currentFraction -= 1;
@@ -119,7 +171,7 @@ class Visualizer extends React.Component {
     drawCircleMask = (context, radius) => {
         context.save();
         context.beginPath();
-        context.arc(this.center_x, this.center_y, radius, 0, CONSTANTS.TWO_PI);
+        context.arc(this.center_x, this.center_y, radius, 0, TWO_PI);
         context.closePath();
         context.clip();
         context.clearRect(0, 0, this.width, this.height);
@@ -130,12 +182,12 @@ class Visualizer extends React.Component {
         // console.log(this.props.waveformLoader);
         const waveform = this.props.waveformLoader.waveform;
         const waveformLength = waveform.length / 2;
-        const twoPiPerWaveformLength = CONSTANTS.TWO_PI / waveformLength;
+        const twoPiPerWaveformLength = TWO_PI / waveformLength;
         context.beginPath();
         // going through mins from start to end
         for (let j = 0; j < waveformLength; j++) {
-            const angle = -CONSTANTS.HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + waveform[j * 2] * CONSTANTS.WAVEFORM_HALF_HEIGHT;
+            const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
+            const scale = centerAxis + waveform[j * 2] * WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.center_x, this.center_y]);
 
             if (j === 0) {
@@ -147,8 +199,8 @@ class Visualizer extends React.Component {
 
         // looping around maxes from end to start
         for (let j = waveformLength - 1; j >= 0; j--) {
-            const angle = -CONSTANTS.HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + waveform[j * 2 + 1] * CONSTANTS.WAVEFORM_HALF_HEIGHT;
+            const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
+            const scale = centerAxis + waveform[j * 2 + 1] * WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.center_x, this.center_y]);
 
             context.lineTo(x, y);
@@ -158,7 +210,7 @@ class Visualizer extends React.Component {
     }
 
     drawPlaybackHead = (context, playbackHead, minRad, maxRad) => {
-        const angle = (this.props.duration) ? -CONSTANTS.HALF_PI + CONSTANTS.TWO_PI * playbackHead / this.props.duration : 0;
+        const angle = (this.props.duration) ? -HALF_PI + TWO_PI * playbackHead / this.props.duration : 0;
         const [xStart, yStart] = polarToCartesian(minRad, angle, [this.center_x, this.center_y]);
         const [xEnd, yEnd] = polarToCartesian(maxRad, angle, [this.center_x, this.center_y]);
         context.beginPath();
@@ -169,7 +221,7 @@ class Visualizer extends React.Component {
     }
 
     drawSeekArea = (context, radius, color, timestamp) => {
-        const WAVEFORM_CENTER_AXIS = radius - CONSTANTS.WAVEFORM_HALF_HEIGHT;
+        const WAVEFORM_CENTER_AXIS = radius - WAVEFORM_HALF_HEIGHT;
         this.drawWaveForm(context, WAVEFORM_CENTER_AXIS, color);
 
         let playbackHead = this.props.currentPosition;
@@ -186,8 +238,8 @@ class Visualizer extends React.Component {
         this.drawPlaybackHead(
             context,
             playbackHead,
-            WAVEFORM_CENTER_AXIS - CONSTANTS.WAVEFORM_HALF_HEIGHT,
-            WAVEFORM_CENTER_AXIS + CONSTANTS.WAVEFORM_HALF_HEIGHT
+            WAVEFORM_CENTER_AXIS - WAVEFORM_HALF_HEIGHT,
+            WAVEFORM_CENTER_AXIS + WAVEFORM_HALF_HEIGHT
         );
     }
 
