@@ -13,4 +13,4 @@ secret.js
 npm-debug.log
 coverage/
 .vscode
-scripts/Eigen/
+scripts/cpp/Eigen
