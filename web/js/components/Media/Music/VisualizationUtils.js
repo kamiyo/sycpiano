@@ -2,24 +2,6 @@ import jbinary from 'jbinary';
 import jdv from 'jdataview';
 import math from 'mathjs';
 
-// Constants so we don't have to calculate in time-sensitive loops
-// includes reciprocals so we just have to multiply instead of divide
-// const FFT_SIZE = 16384;
-// const FFT_HALF_SIZE = FFT_SIZE / 2;
-// const HIGH_PASS_BIN = 1600;
-const TWO_PI = 2 * Math.PI;
-const HALF_PI = Math.PI / 2;
-const PI = Math.PI;
-const CIRCLE_SAMPLES = 2048;
-const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI / CIRCLE_SAMPLES;
-// const CQ_BINS = 84;
-// const OVERSAMPLING_RATIO = CIRCLE_SAMPLES / CQ_BINS;
-// const STEP_SIZE = 1 / OVERSAMPLING_RATIO;
-const GLOBAL_SCALE = 40;
-const WAVEFORM_HALF_HEIGHT = 50;
-//const FFT_2_SCALE = 1 / (2 * FFT_HALF_SIZE);
-//const FFT_2_SCALE_HF = 1 / (2 * (FFT_HALF_SIZE - HIGH_PASS_BIN));
-
 export const polarToCartesian = (radius, angle, offset) => (
     [
         radius * Math.cos(angle) + offset[0],
@@ -67,27 +49,39 @@ export class WaveformLoader {
     }
 }
 
+const firHeaderStructure = {
+    numCrossings: 'uint32',
+    samplesPerCrossing: 'uint32',
+    cutoffcycle: 'float32',
+    kaiserBeta: 'float32'
+}
+
 class FIRLoader {
     constructor() {
         this.numCrossings = null;
         this.samplesPerCrossing = null;
-        this.FIR = null;
+        this.filterSize = null;
+        this.coeffs = null;
+        this.deltas = null;
         this.loaded = this.loadFIRFile();
     }
 
     loadFIRFile = () => (
         new Promise((resolve, reject) => {
             jbinary.loadData('/binary/fir.dat', (error, data) => {
-                console.log(data);
+                // console.log(data);
                 const j = new jbinary(new jdv(data, 0, data.byteLength, true));
+                const header = j.read(firHeaderStructure);
+                this.numCrossings = header.numCrossings;
+                this.samplesPerCrossing = header.samplesPerCrossing;
+                this.filterSize = this.samplesPerCrossing * (this.numCrossings - 1) - 1;
                 const body = j.read({
-                    numCrossings: 'uint32',
-                    samplesPerCrossing: 'uint32',
-                    values: ['array', 'float64']
+                    coeffs: ['array', 'float32', this.filterSize],
+                    deltas: ['array', 'float32', this.filterSize]
                 });
-                this.numCrossings = body.numCrossings;
-                this.samplesPerCrossing = body.samplesPerCrossing;
-                this.FIR = body.values;
+                this.coeffs = body.coeffs;
+                this.deltas = body.deltas;
+                console.log(this.coeffs);
                 resolve();
             });
         })
@@ -123,7 +117,7 @@ class ConstantQ {
             jbinary.loadData(filename, (error, data) => {
                 const j = new jbinary(new jdv(data, 0, data.byteLength, true));
                 const header = j.read(cqHeaderStructure);
-                console.log(header);
+                // console.log(header);
                 const body = j.read({
                     values: ['array', 'float32', header.innerPtrSize],
                     innerPtr: ['array', 'int32', header.innerPtrSize],
@@ -142,7 +136,7 @@ class ConstantQ {
                 this.minF = header.minFreq;
                 this.maxF = header.maxFreq;
                 this.matrix = math.type.SparseMatrix.fromJSON(o);
-                console.log(this.matrix.size());
+                console.log(this.matrix);
                 resolve();
             })
         })

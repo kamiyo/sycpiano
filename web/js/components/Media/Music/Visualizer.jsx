@@ -10,7 +10,8 @@ const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;
 const PI = Math.PI;
 const CIRCLE_SAMPLES = 2048;
-const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI / CIRCLE_SAMPLES;
+const INV_CIRCLE_SAMPLES = 1 / CIRCLE_SAMPLES;
+const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI * INV_CIRCLE_SAMPLES;
 const GLOBAL_SCALE = 40;
 const WAVEFORM_HALF_HEIGHT = 50;
 
@@ -32,27 +33,31 @@ class Visualizer extends React.Component {
         this.visualizationCtx = this.visualization.getContext('2d');
         this.visualizationCtx.globalCompositionOperation = "lighter";
         this.lastPosition = 0;
+        this.lastHighFreqs = new Array(30);
+        this.lastHighFreqs.fill(0);
 
         Promise.all([constantQ.loaded, firLoader.loaded]).then((data) => {
             const cq = constantQ.matrix;
             this.frequencyData = new Uint8Array(constantQ.numRows);
-
             this.FFT_HALF_SIZE = constantQ.numRows;
             this.CQ_BINS = constantQ.numCols * 2;
+            this.INV_CQ_BINS = 1 / this.CQ_BINS;
+
             this.HIGH_PASS_BIN = constantQ.maxF * this.FFT_HALF_SIZE / (constantQ.sampleRate / 2);
             this.LOW_PASS_BIN = constantQ.minF * this.FFT_HALF_SIZE / (constantQ.sampleRate / 2);
 
-            console.log(this.HIGH_PASS_BIN, this.LOW_PASS_BIN);
             this.NUM_CROSSINGS = firLoader.numCrossings;
             this.SAMPLES_PER_CROSSING = firLoader.samplesPerCrossing;
-            this.FIR = Float32Array.from(firLoader.FIR);
-            this.HALF_CROSSINGS = Math.floor(this.NUM_CROSSINGS / 2);
-            this.FILTER_SIZE = this.SAMPLES_PER_CROSSING * (this.NUM_CROSSINGS - 1) - 1;
+            this.firCoeffs = Float32Array.from(firLoader.coeffs);
+            this.firDeltas = Float32Array.from(firLoader.deltas);
+            this.HALF_CROSSINGS = (this.NUM_CROSSINGS - 1) / 2;
+            this.FILTER_SIZE = firLoader.filterSize;
             this.FILTER_CENTER = this.SAMPLES_PER_CROSSING * this.HALF_CROSSINGS - 1;
             this.FFT_2_SCALE = 1 / (2 * this.FFT_HALF_SIZE);
             this.FFT_2_SCALE_HF = 1 / (2 * (this.FFT_HALF_SIZE - this.HIGH_PASS_BIN))
             this.OVERSAMPLING_RATIO = CIRCLE_SAMPLES / this.CQ_BINS;
             this.STEP_SIZE = 1 / this.OVERSAMPLING_RATIO;
+            console.log(this);
         });
     }
 
@@ -65,8 +70,6 @@ class Visualizer extends React.Component {
 
         const accumulatorL = normalizedDataL.reduce((acc, value, index) => {
             if (value !== 0) {
-                acc.average += value;
-                acc.averageCount++;
                 if (index >= this.HIGH_PASS_BIN) {
                     acc.highFreq += value;
                     acc.highFreqCount++;
@@ -78,19 +81,15 @@ class Visualizer extends React.Component {
             }
             return acc;
         }, {
-            average: 0,
-            highFreq: 0,
-            lowFreq: 0,
-            averageCount: 0,
-            highFreqCount: 0,
-            lowFreqCount :0
-        });
+                highFreq: 0,
+                lowFreq: 0,
+                highFreqCount: 0,
+                lowFreqCount: 0
+            });
         const resultL = constantQ.apply(normalizedDataL);
 
         const accumulatorR = normalizedDataR.reduce((acc, value, index) => {
             if (value !== 0) {
-                acc.average += value;
-                acc.averageCount++;
                 if (index >= this.HIGH_PASS_BIN) {
                     acc.highFreq += value;
                     acc.highFreqCount++;
@@ -102,22 +101,23 @@ class Visualizer extends React.Component {
             }
             return acc;
         }, {
-            average: 0,
-            highFreq: 0,
-            lowFreq: 0,
-            averageCount: 0,
-            highFreqCount: 0,
-            lowFreqCount :0
-        });
+                highFreq: 0,
+                lowFreq: 0,
+                highFreqCount: 0,
+                lowFreqCount: 0
+            });
         const resultR = constantQ.apply(normalizedDataR).reverse();
         const result = Float32Array.from([...resultL, ...resultR]);
-        const average = (accumulatorL.averageCount !== 0 && accumulatorR.averageCount !== 0)
-            ? (accumulatorL.average + accumulatorR.average) / (accumulatorL.averageCount + accumulatorR.averageCount)
-            : 0;
-        const highFreq = (accumulatorL.highFreqCount !== 0 && accumulatorR.highFreqCount !== 0)
+        let highFreq = (accumulatorL.highFreqCount !== 0 && accumulatorR.highFreqCount !== 0)
             ? (accumulatorL.highFreq + accumulatorR.highFreq) / (accumulatorL.highFreqCount + accumulatorR.highFreqCount)
             : 0;
-        const lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.LOW_PASS_BIN);
+        let lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.LOW_PASS_BIN);
+        this.lastHighFreqs.push(highFreq);
+        this.lastHighFreqs.shift();
+        highFreq = this.lastHighFreqs.reduce((acc, value) => {
+            return acc + value;
+        }, 0) / this.lastHighFreqs.length;
+
         this.drawVisualization(this.visualizationCtx, lowFreq, result, highFreq, timestamp);
         this.requestId = requestAnimationFrame(this.onAnalyze);
         this.props.storeAnimationRequestId(this.requestId);
@@ -127,28 +127,26 @@ class Visualizer extends React.Component {
         context.beginPath();
         let currentInput = 0;
         let currentSample = 0;
-        let currentFraction = 0.5;
-        //interpolate between bins using FIR so we get smooth surface
+        let currentFraction = 0;
+
         while (currentSample < CIRCLE_SAMPLES && currentInput < this.CQ_BINS) {
+            let index = Math.floor(currentFraction * this.SAMPLES_PER_CROSSING);
             let sum = 0;
-            const currentFractionFrom1 = 1 - currentFraction;
-            for (let i = -this.HALF_CROSSINGS; i < this.HALF_CROSSINGS; i++) {
-                let input = currentInput + i;
+            for (let i = index, x = this.HALF_CROSSINGS; i < this.FILTER_SIZE; i += this.SAMPLES_PER_CROSSING, x--) {
+                let input = currentInput + x;
                 if (input < 0) {
                     input += this.CQ_BINS;
                 } else if (input >= this.CQ_BINS) {
                     input -= this.CQ_BINS;
                 }
                 const scale = values[input];
-                let indexToCoeff = Math.floor((i + currentFractionFrom1) * this.SAMPLES_PER_CROSSING + this.FILTER_CENTER);
-                if (indexToCoeff >= this.FILTER_SIZE || indexToCoeff < 0) indexToCoeff = null;
-                const firCoeff = (indexToCoeff) ? this.FIR[indexToCoeff] : 0;
-                const result = scale * firCoeff;
-                sum += result;
+                sum += scale * this.firCoeffs[i];
             }
-
             const result = sum * GLOBAL_SCALE;
-            const angle = (currentSample * TWO_PI_PER_CIRCLE_SAMPLES) + HALF_PI;    // 2pi * currentSample / CIRCLE_SAMPLES
+            // first term is the actual incrementing.
+            // second term is adjusting so that the visualization is symmetric
+            // third term is adjusting so it starts at the bottom of the screen.
+            const angle = (currentSample * TWO_PI_PER_CIRCLE_SAMPLES) + (TWO_PI * this.INV_CQ_BINS) + HALF_PI;
             const [x, y] = polarToCartesian((radius + result), angle, [this.center_x, this.center_y]);
 
             if (currentSample === 0) {

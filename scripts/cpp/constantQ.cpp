@@ -34,24 +34,28 @@ void genKernel(Eigen::SparseMatrix<T> &matrix, const u32 samplerate, const u32 b
         return (u32)ceil(2. * PI * Q / omega);
     });
     const u32 nfft = next_power2((u32)Nkcqs.maxCoeff());
-    std::vector<Eigen::Triplet<T> > values;
+    std::vector<Eigen::Triplet<T>> values;
     values.reserve(K * nfft);
 
 #pragma omp parallel for
     for (u32 k = 0; k < K; k++)
     {
-        VectorXcd window = VectorXcd::Zero(nfft);
-        for (u32 i = 0; i < Nkcqs[k]; i++)
-        {
-            window[i] = hamming(25. / 46., i, Nkcqs[k]) * exp(std::complex<double>(0, 1) * omegas[k] * (double)i);
-        }
+        const u32 N = Nkcqs[k];
+        VectorXcd fftInput = VectorXcd::Zero(nfft);
+        VectorXcd window = VectorXcd::LinSpaced(N, std::complex<double>(0, 0), std::complex<double>(N - 1, 0));
+        window = window.unaryExpr([&n = N, &o = omegas[k] ](const std::complex<double> e) {
+            return hamming(25. / 46., e.real(), n) * exp(std::complex<double>(0, 1) * o * e);
+        });
+        fftInput.block(0, 0, N, 1) = window;
         VectorXcd kernel;
         FFTd fft;
-        fft.fwd(kernel, window);
+        fft.fwd(kernel, fftInput);
         kernel /= (double)nfft;
-        for (u32 i = 0; i < (u32)kernel.size() / 2; i++) {
-            if (abs(kernel[i]) >= thresh) {
-                #pragma omp critical
+        for (u32 i = 0; i < (u32)kernel.size() / 2; i++)
+        {
+            if (abs(kernel[i]) >= thresh)
+            {
+#pragma omp critical
                 values.push_back(Eigen::Triplet<T>(i, k, (T)abs(kernel[i])));
             }
         }
@@ -68,25 +72,29 @@ int main(int argc, char **argv)
         std::cout << "usage: ./constantQ [samplerate] bins/octave [minFreq] maxFreq" << std::endl;
         return 1;
     }
-    if (argc <= 4) {
+    if (argc <= 4)
+    {
         // generate kernels for all common samplerates
         // for JS, we have to make sure FFT size is limited to 16384 =(
         const u32 binsPerOctave = atoi(argv[1]);
         double minF = 0, maxF;
-        if (argc == 3) {
+        if (argc == 3)
+        {
             maxF = atof(argv[2]);
         }
-        else {
+        else
+        {
             minF = atof(argv[2]);
             maxF = atof(argv[3]);
         }
-        const double ratio = pow(2., 1./12.);
+        const double ratio = pow(2., 1. / 12.);
         ArrayXd pianoFrequencies(100);
         pianoFrequencies.setLinSpaced(0, 99);
         pianoFrequencies = pianoFrequencies.unaryExpr([&ratio](const double number) {
             return 440 * pow(ratio, number - 48);
         });
-        for (const u32 sr: COMMON_RATES) {
+        for (const u32 sr : COMMON_RATES)
+        {
             Eigen::SparseMatrix<float> sparse;
             const double ratio = pow(2, 1. / (double)binsPerOctave);
             const double Q = 1. / (ratio - 1);
@@ -94,18 +102,26 @@ int main(int argc, char **argv)
             std::cout << "Adjusted minimum frequency: " << adjMinF << std::endl;
             double closestMinF = 0;
             double closestMaxF = 0;
-            for (u32 i = 0; i < pianoFrequencies.size(); i++) {
-                if (pianoFrequencies[i] < adjMinF) {
+            for (u32 i = 0; i < pianoFrequencies.size(); i++)
+            {
+                if (pianoFrequencies[i] < adjMinF)
+                {
                     continue;
-                } else {
+                }
+                else
+                {
                     closestMinF = pianoFrequencies[i];
                     break;
                 }
             }
-            for (u32 i = 0; i < pianoFrequencies.size(); i++) {
-                if (pianoFrequencies[i] < maxF) {
+            for (u32 i = 0; i < pianoFrequencies.size(); i++)
+            {
+                if (pianoFrequencies[i] < maxF)
+                {
                     continue;
-                } else {
+                }
+                else
+                {
                     closestMaxF = pianoFrequencies[i];
                     break;
                 }
@@ -113,13 +129,16 @@ int main(int argc, char **argv)
             std::cout << "Closest min, max frequency: " << closestMinF << ", " << closestMaxF << std::endl;
             genKernel(sparse, sr, binsPerOctave, closestMinF, closestMaxF);
             bool success = WriteSparseMatrix<float>(sparse, sr, binsPerOctave, closestMinF, closestMaxF);
-            if (!success) {
+            if (!success)
+            {
                 std::cerr << "write sparse matrix failed" << std::endl;
                 return 1;
             }
         }
         return 0;
-    } else {
+    }
+    else
+    {
         const u32 sr = atoi(argv[1]);
         const u32 binsPerOctave = atoi(argv[2]);
         const double minF = atof(argv[3]);
@@ -127,7 +146,8 @@ int main(int argc, char **argv)
         Eigen::SparseMatrix<float> sparse;
         genKernel(sparse, sr, binsPerOctave, minF, maxF);
         bool success = WriteSparseMatrix<float>(sparse, sr, binsPerOctave, minF, maxF);
-        if (!success) {
+        if (!success)
+        {
             std::cerr << "write sparse matrix failed" << std::endl;
             return 1;
         }

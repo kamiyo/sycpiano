@@ -20,13 +20,12 @@ const demo = {
 
 class Music extends React.Component {
     togglePlaying = (event) => {
-        if (event.keyCode == 32) {
+        if (event.keyCode === 32) {
             if (this.props.isPlaying) {
                 this.audio.pause();
             } else {
                 this.audio.play();
             }
-            this.props.setIsPlaying(!this.props.isPlaying);
         }
     }
 
@@ -51,7 +50,7 @@ class Music extends React.Component {
     onEnded = () => {
         this.props.setIsPlaying(false);
         this.props.updatePlaybackPosition(0, performance.now());
-        setTimeout(() => cancelAnimationFrame(this.props.animationRequestId), 500);
+        setTimeout(() => cancelAnimationFrame(this.props.animationRequestId), 2000);
     }
 
     audioOnLoad = () => {
@@ -79,7 +78,6 @@ class Music extends React.Component {
             firLoader.loaded,
             this.waveformLoader.loaded
         ]).then(() => {
-            console.log(constantQ);
             this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
             this.props.storeAnalyzers([this.analyzerL, this.analyzerR]);
 
@@ -99,19 +97,20 @@ class Music extends React.Component {
     }
 
     onPause = () => {
-        this.props.setIsPlaying(this.audio.currentTime, performance.now());
-        setTimeout(() => cancelAnimationFrame(this.requestId), 500);
+        this.props.setIsPlaying(false);
+        this.props.updatePlaybackPosition(this.audio.currentTime, performance.now());
+        setTimeout(() => cancelAnimationFrame(this.props.animationRequestId), 2000);
     }
 
     onPlaying = () => {
-        this.props.setIsPlaying(this.audio.currentTime, performance.now());
+        this.props.setIsPlaying(true);
+        this.props.updatePlaybackPosition(this.audio.currentTime, performance.now());
         if (this.playingCallback)
             this.playingCallback();
     }
 
     componentDidMount() {
         this.initializeAudioPlayer();
-
         window.addEventListener('keydown', this.togglePlaying);
     }
 

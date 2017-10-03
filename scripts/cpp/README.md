@@ -1,3 +1,8 @@
+# Contents
+
+* Constant Q
+* Finite Impulse Response filter generator (windowed sinc)
+
 # Constant Q
 
 This folder contains C++ code for generating the Constant Q transform matrix.
@@ -54,3 +59,7 @@ Header: 32 bytes
 | 20-23 | uint_32t | # of columns |
 | 24-27 | uint_32t | size of inner pointers (# values) |
 | 28-31 | uint_32t | size of outer pointers |
+
+# Finite Impulse Response Filter (windowed sinc)
+
+TODO
