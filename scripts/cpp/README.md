@@ -1,7 +1,12 @@
 # Contents
 
+* General
 * Constant Q
 * Finite Impulse Response filter generator (windowed sinc)
+
+# General
+
+Eigen library must be present for compilation to work. You can download at http://eigen.tuxfamily.org/index.php?title=Main_Page
 
 # Constant Q
 
@@ -11,12 +16,11 @@ Compile with gcc or clang, for example:
 ```
 clang++ -Ipath_to_Eigen_library -std=c++11 ./constantQ.cpp -o constantQ
 ```
-Eigen Matrix library is included in the project folder.
 Fastest executable I've created is with:
 ```
-clang++ -I./ -std=c++14 -march=native -O3 -fopenmp ./constantQ.cpp -o constantQ
+clang++ -Ipath_to_Eigen_library -std=c++14 -march=native -O3 -fopenmp ./constantQ.cpp -o constantQ
 ```
-Make sure to install libomp-dev
+Make sure to install libomp-dev for OpenMP to work.
 
 Program takes three versions:
 
