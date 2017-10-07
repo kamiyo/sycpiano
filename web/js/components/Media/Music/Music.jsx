@@ -6,8 +6,9 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { WaveformLoader, firLoader, constantQ } from '@/js/components/Media/Music/VisualizationUtils.js';
 import { storeWaveformLoader, storeAnalyzers, updatePlaybackPosition, setIsPlaying, storeDuration } from '@/js/components/Media/Music/actions.js';
-import Visualizer from '@/js/components/Media/Music/Visualizer.jsx';
+import AudioVisualizer from '@/js/components/Media/Music/AudioVisualizer.jsx';
 import AudioInfo from '@/js/components/Media/Music/AudioInfo.jsx';
+import AudioUI from '@/js/components/Media/Music/AudioUI.jsx';
 
 // const url = 'http://seanchenpiano.com/musicfiles/composing/improv.mp3';
 const demo = {
@@ -41,6 +42,8 @@ class Music extends React.Component {
         this.audio.addEventListener('timeupdate', this.onTimeUpdate);
         this.audio.addEventListener('pause', this.onPause);
         this.audio.addEventListener('ended', this.onEnded);
+
+        this.wasPlaying = false;
     }
 
     onTimeUpdate = () => {
@@ -50,7 +53,26 @@ class Music extends React.Component {
     onEnded = () => {
         this.props.setIsPlaying(false);
         this.props.updatePlaybackPosition(0, performance.now());
-        setTimeout(() => cancelAnimationFrame(this.props.animationRequestId), 2000);
+    }
+
+    onDrag = (percent) => {
+        const position = percent * this.audio.duration;
+        this.props.updatePlaybackPosition(position, performance.now());
+    }
+
+    onStartDrag = (percent) => {
+        this.wasPlaying = this.props.isPlaying;
+        this.audio.pause();
+        this.onDrag(percent);
+    }
+
+    seekAudio = (percent) => {
+        this.onDrag(percent);
+        const position = percent * this.audio.duration;
+        this.audio.currentTime = position;
+        if (this.wasPlaying) {
+            this.audio.play();
+        }
     }
 
     audioOnLoad = () => {
@@ -80,33 +102,29 @@ class Music extends React.Component {
         ]).then(() => {
             this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
             this.props.storeAnalyzers([this.analyzerL, this.analyzerR]);
-
-            this.audio.play();
-            this.props.setIsPlaying(true, demo);
+            this.props.setIsPlaying(false, demo);
+            this.animationCallback();
         });
 
         window.audio = this.audio;
     }
 
-    registerPlayingCallback = (func) => {
-        this.playingCallback = func;
+    registerAnimationCallback = (func) => {
+        this.animationCallback = func;
         // manually call func if audio already playing
         if (this.props.isPlaying) {
-            this.playingCallback();
+            this.animationCallback();
         }
     }
 
     onPause = () => {
         this.props.setIsPlaying(false);
         this.props.updatePlaybackPosition(this.audio.currentTime, performance.now());
-        setTimeout(() => cancelAnimationFrame(this.props.animationRequestId), 2000);
     }
 
     onPlaying = () => {
         this.props.setIsPlaying(true);
         this.props.updatePlaybackPosition(this.audio.currentTime, performance.now());
-        if (this.playingCallback)
-            this.playingCallback();
     }
 
     componentDidMount() {
@@ -117,10 +135,15 @@ class Music extends React.Component {
     render() {
         return (
             <div className="mediaContent music">
+                <AudioUI
+                    seekAudio={this.seekAudio}
+                    onStartDrag={this.onStartDrag}
+                    onDrag={this.onDrag}
+                />
                 <AudioInfo />
                 <audio id="audio" crossOrigin="anonymous" />
-                <Visualizer
-                    registerPlayingCallback={this.registerPlayingCallback}
+                <AudioVisualizer
+                    registerAnimationCallback={this.registerAnimationCallback}
                 />
             </div>
         );
@@ -139,6 +162,6 @@ export default connect(
         storeAnalyzers,
         updatePlaybackPosition,
         setIsPlaying,
-        storeDuration
+        storeDuration,
     }
 )(Music);

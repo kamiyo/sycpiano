@@ -6,7 +6,9 @@ export const AUDIO_ACTIONS = {
     SET_IS_PLAYING: 'AUDIO_ACTIONS--SET_IS_PLAYING',
     STORE_ANIMATION_REQUEST_ID: 'AUDIO_ACTIONS--STORE_ANIMATION_REQUEST_ID',
     STORE_DURATION: 'AUDIO_ACTIONS--STORE_DURATION',
-    STORE_WAVEFORM_LOADER: 'AUDIO_ACTIONS--STORE_WAVEFORM_LOADER'
+    STORE_WAVEFORM_LOADER: 'AUDIO_ACTIONS--STORE_WAVEFORM_LOADER',
+    STORE_RADII: 'AUDIO_ACTIONS--STORE_RADII',
+    IS_HOVER: 'AUDIO_ACTIONS--IS_HOVER'
 };
 
 export const storeWaveformLoader = (waveformLoader) => (dispatch) => (
@@ -59,4 +61,20 @@ export const storeDuration = (duration) => (dispatch) => (
         type: AUDIO_ACTIONS.STORE_DURATION,
         duration: duration
     })
-)
+);
+
+export const storeRadii = (innerRadius, outerRadius) => (dispatch) => (
+    dispatch({
+        type: AUDIO_ACTIONS.STORE_RADII,
+        innerRadius: innerRadius,
+        outerRadius: outerRadius
+    })
+);
+
+export const isHover = (isHover, angle) => (dispatch) => (
+    dispatch({
+        type: AUDIO_ACTIONS.IS_HOVER,
+        isHover: isHover,
+        angle: angle
+    })
+);

@@ -11,13 +11,14 @@ import { combineReducers, createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk'
 import { acclaimsListReducer } from '@/js/components/Press/reducers.js';
 import { eventItemsReducer } from '@/js/components/Schedule/reducers.js';
-import { audioPlayerReducer, audioVisualizerReducer } from '@/js/components/Media/Music/reducers.js';
+import { audioPlayerReducer, audioVisualizerReducer, audioUIReducer } from '@/js/components/Media/Music/reducers.js';
 
 const reducersMap = {
     schedule_eventItems: eventItemsReducer,
     press_acclaimsList: acclaimsListReducer,
     audio_player: audioPlayerReducer,
-    audio_visualizer: audioVisualizerReducer
+    audio_visualizer: audioVisualizerReducer,
+    audio_UI: audioUIReducer
 };
 
 export default () => createStore(combineReducers(reducersMap), applyMiddleware(thunk));

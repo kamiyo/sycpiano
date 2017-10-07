@@ -66,4 +66,36 @@ Header: 32 bytes
 
 # Finite Impulse Response Filter (windowed sinc)
 
-TODO
+Compile with gcc or clang, for example:
+```
+clang++ -Ipath_to_Eigen_library -std=c++11 ./fir.cpp -o fir
+```
+
+Program takes 5 versions
+```
+./fir
+./fir numCrossings
+./fir numCrossings samplesPerCrossing
+./fir numCrossings samplesPerCrossing cutoffCycles
+./fir numCrossings samplesPerCrossing cutoffCycles kaiserBeta
+```
+The first variant will generate fir.dat with 7 crossings, 32 samples per crossing, a cutoff of 0.5, and a beta of 7.0. For the other variants, arguments that are not supplied will default to 512 samples per crossing, 0.5 cutoff, and 7.0 beta.
+
+## .dat file header and format.
+
+Header:
+
+| Byte offset | Type | Field |
+| --- | --- | --- |
+| 0-3 | uint_32t | Number of crossings |
+| 4-7 | uint_32t | Samples per crossing |
+| 8-11 | float | Cutoff cycles |
+| 12-15 | float | Kaiser beta |
+
+Body:
+* filterSize is SamplesPerCrossing * (NumCrossings - 1) - 1
+
+| Bytes | Type | Field |
+| --- | --- | --- |
+| filterSize * sizeof(float) | float | Filter Coefficients |
+| filterSize * sizeof(float) | float | Delta Coefficients (filter[i + 1] - filter [i]) |

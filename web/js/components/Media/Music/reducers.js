@@ -43,13 +43,39 @@ export const audioPlayerReducer = (state = {
 };
 
 export const audioVisualizerReducer = (state = {
-    animationRequestId: null
+    isHover: false
 }, action) => {
     switch(action.type) {
         case AUDIO_ACTIONS.STORE_ANIMATION_REQUEST_ID:
             return {
                 ...state,
                 animationRequestId: action.animationRequestId
+            }
+        case AUDIO_ACTIONS.STORE_RADII:
+            return {
+                ...state,
+                innerRadius: action.innerRadius,
+                outerRadius: action.outerRadius
+            }
+        case AUDIO_ACTIONS.IS_HOVER:
+            return {
+                ...state,
+                isHover: action.isHover
+            }
+        default: return state;
+    }
+};
+
+export const audioUIReducer = (state = {
+    isHover: false,
+    angle: null
+}, action) => {
+    switch(action.type) {
+        case AUDIO_ACTIONS.IS_HOVER:
+            return {
+                ...state,
+                isHover: action.isHover,
+                angle: action.angle
             }
         default: return state;
     }

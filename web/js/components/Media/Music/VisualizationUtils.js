@@ -2,6 +2,16 @@ import jbinary from 'jbinary';
 import jdv from 'jdataview';
 import math from 'mathjs';
 
+export const drawCircleMask = (context, radius, center, dimensions) => {
+    context.save();
+    context.beginPath();
+    context.arc(center[0], center[1], radius, 0, 2 * Math.PI);
+    context.closePath();
+    context.clip();
+    context.clearRect(0, 0, dimensions[0], dimensions[1]);
+    context.restore();
+}
+
 export const polarToCartesian = (radius, angle, offset) => (
     [
         radius * Math.cos(angle) + offset[0],
@@ -9,8 +19,22 @@ export const polarToCartesian = (radius, angle, offset) => (
     ]
 )
 
+export const cartesianToPolar = (x, y) => {
+    return {
+        radius: Math.sqrt(x * x + y * y),
+        angle: Math.atan2(y, x)
+    }
+}
+
 export class WaveformLoader {
     constructor(filename) {
+        this.headerStructure = {
+            version: 'int32',
+            flags: 'uint32',
+            sampleRate: 'int32',
+            samplesPerPixel: 'int32',
+            length: 'uint32'
+        }
         this.header = null;
         this.waveform = [];
         if (filename)
@@ -26,13 +50,7 @@ export class WaveformLoader {
         return new Promise((resolve, reject) => {
             jbinary.loadData(filename, (error, data) => {
                 const j = new jbinary(new jdv(data, 0, data.byteLength, true));
-                const header = j.read({
-                    version: 'int32',
-                    flags: 'uint32',
-                    sampleRate: 'int32',
-                    samplesPerPixel: 'int32',
-                    length: 'uint32'
-                });
+                const header = j.read(this.headerStructure);
                 const type = header.flags ? 'int8' : 'int16'
                 const body = j.read({
                     values: ['array', type]
@@ -49,31 +67,31 @@ export class WaveformLoader {
     }
 }
 
-const firHeaderStructure = {
-    numCrossings: 'uint32',
-    samplesPerCrossing: 'uint32',
-    cutoffcycle: 'float32',
-    kaiserBeta: 'float32'
-}
-
 class FIRLoader {
     constructor() {
+        this.headerStructure = {
+            numCrossings: 'uint32',
+            samplesPerCrossing: 'uint32',
+            cutoffcycle: 'float32',
+            kaiserBeta: 'float32'
+        };
         this.numCrossings = null;
         this.samplesPerCrossing = null;
         this.filterSize = null;
         this.coeffs = null;
         this.deltas = null;
+        this.halfCrossings = null;
         this.loaded = this.loadFIRFile();
     }
 
     loadFIRFile = () => (
         new Promise((resolve, reject) => {
             jbinary.loadData('/binary/fir.dat', (error, data) => {
-                // console.log(data);
                 const j = new jbinary(new jdv(data, 0, data.byteLength, true));
-                const header = j.read(firHeaderStructure);
+                const header = j.read(this.headerStructure);
                 this.numCrossings = header.numCrossings;
                 this.samplesPerCrossing = header.samplesPerCrossing;
+                this.halfCrossings = (this.numCrossings - 1) / 2;
                 this.filterSize = this.samplesPerCrossing * (this.numCrossings - 1) - 1;
                 const body = j.read({
                     coeffs: ['array', 'float32', this.filterSize],
@@ -81,7 +99,6 @@ class FIRLoader {
                 });
                 this.coeffs = body.coeffs;
                 this.deltas = body.deltas;
-                console.log(this.coeffs);
                 resolve();
             });
         })
@@ -90,19 +107,18 @@ class FIRLoader {
 
 export const firLoader = new FIRLoader();
 
-const cqHeaderStructure = {
-    sampleRate: 'uint32',
-    binsPerOctave: 'uint32',
-    minFreq: 'float32',
-    maxFreq: 'float32',
-    numRows: 'uint32',
-    numCols: 'uint32',
-    innerPtrSize: 'uint32',
-    outerPtrSize: 'uint32'
-}
-
 class ConstantQ {
     constructor(sampleRate) {
+        this.headerStructure = {
+            sampleRate: 'uint32',
+            binsPerOctave: 'uint32',
+            minFreq: 'float32',
+            maxFreq: 'float32',
+            numRows: 'uint32',
+            numCols: 'uint32',
+            innerPtrSize: 'uint32',
+            outerPtrSize: 'uint32'
+        };
         this.matrix = null;
         this.loaded = this.loadMatrix(`/binary/CQ_${sampleRate}.dat`);
         this.minF = 0;
@@ -116,8 +132,7 @@ class ConstantQ {
         new Promise((resolve, reject) => {
             jbinary.loadData(filename, (error, data) => {
                 const j = new jbinary(new jdv(data, 0, data.byteLength, true));
-                const header = j.read(cqHeaderStructure);
-                // console.log(header);
+                const header = j.read(this.headerStructure);
                 const body = j.read({
                     values: ['array', 'float32', header.innerPtrSize],
                     innerPtr: ['array', 'int32', header.innerPtrSize],
@@ -136,7 +151,6 @@ class ConstantQ {
                 this.minF = header.minFreq;
                 this.maxF = header.maxFreq;
                 this.matrix = math.type.SparseMatrix.fromJSON(o);
-                console.log(this.matrix);
                 resolve();
             })
         })
@@ -150,8 +164,7 @@ class ConstantQ {
                 size: [1, input.length],
                 datatype: 'number'
             });
-            const result = math.multiply(inputMatrix, this.matrix).toArray();
-            return result[0];
+            return math.multiply(inputMatrix, this.matrix).toArray()[0];
         }
         return input;
     }

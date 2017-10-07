@@ -57,10 +57,19 @@ void FIR<T>::PopulateFilterCoeffs()
 
 int main(int argc, char **argv)
 {
-    FIR<float> fir(7, 32);
-    std::cout << "filter" << std::endl;
-    std::cout << fir.m_coeffs << std::endl;
-    bool success = WriteFIRFilter(fir.m_coeffs, fir.m_deltas, fir.m_numCrossings, fir.m_samplesPerCrossing, fir.m_cutoffCycle, fir.m_kaiserBeta);
+    FIR<float>* fir;
+    if (argc == 1) {
+        fir = new FIR<float>(7, 32);
+    } else if (argc == 2) {
+        fir = new FIR<float>((u32)atoi(argv[1]));
+    } else if (argc == 3) {
+        fir = new FIR<float>((u32)atoi(argv[1]), (u32)atoi(argv[2]));
+    } else if (argc == 4) {
+        fir = new FIR<float>((u32)atoi(argv[1]), (u32)atoi(argv[2]), atof(argv[3]));
+    } else if (argc == 5) {
+        fir = new FIR<float>((u32)atoi(argv[1]), (u32)atoi(argv[2]), atof(argv[3]), atof(argv[4]));
+    }
+    bool success = WriteFIRFilter(fir->m_coeffs, fir->m_deltas, fir->m_numCrossings, fir->m_samplesPerCrossing, fir->m_cutoffCycle, fir->m_kaiserBeta);
     if (!success)
     {
         std::cerr << "write filter coeffs/deltas failed" << std::endl;

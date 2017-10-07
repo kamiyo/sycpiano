@@ -1,10 +1,10 @@
-import '@/less/Media/Music/visualizer.less';
+import '@/less/Media/Music/audio-visualizer.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { constantQ, firLoader, polarToCartesian } from '@/js/components/Media/Music/VisualizationUtils.js'
-import { storeAnimationRequestId } from '@/js/components/Media/Music/actions.js'
+import { constantQ, firLoader, polarToCartesian, drawCircleMask } from '@/js/components/Media/Music/VisualizationUtils.js'
+import { storeAnimationRequestId, storeRadii } from '@/js/components/Media/Music/actions.js'
 
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;
@@ -15,10 +15,10 @@ const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI * INV_CIRCLE_SAMPLES;
 const GLOBAL_SCALE = 40;
 const WAVEFORM_HALF_HEIGHT = 50;
 
-class Visualizer extends React.Component {
+class AudioVisualizer extends React.Component {
     constructor(props) {
         super(props);
-        props.registerPlayingCallback(this.onAnalyze);
+        props.registerAnimationCallback(this.onAnalyze);
     }
 
     initializeVisualizer = () => {
@@ -29,10 +29,12 @@ class Visualizer extends React.Component {
         this.visualization.height = this.height;
         this.visualization.width = this.width;
         this.center_x = this.width / 2;
-        this.center_y = this.height / 2 - 100;
+        this.center_y = this.height / 2 - 100;  // 100 for adjustment - arbitrary
         this.visualizationCtx = this.visualization.getContext('2d');
         this.visualizationCtx.globalCompositionOperation = "lighter";
-        this.lastPosition = 0;
+        this.lastPlayheadPosition = 0;
+        // high frequency visualization uses a 30 element running average
+        // so the color doesn't jitter around so much.
         this.lastHighFreqs = new Array(30);
         this.lastHighFreqs.fill(0);
 
@@ -50,14 +52,9 @@ class Visualizer extends React.Component {
             this.SAMPLES_PER_CROSSING = firLoader.samplesPerCrossing;
             this.firCoeffs = Float32Array.from(firLoader.coeffs);
             this.firDeltas = Float32Array.from(firLoader.deltas);
-            this.HALF_CROSSINGS = (this.NUM_CROSSINGS - 1) / 2;
+            this.HALF_CROSSINGS = firLoader.halfCrossings
             this.FILTER_SIZE = firLoader.filterSize;
-            this.FILTER_CENTER = this.SAMPLES_PER_CROSSING * this.HALF_CROSSINGS - 1;
-            this.FFT_2_SCALE = 1 / (2 * this.FFT_HALF_SIZE);
-            this.FFT_2_SCALE_HF = 1 / (2 * (this.FFT_HALF_SIZE - this.HIGH_PASS_BIN))
-            this.OVERSAMPLING_RATIO = CIRCLE_SAMPLES / this.CQ_BINS;
-            this.STEP_SIZE = 1 / this.OVERSAMPLING_RATIO;
-            console.log(this);
+            this.STEP_SIZE = this.CQ_BINS / CIRCLE_SAMPLES;
         });
     }
 
@@ -108,7 +105,8 @@ class Visualizer extends React.Component {
             });
         const resultR = constantQ.apply(normalizedDataR).reverse();
         const result = Float32Array.from([...resultL, ...resultR]);
-        let highFreq = (accumulatorL.highFreqCount !== 0 && accumulatorR.highFreqCount !== 0)
+
+        let highFreq = (accumulatorL.highFreqCount !== 0 || accumulatorR.highFreqCount !== 0)
             ? (accumulatorL.highFreq + accumulatorR.highFreq) / (accumulatorL.highFreqCount + accumulatorR.highFreqCount)
             : 0;
         let lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.LOW_PASS_BIN);
@@ -130,17 +128,20 @@ class Visualizer extends React.Component {
         let currentFraction = 0;
 
         while (currentSample < CIRCLE_SAMPLES && currentInput < this.CQ_BINS) {
-            let index = Math.floor(currentFraction * this.SAMPLES_PER_CROSSING);
+            let index = currentFraction * this.SAMPLES_PER_CROSSING;
+            const integralPart = Math.floor(index);
+            const fractionalPart = index - integralPart;
             let sum = 0;
-            for (let i = index, x = this.HALF_CROSSINGS; i < this.FILTER_SIZE; i += this.SAMPLES_PER_CROSSING, x--) {
+            for (let i = integralPart, x = this.HALF_CROSSINGS; i < this.FILTER_SIZE; i += this.SAMPLES_PER_CROSSING, x--) {
                 let input = currentInput + x;
+                // treat like ring buffer
                 if (input < 0) {
                     input += this.CQ_BINS;
                 } else if (input >= this.CQ_BINS) {
                     input -= this.CQ_BINS;
                 }
                 const scale = values[input];
-                sum += scale * this.firCoeffs[i];
+                sum += scale * (this.firCoeffs[i] + fractionalPart * this.firDeltas[i]);
             }
             const result = sum * GLOBAL_SCALE;
             // first term is the actual incrementing.
@@ -149,11 +150,13 @@ class Visualizer extends React.Component {
             const angle = (currentSample * TWO_PI_PER_CIRCLE_SAMPLES) + (TWO_PI * this.INV_CQ_BINS) + HALF_PI;
             const [x, y] = polarToCartesian((radius + result), angle, [this.center_x, this.center_y]);
 
+            // if first sample, use moveTo instead of lineTo
             if (currentSample === 0) {
                 context.moveTo(x, y);
             } else {
                 context.lineTo(x, y);
             }
+
             // update for next sample
             currentSample += 1;
             currentFraction += this.STEP_SIZE;
@@ -164,16 +167,6 @@ class Visualizer extends React.Component {
         }
         context.fillStyle = color;
         context.fill();
-    }
-
-    drawCircleMask = (context, radius) => {
-        context.save();
-        context.beginPath();
-        context.arc(this.center_x, this.center_y, radius, 0, TWO_PI);
-        context.closePath();
-        context.clip();
-        context.clearRect(0, 0, this.width, this.height);
-        context.restore();
     }
 
     drawWaveForm = (context, centerAxis, color) => {
@@ -207,14 +200,13 @@ class Visualizer extends React.Component {
         context.fill();
     }
 
-    drawPlaybackHead = (context, playbackHead, minRad, maxRad) => {
-        const angle = (this.props.duration) ? -HALF_PI + TWO_PI * playbackHead / this.props.duration : 0;
+    drawPlaybackHead = (context, angle, minRad, maxRad, color) => {
         const [xStart, yStart] = polarToCartesian(minRad, angle, [this.center_x, this.center_y]);
         const [xEnd, yEnd] = polarToCartesian(maxRad, angle, [this.center_x, this.center_y]);
         context.beginPath();
         context.moveTo(xStart, yStart);
         context.lineTo(xEnd, yEnd);
-        context.strokeStyle = '#FFF';
+        context.strokeStyle = color;
         context.stroke();
     }
 
@@ -225,20 +217,30 @@ class Visualizer extends React.Component {
         let playbackHead = this.props.currentPosition;
         if (
             this.props.currentPosition &&
-            this.props.currentPosition === this.lastPosition &&
+            this.props.currentPosition === this.lastPlayheadPosition &&
             this.props.isPlaying
         ) {
             playbackHead = this.props.currentPosition + (timestamp - this.props.prevTimestamp) / 1000;
         } else {
-            this.lastPosition = this.props.currentPosition;
+            this.lastPlayheadPosition = this.props.currentPosition;
         }
-
+        const angle = (this.props.duration) ? -HALF_PI + TWO_PI * playbackHead / this.props.duration : 0;
         this.drawPlaybackHead(
             context,
-            playbackHead,
+            angle,
             WAVEFORM_CENTER_AXIS - WAVEFORM_HALF_HEIGHT,
-            WAVEFORM_CENTER_AXIS + WAVEFORM_HALF_HEIGHT
+            WAVEFORM_CENTER_AXIS + WAVEFORM_HALF_HEIGHT,
+            "#FFF"
         );
+        if (this.props.isHover) {
+            this.drawPlaybackHead(
+                context,
+                this.props.hoverAngle - HALF_PI,
+                WAVEFORM_CENTER_AXIS - WAVEFORM_HALF_HEIGHT,
+                WAVEFORM_CENTER_AXIS + WAVEFORM_HALF_HEIGHT,
+                "#888"
+            );
+        }
     }
 
     drawVisualization = (context, average, values, lightness, timestamp) => {
@@ -246,10 +248,12 @@ class Visualizer extends React.Component {
 
         // hsl derived from @light-blue: #4E86A4;
         const color = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
-        const radius = 250 + average * 50;     // adjust large radius to change with the average of all values
+        // adjust large radius to change with the average of all values
+        const radius = 250 + average * 50;
+        this.props.storeRadii(radius - 2 * WAVEFORM_HALF_HEIGHT, radius);
 
         this.drawConstantQBins(context, values, radius, color);
-        this.drawCircleMask(context, radius);
+        drawCircleMask(context, radius, [this.center_x, this.center_y], [this.width, this.height]);
         this.drawSeekArea(context, radius, color, timestamp);
     }
 
@@ -280,12 +284,15 @@ const mapStateToProps = state => ({
     analyzers: state.audio_player.analyzers,
     isPlaying: state.audio_player.isPlaying,
     duration: state.audio_player.duration,
-    prevTimestamp: state.audio_player.updateTimestamp
+    prevTimestamp: state.audio_player.updateTimestamp,
+    isHover: state.audio_UI.isHover,
+    hoverAngle: state.audio_UI.angle
 })
 
 export default connect(
     mapStateToProps,
     {
-        storeAnimationRequestId
+        storeAnimationRequestId,
+        storeRadii
     }
-)(Visualizer);
+)(AudioVisualizer);
