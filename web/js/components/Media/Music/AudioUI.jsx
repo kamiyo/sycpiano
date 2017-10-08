@@ -3,18 +3,18 @@ import '@/less/Media/Music/audio-ui.less';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { cartesianToPolar } from '@/js/components/Media/Music/VisualizationUtils.js';
+import { cartesianToPolar, formatTime } from '@/js/components/Media/Music/VisualizationUtils.js';
 import { isHover } from '@/js/components/Media/Music/actions.js';
-import { PlaySVG } from '@/js/components/Media/Music/IconSVGs.jsx';
+import { PlayButton, PauseButton } from '@/js/components/Media/Music/Buttons.jsx';
 
 class AudioUI extends React.Component {
 
     componentDidMount() {
         this.el = ReactDOM.findDOMNode(this);
         this.visualization = this.el.getElementsByClassName('seekRing')[0];
-        this.visualization.addEventListener('mousemove', this.handleMousemove, false);
-        this.visualization.addEventListener('mousedown', this.handleMousedown, false);
-        this.visualization.addEventListener('mouseup', this.handleMouseup, false);
+        this.visualization.addEventListener('mousemove', this.handleMousemove);
+        this.visualization.addEventListener('mousedown', this.handleMousedown);
+        this.visualization.addEventListener('mouseup', this.handleMouseup);
         this.height = this.visualization.offsetHeight;
         this.width = this.visualization.offsetWidth;
         this.visualization.height = this.height;
@@ -24,6 +24,9 @@ class AudioUI extends React.Component {
         this.visualizationCtx = this.visualization.getContext('2d');
         this.visualizationCtx.globalCompositionOperation = "lighter";
         this.isDragging = false;
+        this.isMoving = true;
+        this.isHovering = false;
+        this.timerId = setTimeout(() => this.isMoving = false, 1000);
     }
 
     getMousePositionInCanvas = (event) => {
@@ -55,13 +58,25 @@ class AudioUI extends React.Component {
     }
 
     handleMousemove = (event) => {
+        const prevMoving = this.isMoving;
         if (this.isDragging) {
             this.props.onDrag(this.mousePositionToPercentage(event));
             this.visualization.style.cursor = "pointer"
+        } else {
+            if (this.timerId) {
+                clearTimeout(this.timerId);
+            }
+            this.isMoving = true;
+            this.timerId = setTimeout(() => this.isMoving = false, 1000);
         }
         if (this.isEventInSeekRing(event)) {
             this.visualization.style.cursor = "pointer";
             this.props.isHover(true, this.mousePositionToAngle(event));
+            if (!prevMoving) {
+                this.isMoving = false;
+            } else {
+                this.timerId = setTimeout(() => this.isMoving = false, 1000);
+            }
         } else {
             this.visualization.style.cursor = "default";
             this.props.isHover(false, null);
@@ -98,10 +113,46 @@ class AudioUI extends React.Component {
         }
     }
 
+    handleMouseover = (event) => {
+        this.isHovering = true;
+    }
+
+    handleMouseout = (event) => {
+        this.isHovering = false;
+    }
+
+    componentWillUpdate(nextProps) {
+        if (this.props.isPlaying !== nextProps.isPlaying) {
+            this.isMoving = true;
+            this.timerId = setTimeout(() => this.isMoving = false, 1000);
+        }
+    }
+
     render() {
         return (
             <div className="uiContainer">
-                <PlaySVG className="playButton" />
+                <div className="currentTime">
+                    {formatTime(this.props.currentPosition)}
+                </div>
+                {(this.props.isPlaying) ?
+
+                    <PauseButton
+                        onClick={this.props.pause}
+                        isMoving={this.isMoving}
+                        isHovering={this.isHovering}
+                        onMouseMove={this.handleMousemove}
+                        onMouseOver={this.handleMouseover}
+                        onMouseOut={this.handleMouseout}
+                    />
+                    : <PlayButton
+                        onClick={this.props.play}
+                        isMoving={this.isMoving}
+                        isHovering={this.isHovering}
+                        onMouseMove={this.handleMousemove}
+                        onMouseOver={this.handleMouseover}
+                        onMouseOut={this.handleMouseout}
+                    />
+                }
                 <canvas className="seekRing" />
             </div>
         )
@@ -111,7 +162,9 @@ class AudioUI extends React.Component {
 
 const mapStateToProps = state => ({
     innerRadius: state.audio_visualizer.innerRadius,
-    outerRadius: state.audio_visualizer.outerRadius
+    outerRadius: state.audio_visualizer.outerRadius,
+    isPlaying: state.audio_player.isPlaying,
+    currentPosition: state.audio_player.currentPosition
 })
 
 export default connect(

@@ -26,6 +26,14 @@ export const cartesianToPolar = (x, y) => {
     }
 }
 
+export const formatTime = (current) => {
+    const minutes = Math.floor(current / 60);
+    const seconds = Math.floor(current - 60 * minutes);
+    const minutesDisplay = `${minutes < 10 ? '0' : ''}${minutes}`;
+    const secondsDisplay = `${seconds < 10 ? '0' : ''}${seconds}`;
+    return `${minutesDisplay}:${secondsDisplay}`;
+}
+
 export class WaveformLoader {
     constructor(filename) {
         this.headerStructure = {

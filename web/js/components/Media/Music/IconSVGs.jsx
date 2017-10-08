@@ -1,21 +1,31 @@
 import React from 'react';
 
-export const PlaySVG = (props) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 78.211719 78.211715"
-        height="295.60333"
-        width="295.60333"
+export const PlaySVG = ({ onMouseOver, onMouseOut, ...props }) => (
+    <svg {...props}
+        xmlns="http://www.w3.org/2000/svg"
+        width="500"
+        height="500"
+        viewBox="0 0 132.29166 132.29166"
     >
-        <path d="M78.212 39.106L48.882 56.04l-29.33 16.933V5.24l29.33 16.933z" />
+        <path d="M105.252 66.145L75.922 83.08l-29.33 16.932V32.28l29.33 16.932z"
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
+        />
     </svg>
 );
 
-export const PauseSVG = (props) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 67.733332 67.733335"
-        height="256"
-        width="256"
+export const PauseSVG = ({ onMouseOver, onMouseOut, ...props }) => (
+    <svg {...props}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 132.29166 132.29166"
+        height="500"
+        width="500"
     >
-        <path d="M12.43 0h10.583v67.733H12.43zM44.72 0h10.583v67.733H44.72z" />
+        <g
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}>
+            <path fill="#FFF" fillOpacity="0" d="M23.813 23.813h84.667v84.667H23.813z" />
+            <path d="M44.71 32.28H55.29v67.732H44.71zm32.29 0H87.58v67.732H77z" />
+        </g>
     </svg>
 );

@@ -139,6 +139,8 @@ class Music extends React.Component {
                     seekAudio={this.seekAudio}
                     onStartDrag={this.onStartDrag}
                     onDrag={this.onDrag}
+                    play={() => this.audio.play()}
+                    pause={() => this.audio.pause()}
                 />
                 <AudioInfo />
                 <audio id="audio" crossOrigin="anonymous" />
