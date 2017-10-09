@@ -6,7 +6,7 @@ import { PlaySVG, PauseSVG } from '@/js/components/Media/Music/IconSVGs.jsx';
 export class PlayButton extends React.Component {
     render() {
         return (
-            <div className={`playButton${(this.props.isMoving || this.props.isHovering) ? ' visible' : ' invisible'}`}
+            <div className={`playButton${(this.props.isVisible) ? ' visible' : ' invisible'}`}
                 onMouseMove={this.props.onMouseMove}
             >
                 <PlaySVG className={`solid${this.props.isHovering ? ' hover' : ''}`}
@@ -22,7 +22,7 @@ export class PlayButton extends React.Component {
 export class PauseButton extends React.Component {
     render() {
         return (
-            <div className={`pauseButton${(this.props.isMoving || this.props.isHovering) ? ' visible' : ' invisible'}`}
+            <div className={`pauseButton${(this.props.isVisible) ? ' visible' : ' invisible'}`}
                 onMouseMove={this.props.onMouseMove}
             >
                 <PauseSVG className={`solid${this.props.isHovering ? ' hover' : ''}`}

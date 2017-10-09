@@ -75,6 +75,9 @@ class AudioUI extends React.Component {
             if (!prevMoving) {
                 this.isMoving = false;
             } else {
+                if (this.timerId) {
+                    clearTimeout(this.timerId);
+                }
                 this.timerId = setTimeout(() => this.isMoving = false, 1000);
             }
         } else {
@@ -84,9 +87,18 @@ class AudioUI extends React.Component {
     }
 
     handleMouseup = (event) => {
+        const prevMoving = this.isMoving;
         if (this.isDragging) {
             this.props.seekAudio(this.mousePositionToPercentage(event));
             this.isDragging = false;
+            if (!prevMoving) {
+                this.isMoving = false;
+            } else {
+                if (this.timerId) {
+                    clearTimeout(this.timerId);
+                }
+                this.timerId = setTimeout(() => this.isMoving = false, 1000);
+            }
             if (!this.isEventInSeekRing(event)) {
                 this.visualization.style.cursor = "default";
             }
@@ -122,7 +134,7 @@ class AudioUI extends React.Component {
     }
 
     componentWillUpdate(nextProps) {
-        if (this.props.isPlaying !== nextProps.isPlaying) {
+        if (this.props.isPlaying !== nextProps.isPlaying && !this.isDragging) {
             this.isMoving = true;
             this.timerId = setTimeout(() => this.isMoving = false, 1000);
         }
@@ -138,7 +150,7 @@ class AudioUI extends React.Component {
 
                     <PauseButton
                         onClick={this.props.pause}
-                        isMoving={this.isMoving}
+                        isVisible={this.isMoving || this.isHovering}
                         isHovering={this.isHovering}
                         onMouseMove={this.handleMousemove}
                         onMouseOver={this.handleMouseover}
@@ -146,7 +158,7 @@ class AudioUI extends React.Component {
                     />
                     : <PlayButton
                         onClick={this.props.play}
-                        isMoving={this.isMoving}
+                        isVisible={this.isMoving || this.isHovering}
                         isHovering={this.isHovering}
                         onMouseMove={this.handleMousemove}
                         onMouseOver={this.handleMouseover}
@@ -164,7 +176,8 @@ const mapStateToProps = state => ({
     innerRadius: state.audio_visualizer.innerRadius,
     outerRadius: state.audio_visualizer.outerRadius,
     isPlaying: state.audio_player.isPlaying,
-    currentPosition: state.audio_player.currentPosition
+    currentPosition: state.audio_player.currentPosition,
+    lastAction: state.audio_player.lastAction
 })
 
 export default connect(
