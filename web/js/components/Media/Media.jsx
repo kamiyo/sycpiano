@@ -2,12 +2,19 @@ import '@/less/Media/media.less';
 
 import React from 'react';
 
-export default class Media extends React.Component {
-	render() {
-		return (
-			<div className='mediaContainer container'>
-                {this.props.children}
-			</div>
-		);
-	}
-}
+import { Switch, Route } from 'react-router-dom';
+import Videos from '@/js/components/Media/Videos/Videos.jsx';
+import Music from '@/js/components/Media/Music/Music.jsx';
+import Photos from '@/js/components/Media/Photos/Photos.jsx';
+
+const Media = () => (
+	<div className='mediaContainer container'>
+		<Switch>
+			<Route path='/media/videos' component={Videos} exact />
+			<Route path='/media/music' component={Music} exact />
+			<Route path='/media/pictures' component={Photos} exact />
+		</Switch>
+	</div>
+)
+
+export default Media;

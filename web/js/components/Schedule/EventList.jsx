@@ -1,7 +1,5 @@
 import '@/less/Schedule/event-list.less';
 
-// should we just use es6 array functions instead of lodash?
-import _ from 'lodash';
 import moment from 'moment-timezone';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -28,7 +26,7 @@ class ConnectedEventList extends React.Component {
             return;
         }
 
-        if (this.props.params.date) {
+        if (this.props.match.params.date) {
             const scrollIndex = this._getScrollIndex();
             this.currentRow = scrollIndex;
             this.List.scrollToPosition(this.List.getOffsetForRow({ index: scrollIndex }));
@@ -41,14 +39,14 @@ class ConnectedEventList extends React.Component {
         const targetIndex = this._getScrollIndex();
         const targetOffset = this.List.getOffsetForRow({ index: targetIndex });
         this.props.dispatchAnimateStart();
-        animateFn(
+        setTimeout(() => animateFn(
             this.currentOffset,
             targetOffset,
             500,
             (position) => this.List.scrollToPosition(position),
             easeQuadOut,
-            () => {this.props.dispatchAnimateFinish();}
-        );
+            () => { this.props.dispatchAnimateFinish(); }
+        ), 100);
     }
 
     _getScrollIndex = () => (
@@ -56,7 +54,7 @@ class ConnectedEventList extends React.Component {
             item => (
                 item.type === 'day' &&
                 // in case we change parameter format, compare using moment
-                item.dateTime.isSame(moment(this.props.params.date), 'day')
+                item.dateTime.isSame(moment(this.props.match.params.date), 'day')
             )
         ))
     );
@@ -97,7 +95,7 @@ class ConnectedEventList extends React.Component {
 
     render() {
         return (
-            <div className="event-list container">
+            <div className="event-list">
                 {
                     <AutoSizer>
                         {({ height, width }) => (

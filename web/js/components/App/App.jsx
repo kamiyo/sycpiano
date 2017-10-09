@@ -1,27 +1,43 @@
 import '@/less/App/app.less';
 
 import React from 'react';
-import {VelocityComponent, VelocityTransitionGroup} from 'velocity-react';
 
-import {LogoSVG} from '@/js/components/LogoSVG.jsx';
-import NavBar from '@/js/components/App/NavBar/NavBar.jsx';
+import { VelocityComponent } from 'velocity-react';
+import { Route, Switch } from 'react-router-dom';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+
+import { LogoSVG } from '@/js/components/LogoSVG.jsx';
 import Front from '@/js/components/App/Front/Front.jsx';
+import NavBar from '@/js/components/App/NavBar/NavBar.jsx';
+
+import About from '@/js/components/About/About.jsx';
+import Contact from '@/js/components/Contact/Contact.jsx';
+import Home from '@/js/components/Home/Home.jsx';
+import Media from '@/js/components/Media/Media.jsx';
+import Press from '@/js/components/Press/Press.jsx';
+import Schedule from '@/js/components/Schedule/Schedule.jsx';
 
 export default class App extends React.Component {
-    state = {
-        isFront: false // for peaceful dev until we figure out how to show only on home
-    };
+    constructor(props) {
+        super(props);
+        // uncomment the following comments to allow showing video on Home
+        // const initialFront = this.props.location.pathname === '/';
+        this.state = {
+            //isFront: initialFront
+            isFront: false
+        }
+    }
 
     getRouteBase = () => this.props.location.pathname.match(/^(\/\w*)(\/.*)*$/)[1];
 
     showFront = () => {
-        this.setState({isFront: true});
+        this.setState({ isFront: true });
         ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
     hideFront = () => {
-        this.setState({isFront: false});
+        this.setState({ isFront: false });
         ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront));
         window.removeEventListener('keydown', this.checkDownArrow);
     }
@@ -52,16 +68,20 @@ export default class App extends React.Component {
                         currentBasePath={this.getRouteBase()}
                     />
                 </VelocityComponent>
-                <VelocityTransitionGroup
-                    enter={{ duration: 500, animation: { opacity: 1, translateZ: 0 } }}
-                    leave={{ duration: 500, animation: { opacity: 0, translateZ: 0 } }}
-                    runOnMount
-                >
-                    {React.cloneElement(this.props.children, {
-                        // we don't want animation here to trigger when going from /schedule to /schedule/[date]
-                        key: this.getRouteBase()
-                    })}
-                </VelocityTransitionGroup>
+                <TransitionGroup>
+                    <CSSTransition key={this.getRouteBase()} timeout={160} classNames="fade" mountOnEnter={true} unmountOnExit={true}>
+                        <main>
+                            <Switch location={this.props.location}>
+                                <Route path='/about' exact component={About} />
+                                <Route path='/contact' exact component={Contact} />
+                                <Route path='/media' component={Media} />
+                                <Route path='/press' exact component={Press} />
+                                <Route path='/schedule' component={Schedule} />
+                                <Route path='/' exact component={Home} />
+                            </Switch>
+                        </main>
+                    </CSSTransition>
+                </TransitionGroup>
             </div>
         )
     }
