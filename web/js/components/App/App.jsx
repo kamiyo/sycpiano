@@ -51,13 +51,13 @@ export default class App extends React.Component {
 
     showFront = () => {
         this.setState({ isFront: true });
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
     hideFront = () => {
         this.setState({ isFront: false });
-        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront));
+        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront, { passive: true }));
         window.removeEventListener('keydown', this.checkDownArrow);
     }
 
@@ -67,7 +67,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
