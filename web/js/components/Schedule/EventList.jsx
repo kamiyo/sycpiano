@@ -18,14 +18,20 @@ class ConnectedEventList extends React.Component {
         this._renderEventItem = this._renderEventItem.bind(this);
 
         this.currentOffset = 0;
+        this.maxOffset = 0;
+        this.requestId = null;
     }
 
     componentDidUpdate() {
+        if (this.props.eventItems.length !== 0) {
+            const outerHeight = Math.floor(document.getElementsByClassName('event-list')[0].clientHeight);
+            const innerHeight = this.List.Grid._scrollingContainer.scrollHeight;
+            this.maxOffset = innerHeight - outerHeight;
+        }
         if (this.props.hasEventBeenSelected) {
             this._scrollToSelectedRow();
             return;
         }
-
         if (this.props.match.params.date) {
             const scrollIndex = this._getScrollIndex();
             this.currentRow = scrollIndex;
@@ -35,18 +41,23 @@ class ConnectedEventList extends React.Component {
         }
     }
 
+    animationRequestHandler = (requestId) => {
+        this.requestId = requestId;
+    }
+
     _scrollToSelectedRow = () => {
         const targetIndex = this._getScrollIndex();
-        const targetOffset = this.List.getOffsetForRow({ index: targetIndex });
+        const targetOffset = Math.min(this.List.getOffsetForRow({ index: targetIndex }), this.maxOffset);
         this.props.dispatchAnimateStart();
-        setTimeout(() => animateFn(
+        setTimeout(() => this.requestId = animateFn(
             this.currentOffset,
             targetOffset,
-            500,
+            Math.min(Math.abs(this.currentOffset - targetOffset) / 2, 500),
             (position) => this.List.scrollToPosition(position),
             easeQuadOut,
-            () => { this.props.dispatchAnimateFinish(); }
-        ), 100);
+            () => { this.props.dispatchAnimateFinish(); },
+            this.animationRequestHandler
+        ), 200);
     }
 
     _getScrollIndex = () => (
@@ -114,6 +125,7 @@ class ConnectedEventList extends React.Component {
                                 // https://github.com/bvaughn/react-virtualized/blob/master/source/Grid/utils/CellSizeAndPositionManager.js#L152
                                 estimatedRowSize={300}
                                 onScroll={({ clientHeight, scrollHeight, scrollTop }) => {
+                                    window.cancelAnimationFrame(this.requestId);        // if we scroll manually, hijack the animation.
                                     this.currentOffset = scrollTop;
                                 }}
                             />
