@@ -1,10 +1,11 @@
 import '@/less/App/app.less';
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 
-import { VelocityComponent } from 'velocity-react';
 import { Route, Switch } from 'react-router-dom';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { TransitionGroup, Transition } from 'react-transition-group';
+import { TweenLite } from 'gsap';
 
 import { LogoSVG } from '@/js/components/LogoSVG.jsx';
 import Front from '@/js/components/App/Front/Front.jsx';
@@ -16,6 +17,24 @@ import Home from '@/js/components/Home/Home.jsx';
 import Media from '@/js/components/Media/Media.jsx';
 import Press from '@/js/components/Press/Press.jsx';
 import Schedule from '@/js/components/Schedule/Schedule.jsx';
+
+
+const fadeOnEnter = (element, isAppearing) => {
+    const delay = (isAppearing) ? 0.3 : 0;
+    TweenLite.fromTo(element, 0.25, { opacity: 0 }, { opacity: 1, delay: delay });
+}
+
+const fadeOnExit = (element) => {
+    TweenLite.fromTo(element, 0.25, { opacity: 1 }, { opacity: 0, });
+}
+
+const slideDownOnEnter = (element) => {
+    TweenLite.fromTo(element, 0.5, { y: -90 }, { y: 0, delay: 0.55, ease: "Power3.easeOut" });
+}
+
+const slideUpOnExit = (element) => {
+    TweenLite.fromTo(element, 0.5, { y: 0 }, { y: -90, delay: 0.55, ease: "Power3.easeOut" });
+}
 
 export default class App extends React.Component {
     constructor(props) {
@@ -32,13 +51,13 @@ export default class App extends React.Component {
 
     showFront = () => {
         this.setState({ isFront: true });
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
     hideFront = () => {
         this.setState({ isFront: false });
-        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront));
+        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront, { passive: true }));
         window.removeEventListener('keydown', this.checkDownArrow);
     }
 
@@ -48,7 +67,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
@@ -57,30 +76,33 @@ export default class App extends React.Component {
             <div className='appContainer'>
                 <LogoSVG />
                 <Front show={this.state.isFront} onClick={this.hideFront} />
-                <VelocityComponent
-                    animation={{ translateY: !this.state.isFront ? 0 : -90, translateZ: 0 }}
-                    delay={500}
-                    duration={500}
-                    easing={[170, 26]}
+                <Transition in={!this.state.isFront}
+                    onEnter={slideDownOnEnter}
+                    onExit={slideUpOnExit}
+                    timeout={250}
                 >
                     <NavBar
                         onClick={this.showFront}
                         currentBasePath={this.getRouteBase()}
                     />
-                </VelocityComponent>
+                </Transition>
                 <TransitionGroup>
-                    <CSSTransition key={this.getRouteBase()} timeout={160} classNames="fade" mountOnEnter={true} unmountOnExit={true}>
-                        <main>
-                            <Switch location={this.props.location}>
-                                <Route path='/about' exact component={About} />
-                                <Route path='/contact' exact component={Contact} />
-                                <Route path='/media' component={Media} />
-                                <Route path='/press' exact component={Press} />
-                                <Route path='/schedule' component={Schedule} />
-                                <Route path='/' exact component={Home} />
-                            </Switch>
-                        </main>
-                    </CSSTransition>
+                    <Transition
+                        key={this.getRouteBase()}
+                        onEntering={fadeOnEnter}
+                        onExiting={fadeOnExit}
+                        timeout={550}
+                        appear={true}
+                    >
+                        <Switch location={this.props.location}>
+                            <Route path='/about' exact component={About} />
+                            <Route path='/contact' exact component={Contact} />
+                            <Route path='/media' component={Media} />
+                            <Route path='/press' exact component={Press} />
+                            <Route path='/schedule' component={Schedule} />
+                            <Route path='/' exact component={Home} />
+                        </Switch>
+                    </Transition>
                 </TransitionGroup>
             </div>
         )

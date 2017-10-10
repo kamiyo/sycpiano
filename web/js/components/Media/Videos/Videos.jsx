@@ -4,7 +4,8 @@ import '@/less/Media/Videos/videos.less';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import {VelocityComponent, VelocityTransitionGroup} from 'velocity-react';
+import { TweenLite } from 'gsap';
+import { Transition } from 'react-transition-group';
 import VideoLoadingOverlay from '@/js/components/Media/LoadingOverlay.jsx';
 import PreviewOverlay from '@/js/components/Media/PreviewOverlay.jsx';
 import VideoPlaylistToggler from '@/js/components/Media/PlaylistToggler.jsx';
@@ -13,6 +14,14 @@ import ConnectPlaylistHOC from '@/js/components/Media/HigherOrder/ConnectPlaylis
 import youTube from '@/js/YouTube.js';
 
 const PLAYLIST_WIDTH = 550;
+
+const slideLeft = (element) => {
+    TweenLite.fromTo(element, 0.4, { x: 0 }, { x: -PLAYLIST_WIDTH, ease: "Power3.easeOut" });
+}
+
+const slideRight = (element) => {
+    TweenLite.fromTo(element, 0.4, { x: -PLAYLIST_WIDTH }, { x: 0, ease: "Power3.easeOut" });
+}
 
 class Videos extends React.Component {
     constructor(props) {
@@ -38,7 +47,7 @@ class Videos extends React.Component {
         this.setState({ playingVideoId: videoId, shouldPlay: true, isPreviewOverlay: false }, () => this.setState({ shouldPlay: false }));
         this.playlistAutoHideTimeout = setTimeout(() => {
             this.props.togglePlaylist(false);
-        }, 2500);
+        }, 250);
     }
 
     previewOverlayOnClick = () => {
@@ -55,6 +64,8 @@ class Videos extends React.Component {
         }, () => {
             this.playlistItems = null;
         });
+
+        setTimeout(() => this.props.togglePlaylist(true), 1000);
     }
 
     getVideosOnError = (response) => {
@@ -97,35 +108,51 @@ class Videos extends React.Component {
     }
 
     render() {
-        let overlayLeaveAnimation = { duration: 300, delay: 1000, animation: 'fadeOut' };
-        let previewLeaveAnimation = { duration: 300, animation: 'fadeOut' };
-        let playlistExpandAnimation = { translateX: this.props.showPlaylist ? 0 : PLAYLIST_WIDTH + this.props.playlistRight };
-
         return (
             <div className="mediaContent videos">
-                <VelocityTransitionGroup leave={previewLeaveAnimation}>
-                    { this.state.isPreviewOverlay ? <PreviewOverlay onClick={this.previewOverlayOnClick}/> : undefined }
-                </VelocityTransitionGroup>
+                <Transition
+                    in={this.state.isPreviewOverlay}
+                    onExit={(el) => {TweenLite.fromTo(el, 0.3, { opacity: 1 }, { opacity: 0 })}}
+                    timeout={300}
+                    unmountOnExit={true}
+                    appear={true}
+                >
+                    <PreviewOverlay onClick={this.previewOverlayOnClick} />
+                </Transition>
 
-                <VelocityTransitionGroup leave={overlayLeaveAnimation}>
-                    { this.state.playerReady ? undefined : <VideoLoadingOverlay/> }
-                </VelocityTransitionGroup>
+                <Transition
+                    in={!this.state.playerReady}
+                    onExit={(el) => {TweenLite.fromTo(el, 0.3, { opacity: 1 }, { opacity: 0, delay: 1 })}}
+                    timeout={300}
+                    unmountOnExit={true}
+                    appear={true}
+                >
+                    <VideoLoadingOverlay />
+                </Transition>
 
-                <VelocityComponent animation={playlistExpandAnimation} duration={400} easing={[170, 26]}>
+                <Transition
+                    in={this.props.showPlaylist}
+                    onEnter={slideLeft}
+                    onExit={slideRight}
+                    timeout={400}
+                >
                     <VideoPlaylistToggler
-                        playlistWidth={PLAYLIST_WIDTH}
-                        playlistRight={this.props.playlistRight}
                         isPlaylistVisible={this.props.showPlaylist}
                         onClick={this.props.playlistToggleOnClick} />
-                </VelocityComponent>
+                </Transition>
 
-                <VelocityComponent animation={playlistExpandAnimation} duration={400} easing={[170, 26]}>
+                <Transition
+                    in={this.props.showPlaylist}
+                    onEnter={slideLeft}
+                    onExit={slideRight}
+                    timeout={400}
+                >
                     <VideoPlaylist
                         currentItemId={this.state.playingVideoId}
                         items={this.state.videos}
                         playlistRightOnChange={this.props.playlistRightOnChange}
                         playlistItemOnClick={this.playlistItemOnClick} />
-                </VelocityComponent>
+                </Transition>
             </div>
         );
     }

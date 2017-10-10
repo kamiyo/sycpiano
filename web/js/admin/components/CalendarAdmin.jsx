@@ -10,8 +10,7 @@ import {
     eventListReducer,
 } from '@/js/admin/components/Reducers.js';
 
-
-import {validateToken, CLIENT_ID} from '@/js/services/GoogleOAuth.js';
+import { validateToken, CLIENT_ID } from '@/js/services/GoogleOAuth.js';
 import AuthInterface from '@/js/admin/components/AuthInterface.jsx';
 import EventForm from '@/js/admin/components/EventForm.jsx';
 import EventList from '@/js/admin/components/EventList.jsx';
@@ -36,7 +35,7 @@ export default class CalendarAdmin extends React.Component {
         if (!this.props.token) {
             return;
         }
-        this.setState({authInProgress: true});
+        this.setState({ authInProgress: true });
         validateToken(this.props.token)
             .then(response => {
                 this.setState({
@@ -63,16 +62,16 @@ export default class CalendarAdmin extends React.Component {
                         return <div>Authorizing...</div>;
                     }
                     if (!this.state.isAuthorized) {
-                        return <AuthInterface/>;
+                        return <AuthInterface />;
                     }
                     return (
                         <Provider store={store}>
                             <div className="admin__calendar">
                                 <div className="admin__event_form">
-                                    <EventForm accessToken={this.props.token}/>
+                                    <EventForm accessToken={this.props.token} />
                                 </div>
                                 <div className="admin__list_events">
-                                    <EventList/>
+                                    <EventList />
                                 </div>
                             </div>
                         </Provider>
