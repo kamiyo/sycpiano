@@ -1,17 +1,16 @@
 @import '../../variables.less';
+@import '../../flex.less';
 
 .playlistToggler {
+    .flex-basis(20px);
+    .align-self(center);
     @height: 30px;
 
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
-    line-height: @height;
+    line-height: @height + 1;
     height: @height;
-    width: 20px;
     text-align: center;
-    position: fixed;
-    top: ~"calc(50% - "(@height / 2)~" + @{navbarHeight})";
-    right: 0;
     background-color: @playlistBackground;
     color: #000;
     cursor: pointer;

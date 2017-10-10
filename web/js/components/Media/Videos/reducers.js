@@ -12,17 +12,18 @@ export const videoPlayerReducer = (state = {
                 ...state,
                 isPlayerReady: true,
                 isPreviewOverlay: true
-            };
+            }
         case VIDEO_ACTIONS.PLAY_ITEM:
             return {
                 ...state,
                 videoId: (action.videoId) ? action.videoId : state.videoId,
-                shouldPlay: true
-            };
+                shouldPlay: true,
+                isPreviewOverlay: false
+            }
         case VIDEO_ACTIONS.FETCH_PLAYLIST_SUCCESS:
             return {
                 ...state,
-                videoId: action.video[0].id
+                videoId: action.videoId
             }
         case VIDEO_ACTIONS.RESET_PLAYER:
             return {

@@ -15,7 +15,7 @@ import youTube from '@/js/YouTube.js';
 
 class Videos extends React.Component {
     componentWillMount() {
-        this.props.createFetchPlaylistAction(youTube.getPlaylistItems);
+        this.props.createFetchPlaylistAction(youTube.getPlaylistItems, youTube.getVideos);
     }
 
     componentDidMount() {
@@ -23,9 +23,10 @@ class Videos extends React.Component {
         youTube.executeWhenPlayerReady(this.props.playerIsReady);
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.shouldPlay === false && this.props.shouldPlay === true)
-            youTube.loadVideoById(this.props.videoId, true);
+    // write function to handle spacebar presses for embedded iframe youtube
+
+    playYoutubeVideo = (videoId = this.props.videoId) => {
+        youTube.loadVideoById(videoId, true);
     }
 
     componentWillUnmount() {
@@ -36,19 +37,17 @@ class Videos extends React.Component {
     render() {
         return (
             <div className="mediaContent videos">
-                <PreviewOverlay />
-                <VideoLoadingOverlay />
+                <PreviewOverlay playYoutubeVideo={this.playYoutubeVideo} />
+                <LoadingOverlay />
 
-                <Transition
+                {/* <Transition
                     in={this.props.showPlaylist}
                     onEnter={slideLeft}
                     onExit={slideRight}
                     timeout={400}
                 >
-
-                </Transition>
-
-                <VideoPlaylist />
+                </Transition> */}
+                <VideoPlaylist playYoutubeVideo={this.playYoutubeVideo} />
             </div>
         );
     }
@@ -61,7 +60,7 @@ Videos.propTypes = {
     playerIsReady: PropTypes.func.isRequired,
 };
 
-mapStateToProps = (state) => ({
+const mapStateToProps = (state) => ({
     shouldPlay: state.video_player.shouldPlay,
     videoId: state.video_player.videoId
 })
@@ -71,6 +70,6 @@ export default connect(
     {
         createFetchPlaylistAction,
         playerIsReady,
-        resetPlayer
+        resetPlayer,
     }
 )(Videos);

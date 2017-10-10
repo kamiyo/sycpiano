@@ -68,10 +68,12 @@ class YouTube {
 
     loadVideoById(videoId, autoplay) {
         this.playerReady.promise.then(() => {
-            if (autoplay)
+            if (autoplay){
                 this.player.loadVideoById(videoId);
-            else
+            }
+            else {
                 this.player.cueVideoById(videoId);
+            }
         });
     }
 
@@ -94,8 +96,8 @@ class YouTube {
         });
     }
 
-    //technically not needed; getPlaylistItems response already contains contentDetails and statistics
     getVideos(listOfIds) {
+        console.log(listOfIds.join(','));
         return axios.get(VIDEOS_URL, {
             params: {
                 key: API_KEY,

@@ -14,16 +14,25 @@ const fetchPlaylistRequest = () => ({
 
 const fetchPlaylistSuccess = (videos) => ({
     type: VIDEO_ACTIONS.FETCH_PLAYLIST_SUCCESS,
-    videos: videos
+    videos: videos,
+    videoId: videos[0].id
 });
 
-const fetchPlaylist = (fetchingFunction) => (dispatch) => {
+// need two separate api requests, because statistics is only available when fetching videos
+const fetchPlaylist = (fetchPlaylistFunc, fetchVideosFunc) => (dispatch) => {
     dispatch(fetchPlaylistRequest());
-    return fetchingFunction().then(response => {
-        const videos = response.data.items;
-        return dispatch(fetchPlaylistSuccess(videos));
-    }).catch(response => {
-        console.error(`get videos request failed: ${response}`);
+    return fetchPlaylistFunc().then(response => {
+        const videoItems = response.data.items;
+        const videoIds = videoItems.map(item => {
+            return item.snippet.resourceId.videoId;
+        });
+        return fetchVideosFunc(videoIds).then(response => {
+            response.data.items.forEach((item, i) => {
+                videoItems[i] = {...videoItems[i], ...item};
+            })
+            console.log(videoItems);
+            return dispatch(fetchPlaylistSuccess(videoItems));
+        });
     });
 }
 
@@ -32,9 +41,9 @@ const shouldFetchPlaylist = (state) => {
     return (playlistReducer.items.length === 0 && !playlistReducer.isFetching);
 }
 
-export const createFetchPlaylistAction = (fetchingFunction) => (dispatch, getState) => {
+export const createFetchPlaylistAction = (fetchPlaylistFunc, fetchVideosFunc) => (dispatch, getState) => {
     if (shouldFetchPlaylist(getState())) {
-        return dispatch(fetchPlaylist(fetchingFunction));
+        return dispatch(fetchPlaylist(fetchPlaylistFunc, fetchVideosFunc));
     } else {
         return Promise.resolve();
     }
@@ -57,10 +66,10 @@ const playItem = (videoId = null) => ({
 // );
 
 const togglePlaylist = (show, state) => {
-    const show = (show === null) ? !state.video_playlist.isShow : show;
+    const isShow = (show === null) ? !state.video_playlist.isShow : show;
     return {
         type: VIDEO_ACTIONS.TOGGLE_PLAYLIST,
-        isShow: show
+        isShow: isShow
     };
 }
 

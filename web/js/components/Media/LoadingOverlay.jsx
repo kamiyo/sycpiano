@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 const LoadingOverlay = (props) => (
     <Transition
-        in={!this.props.isPlayerReady}
+        in={!props.isPlayerReady}
         onExit={(el) => { TweenLite.fromTo(el, 0.3, { opacity: 1 }, { opacity: 0, delay: 1 }) }}
         timeout={300}
         mountOnEnter={true}
