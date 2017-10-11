@@ -14,19 +14,10 @@ import { createFetchPlaylistAction, playerIsReady, resetPlayer } from '@/js/comp
 import youTube from '@/js/YouTube.js';
 
 class Videos extends React.Component {
-    componentWillMount() {
-        this.props.createFetchPlaylistAction(youTube.getPlaylistItems, youTube.getVideos);
-    }
-
     componentDidMount() {
+        this.props.createFetchPlaylistAction(youTube.getPlaylistItems, youTube.getVideos);
         youTube.initializePlayerOnElement(ReactDOM.findDOMNode(this));
         youTube.executeWhenPlayerReady(this.props.playerIsReady);
-    }
-
-    // write function to handle spacebar presses for embedded iframe youtube
-
-    playYoutubeVideo = (videoId = this.props.videoId) => {
-        youTube.loadVideoById(videoId, true);
     }
 
     componentWillUnmount() {
@@ -34,19 +25,15 @@ class Videos extends React.Component {
         youTube.destroyPlayer();
     }
 
+    playYoutubeVideo = (videoId = this.props.videoId) => {
+        youTube.loadVideoById(videoId, true);
+    }
+
     render() {
         return (
             <div className="mediaContent videos">
                 <PreviewOverlay playYoutubeVideo={this.playYoutubeVideo} />
                 <LoadingOverlay />
-
-                {/* <Transition
-                    in={this.props.showPlaylist}
-                    onEnter={slideLeft}
-                    onExit={slideRight}
-                    timeout={400}
-                >
-                </Transition> */}
                 <VideoPlaylist playYoutubeVideo={this.playYoutubeVideo} />
             </div>
         );

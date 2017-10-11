@@ -11,8 +11,8 @@
     position: fixed;
     height: inherit;
     right: 0;
-    .transform(translateX(@playlistWidth));
     width: @playlistWidth;
+    .transform(translateX(@playlistWidth - @playlistTogglerWidth));
     font-family: @lato1;
     z-index: 50;
     .flex-display();

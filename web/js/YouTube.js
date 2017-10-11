@@ -97,7 +97,6 @@ class YouTube {
     }
 
     getVideos(listOfIds) {
-        console.log(listOfIds.join(','));
         return axios.get(VIDEOS_URL, {
             params: {
                 key: API_KEY,

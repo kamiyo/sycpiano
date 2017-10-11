@@ -29,10 +29,11 @@ const fetchPlaylist = (fetchPlaylistFunc, fetchVideosFunc) => (dispatch) => {
         return fetchVideosFunc(videoIds).then(response => {
             response.data.items.forEach((item, i) => {
                 videoItems[i] = {...videoItems[i], ...item};
-            })
-            console.log(videoItems);
-            return dispatch(fetchPlaylistSuccess(videoItems));
-        });
+            });
+            return videoItems;
+        }).then((videoItems) =>
+            setTimeout(() => dispatch(fetchPlaylistSuccess(videoItems)), 500)
+        );
     });
 }
 
@@ -45,6 +46,7 @@ export const createFetchPlaylistAction = (fetchPlaylistFunc, fetchVideosFunc) =>
     if (shouldFetchPlaylist(getState())) {
         return dispatch(fetchPlaylist(fetchPlaylistFunc, fetchVideosFunc));
     } else {
+        dispatch(togglePlaylist(true, getState()));
         return Promise.resolve();
     }
 }
@@ -59,11 +61,6 @@ const playItem = (videoId = null) => ({
     type: VIDEO_ACTIONS.PLAY_ITEM,
     videoId: videoId
 });
-
-// Not used right now...
-// export const playItemAction = (videoId = null) => (dispatch) => (
-//     dispatch(playItem(videoId))
-// );
 
 const togglePlaylist = (show, state) => {
     const isShow = (show === null) ? !state.video_playlist.isShow : show;

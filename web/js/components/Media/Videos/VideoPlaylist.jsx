@@ -12,19 +12,26 @@ import { clickPlaylistItem, togglePlaylistAction } from '@/js/components/Media/V
 const PLAYLIST_WIDTH = 550;
 const TOGGLER_WIDTH = 20;
 
-const slideLeft = (element) => {
-    TweenLite.fromTo(element, 0.4, { x: PLAYLIST_WIDTH - TOGGLER_WIDTH }, { x: 0, ease: "Power3.easeOut" });
+const slideLeft = (element, amount, delay = 0) => {
+    TweenLite.fromTo(element, 0.4, { x: amount }, { x: 0, ease: "Power3.easeOut", delay: delay });
 }
 
-const slideRight = (element) => {
-    TweenLite.fromTo(element, 0.4, { x: 0 }, { x: PLAYLIST_WIDTH - TOGGLER_WIDTH, ease: "Power3.easeOut" });
+const slideRight = (element, amount, delay = 0) => {
+    TweenLite.fromTo(element, 0.4, { x: 0 }, { x: amount, ease: "Power3.easeOut", delay: delay });
 }
 
 const VideoPlaylist = (props) => (
     <Transition
         in={props.isShow}
-        onEnter={slideLeft}
-        onExit={slideRight}
+        appear={true}
+        onEnter={(el, isAppearing) => {
+            const amount = el.children[1].getBoundingClientRect().width;
+            slideLeft(el, amount, (isAppearing) ? 0.25 : 0);
+        }}
+        onExit={(el) => {
+            const amount = el.children[1].getBoundingClientRect().width;
+            slideRight(el, amount);
+        }}
         timeout={400}
     >
         <div className="videoPlaylist">
