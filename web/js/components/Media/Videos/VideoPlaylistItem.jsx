@@ -2,32 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-const VideoPlaylistItem = ({ video, ...props }) => {
-    return (
-        <li
-            className={`videoPlaylistItem${props.isActive ? ' active' : ''}`}
-            onClick={() => props.onClick(video.id)}
-        >
-            <div className="itemContent">
-                <div className="imageContainer section">
-                    <img src={video.snippet.thumbnails.high.url}></img>
-                    <span className="duration">
-                        {videoDurationToDisplay(video.contentDetails.duration)}
-                    </span>
-                </div>
-                <div className="section videoInfo">
-                    <h4 className="text-top">
-                        {video.snippet.title}
-                    </h4>
-                    <h4
-                        className="text-bottom">
-                        {video.statistics.viewCount} views
-                        | published on {publishedDateToDisplay(video.snippet.publishedAt)}
-                    </h4>
-                </div>
+const VideoPlaylistItem = ({ video, ...props }) => (
+    <li
+        className={`videoPlaylistItem${props.isActive ? ' active' : ''}`}
+        onClick={() => props.onClick(video.id)}
+    >
+        <div className="itemContent">
+            <div className="imageContainer section">
+                <img src={video.snippet.thumbnails.high.url}></img>
+                <span className="duration">
+                    {videoDurationToDisplay(video.contentDetails.duration)}
+                </span>
             </div>
-        </li>)
-}
+            <div className="section videoInfo">
+                <h4 className="text-top">
+                    {video.snippet.title}
+                </h4>
+                <h4 className="text-bottom">
+                    {video.statistics.viewCount} views
+                        | published on {publishedDateToDisplay(video.snippet.publishedAt)}
+                </h4>
+            </div>
+        </div>
+    </li>
+)
 
 VideoPlaylistItem.propTypes = {
     isActive: PropTypes.bool.isRequired,
