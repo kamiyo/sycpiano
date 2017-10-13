@@ -1,7 +1,6 @@
 import { PRESS_ACTIONS } from '@/js/components/Press/actions.js';
 
 export const acclaimsListReducer = (state = {
-    playerReady: false,
     isFetching: false,
     items: [],
 }, action) => {
