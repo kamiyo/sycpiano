@@ -16,7 +16,7 @@ export const videoPlayerReducer = (state = {
         case VIDEO_ACTIONS.PLAY_ITEM:
             return {
                 ...state,
-                videoId: (action.videoId) ? action.videoId : state.videoId,
+                videoId: action.videoId,
                 isPlaying: true,
                 isPreviewOverlay: false
             }
