@@ -10,7 +10,7 @@ const NavBarLinks = (props) => (
             {props.links.map(function (link, i) {
                 let activeName = '';
                 if ((props.showSub && link.path === '/media') ||
-                    (link.path === props.pathname)) {
+                    (link.path === props.currentBasePath)) {
                     activeName = 'active';
                 }
                 return (

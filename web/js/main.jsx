@@ -14,9 +14,7 @@ function main() {
     ReactDOM.render((
         <Provider store={store}>
             <BrowserRouter>
-                <Switch>
-                    <Route path='/' component={App} />
-                </Switch>
+                <Route path='/' component={App} />
             </BrowserRouter>
         </Provider>
     ), document.getElementById('hero-container'));

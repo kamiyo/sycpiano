@@ -34,7 +34,7 @@ export default class NavBar extends React.Component {
                     links={links}
                     showSub={this.state.showSub}
                     toggleSub={this.toggleSubNav}
-                    pathname={this.props.currentPath}
+                    currentBasePath={this.props.currentBasePath}
                 />
             </div>
         )

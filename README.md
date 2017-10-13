@@ -34,7 +34,7 @@ create role <username> with login password '<quoted password>'
 ```
 * Create a `secret.js` file under the project root that contains this new user's username and password. Don't worry, this file is in our `.gitignore`! Make sure that object exported by `secret.js` contains the keys `username` and `password`. This file will be used when connecting to the database to create tables that do not exist. It will look something like this:
 ```
-modules.export = {
+module.exports = {
   username: <username>,
   password: <password>
 };

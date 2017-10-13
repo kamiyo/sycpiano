@@ -1,6 +1,7 @@
 import '@/less/App/app.less';
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import { Route, Switch } from 'react-router-dom';
 import { TransitionGroup, Transition } from 'react-transition-group';
@@ -18,12 +19,13 @@ import Press from '@/js/components/Press/Press.jsx';
 import Schedule from '@/js/components/Schedule/Schedule.jsx';
 
 
-const fadeOnEnter = (element) => {
-    TweenLite.fromTo(element, 0.2, { opacity: 0 }, { opacity: 1 });
+const fadeOnEnter = (element, isAppearing) => {
+    const delay = (isAppearing) ? 0.3 : 0;
+    TweenLite.fromTo(element, 0.25, { opacity: 0 }, { opacity: 1, delay: delay });
 }
 
 const fadeOnExit = (element) => {
-    TweenLite.fromTo(element, 0.2, { opacity: 1 }, { opacity: 0 });
+    TweenLite.fromTo(element, 0.25, { opacity: 1 }, { opacity: 0, });
 }
 
 const slideDownOnEnter = (element) => {
@@ -45,25 +47,17 @@ export default class App extends React.Component {
         }
     }
 
-    componentDidMount() {
-        fadeOnEnter(this);
-    }
-
-    getRouteBase = () => {
-        const indexOfSecondSlash = this.props.location.pathname.indexOf('/', 1);
-        if (indexOfSecondSlash != -1) return this.props.location.pathname.substr(0, indexOfSecondSlash);
-        return this.props.location.pathname;
-    }
+    getRouteBase = () => this.props.location.pathname.match(/^(\/\w*)(\/.*)*$/)[1];
 
     showFront = () => {
         this.setState({ isFront: true });
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
     hideFront = () => {
         this.setState({ isFront: false });
-        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront));
+        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront, { passive: true }));
         window.removeEventListener('keydown', this.checkDownArrow);
     }
 
@@ -73,7 +67,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
@@ -85,33 +79,29 @@ export default class App extends React.Component {
                 <Transition in={!this.state.isFront}
                     onEnter={slideDownOnEnter}
                     onExit={slideUpOnExit}
-                    timeout={200}
+                    timeout={250}
                 >
                     <NavBar
                         onClick={this.showFront}
-                        currentPath={this.getRouteBase()}
+                        currentBasePath={this.getRouteBase()}
                     />
                 </Transition>
                 <TransitionGroup>
                     <Transition
                         key={this.getRouteBase()}
-                        mountOnEnter={true}
-                        unmountOnExit={true}
-                        onEnter={fadeOnEnter}
-                        onExit={fadeOnExit}
-                        timeout={200}
+                        onEntering={fadeOnEnter}
+                        onExiting={fadeOnExit}
+                        timeout={550}
                         appear={true}
                     >
-                        <main>
-                            <Switch location={this.props.location}>
-                                <Route path='/about' exact component={About} />
-                                <Route path='/contact' exact component={Contact} />
-                                <Route path='/media' component={Media} />
-                                <Route path='/press' exact component={Press} />
-                                <Route path='/schedule' component={Schedule} />
-                                <Route path='/' exact component={Home} />
-                            </Switch>
-                        </main>
+                        <Switch location={this.props.location}>
+                            <Route path='/about' exact component={About} />
+                            <Route path='/contact' exact component={Contact} />
+                            <Route path='/media' component={Media} />
+                            <Route path='/press' exact component={Press} />
+                            <Route path='/schedule' component={Schedule} />
+                            <Route path='/' exact component={Home} />
+                        </Switch>
                     </Transition>
                 </TransitionGroup>
             </div>
