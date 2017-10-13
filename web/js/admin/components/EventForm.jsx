@@ -13,9 +13,9 @@ import Select from 'react-select';
 import { connect } from 'react-redux';
 
 import Button from '@/js/components/_reusable/Button.jsx';
-import {googleAPI} from '@/js/services/GoogleAPI.js'
-import {CalendarEvent} from '@/js/admin/models.js';
-import {eventTypes, TOKEN_KEY} from '@/js/admin/constants.js';
+import { googleAPI } from '@/js/services/GoogleAPI.js'
+import { CalendarEvent } from '@/js/admin/models.js';
+import { eventTypes, TOKEN_KEY } from '@/js/admin/constants.js';
 
 class EventForm extends React.Component {
     constructor(props) {
