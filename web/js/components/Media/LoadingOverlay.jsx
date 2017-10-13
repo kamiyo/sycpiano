@@ -13,7 +13,6 @@ const LoadingOverlay = (props) => (
         timeout={300}
         mountOnEnter={true}
         unmountOnExit={true}
-        appear={true}
     >
         <div className="loading-overlay">
             <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">

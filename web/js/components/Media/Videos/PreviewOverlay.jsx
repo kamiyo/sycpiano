@@ -15,7 +15,6 @@ const PreviewOverlay = (props) => (
         timeout={300}
         unmountOnExit={true}
         mountOnEnter={true}
-        appear={true}
     >
         <div className="preview-overlay" onClick={() => {
             props.playVideo();
