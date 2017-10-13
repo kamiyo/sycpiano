@@ -9,9 +9,6 @@ import VideoPlaylistItem from '@/js/components/Media/Videos/VideoPlaylistItem.js
 import VideoPlaylistToggler from '@/js/components/Media/PlaylistToggler.jsx';
 import { playVideo, togglePlaylistAction } from '@/js/components/Media/Videos/actions.js';
 
-const PLAYLIST_WIDTH = 550;
-const TOGGLER_WIDTH = 20;
-
 const slideLeft = (element, amount, delay = 0) => {
     TweenLite.fromTo(element, 0.4, { x: amount }, { x: 0, ease: "Power3.easeOut", delay: delay });
 }
@@ -20,43 +17,47 @@ const slideRight = (element, amount, delay = 0) => {
     TweenLite.fromTo(element, 0.4, { x: 0 }, { x: amount, ease: "Power3.easeOut", delay: delay });
 }
 
-const VideoPlaylist = (props) => (
-    <Transition
-        in={props.isShow}
-        appear={true}
-        onEnter={(el, isAppearing) => {
-            const amount = el.children[1].getBoundingClientRect().width;
-            slideLeft(el, amount, (isAppearing) ? 0.25 : 0);
-        }}
-        onExit={(el) => {
-            const amount = el.children[1].getBoundingClientRect().width;
-            slideRight(el, amount);
-        }}
-        timeout={400}
-    >
-        <div className="videoPlaylist">
-            <VideoPlaylistToggler
-                isPlaylistVisible={props.isShow}
-                onClick={(event) => {
-                    props.togglePlaylistAction();
-                }} />
-            <ul>
-                {props.videos.map((video, i) => {
-                    return (
-                        <VideoPlaylistItem
-                            key={video.id}
-                            isActive={props.videoId === video.id}
-                            video={video}
-                            onClick={(video) => {
-                                props.playVideo(video);
-                            }}
-                        />
-                    )
-                })}
-            </ul>
-        </div>
-    </Transition>
-);
+const VideoPlaylist = (props) => {
+    let ulRef = null;
+    return (
+        <Transition
+            in={props.isShow}
+            appear={true}
+            onEnter={(el, isAppearing) => {
+                const amount = ulRef.getBoundingClientRect().width;
+                slideLeft(el, amount, (isAppearing) ? 0.25 : 0);
+            }}
+            onExit={(el) => {
+                const amount = ulRef.getBoundingClientRect().width;
+                slideRight(el, amount);
+            }}
+            timeout={400}
+        >
+            <div className="videoPlaylist">
+                <VideoPlaylistToggler
+                    isPlaylistVisible={props.isShow}
+                    onClick={() => {
+                        props.togglePlaylistAction();
+                    }}
+                />
+                <ul ref={(ul) => ulRef = ul}>
+                    {props.videos.map((video, i) => {
+                        return (
+                            <VideoPlaylistItem
+                                key={video.id}
+                                isActive={props.videoId === video.id}
+                                video={video}
+                                onClick={(video) => {
+                                    props.playVideo(video);
+                                }}
+                            />
+                        )
+                    })}
+                </ul>
+            </div>
+        </Transition>
+    )
+}
 
 VideoPlaylist.PropTypes = {
     videos: PropTypes.array.isRequired,
