@@ -1,12 +1,20 @@
+import youTube from '@/js/YouTube.js';
+
 export const VIDEO_ACTIONS = {
     FETCH_PLAYLIST_SUCCESS: 'VIDEO--FETCH_PLAYLIST_SUCCESS',
     FETCH_PLAYLIST_REQUEST: 'VIDEO--FETCH_PLAYLIST_REQUEST',
     PLAYER_IS_READY: 'VIDEO--PLAYER_IS_READY',
     PLAY_ITEM: 'VIDEO--PLAY_ITEM',
     TOGGLE_PLAYLIST: 'VIDEO--TOGGLE_PLAYLIST',
-    HIDE_PREVIEW_OVERLAY: 'VIDEO--HIDE_PREVIEW_OVERLAY',
     RESET_PLAYER: 'VIDEO--RESET_PLAYER'
 };
+
+export const initializeYoutubeElement = (el) => (dispatch) => {
+    youTube.initializePlayerOnElement(el);
+    youTube.executeWhenPlayerReady(() => dispatch({
+        type: VIDEO_ACTIONS.PLAYER_IS_READY
+    }));
+}
 
 const fetchPlaylistRequest = () => ({
     type: VIDEO_ACTIONS.FETCH_PLAYLIST_REQUEST
@@ -19,14 +27,14 @@ const fetchPlaylistSuccess = (videos) => ({
 });
 
 // need two separate api requests, because statistics is only available when fetching videos
-const fetchPlaylist = (fetchPlaylistFunc, fetchVideosFunc) => (dispatch) => {
+const fetchPlaylist = () => (dispatch) => {
     dispatch(fetchPlaylistRequest());
-    return fetchPlaylistFunc().then(response => {
+    return youTube.getPlaylistItems().then(response => {
         const videoItems = response.data.items;
         const videoIds = videoItems.map(item => {
             return item.snippet.resourceId.videoId;
         });
-        return fetchVideosFunc(videoIds).then(response => {
+        return youTube.getVideos(videoIds).then(response => {
             response.data.items.forEach((item, i) => {
                 videoItems[i] = {...videoItems[i], ...item};
             });
@@ -51,12 +59,6 @@ export const createFetchPlaylistAction = (fetchPlaylistFunc, fetchVideosFunc) =>
     }
 }
 
-export const playerIsReady = () => (dispatch) => (
-    dispatch({
-        type: VIDEO_ACTIONS.PLAYER_IS_READY
-    })
-)
-
 const playItem = (videoId = null) => ({
     type: VIDEO_ACTIONS.PLAY_ITEM,
     videoId: videoId
@@ -74,23 +76,19 @@ export const togglePlaylistAction = (show = null) => (dispatch, getState) => (
     dispatch(togglePlaylist(show, getState()))
 );
 
-export const clickPlaylistItem = (videoId) => (dispatch, getState) => {
+export const playVideo = (videoId) => (dispatch, getState) => {
     const videoPlayerReducer = getState().video_player;
-    if (videoPlayerReducer.shouldPlay && videoId === videoPlayerReducer.videoId)
+    setTimeout(() => dispatch(togglePlaylist(false, getState())), 500);
+    if (videoPlayerReducer.isPlaying && videoId === videoPlayerReducer.videoId)
         return;
-    setTimeout(() => dispatch(togglePlaylist(false, getState())), 250);
-    return dispatch(playItem(videoId));
+    const vid = videoId ? videoId : videoPlayerReducer.videoId;
+    youTube.loadVideoById(vid, true);
+    dispatch(playItem(vid));
 }
 
-export const hidePreviewOverlay = () => (dispatch) => {
-    dispatch({
-        type: VIDEO_ACTIONS.HIDE_PREVIEW_OVERLAY
-    });
-    dispatch(playItem());
-}
-
-export const resetPlayer = () => (dispatch) => (
+export const resetPlayer = () => (dispatch) => {
+    youTube.destroyPlayer();
     dispatch({
         type: VIDEO_ACTIONS.RESET_PLAYER
     })
-);
+}

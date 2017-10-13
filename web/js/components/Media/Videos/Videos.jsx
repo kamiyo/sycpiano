@@ -8,55 +8,51 @@ import { TweenLite } from 'gsap';
 import { Transition } from 'react-transition-group';
 import { connect } from 'react-redux';
 import LoadingOverlay from '@/js/components/Media/LoadingOverlay.jsx';
-import PreviewOverlay from '@/js/components/Media/PreviewOverlay.jsx';
+import PreviewOverlay from '@/js/components/Media/Videos/PreviewOverlay.jsx';
 import VideoPlaylist from '@/js/components/Media/Videos/VideoPlaylist.jsx';
-import { createFetchPlaylistAction, playerIsReady, resetPlayer } from '@/js/components/Media/Videos/actions.js';
+import { createFetchPlaylistAction, resetPlayer, initializeYoutubeElement } from '@/js/components/Media/Videos/actions.js';
 import youTube from '@/js/YouTube.js';
 
 class Videos extends React.Component {
     componentDidMount() {
         this.props.createFetchPlaylistAction(youTube.getPlaylistItems, youTube.getVideos);
-        youTube.initializePlayerOnElement(ReactDOM.findDOMNode(this));
-        youTube.executeWhenPlayerReady(this.props.playerIsReady);
+        this.props.initializeYoutubeElement(this.domElement);
     }
 
     componentWillUnmount() {
         this.props.resetPlayer();
-        youTube.destroyPlayer();
-    }
-
-    playYoutubeVideo = (videoId = this.props.videoId) => {
-        youTube.loadVideoById(videoId, true);
     }
 
     render() {
         return (
-            <div className="mediaContent videos">
-                <PreviewOverlay playYoutubeVideo={this.playYoutubeVideo} />
+            <div
+                className="mediaContent videos"
+                ref={(div) => this.domElement = div}
+            >
+                <PreviewOverlay />
                 <LoadingOverlay />
-                <VideoPlaylist playYoutubeVideo={this.playYoutubeVideo} />
+                <VideoPlaylist />
             </div>
         );
     }
 }
 
 Videos.propTypes = {
-    shouldPlay: PropTypes.bool.isRequired,
     videoId: PropTypes.string.isRequired,
     createFetchPlaylistAction: PropTypes.func.isRequired,
-    playerIsReady: PropTypes.func.isRequired,
+    initializeYoutubeElement: PropTypes.func.isRequired,
+    resetPlayer: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
-    shouldPlay: state.video_player.shouldPlay,
     videoId: state.video_player.videoId
 })
 
 export default connect(
     mapStateToProps,
     {
+        initializeYoutubeElement,
         createFetchPlaylistAction,
-        playerIsReady,
         resetPlayer,
     }
 )(Videos);

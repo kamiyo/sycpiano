@@ -53,7 +53,10 @@ class YouTube {
 
             // create youtube player
             this.player = new YT.Player(id, {
-                playerVars: { 'autoplay': 0 },
+                playerVars: {
+                    'autoplay': 0,
+                    'rel': 0
+                },
                 events: {
                     'onReady': this.onPlayerReady.bind(this),
                     // 'onStateChange': onPlayerStateChange

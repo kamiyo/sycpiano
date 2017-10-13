@@ -3,8 +3,8 @@ import { VIDEO_ACTIONS } from '@/js/components/Media/Videos/actions.js';
 export const videoPlayerReducer = (state = {
     isPlayerReady: false,
     videoId: '',
-    shouldPlay: false,
     isPreviewOverlay: false,
+    isPlaying: false
 }, action) => {
     switch (action.type) {
         case VIDEO_ACTIONS.PLAYER_IS_READY:
@@ -17,7 +17,7 @@ export const videoPlayerReducer = (state = {
             return {
                 ...state,
                 videoId: (action.videoId) ? action.videoId : state.videoId,
-                shouldPlay: true,
+                isPlaying: true,
                 isPreviewOverlay: false
             }
         case VIDEO_ACTIONS.FETCH_PLAYLIST_SUCCESS:
@@ -30,12 +30,7 @@ export const videoPlayerReducer = (state = {
                 ...state,
                 isPlayerReady: false,
                 videoId: '',
-                shouldPlay: false,
-                isPreviewOverlay: false
-            }
-        case VIDEO_ACTIONS.HIDE_PREVIEW_OVERLAY:
-            return {
-                ...state,
+                isPlaying: false,
                 isPreviewOverlay: false
             }
         default: return state;

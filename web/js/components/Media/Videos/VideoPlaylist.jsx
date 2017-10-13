@@ -7,7 +7,7 @@ import { Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
 import VideoPlaylistItem from '@/js/components/Media/Videos/VideoPlaylistItem.jsx';
 import VideoPlaylistToggler from '@/js/components/Media/PlaylistToggler.jsx';
-import { clickPlaylistItem, togglePlaylistAction } from '@/js/components/Media/Videos/actions.js';
+import { playVideo, togglePlaylistAction } from '@/js/components/Media/Videos/actions.js';
 
 const PLAYLIST_WIDTH = 550;
 const TOGGLER_WIDTH = 20;
@@ -48,8 +48,7 @@ const VideoPlaylist = (props) => (
                             isActive={props.videoId === video.id}
                             video={video}
                             onClick={(video) => {
-                                props.clickPlaylistItem(video);
-                                props.playYoutubeVideo(video);
+                                props.playVideo(video);
                             }}
                         />
                     )
@@ -62,9 +61,8 @@ const VideoPlaylist = (props) => (
 VideoPlaylist.PropTypes = {
     videos: PropTypes.array.isRequired,
     isShow: PropTypes.bool.isRequired,
-    clickPlaylistItem: PropTypes.func.isRequired,
+    playVideo: PropTypes.func.isRequired,
     togglePlaylistAction: PropTypes.func.isRequired,
-    playYoutubeVideo: PropTypes.func.isRequired,
     videoId: PropTypes.string.isRequired
 }
 
@@ -77,7 +75,7 @@ const mapStateToProps = (state) => ({
 export default connect(
     mapStateToProps,
     {
-        clickPlaylistItem,
+        playVideo,
         togglePlaylistAction
     }
 )(VideoPlaylist);

@@ -1,18 +1,21 @@
-@import '../../variables.less';
-@import '../../flex.less';
+@import '../../mixins.less';
 
 .playlistToggler {
     .flex-basis(@playlistTogglerWidth);
     .align-self(center);
-    @height: 30px;
+    @height: @playlistTogglerWidth * 2;
 
-    border-top-left-radius: 50%;
-    border-bottom-left-radius: 50%;
+    border-top-left-radius: @height;
+    border-bottom-left-radius: @height;
     line-height: @height + 1;
     height: @height;
-    text-align: center;
+    text-align: right;
     background-color: @playlistBackground;
     color: #000;
-    cursor: pointer;
+    .transition(all 0.15s);
+    &:hover {
+        background-color: rgba(255, 255, 255, 1);
+        cursor: pointer;
+    }
     z-index: 50;
 }
