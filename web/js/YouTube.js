@@ -18,7 +18,7 @@ class YouTube {
         this.player = null;
         this.playerReady = null;
 
-        window.onYouTubeIframeAPIReady = this.onYouTubeIframeAPIReady.bind(this);
+        window.onYouTubeIframeAPIReady = () => this.onYouTubeIframeAPIReady();
 
         // load youtube api
         let body = document.body;
@@ -31,37 +31,37 @@ class YouTube {
         this.playerReady.resolve();
     }
 
-    executeWhenPlayerReady(func) {
+    async executeWhenPlayerReady(func) {
         if (!this.playerReady)
             throw "initializePlayerOnElement must first be called before calling this function";
 
-        this.playerReady.promise.then(func);
+        await this.playerReady.promise;
+        func();
     }
 
-    initializePlayerOnElement(el, id = 'player') {
+    async initializePlayerOnElement(el, id = 'player') {
         // reinitiaize playerReady deferred
         this.playerReady = Q.defer();
+        await this.apiReady.promise;
 
-        this.apiReady.promise.then(() => {
-            // For now, only allow one player at a time.
-            this.destroyPlayer();
+        // For now, only allow one player at a time.
+        this.destroyPlayer();
 
-            // element to be replace by iframe
-            let div = document.createElement('div');
-            div.id = id;
-            el.appendChild(div);
+        // element to be replace by iframe
+        let div = document.createElement('div');
+        div.id = id;
+        el.appendChild(div);
 
-            // create youtube player
-            this.player = new YT.Player(id, {
-                playerVars: {
-                    'autoplay': 0,
-                    'rel': 0
-                },
-                events: {
-                    'onReady': this.onPlayerReady.bind(this),
-                    // 'onStateChange': onPlayerStateChange
-                }
-            });
+        // create youtube player
+        this.player = new YT.Player(id, {
+            playerVars: {
+                'autoplay': 0,
+                'rel': 0
+            },
+            events: {
+                'onReady': () => this.onPlayerReady(),
+                // 'onStateChange': onPlayerStateChange
+            }
         });
     }
 
@@ -69,15 +69,14 @@ class YouTube {
         this.apiReady.resolve();
     }
 
-    loadVideoById(videoId, autoplay) {
-        this.playerReady.promise.then(() => {
-            if (autoplay){
-                this.player.loadVideoById(videoId);
-            }
-            else {
-                this.player.cueVideoById(videoId);
-            }
-        });
+    async loadVideoById(videoId, autoplay) {
+        await this.playerReady.promise;
+        if (autoplay) {
+            this.player.loadVideoById(videoId);
+        }
+        else {
+            this.player.cueVideoById(videoId);
+        }
     }
 
     playVideo() {
