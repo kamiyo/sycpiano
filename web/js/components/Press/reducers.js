@@ -7,6 +7,8 @@ export const acclaimsListReducer = (state = {
     switch (action.type) {
         case PRESS_ACTIONS.FETCH_ACCLAIMS_SUCCESS:
             return { isFetching: false, items: action.items };
+        case PRESS_ACTIONS.FETCH_ACCLAIMS_ERROR:
+            return { ...state, isFetching: false }
         case PRESS_ACTIONS.FETCH_ACCLAIMS_REQUEST:
             return state.isFetching ? state : { ...state, isFetching: true };
         default:

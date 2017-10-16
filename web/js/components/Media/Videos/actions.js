@@ -3,6 +3,7 @@ import youTube from '@/js/YouTube.js';
 export const VIDEO_ACTIONS = {
     FETCH_PLAYLIST_SUCCESS: 'VIDEO--FETCH_PLAYLIST_SUCCESS',
     FETCH_PLAYLIST_REQUEST: 'VIDEO--FETCH_PLAYLIST_REQUEST',
+    FETCH_PLAYLIST_ERROR: 'VIDEO--FETCH_PLAYLIST_ERROR',
     PLAYER_IS_READY: 'VIDEO--PLAYER_IS_READY',
     PLAY_ITEM: 'VIDEO--PLAY_ITEM',
     TOGGLE_PLAYLIST: 'VIDEO--TOGGLE_PLAYLIST',
@@ -26,23 +27,28 @@ const fetchPlaylistSuccess = (videos) => ({
     videoId: videos[0].id
 });
 
+const fetchPlaylistError = () => ({
+    type: VIDEO_ACTIONS.FETCH_PLAYLIST_ERROR
+})
+
 // need two separate api requests, because statistics is only available when fetching videos
-const fetchPlaylist = () => (dispatch) => {
-    dispatch(fetchPlaylistRequest());
-    return youTube.getPlaylistItems().then(response => {
-        const videoItems = response.data.items;
+const fetchPlaylist = () => async (dispatch) => {
+    try {
+        dispatch(fetchPlaylistRequest());
+        const playlistResponse = await youTube.getPlaylistItems();
+        const videoItems = playlistResponse.data.items;
         const videoIds = videoItems.map(item => {
             return item.snippet.resourceId.videoId;
         });
-        return youTube.getVideos(videoIds).then(response => {
-            response.data.items.forEach((item, i) => {
-                videoItems[i] = {...videoItems[i], ...item};
-            });
-            return videoItems;
-        }).then((videoItems) =>
-            setTimeout(() => dispatch(fetchPlaylistSuccess(videoItems)), 500)
-        );
-    });
+        const videosResponse = await youTube.getVideos(videoIds);
+        await videosResponse.data.items.forEach((item, i) => {
+            videoItems[i] = { ...videoItems[i], ...item };
+        });
+        setTimeout(() => dispatch(fetchPlaylistSuccess(videoItems)), 500);
+    } catch (err) {
+        dispatch(fetchPlaylistError());
+        console.log('fetch videos error', err);
+    }
 }
 
 const shouldFetchPlaylist = (state) => {
@@ -50,12 +56,11 @@ const shouldFetchPlaylist = (state) => {
     return (playlistReducer.items.length === 0 && !playlistReducer.isFetching);
 }
 
-export const createFetchPlaylistAction = (fetchPlaylistFunc, fetchVideosFunc) => (dispatch, getState) => {
+export const createFetchPlaylistAction = () => (dispatch, getState) => {
     if (shouldFetchPlaylist(getState())) {
-        return dispatch(fetchPlaylist(fetchPlaylistFunc, fetchVideosFunc));
+        dispatch(fetchPlaylist());
     } else {
         dispatch(togglePlaylist(true, getState()));
-        return Promise.resolve();
     }
 }
 

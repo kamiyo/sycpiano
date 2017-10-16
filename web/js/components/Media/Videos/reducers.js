@@ -54,6 +54,11 @@ export const videoPlaylistReducer = (state = {
                 items: action.videos,
                 isShow: true
             }
+        case VIDEO_ACTIONS.FETCHP_PLAYLIST_ERROR:
+            return {
+                ...state,
+                isFetching: false
+            }
         case VIDEO_ACTIONS.TOGGLE_PLAYLIST:
             return {
                 ...state,

@@ -15,7 +15,7 @@ import youTube from '@/js/YouTube.js';
 
 class Videos extends React.Component {
     componentDidMount() {
-        this.props.createFetchPlaylistAction(youTube.getPlaylistItems, youTube.getVideos);
+        this.props.createFetchPlaylistAction();
         this.props.initializeYoutubeElement(this.domElement);
     }
 
