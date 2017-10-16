@@ -13,10 +13,11 @@ const MAX_PLAYLIST_ITEMS = 25;
 ** that don't need to be exposed to other modules into variables local to module. */
 
 class YouTube {
+    player = null;
+    playerReady = null;
+
     constructor() {
         this.apiReady = Q.defer();
-        this.player = null;
-        this.playerReady = null;
 
         window.onYouTubeIframeAPIReady = this.onYouTubeIframeAPIReady.bind(this);
 
