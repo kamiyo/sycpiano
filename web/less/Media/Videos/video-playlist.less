@@ -10,21 +10,26 @@
 .videoPlaylist {
     position: fixed;
     height: inherit;
-    right: -@playlistWidth;
-    overflow-y: auto;
-    background-color: @playlistBackground;
+    right: 0;
     width: @playlistWidth;
+    .transform(translateX(@playlistWidth - @playlistTogglerWidth));
     font-family: @lato1;
     z-index: 50;
+    .flex-display();
 
     ul {
         padding: 0;
         margin: 0;
         width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+        .flex(1);
+        .align-self(flex-start);
     }
 
     .videoPlaylistItem {
         @padding: 10px;
+        background-color: @playlistBackground;
 
         list-style: none;
         cursor: pointer;
@@ -37,7 +42,7 @@
         .transition(all 0.15s);
 
         &:hover, &.active {
-            background-color: @playlistBackground + rgba(120, 120, 120, 0);
+            background-color: rgba(255, 255, 255, 1);
 
             .imageContainer img {
                 .filter(brightness(60%));

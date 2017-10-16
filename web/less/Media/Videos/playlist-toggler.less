@@ -1,19 +1,21 @@
-@import '../../variables.less';
+@import '../../mixins.less';
 
 .playlistToggler {
-    @height: 30px;
+    .flex-basis(@playlistTogglerWidth);
+    .align-self(center);
+    @height: @playlistTogglerWidth * 2;
 
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-    line-height: @height;
+    border-top-left-radius: @height;
+    border-bottom-left-radius: @height;
+    line-height: @height + 1;
     height: @height;
-    width: 20px;
-    text-align: center;
-    position: fixed;
-    top: ~"calc(50% - "(@height / 2)~" + @{navbarHeight})";
-    right: 0;
+    text-align: right;
     background-color: @playlistBackground;
     color: #000;
-    cursor: pointer;
+    .transition(all 0.15s);
+    &:hover {
+        background-color: rgba(255, 255, 255, 1);
+        cursor: pointer;
+    }
     z-index: 50;
 }

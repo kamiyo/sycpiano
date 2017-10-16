@@ -14,10 +14,10 @@ const slideFromRightWithStagger = (element, index) => {
         { x: 0, opacity: 1, ease: 'Power3.easeOut', delay: delay });
 };
 
-const SubNav = (props) => (
-    <ul className='subNav' style={props.position}>
+const SubNav = ({ basePath, links, onClick }) => (
+    <ul className='subNav'>
         <TransitionGroup>
-            {props.links.map((link, i) => (
+            {links.map((link, i) => (
                 <Transition
                     key={link}
                     appear={true}
@@ -27,7 +27,7 @@ const SubNav = (props) => (
                     timeout={0.50 + 0.3 * i}
                     onEnter={(element) => slideFromRightWithStagger(element, i)}
                 >
-                    <SubNavLink link={link} />
+                    <SubNavLink basePath={basePath} link={link} onClick={onClick}/>
                 </Transition>
             ))}
         </TransitionGroup>
