@@ -18,7 +18,7 @@ class YouTube {
         this.player = null;
         this.playerReady = null;
 
-        window.onYouTubeIframeAPIReady = () => this.onYouTubeIframeAPIReady();
+        window.onYouTubeIframeAPIReady = this.onYouTubeIframeAPIReady.bind(this);
 
         // load youtube api
         let body = document.body;
@@ -59,7 +59,7 @@ class YouTube {
                 'rel': 0
             },
             events: {
-                'onReady': () => this.onPlayerReady(),
+                'onReady': this.onPlayerReady.bind(this),
                 // 'onStateChange': onPlayerStateChange
             }
         });

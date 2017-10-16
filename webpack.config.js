@@ -78,7 +78,6 @@ const config = {
             threads: 1,
             loaders: ['url-loader?limit=100000&name=[name]-[hash].[ext]'],
         }),
-        new
     ],
 };
 
