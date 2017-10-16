@@ -10,7 +10,7 @@ const fetchAcclaimsRequest = () => ({
     type: PRESS_ACTIONS.FETCH_ACCLAIMS_REQUEST
 });
 
-const fetchAcclaimsRequest = () => ({
+const fetchAcclaimsError = () => ({
     type: PRESS_ACTIONS.FETCH_ACCLAIMS_ERROR
 });
 

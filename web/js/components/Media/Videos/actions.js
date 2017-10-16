@@ -34,21 +34,21 @@ const fetchPlaylistError = () => ({
 // need two separate api requests, because statistics is only available when fetching videos
 const fetchPlaylist = () => async (dispatch) => {
     try {
-    dispatch(fetchPlaylistRequest());
-    const playlistResponse = await youTube.getPlaylistItems();
-    const videoItems = playlistResponse.data.items;
-    const videoIds = videoItems.map(item => {
-        return item.snippet.resourceId.videoId;
-    });
-    const videosResponse = await youTube.getVideos(videoIds);
-    const videoItems = await videosResponse.data.items.forEach((item, i) => {
-                videoItems[i] = {...videoItems[i], ...item};
-            });
-    setTimeout(() => dispatch(fetchPlaylistSuccess(videoItems)), 500);
-        } catch (err) {
-            dispatch(fetchPlaylistError());
-            console.log('fetch videos error', err);
-        }
+        dispatch(fetchPlaylistRequest());
+        const playlistResponse = await youTube.getPlaylistItems();
+        const videoItems = playlistResponse.data.items;
+        const videoIds = videoItems.map(item => {
+            return item.snippet.resourceId.videoId;
+        });
+        const videosResponse = await youTube.getVideos(videoIds);
+        await videosResponse.data.items.forEach((item, i) => {
+            videoItems[i] = { ...videoItems[i], ...item };
+        });
+        setTimeout(() => dispatch(fetchPlaylistSuccess(videoItems)), 500);
+    } catch (err) {
+        dispatch(fetchPlaylistError());
+        console.log('fetch videos error', err);
+    }
 }
 
 const shouldFetchPlaylist = (state) => {
