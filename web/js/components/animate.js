@@ -4,7 +4,8 @@ const animateFn = (
     duration = 200, // ms
     fn,             // the function to use as animation (is called every frame)
     easing,         // function input: t => [0, 1], output: eased t => [0, 1]
-    callback        // callback for when animation finishes (i.e. return promise)
+    callback,       // callback for when animation finishes (i.e. return promise)
+    animationRequestHandler     // for dealing with requestIds (in case you want to cancel it on scroll, etc)
 ) => {
     if (!fn) {
         return;
@@ -35,7 +36,8 @@ const animateFn = (
         }
     };
 
-    window.requestAnimationFrame(animationStep);
+    const requestId = window.requestAnimationFrame(animationStep);
+    animationRequestHandler(requestId);
 }
 
 export default animateFn;

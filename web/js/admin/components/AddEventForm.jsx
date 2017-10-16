@@ -1,5 +1,3 @@
-// date, startTime, type (solo, concerto, masterclass, etc), location, eventName, program, [collaborators (orchestra, conductor, chamber musicians)]
-// Also link to website
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-select/dist/react-select.css';
 import '@/less/admin/components/add-event-form.less';
@@ -12,8 +10,8 @@ import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 
 import Button from '@/js/components/_reusable/Button.jsx';
-import {googleAPI} from '@/js/services/GoogleAPI.js'
-import {CalendarEvent} from '@/js/admin/models.js';
+import { googleAPI } from '@/js/services/GoogleAPI.js'
+import { CalendarEvent } from '@/js/admin/models.js';
 
 var eventTypes = [
     { value: 'solo', label: 'Solo' },
@@ -74,11 +72,11 @@ export class AddEventForm extends React.Component {
     }
 
     setDate(date) {
-        this.setState({date: date});
+        this.setState({ date: date });
     }
 
     setType(type) {
-        this.setState({type: type});
+        this.setState({ type: type });
     }
 
     render() {

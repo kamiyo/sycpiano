@@ -1,17 +1,17 @@
 import '@/less/Media/Videos/video-playlist-toggler.less';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
-let PLAYLIST_WIDTH = 550;
+const VideoPlaylistToggler = (props) => (
+    <div className="playlistToggler" onClick={props.onClick}>
+        {props.isPlaylistVisible ? '\u25B6' : '\u25C0'}
+    </div>
+);
 
-export default class VideoPlaylistToggler extends React.Component {
-    render() {
-        let style = { right: PLAYLIST_WIDTH + this.props.playlistRight };
-
-        return (
-            <div className="playlistToggler" style={style} onClick={this.props.onClick}>
-                {!this.props.isPlaylistVisible ? '\u25C0' : '\u25B6'}
-            </div>
-            );
-    }
+VideoPlaylistToggler.PropTypes = {
+    onClick: props.func.isRequired,
+    isPlaylistVisible: props.bool.isRequired
 }
+
+export default VideoPlaylistToggler;

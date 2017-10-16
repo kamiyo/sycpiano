@@ -1,11 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { NavLink } from 'react-router-dom';
 
-const SubNavLink = ({ link }) => (
-    <li className="subNavLink">
-        <Link to={`/media/${link}`} activeClassName="active">
+const SubNavLink = ({ basePath, link, onClick, ...props }) => (
+    <li className="subNavLink unselectable">
+        <NavLink to={`${basePath}/${link}`} activeClassName="active" onClick={() => { setTimeout(() => onClick(), 250); }}>
             {link}
-        </Link>
+        </NavLink>
     </li>
 );
 

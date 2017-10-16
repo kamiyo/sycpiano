@@ -2,8 +2,8 @@ import '@/less/admin/components/auth-interface.less';
 
 import React from 'react';
 import Button from '@/js/components/_reusable/Button.jsx';
-import {authorize} from '@/js/services/GoogleOAuth.js';
-import {calendarScopes} from '@/js/services/GoogleOAuthScopes.js';
+import { authorize } from '@/js/services/GoogleOAuth.js';
+import { calendarScopes } from '@/js/services/GoogleOAuthScopes.js';
 
 
 export default class AuthInterface extends React.Component {

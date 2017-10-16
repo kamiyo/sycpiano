@@ -1,39 +1,37 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SubNavLink from '@/js/components/SubNav/SubNavLink.jsx';
-import { velocityHelpers } from 'velocity-react';
-import Velocity from 'velocity-animate/velocity';
+import { TransitionGroup, Transition } from 'react-transition-group';
+import { TweenLite } from 'gsap';
 
-const Animations = {
-    RightIn: velocityHelpers.registerEffect({
-        calls: [
-            [
-                { translateX: [0, 150], opacity: 1 },
-                1,
-                { easing: 'ease-out', display: 'block' },
-            ],
-        ],
-    }),
+const slideFromRightWithStagger = (element, index) => {
+    const index1 = index + 1;
+    const delay = index1 * 0.1;
+    const duration = 0.20 + 0.2 * index1;
+    TweenLite.fromTo(element,
+        duration,
+        { x: 150, opacity: 0 },
+        { x: 0, opacity: 1, ease: 'Power3.easeOut', delay: delay });
 };
 
-export default class SubNav extends React.Component {
-    componentDidMount() {
-        const component = ReactDOM.findDOMNode(this);
-        const subs = component.getElementsByClassName('subNavLink');
-        Velocity(subs, Animations.RightIn, {
-            delay: 100,
-            stagger: 100,
-            duration: 250,
-            drag: true,
-            display: 'block',
-        });
-    }
+const SubNav = ({ basePath, links, onClick }) => (
+    <ul className='subNav'>
+        <TransitionGroup>
+            {links.map((link, i) => (
+                <Transition
+                    key={link}
+                    appear={true}
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                    // calculate from adding delay and duration from slide function
+                    timeout={0.50 + 0.3 * i}
+                    onEnter={(element) => slideFromRightWithStagger(element, i)}
+                >
+                    <SubNavLink basePath={basePath} link={link} onClick={onClick}/>
+                </Transition>
+            ))}
+        </TransitionGroup>
+    </ul>
+);
 
-    render() {
-        return (
-            <ul className='subNav' style={this.props.position}>
-                {this.props.links.map(link => <SubNavLink key={link} link={link} />) }
-            </ul>
-        );
-    }
-};
+export default SubNav;

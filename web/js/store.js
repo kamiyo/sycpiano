@@ -12,13 +12,16 @@ import thunk from 'redux-thunk'
 import { acclaimsListReducer } from '@/js/components/Press/reducers.js';
 import { eventItemsReducer } from '@/js/components/Schedule/reducers.js';
 import { audioPlayerReducer, audioVisualizerReducer, audioUIReducer } from '@/js/components/Media/Music/reducers.js';
+import { videoPlayerReducer, videoPlaylistReducer } from '@/js/components/Media/Videos/reducers.js';
 
 const reducersMap = {
     schedule_eventItems: eventItemsReducer,
     press_acclaimsList: acclaimsListReducer,
     audio_player: audioPlayerReducer,
     audio_visualizer: audioVisualizerReducer,
-    audio_UI: audioUIReducer
+    audio_UI: audioUIReducer,
+    video_player: videoPlayerReducer,
+    video_playlist: videoPlaylistReducer
 };
 
 export default () => createStore(combineReducers(reducersMap), applyMiddleware(thunk));

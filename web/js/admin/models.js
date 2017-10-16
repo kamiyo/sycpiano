@@ -1,6 +1,7 @@
 import moment from 'moment';
 import 'moment-timezone';
-import { googleAPI } from '@/js/services/GoogleAPI.js'
+import { googleAPI } from '@/js/services/GoogleAPI.js';
+import { simplifyArray } from '@/js/admin/utils.js';
 
 /**
  * Set the hour and minute components of given datetime.
@@ -86,10 +87,12 @@ class CalendarEvent {
     get description() {
         // Turn `collaborators` from newline-separated values to array
         // and trim leading and trailing whitepsaces.
-        const collabsArray = this.collaborators.split('\n').map(str => str.trim());
+        const collabsArray = simplifyArray(this.collaborators.split('\n').map(str => str.trim()));
+
         // Turn `programs` from newline-separated values to array
         // and trim leading and trailing whitepsaces.
-        const progsArray = this.program.split('\n').map(str => str.trim());
+        const progsArray = simplifyArray(this.program.split('\n').map(str => str.trim()));
+
         return JSON.stringify({
             collaborators: collabsArray,
             program: progsArray,

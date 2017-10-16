@@ -1,7 +1,5 @@
 import '@/less/Schedule/event-list.less';
 
-// should we just use es6 array functions instead of lodash?
-import _ from 'lodash';
 import moment from 'moment-timezone';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -20,15 +18,21 @@ class ConnectedEventList extends React.Component {
         this._renderEventItem = this._renderEventItem.bind(this);
 
         this.currentOffset = 0;
+        this.maxOffset = 0;
+        this.requestId = null;
     }
 
     componentDidUpdate() {
+        if (this.props.eventItems.length !== 0) {
+            const outerHeight = Math.floor(document.getElementsByClassName('event-list')[0].clientHeight);
+            const innerHeight = this.List.Grid._scrollingContainer.scrollHeight;
+            this.maxOffset = innerHeight - outerHeight;
+        }
         if (this.props.hasEventBeenSelected) {
             this._scrollToSelectedRow();
             return;
         }
-
-        if (this.props.params.date) {
+        if (this.props.match.params.date) {
             const scrollIndex = this._getScrollIndex();
             this.currentRow = scrollIndex;
             this.List.scrollToPosition(this.List.getOffsetForRow({ index: scrollIndex }));
@@ -37,18 +41,23 @@ class ConnectedEventList extends React.Component {
         }
     }
 
+    animationRequestHandler = (requestId) => {
+        this.requestId = requestId;
+    }
+
     _scrollToSelectedRow = () => {
         const targetIndex = this._getScrollIndex();
-        const targetOffset = this.List.getOffsetForRow({ index: targetIndex });
+        const targetOffset = Math.min(this.List.getOffsetForRow({ index: targetIndex }), this.maxOffset);
         this.props.dispatchAnimateStart();
-        animateFn(
+        setTimeout(() => this.requestId = animateFn(
             this.currentOffset,
             targetOffset,
-            500,
+            Math.min(Math.abs(this.currentOffset - targetOffset) / 2, 500),
             (position) => this.List.scrollToPosition(position),
             easeQuadOut,
-            () => {this.props.dispatchAnimateFinish();}
-        );
+            () => { this.props.dispatchAnimateFinish(); },
+            this.animationRequestHandler
+        ), 200);
     }
 
     _getScrollIndex = () => (
@@ -56,7 +65,7 @@ class ConnectedEventList extends React.Component {
             item => (
                 item.type === 'day' &&
                 // in case we change parameter format, compare using moment
-                item.dateTime.isSame(moment(this.props.params.date), 'day')
+                item.dateTime.isSame(moment(this.props.match.params.date), 'day')
             )
         ))
     );
@@ -97,7 +106,7 @@ class ConnectedEventList extends React.Component {
 
     render() {
         return (
-            <div className="event-list container">
+            <div className="event-list">
                 {
                     <AutoSizer>
                         {({ height, width }) => (
@@ -116,6 +125,7 @@ class ConnectedEventList extends React.Component {
                                 // https://github.com/bvaughn/react-virtualized/blob/master/source/Grid/utils/CellSizeAndPositionManager.js#L152
                                 estimatedRowSize={300}
                                 onScroll={({ clientHeight, scrollHeight, scrollTop }) => {
+                                    window.cancelAnimationFrame(this.requestId);        // if we scroll manually, hijack the animation.
                                     this.currentOffset = scrollTop;
                                 }}
                             />
