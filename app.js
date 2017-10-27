@@ -30,5 +30,5 @@ initDB().then(() => {
     // Generally we catch any route first, and then let our front-end routing do the work.
     app.get(/^((?!\/admin).)*$/, (req, res) => res.render('index'));
 
-    app.listen(port, () => console.log(`App listening on port ${port}.`));
+    app.listen(port, '127.0.0.1', () => console.log(`App listening on port ${port}.`));
 });

@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { formatTime } from '@/js/Components/Media/Music/VisualizationUtils.js';
 
-const AudioInfo = (props) => {
-    const { title, composer, contributing, ...rest } = props.currentTrack;
+const AudioInfo = ({ currentTrack, duration }) => {
+    const { title, composer, contributing } = currentTrack;
     return (
         <div className="audioInfoContainer">
             <div className="audioInfo">
-                {`${composer} | ${title} ${(contributing) ? '| ' : ''} ${contributing} ${(props.duration) ? '| ' : ''}${formatTime(props.duration)}`}
+                {`${composer} | ${title} ${(contributing) ? '| ' : ''} ${contributing} ${(duration) ? '| ' : ''}${formatTime(duration)}`}
             </div>
         </div>
     );

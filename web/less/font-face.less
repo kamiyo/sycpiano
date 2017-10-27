@@ -1,0 +1,23 @@
+.include-font(@fileName, @fontFamily) {
+    @font-face {
+    	font-family: @fontFamily;
+        src: url('/fonts/@{fileName}.eot'); /* IE9 Compat Modes */
+        src: url('/fonts/@{fileName}.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+             url('/fonts/@{fileName}.woff2') format('woff2'), /* Modern Browsers */
+             url('/fonts/@{fileName}.woff') format('woff'), /* Modern Browsers */
+             url('/fonts/@{fileName}.ttf') format('truetype'),
+             url('/fonts/@{fileName}.svg#@{fontFamily}') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
+.include-font('lato-hairline', 'LatoHairline');
+.include-font('lato-thin', 'LatoThin');
+.include-font('lato-light', 'LatoLight');
+.include-font('lato-black', 'LatoBlack');
+.include-font('lato-medium', 'LatoMedium');
+.include-font('lato-bold', 'LatoBold');
+.include-font('lato-semibold', 'LatoSemibold');
+.include-font('lato-regular', 'LatoRegular');
+.include-font('lato-heavy', 'LatoHeavy');

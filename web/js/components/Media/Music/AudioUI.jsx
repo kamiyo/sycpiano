@@ -1,38 +1,57 @@
 import '@/less/Media/Music/audio-ui.less';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
+import { TweenLite } from 'gsap';
+import { Transition } from 'react-transition-group';
 import { cartesianToPolar, formatTime } from '@/js/components/Media/Music/VisualizationUtils.js';
-import { isHover } from '@/js/components/Media/Music/actions.js';
-import { PlayButton, PauseButton } from '@/js/components/Media/Music/Buttons.jsx';
+import { setHoverSeekring, setHoverPlaypause, setMouseMove } from '@/js/components/Media/Music/actions.js';
+import { PlayIcon, PauseIcon, PlayButton, PauseButton } from '@/js/components/Media/Music/Buttons.jsx';
 
 class AudioUI extends React.Component {
+    setPlayButtonRef = (ref) => {
+        this.playButton = ref;
+    }
+
+    setPauseButtonRef = (ref) => {
+        this.pauseButton = ref;
+    }
+
+    togglePlaying = (event) => {
+        if (event.keyCode === 32 || event.button === 0) {
+            if (this.props.isPlaying) {
+                this.props.pause();
+                TweenLite.fromTo(this.pauseButton, 0.25, { opacity: 1, scale: 1 }, { opacity: 0, scale: 5, delay: 0.1 });
+            } else {
+                this.props.play();
+                TweenLite.fromTo(this.playButton, 0.25, { opacity: 1, scale: 1 }, { opacity: 0, scale: 5, delay: 0.1 });
+            }
+        }
+    }
 
     componentDidMount() {
-        this.el = ReactDOM.findDOMNode(this);
-        this.visualization = this.el.getElementsByClassName('seekRing')[0];
-        this.visualization.addEventListener('mousemove', this.handleMousemove);
-        this.visualization.addEventListener('mousedown', this.handleMousedown);
-        this.visualization.addEventListener('mouseup', this.handleMouseup);
-        this.height = this.visualization.offsetHeight;
-        this.width = this.visualization.offsetWidth;
-        this.visualization.height = this.height;
-        this.visualization.width = this.width;
+        window.addEventListener('keydown', this.togglePlaying);
+
+        this.seekRing.addEventListener('mousemove', this.handleMousemove);
+        this.seekRing.addEventListener('mousedown', this.handleMousedown);
+        this.seekRing.addEventListener('mouseup', this.handleMouseup);
+        this.height = this.seekRing.offsetHeight;
+        this.width = this.seekRing.offsetWidth;
+        this.seekRing.height = this.height;
+        this.seekRing.width = this.width;
         this.center_x = this.width / 2;
         this.center_y = this.height / 2 - 100;  // 100 for adjustment - arbitrary
-        this.visualizationCtx = this.visualization.getContext('2d');
+        this.visualizationCtx = this.seekRing.getContext('2d');
         this.visualizationCtx.globalCompositionOperation = "lighter";
         this.isDragging = false;
-        this.isMoving = true;
-        this.isHovering = false;
-        this.timerId = setTimeout(() => this.isMoving = false, 1000);
+        this.props.setMouseMove(false);
+        this.props.setHoverPlaypause(false);
     }
 
     getMousePositionInCanvas = (event) => {
         const mouseX = event.clientX;
         const mouseY = event.clientY;
-        const boundingRect = this.visualization.getBoundingClientRect();
+        const boundingRect = this.seekRing.getBoundingClientRect();
         return {
             x: mouseX - boundingRect.x,
             y: mouseY - boundingRect.y
@@ -50,7 +69,7 @@ class AudioUI extends React.Component {
     isEventInSeekRing = (event) => {
         const mouseX = event.clientX;
         const mouseY = event.clientY;
-        const boundingRect = this.visualization.getBoundingClientRect();
+        const boundingRect = this.seekRing.getBoundingClientRect();
         const canvasPos = this.getMousePositionInCanvas(event);
         const isInOuter = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.outerRadius, [this.center_x, this.center_y]);
         const isInInner = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.innerRadius, [this.center_x, this.center_y]);
@@ -58,56 +77,56 @@ class AudioUI extends React.Component {
     }
 
     handleMousemove = (event) => {
-        const prevMoving = this.isMoving;
+        const prevMoving = this.props.isMouseMove;
         if (this.isDragging) {
             this.props.onDrag(this.mousePositionToPercentage(event));
-            this.visualization.style.cursor = "pointer"
+            this.seekRing.style.cursor = "pointer";
+            this.props.setMouseMove(false);
         } else {
-            if (this.timerId) {
-                clearTimeout(this.timerId);
-            }
-            this.isMoving = true;
-            this.timerId = setTimeout(() => this.isMoving = false, 1000);
-        }
-        if (this.isEventInSeekRing(event)) {
-            this.visualization.style.cursor = "pointer";
-            this.props.isHover(true, this.mousePositionToAngle(event));
-            if (!prevMoving) {
-                this.isMoving = false;
+            if (this.isEventInSeekRing(event)) {
+                this.seekRing.style.cursor = "pointer";
+                this.props.setHoverSeekring(true, this.mousePositionToAngle(event));
+                if (!prevMoving) {
+                    this.props.setMouseMove(false);
+                } else {
+                    if (this.timerId) {
+                        clearTimeout(this.timerId);
+                    }
+                    this.timerId = setTimeout(() => this.props.setMouseMove(false), 1000);
+                }
             } else {
+                this.seekRing.style.cursor = "default";
+                this.props.setHoverSeekring(false, null);
                 if (this.timerId) {
                     clearTimeout(this.timerId);
                 }
-                this.timerId = setTimeout(() => this.isMoving = false, 1000);
+                this.props.setMouseMove(true);
+                this.timerId = setTimeout(() => this.props.setMouseMove(false), 1000);
             }
-        } else {
-            this.visualization.style.cursor = "default";
-            this.props.isHover(false, null);
         }
     }
 
     handleMouseup = (event) => {
-        const prevMoving = this.isMoving;
+        const prevMoving = this.props.isMoving;
         if (this.isDragging) {
             this.props.seekAudio(this.mousePositionToPercentage(event));
             this.isDragging = false;
             if (!prevMoving) {
-                this.isMoving = false;
+                this.props.setMouseMove(false);
             } else {
                 if (this.timerId) {
                     clearTimeout(this.timerId);
                 }
-                this.timerId = setTimeout(() => this.isMoving = false, 1000);
+                this.timerId = setTimeout(() => this.props.setMouseMove(false), 1000);
             }
             if (!this.isEventInSeekRing(event)) {
-                this.visualization.style.cursor = "default";
+                this.seekRing.style.cursor = "default";
             }
         }
     }
 
     mousePositionToPercentage = (event) => {
-        const angle = this.mousePositionToAngle(event);
-        return angle / (2 * Math.PI);
+        return this.mousePositionToAngle(event) / (2 * Math.PI);
     }
 
     mousePositionToAngle = (event) => {
@@ -126,18 +145,11 @@ class AudioUI extends React.Component {
     }
 
     handleMouseover = (event) => {
-        this.isHovering = true;
+        this.props.setHoverPlaypause(true);
     }
 
     handleMouseout = (event) => {
-        this.isHovering = false;
-    }
-
-    componentWillUpdate(nextProps) {
-        if (this.props.isPlaying !== nextProps.isPlaying && !this.isDragging) {
-            this.isMoving = true;
-            this.timerId = setTimeout(() => this.isMoving = false, 1000);
-        }
+        this.props.setHoverPlaypause(false);
     }
 
     render() {
@@ -146,30 +158,31 @@ class AudioUI extends React.Component {
                 <div className="currentTime">
                     {formatTime(this.props.currentPosition)}
                 </div>
+                <PauseIcon setRef={this.setPauseButtonRef} />
+                <PlayIcon setRef={this.setPlayButtonRef} />
                 {(this.props.isPlaying) ?
-
                     <PauseButton
-                        onClick={this.props.pause}
-                        isVisible={this.isMoving || this.isHovering}
-                        isHovering={this.isHovering}
+                        onClick={this.togglePlaying}
+                        isVisible={this.props.isMouseMove || this.props.isHoverPlaypause}
+                        isHovering={this.props.isHoverPlaypause}
                         onMouseMove={this.handleMousemove}
                         onMouseOver={this.handleMouseover}
                         onMouseOut={this.handleMouseout}
-                    />
-                    : <PlayButton
-                        onClick={this.props.play}
-                        isVisible={this.isMoving || this.isHovering}
-                        isHovering={this.isHovering}
+                        onMouseUp={this.handleMouseup}
+                    /> : <PlayButton
+                        onClick={this.togglePlaying}
+                        isVisible={this.props.isMouseMove || this.props.isHoverPlaypause}
+                        isHovering={this.props.isHoverPlaypause}
                         onMouseMove={this.handleMousemove}
                         onMouseOver={this.handleMouseover}
                         onMouseOut={this.handleMouseout}
+                        onMouseUp={this.handleMouseup}
                     />
                 }
-                <canvas className="seekRing" />
+                <canvas className="seekRing" ref={(canvas) => this.seekRing = canvas} />
             </div>
         )
     }
-
 }
 
 const mapStateToProps = state => ({
@@ -177,12 +190,16 @@ const mapStateToProps = state => ({
     outerRadius: state.audio_visualizer.outerRadius,
     isPlaying: state.audio_player.isPlaying,
     currentPosition: state.audio_player.currentPosition,
-    lastAction: state.audio_player.lastAction
+    lastAction: state.audio_player.lastAction,
+    isMouseMove: state.audio_ui.isMouseMove,
+    isHoverPlaypause: state.audio_ui.isHoverPlaypause
 })
 
 export default connect(
     mapStateToProps,
     {
-        isHover
+        setHoverSeekring,
+        setHoverPlaypause,
+        setMouseMove
     }
 )(AudioUI);

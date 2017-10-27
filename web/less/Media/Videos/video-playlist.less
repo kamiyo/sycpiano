@@ -7,108 +7,87 @@
 @itemHeight: @thumbnailWidth / @aspectRatio;
 @itemBorderColor: 1px solid rgba(120, 120, 120, 0.3);
 
-.videoPlaylist {
-    position: fixed;
-    height: inherit;
-    right: 0;
-    width: @playlistWidth;
-    .transform(translateX(@playlistWidth - @playlistTogglerWidth));
-    font-family: @lato1;
-    z-index: 50;
-    .flex-display();
+.videoPlaylist .videoPlaylistItem {
+    @padding: 10px;
+    background-color: @playlistBackground;
 
-    ul {
-        padding: 0;
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        overflow-y: scroll;
-        .flex(1);
-        .align-self(flex-start);
+    list-style: none;
+    cursor: pointer;
+    width: 100%;
+    height: @itemHeight + @padding * 2;
+    padding: @padding 0 @padding 15px;
+    border-left: 7px solid transparent;
+    border-bottom: @itemBorderColor;
+
+    .transition(all 0.15s);
+
+    &:hover, &.active {
+        background-color: rgba(255, 255, 255, 1);
+
+        .imageContainer img {
+            .filter(brightness(60%));
+        }
     }
 
-    .videoPlaylistItem {
-        @padding: 10px;
-        background-color: @playlistBackground;
+    &.active {
+        border-left-color: #4E86A4;
 
-        list-style: none;
-        cursor: pointer;
+        .imageContainer .duration {
+            color: #4E86A4 + #555;
+            font-family: @lato2;
+        }
+    }
+
+    .itemContent {
+        height: 100%;
         width: 100%;
-        height: @itemHeight + @padding * 2;
-        padding: @padding 0 @padding 15px;
-        border-left: 7px solid transparent;
-        border-bottom: @itemBorderColor;
+    }
 
-        .transition(all 0.15s);
+    .section {
+        vertical-align: middle;
+        display: inline-block;
+    }
 
-        &:hover, &.active {
-            background-color: rgba(255, 255, 255, 1);
+    .imageContainer {
+        height: 100%;
+        width: @thumbnailWidth;
+        position: relative;
 
-            .imageContainer img {
-                .filter(brightness(60%));
-            }
-        }
-
-        &.active {
-            border-left-color: #4E86A4;
-
-            .imageContainer .duration {
-                color: #4E86A4 + #555;
-                font-family: @lato2;
-            }
-        }
-
-        .itemContent {
-            height: 100%;
+        img {
             width: 100%;
+            .filter(saturate(50%) brightness(60%));
         }
 
-        .section {
-            vertical-align: middle;
-            display: inline-block;
+        .duration {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            color: #fff;
+            padding-right: 3px;
         }
+    }
 
-        .imageContainer {
-            height: 100%;
-            width: @thumbnailWidth;
-            position: relative;
+    .videoInfo {
+        width: ~"calc(80% - 20px)";
+        height: 100%;
+        padding: 0 20px;
+        position: relative;
 
-            img {
-                width: 100%;
-                .filter(saturate(50%) brightness(60%));
+        h4 {
+            margin: 0;
+            color: black;
+            font-size: 15px;
+            position: absolute;
+
+            &.text-top {
+                padding-top: 5px;
+                top: 0;
             }
 
-            .duration {
-                position: absolute;
-                right: 0;
+            &.text-bottom {
+                font-size: 12px;
+                padding-bottom: 5px;
                 bottom: 0;
-                color: #fff;
-                padding-right: 3px;
-            }
-        }
-
-        .videoInfo {
-            width: ~"calc(80% - 20px)";
-            height: 100%;
-            padding: 0 20px;
-            position: relative;
-
-            h4 {
-                margin: 0;
-                color: black;
-                font-size: 15px;
-                position: absolute;
-
-                &.text-top {
-                    padding-top: 5px;
-                    top: 0;
-                }
-
-                &.text-bottom {
-                    font-size: 12px;
-                    padding-bottom: 5px;
-                    bottom: 0;
-                }
             }
         }
     }

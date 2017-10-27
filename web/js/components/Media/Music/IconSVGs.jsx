@@ -23,7 +23,8 @@ export const PauseSVG = ({ onMouseOver, onMouseOut, ...props }) => (
     >
         <g
             onMouseOver={onMouseOver}
-            onMouseOut={onMouseOut}>
+            onMouseOut={onMouseOut}
+        >
             <path fill="#FFF" fillOpacity="0" d="M23.813 23.813h84.667v84.667H23.813z" />
             <path d="M44.71 32.28H55.29v67.732H44.71zm32.29 0H87.58v67.732H77z" />
         </g>

@@ -31,7 +31,11 @@ export const audioPlayerReducer = (state = {
             return {
                 ...state,
                 isPlaying: action.isPlaying,
-                currentTrack: (action.track) ? action.track : state.currentTrack
+            }
+        case AUDIO_ACTIONS.SELECT_TRACK:
+            return {
+                ...state,
+                currentTrack: action.currentTrack
             }
         case AUDIO_ACTIONS.STORE_WAVEFORM_LOADER:
             return {
@@ -67,16 +71,54 @@ export const audioVisualizerReducer = (state = {
 };
 
 export const audioUIReducer = (state = {
-    isHover: false,
+    isHoverSeekring: false,
+    isHoverPlaypause: false,
+    isMouseMove: false,
     angle: null
 }, action) => {
     switch(action.type) {
-        case AUDIO_ACTIONS.IS_HOVER:
+        case AUDIO_ACTIONS.IS_HOVER_SEEKRING:
             return {
                 ...state,
-                isHover: action.isHover,
+                isHoverSeekring: action.isHoverSeekring,
                 angle: action.angle
+            }
+        case AUDIO_ACTIONS.IS_HOVER_PLAYPAUSE:
+            return {
+                ...state,
+                isHoverPlaypause: action.isHoverPlaypause
+            }
+        case AUDIO_ACTIONS.IS_MOUSE_MOVE:
+            return {
+                ...state,
+                isMouseMove: action.isMouseMove
             }
         default: return state;
     }
 };
+
+export const audioPlaylistReducer = (state = {
+    isFetching: false,
+    items: [],
+}, action) => {
+    switch (action.type) {
+        case AUDIO_ACTIONS.FETCH_PLAYLIST_REQUEST:
+            return {
+                ...state,
+                isFetching: true
+            }
+        case AUDIO_ACTIONS.FETCH_PLAYLIST_ERROR:
+            return {
+                ...state,
+                isFetching: false
+            }
+        case AUDIO_ACTIONS.FETCH_PLAYLIST_SUCCESS:
+            return {
+                ...state,
+                isFetching: false,
+                items: action.items,
+                isShow: true
+            }
+        default: return state;
+    }
+}
