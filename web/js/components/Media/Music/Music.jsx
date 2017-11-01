@@ -3,16 +3,17 @@ import '@/less/Media/Music/music.less';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { WaveformLoader, firLoader, constantQ } from '@/js/components/Media/Music/VisualizationUtils.js';
+import { waveformLoader, firLoader, constantQ } from '@/js/components/Media/Music/VisualizationUtils.js';
 import { TweenLite } from 'gsap';
 import {
     fetchPlaylistAction,
     selectTrack,
-    storeWaveformLoader,
     storeAnalyzers,
     updatePlaybackPosition,
     setIsPlaying,
-    storeDuration, } from '@/js/components/Media/Music/actions.js';
+    storeDuration,
+    storeVolume,
+} from '@/js/components/Media/Music/actions.js';
 import AudioVisualizer from '@/js/components/Media/Music/AudioVisualizer.jsx';
 import AudioInfo from '@/js/components/Media/Music/AudioInfo.jsx';
 import AudioUI from '@/js/components/Media/Music/AudioUI.jsx';
@@ -21,8 +22,12 @@ import MusicPlaylist from '@/js/components/Media/Music/MusicPlaylist.jsx';
 class Music extends React.Component {
     autoPlay = false;
     wasPlaying = false;
+    loaded = false;
 
     play = () => {
+        if (!this.loaded) {
+            this.autoPlay = false;
+        }
         this.audio.play();
     }
     pause = () => {
@@ -51,26 +56,36 @@ class Music extends React.Component {
 
         this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(audioCtx.sampleRate / 192000, 2);
 
-        this.audio.volume = 1;
         window.audio = this.audio;
 
         const firstTrack = await this.props.fetchPlaylistAction();
         this.loadTrack(firstTrack, false);
     }
 
-    loadTrack = (track, autoPlay) => {
-        TweenLite.fromTo(this.audio, 0.5, { volume: 1 }, { volume: 0, ease: "Power3.easeIn",
-            onComplete: () => {
-                setTimeout(() => {
-                    this.audio.pause();
-                    this.waveformLoader = new WaveformLoader(track.waveform);
-                    this.props.storeWaveformLoader(this.waveformLoader);
-                    this.props.selectTrack(track);
-                    this.autoPlay = autoPlay;
-                    this.audio.volume = 1;
-                    this.audio.src = track.url;
-                }, 100);
-            }
+    loadTrack = async (track, autoPlay) => {
+        this.autoPlay = autoPlay;
+        await new Promise((resolve, reject) => {
+            TweenLite.fromTo(this.audio, 0.3, { volume: 1 }, {
+                volume: 0,
+                onUpdate: () => {
+                    this.props.storeVolume(this.audio.volume);
+                },
+                onComplete: () => {
+                    setTimeout(resolve, 100);
+                }
+            });
+        });
+        this.audio.pause();
+        this.props.selectTrack(track);
+        waveformLoader.loadWaveformFile(track.waveform);
+        this.loaded = false;
+        this.audio.src = track.url;
+        await waveformLoader.loaded;
+        TweenLite.fromTo(this.audio, 0.3, { volume: 0 }, {
+            volume: 1,
+            onUpdate: () => {
+                this.props.storeVolume(this.audio.volume);
+            },
         });
     }
 
@@ -107,16 +122,17 @@ class Music extends React.Component {
 
     audioOnLoad = async () => {
         this.props.storeDuration(this.audio.duration);
-
+        this.loaded = true;
         try {
             await Promise.all([
                 constantQ.loaded,
                 firLoader.loaded,
-                this.waveformLoader.loaded
+                waveformLoader.loaded
             ]);
 
             this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
             this.props.storeAnalyzers([this.analyzerL, this.analyzerR]);
+            cancelAnimationFrame(this.props.animationRequestId);
             this.animationCallback();
             if (this.autoPlay) {
                 this.props.setIsPlaying(true);
@@ -153,18 +169,17 @@ class Music extends React.Component {
         return (
             <div className="mediaContent music">
                 <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
-                <MusicPlaylist onClick={this.loadTrack}/>
+                <MusicPlaylist onClick={this.loadTrack} />
                 <AudioUI
                     seekAudio={this.seekAudio}
                     onStartDrag={this.onStartDrag}
                     onDrag={this.onDrag}
+                    volume={this.volume}
                     play={this.play}
                     pause={this.pause}
                 />
                 <AudioInfo />
-                <AudioVisualizer
-                    registerAnimationCallback={this.registerAnimationCallback}
-                />
+                <AudioVisualizer registerAnimationCallback={this.registerAnimationCallback} />
             </div>
         );
     }
@@ -181,10 +196,10 @@ export default connect(
     {
         fetchPlaylistAction,
         selectTrack,
-        storeWaveformLoader,
         storeAnalyzers,
         updatePlaybackPosition,
         setIsPlaying,
         storeDuration,
+        storeVolume,
     }
 )(Music);

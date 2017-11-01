@@ -7,7 +7,6 @@ export const AUDIO_ACTIONS = {
     SET_IS_PLAYING: 'AUDIO_ACTIONS--SET_IS_PLAYING',
     STORE_ANIMATION_REQUEST_ID: 'AUDIO_ACTIONS--STORE_ANIMATION_REQUEST_ID',
     STORE_DURATION: 'AUDIO_ACTIONS--STORE_DURATION',
-    STORE_WAVEFORM_LOADER: 'AUDIO_ACTIONS--STORE_WAVEFORM_LOADER',
     STORE_RADII: 'AUDIO_ACTIONS--STORE_RADII',
     IS_HOVER_SEEKRING: 'AUDIO_ACTIONS--IS_HOVER_SEEKRING',
     IS_HOVER_PLAYPAUSE: 'AUDIO_ACTIONS--IS_HOVER_PLAYPAUSE',
@@ -16,14 +15,8 @@ export const AUDIO_ACTIONS = {
     FETCH_PLAYLIST_SUCCESS: 'AUDIO_ACTIONS--FETCH_PLAYLIST_SUCCESS',
     FETCH_PLAYLIST_ERROR: 'AUDIO_ACTIONS--FETCH_PLAYLIST_ERROR',
     SELECT_TRACK: 'AUDIO_ACTIONS--SELECT_TRACK',
+    STORE_VOLUME: 'AUDIO_ACTIONS--STORE_VOLUME',
 };
-
-export const storeWaveformLoader = (waveformLoader) => (dispatch) => (
-    dispatch({
-        type: AUDIO_ACTIONS.STORE_WAVEFORM_LOADER,
-        waveformLoader: waveformLoader
-    })
-);
 
 export const storeAnalyzers = (analyzers) => (dispatch) => (
     dispatch({
@@ -53,6 +46,13 @@ export const togglePlaying = () => (dispatch, getState) => (
         isPlaying: !getState().audio_player.isPlaying,
     })
 );
+
+export const storeVolume = (volume) => (dispatch) => (
+    dispatch({
+        type: AUDIO_ACTIONS.STORE_VOLUME,
+        volume: volume
+    })
+)
 
 export const storeAnimationRequestId = (requestId) => (dispatch) => (
     dispatch({

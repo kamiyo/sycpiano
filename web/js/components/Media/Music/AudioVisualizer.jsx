@@ -2,7 +2,7 @@ import '@/less/Media/Music/audio-visualizer.less';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { constantQ, firLoader, polarToCartesian, drawCircleMask } from '@/js/components/Media/Music/VisualizationUtils.js'
+import { waveformLoader, constantQ, firLoader, polarToCartesian, drawCircleMask } from '@/js/components/Media/Music/VisualizationUtils.js'
 import { storeAnimationRequestId, storeRadii } from '@/js/components/Media/Music/actions.js'
 
 const TWO_PI = 2 * Math.PI;
@@ -47,6 +47,7 @@ class AudioVisualizer extends React.Component {
             this.CQ_BINS = constantQ.numCols * 2;
             this.INV_CQ_BINS = 1 / this.CQ_BINS;
 
+            this.MAX_BIN = this.FFT_HALF_SIZE * 22050 / (constantQ.sampleRate / 2);
             this.HIGH_PASS_BIN = constantQ.maxF * this.FFT_HALF_SIZE / (constantQ.sampleRate / 2);
             this.LOW_PASS_BIN = constantQ.minF * this.FFT_HALF_SIZE / (constantQ.sampleRate / 2);
 
@@ -100,10 +101,7 @@ class AudioVisualizer extends React.Component {
         const resultR = constantQ.apply(normalizedDataR).reverse();
         const result = Float32Array.from([...resultL, ...resultR]);
 
-        let highFreq = 0;
-        if (accumulatorL.highFreqCount !== 0 || accumulatorR.highFreqCount !== 0) {
-            (accumulatorL.highFreq + accumulatorR.highFreq) / (accumulatorL.highFreqCount + accumulatorR.highFreqCount);
-        }
+        let highFreq = (accumulatorL.highFreq + accumulatorR.highFreq) / (2 * (this.MAX_BIN - this.HIGH_PASS_BIN));
         let lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.LOW_PASS_BIN);
         this.lastHighFreqs.shift();
         this.lastHighFreqs.push(highFreq);
@@ -111,7 +109,7 @@ class AudioVisualizer extends React.Component {
             return acc + value;
         }, 0) / this.lastHighFreqs.length;
 
-        this.drawVisualization(this.visualizationCtx, lowFreq, result, highFreq, timestamp);
+        this.drawVisualization(this.visualizationCtx, lowFreq, result, 10 * highFreq, timestamp);
         this.requestId = requestAnimationFrame(this.onAnalyze);
         this.props.storeAnimationRequestId(this.requestId);
     }
@@ -138,7 +136,7 @@ class AudioVisualizer extends React.Component {
                 const scale = values[input];
                 sum += scale * (this.firCoeffs[i] + fractionalPart * this.firDeltas[i]);
             }
-            const result = sum * GLOBAL_SCALE;
+            const result = this.props.volume * sum * GLOBAL_SCALE;
             // first term is the actual incrementing.
             // second term is adjusting so that the visualization is symmetric
             // third term is adjusting so it starts at the bottom of the screen.
@@ -165,15 +163,15 @@ class AudioVisualizer extends React.Component {
     }
 
     drawWaveForm = (context, centerAxis, color) => {
-        const waveform = this.props.waveformLoader.waveform;
-        if (!waveform) return;
+        const waveform = waveformLoader.waveform;
+        if (waveform.length === 0) return;
         const waveformLength = waveform.length / 2;
         const twoPiPerWaveformLength = TWO_PI / waveformLength;
         context.beginPath();
         // going through mins from start to end
         for (let j = 0; j < waveformLength; j++) {
             const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + waveform[j * 2] * WAVEFORM_HALF_HEIGHT;
+            const scale = centerAxis + waveform[j * 2] * this.props.volume * WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.center_x, this.center_y]);
 
             if (j === 0) {
@@ -186,7 +184,7 @@ class AudioVisualizer extends React.Component {
         // looping around maxes from end to start
         for (let j = waveformLength - 1; j >= 0; j--) {
             const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + waveform[j * 2 + 1] * WAVEFORM_HALF_HEIGHT;
+            const scale = centerAxis + waveform[j * 2 + 1] * this.props.volume * WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.center_x, this.center_y]);
 
             context.lineTo(x, y);
@@ -224,16 +222,16 @@ class AudioVisualizer extends React.Component {
         this.drawPlaybackHead(
             context,
             angle,
-            WAVEFORM_CENTER_AXIS - WAVEFORM_HALF_HEIGHT,
-            WAVEFORM_CENTER_AXIS + WAVEFORM_HALF_HEIGHT,
+            WAVEFORM_CENTER_AXIS - this.props.volume * WAVEFORM_HALF_HEIGHT,
+            WAVEFORM_CENTER_AXIS +this.props.volume * WAVEFORM_HALF_HEIGHT,
             "#FFF"
         );
         if (this.props.isHoverSeekring) {
             this.drawPlaybackHead(
                 context,
                 this.props.hoverAngle - HALF_PI,
-                WAVEFORM_CENTER_AXIS - WAVEFORM_HALF_HEIGHT,
-                WAVEFORM_CENTER_AXIS + WAVEFORM_HALF_HEIGHT,
+                WAVEFORM_CENTER_AXIS - this.props.volume * WAVEFORM_HALF_HEIGHT,
+                WAVEFORM_CENTER_AXIS + this.props.volume * WAVEFORM_HALF_HEIGHT,
                 "#888"
             );
         }
@@ -276,14 +274,14 @@ class AudioVisualizer extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    waveformLoader: state.audio_player.waveformLoader,
     currentPosition: state.audio_player.currentPosition,
     analyzers: state.audio_player.analyzers,
     isPlaying: state.audio_player.isPlaying,
     duration: state.audio_player.duration,
     prevTimestamp: state.audio_player.updateTimestamp,
     isHoverSeekring: state.audio_ui.isHoverSeekring,
-    hoverAngle: state.audio_ui.angle
+    hoverAngle: state.audio_ui.angle,
+    volume: state.audio_player.volume,
 })
 
 export default connect(

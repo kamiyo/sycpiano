@@ -8,7 +8,7 @@ let dbName;
 
 if (!isProduction) {
     secret = require('./secret.js');
-    host = 'localhost';
+    host = '127.0.0.1';
     dbName = 'sycpiano';
 } else {
     const dbUrl = process.env.DATABASE_URL;

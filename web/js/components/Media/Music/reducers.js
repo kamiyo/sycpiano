@@ -8,7 +8,8 @@ export const audioPlayerReducer = (state = {
     isPlaying: false,
     analyzers: [],
     updateTimestamp: null,
-    duration: null
+    duration: null,
+    volume: 1.0
 }, action) => {
     switch(action.type) {
         case AUDIO_ACTIONS.UPDATE_POSITION:
@@ -37,10 +38,10 @@ export const audioPlayerReducer = (state = {
                 ...state,
                 currentTrack: action.currentTrack
             }
-        case AUDIO_ACTIONS.STORE_WAVEFORM_LOADER:
+        case AUDIO_ACTIONS.STORE_VOLUME:
             return {
                 ...state,
-                waveformLoader: action.waveformLoader
+                volume: action.volume
             }
         default: return state;
     }

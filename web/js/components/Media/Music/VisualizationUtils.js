@@ -35,7 +35,7 @@ export const formatTime = (current) => {
 }
 
 export class WaveformLoader {
-    constructor(filename) {
+    constructor() {
         this.headerStructure = {
             version: 'int32',
             flags: 'uint32',
@@ -45,17 +45,12 @@ export class WaveformLoader {
         }
         this.header = null;
         this.waveform = [];
-        if (filename)
-            this.loaded = this.loadWaveformFile(filename);
-        else {
-            this.loaded = Promise.resolve();
-        }
     }
 
     loadWaveformFile = (filename) => {
         this.header = null;
-        this.waveform = null;
-        return new Promise((resolve, reject) => {
+        this.waveform = [];
+        this.loaded = new Promise((resolve, reject) => {
             jbinary.loadData(filename, (error, data) => {
                 const j = new jbinary(new jdv(data, 0, data.byteLength, true));
                 const header = j.read(this.headerStructure);
@@ -74,6 +69,8 @@ export class WaveformLoader {
         })
     }
 }
+
+export const waveformLoader = new WaveformLoader();
 
 class FIRLoader {
     constructor() {
