@@ -6,7 +6,7 @@ export const audioPlayerReducer = (state = {
     currentPosition: 0,
     currentTrack: {},
     isPlaying: false,
-    analyzers: [],
+    analyzers: [null, null],
     updateTimestamp: null,
     duration: null,
     volume: 1.0

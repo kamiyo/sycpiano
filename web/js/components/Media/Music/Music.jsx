@@ -58,8 +58,28 @@ class Music extends React.Component {
 
         window.audio = this.audio;
 
-        const firstTrack = await this.props.fetchPlaylistAction();
-        this.loadTrack(firstTrack, false);
+        waitForConstantQ();
+        waitForPlaylist();
+    }
+
+    waitForConstantQ = async () => {
+        try {
+            await constantQ.loaded;
+            this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
+            this.props.storeAnalyzers([this.analyzerL, this.analyzerR]);
+        } catch (err) {
+            console.error('constantQ init failed.', err);
+        }
+    }
+
+    waitForPlaylist = async () => {
+        try {
+            const firstTrack = await this.props.fetchPlaylistAction();
+            this.loadTrack(firstTrack, false);
+        }
+        catch (err) {
+            console.error('playlist init failed.', err);
+        }
     }
 
     loadTrack = async (track, autoPlay) => {
@@ -124,30 +144,13 @@ class Music extends React.Component {
         this.props.storeDuration(this.audio.duration);
         this.loaded = true;
         try {
-            await Promise.all([
-                constantQ.loaded,
-                firLoader.loaded,
-                waveformLoader.loaded
-            ]);
-
-            this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
-            this.props.storeAnalyzers([this.analyzerL, this.analyzerR]);
-            cancelAnimationFrame(this.props.animationRequestId);
-            this.animationCallback();
+            await Promise.all([constantQ.loaded, firLoader.loaded, waveformLoader.loaded]);
             if (this.autoPlay) {
                 this.props.setIsPlaying(true);
                 this.audio.play();
             }
         } catch (err) {
             console.error('music component init failed.', err);
-        }
-    }
-
-    registerAnimationCallback = (func) => {
-        this.animationCallback = func;
-        // manually call func if audio already playing
-        if (this.props.isPlaying) {
-            this.animationCallback();
         }
     }
 
@@ -179,7 +182,7 @@ class Music extends React.Component {
                     pause={this.pause}
                 />
                 <AudioInfo />
-                <AudioVisualizer registerAnimationCallback={this.registerAnimationCallback} />
+                <AudioVisualizer />
             </div>
         );
     }

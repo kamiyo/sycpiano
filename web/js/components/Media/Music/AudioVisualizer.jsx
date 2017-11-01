@@ -16,11 +16,12 @@ const WAVEFORM_HALF_HEIGHT = 50;
 const HEIGHT_ADJUST = -100;  // 100 for adjustment - arbitrary
 const RADIUS_BASE = 250;
 const RADIUS_SCALE = 50;
+const HIGH_FREQ_SCALE = 10;
 
 class AudioVisualizer extends React.Component {
     constructor(props) {
         super(props);
-        props.registerAnimationCallback(this.onAnalyze);
+        // props.registerAnimationCallback(this.onAnalyze);
     }
 
     initializeVisualizer = async () => {
@@ -58,6 +59,9 @@ class AudioVisualizer extends React.Component {
             this.HALF_CROSSINGS = firLoader.halfCrossings
             this.FILTER_SIZE = firLoader.filterSize;
             this.STEP_SIZE = this.CQ_BINS / CIRCLE_SAMPLES;
+
+            this.requestId = requestAnimationFrame(this.onAnalyze);
+            this.props.storeAnimationRequestId(this.requestId);
         } catch (err) {
             console.error('visualizer init failed.', err);
         }
@@ -78,6 +82,12 @@ class AudioVisualizer extends React.Component {
     }
 
     onAnalyze = (timestamp = 0) => {
+        // don't render anything if analyzers are null, i.e. audio not set up yet
+        if (this.props.analyzers[0] === null || this.props.analyzers[1] === null) {
+            this.requestId = requestAnimationFrame(this.onAnalyze);
+            this.props.storeAnimationRequestId(this.requestId);
+        }
+
         this.props.analyzers[0].getByteFrequencyData(this.frequencyData);
         const normalizedDataL = Float32Array.from(this.frequencyData, (number, index) => number / 255);
 
@@ -105,11 +115,11 @@ class AudioVisualizer extends React.Component {
         let lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.LOW_PASS_BIN);
         this.lastHighFreqs.shift();
         this.lastHighFreqs.push(highFreq);
-        highFreq = this.lastHighFreqs.reduce((acc, value) => {
+        highFreq = HIGH_FREQ_SCALE * this.lastHighFreqs.reduce((acc, value) => {
             return acc + value;
         }, 0) / this.lastHighFreqs.length;
 
-        this.drawVisualization(this.visualizationCtx, lowFreq, result, 10 * highFreq, timestamp);
+        this.drawVisualization(this.visualizationCtx, lowFreq, result, highFreq, timestamp);
         this.requestId = requestAnimationFrame(this.onAnalyze);
         this.props.storeAnimationRequestId(this.requestId);
     }
