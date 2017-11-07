@@ -18,7 +18,7 @@ class Music extends React.Component {
     state = {
         analyzers: [null, null],
         isPlaying: false,
-        volume: 1.0,
+        volume: 0.0,
         playbackPosition: 0.0,
         lastUpdateTimestamp: 0,
         duration: -1,
@@ -58,7 +58,7 @@ class Music extends React.Component {
 
         this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(audioCtx.sampleRate / 192000, 2);
 
-        window.audio = this.audio;
+        this.audio.volume = 0;
 
         this.waitForConstantQ();
         this.waitForPlaylist();
@@ -87,7 +87,7 @@ class Music extends React.Component {
     loadTrack = async (track, autoPlay) => {
         this.autoPlay = autoPlay;
         await new Promise((resolve, reject) => {
-            TweenLite.fromTo(this.audio, 0.3, { volume: 1 }, {
+            TweenLite.fromTo(this.audio, 0.3, { volume: this.audio.volume }, {
                 volume: 0,
                 onUpdate: () => {
                     this.setState({ volume: this.audio.volume });
@@ -183,6 +183,16 @@ class Music extends React.Component {
 
     componentDidMount() {
         this.initializeAudioPlayer();
+    }
+
+    componentWillUnmount() {
+        this.audio.removeEventListener('loadeddata', this.audioOnLoad);
+        this.audio.removeEventListener('playing', this.onPlaying);
+        this.audio.removeEventListener('timeupdate', this.onTimeUpdate);
+        this.audio.removeEventListener('pause', this.onPause);
+        this.audio.removeEventListener('ended', this.onEnded);
+        this.audio.pause();
+        waveformLoader.reset();
     }
 
     render() {

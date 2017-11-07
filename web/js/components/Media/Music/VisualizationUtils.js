@@ -36,14 +36,17 @@ export const formatTime = (current) => {
 }
 
 export class WaveformLoader {
-    constructor() {
-        this.headerStructure = {
-            version: 'int32',
-            flags: 'uint32',
-            sampleRate: 'int32',
-            samplesPerPixel: 'int32',
-            length: 'uint32'
-        }
+    headerStructure = {
+        version: 'int32',
+        flags: 'uint32',
+        sampleRate: 'int32',
+        samplesPerPixel: 'int32',
+        length: 'uint32'
+    };
+    header = null;
+    waveform = [];
+
+    reset = () => {
         this.header = null;
         this.waveform = [];
     }

@@ -165,6 +165,14 @@ class AudioUI extends React.Component {
         this.initializeUI();
     }
 
+    componentWillUnmount() {
+        window.removeEventListener('keydown', this.togglePlaying);
+        window.removeEventListener('resize', this.onResize);
+        this.seekRing.removeEventListener('mousemove', this.handleMousemove);
+        this.seekRing.removeEventListener('mousedown', this.handleMousedown);
+        this.seekRing.removeEventListener('mouseup', this.handleMouseup);
+    }
+
     render() {
         return (
             <div className="uiContainer">

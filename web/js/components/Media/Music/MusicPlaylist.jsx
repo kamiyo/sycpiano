@@ -12,6 +12,7 @@ const MusicPlaylist = (props) => {
         <Playlist
             className="musicPlaylist"
             isShow={true}
+            isAppear={false}
             hasToggler={false}
             items={props.items}
             currentItemId={props.currentTrack.id}

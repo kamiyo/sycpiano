@@ -22,7 +22,11 @@ const Playlist = (props) => {
             appear={true}
             onEnter={(el, isAppearing) => {
                 const amount = ulRef.getBoundingClientRect().width;
-                slideLeft(el, amount, (isAppearing) ? 0.25 : 0);
+                if (!props.isAppear && isAppearing) {
+                    el.style.transform = "translateX(0)";
+                } else {
+                    slideLeft(el, amount, (isAppearing) ? 0.25 : 0);
+                }
             }}
             onExit={(el) => {
                 const amount = ulRef.getBoundingClientRect().width;

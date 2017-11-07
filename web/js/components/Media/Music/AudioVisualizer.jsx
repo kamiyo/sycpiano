@@ -214,7 +214,7 @@ class AudioVisualizer extends React.Component {
             context,
             angle,
             WAVEFORM_CENTER_AXIS - this.props.volume * WAVEFORM_HALF_HEIGHT,
-            WAVEFORM_CENTER_AXIS +this.props.volume * WAVEFORM_HALF_HEIGHT,
+            WAVEFORM_CENTER_AXIS + this.props.volume * WAVEFORM_HALF_HEIGHT,
             "#FFF"
         );
         if (this.props.isHoverSeekring) {
