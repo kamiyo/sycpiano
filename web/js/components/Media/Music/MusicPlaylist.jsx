@@ -29,7 +29,6 @@ MusicPlaylist.PropTypes = {
 
 const mapStateToProps = (state) => ({
     items: state.audio_playlist.items,
-    currentTrack: state.audio_player.currentTrack,
 })
 
 export default connect(

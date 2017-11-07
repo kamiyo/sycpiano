@@ -2,11 +2,6 @@ import axios from 'axios';
 import { loadFIRFile } from '@/js/components/Media/Music/VisualizationUtils.js';
 
 export const AUDIO_ACTIONS = {
-    STORE_ANALYZERS: 'AUDIO_ACTIONS--STORE_ANALYZERS',
-    UPDATE_POSITION: 'AUDIO_ACTIONS--UPDATE_POSITION',
-    SET_IS_PLAYING: 'AUDIO_ACTIONS--SET_IS_PLAYING',
-    STORE_ANIMATION_REQUEST_ID: 'AUDIO_ACTIONS--STORE_ANIMATION_REQUEST_ID',
-    STORE_DURATION: 'AUDIO_ACTIONS--STORE_DURATION',
     STORE_RADII: 'AUDIO_ACTIONS--STORE_RADII',
     IS_HOVER_SEEKRING: 'AUDIO_ACTIONS--IS_HOVER_SEEKRING',
     IS_HOVER_PLAYPAUSE: 'AUDIO_ACTIONS--IS_HOVER_PLAYPAUSE',
@@ -14,59 +9,7 @@ export const AUDIO_ACTIONS = {
     FETCH_PLAYLIST_REQUEST: 'AUDIO_ACTIONS--FETCH_PLAYLIST_REQUEST',
     FETCH_PLAYLIST_SUCCESS: 'AUDIO_ACTIONS--FETCH_PLAYLIST_SUCCESS',
     FETCH_PLAYLIST_ERROR: 'AUDIO_ACTIONS--FETCH_PLAYLIST_ERROR',
-    SELECT_TRACK: 'AUDIO_ACTIONS--SELECT_TRACK',
-    STORE_VOLUME: 'AUDIO_ACTIONS--STORE_VOLUME',
 };
-
-export const storeAnalyzers = (analyzers) => (dispatch) => (
-    dispatch({
-        type: AUDIO_ACTIONS.STORE_ANALYZERS,
-        analyzers: analyzers
-    })
-);
-
-export const updatePlaybackPosition = (position, timestamp) => (dispatch) => (
-    dispatch({
-        type: AUDIO_ACTIONS.UPDATE_POSITION,
-        currentPosition: position,
-        updateTimestamp: timestamp
-    })
-);
-
-export const setIsPlaying = (isPlaying) => (dispatch) => (
-    dispatch({
-        type: AUDIO_ACTIONS.SET_IS_PLAYING,
-        isPlaying: isPlaying,
-    })
-);
-
-export const togglePlaying = () => (dispatch, getState) => (
-    dispatch({
-        type: AUDIO_ACTIONS.SET_IS_PLAYING,
-        isPlaying: !getState().audio_player.isPlaying,
-    })
-);
-
-export const storeVolume = (volume) => (dispatch) => (
-    dispatch({
-        type: AUDIO_ACTIONS.STORE_VOLUME,
-        volume: volume
-    })
-)
-
-export const storeAnimationRequestId = (requestId) => (dispatch) => (
-    dispatch({
-        type: AUDIO_ACTIONS.STORE_ANIMATION_REQUEST_ID,
-        animationRequestId: requestId
-    })
-);
-
-export const storeDuration = (duration) => (dispatch) => (
-    dispatch({
-        type: AUDIO_ACTIONS.STORE_DURATION,
-        duration: duration
-    })
-);
 
 export const storeRadii = (innerRadius, outerRadius) => dispatch => (
     dispatch({
@@ -135,10 +78,3 @@ export const fetchPlaylistAction = () => (dispatch, getState) => {
         return getState().audio_playlist.items[0]
     }
 }
-
-export const selectTrack = (track) => (dispatch, getState) => (
-    dispatch({
-        type: AUDIO_ACTIONS.SELECT_TRACK,
-        currentTrack: track
-    })
-);

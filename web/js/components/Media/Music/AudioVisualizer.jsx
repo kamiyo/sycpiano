@@ -3,7 +3,7 @@ import '@/less/Media/Music/audio-visualizer.less';
 import React from 'react';
 import { connect } from 'react-redux';
 import { waveformLoader, constantQ, firLoader, polarToCartesian, drawCircleMask } from '@/js/components/Media/Music/VisualizationUtils.js'
-import { storeAnimationRequestId, storeRadii } from '@/js/components/Media/Music/actions.js'
+import { storeRadii } from '@/js/components/Media/Music/actions.js'
 
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;
@@ -14,15 +14,10 @@ const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI * INV_CIRCLE_SAMPLES;
 const GLOBAL_SCALE = 40;
 const WAVEFORM_HALF_HEIGHT = 50;
 const HEIGHT_ADJUST = -100;  // 100 for adjustment - arbitrary
-const RADIUS_BASE = 250;
-const RADIUS_SCALE = 50;
 const HIGH_FREQ_SCALE = 10;
 
 class AudioVisualizer extends React.Component {
-    constructor(props) {
-        super(props);
-        // props.registerAnimationCallback(this.onAnalyze);
-    }
+    lastPlayheadPosition = 0;
 
     initializeVisualizer = async () => {
         this.height = this.visualization.offsetHeight;
@@ -31,13 +26,10 @@ class AudioVisualizer extends React.Component {
         this.visualization.width = this.width;
         this.center_x = this.width / 2;
         this.center_y = this.height / 2 + HEIGHT_ADJUST;
+        this.RADIUS_SCALE = this.center_y / 5.0;
+        this.RADIUS_BASE = this.center_y - this.RADIUS_SCALE;
         this.visualizationCtx = this.visualization.getContext('2d');
         this.visualizationCtx.globalCompositionOperation = "lighter";
-        this.lastPlayheadPosition = 0;
-        // high frequency visualization uses a 30 element running average
-        // so the color doesn't jitter around so much.
-        this.lastHighFreqs = new Array(30);
-        this.lastHighFreqs.fill(0);
 
         try {
             await Promise.all([constantQ.loaded, firLoader.loaded]);
@@ -61,7 +53,6 @@ class AudioVisualizer extends React.Component {
             this.STEP_SIZE = this.CQ_BINS / CIRCLE_SAMPLES;
 
             this.requestId = requestAnimationFrame(this.onAnalyze);
-            this.props.storeAnimationRequestId(this.requestId);
         } catch (err) {
             console.error('visualizer init failed.', err);
         }
@@ -71,11 +62,9 @@ class AudioVisualizer extends React.Component {
         if (value !== 0) {
             if (index >= this.HIGH_PASS_BIN) {
                 acc.highFreq += value;
-                acc.highFreqCount++;
             }
             if (index < this.LOW_PASS_BIN) {
                 acc.lowFreq += value;
-                acc.lowFreqCount++;
             }
         }
         return acc;
@@ -85,7 +74,7 @@ class AudioVisualizer extends React.Component {
         // don't render anything if analyzers are null, i.e. audio not set up yet
         if (this.props.analyzers[0] === null || this.props.analyzers[1] === null) {
             this.requestId = requestAnimationFrame(this.onAnalyze);
-            this.props.storeAnimationRequestId(this.requestId);
+            return;
         }
 
         this.props.analyzers[0].getByteFrequencyData(this.frequencyData);
@@ -97,31 +86,22 @@ class AudioVisualizer extends React.Component {
         const accumulatorL = normalizedDataL.reduce(this.accumulateLowHighFreq, {
             highFreq: 0,
             lowFreq: 0,
-            highFreqCount: 0,
-            lowFreqCount: 0
         });
         const resultL = constantQ.apply(normalizedDataL);
 
         const accumulatorR = normalizedDataR.reduce(this.accumulateLowHighFreq, {
             highFreq: 0,
             lowFreq: 0,
-            highFreqCount: 0,
-            lowFreqCount: 0
         });
         const resultR = constantQ.apply(normalizedDataR).reverse();
         const result = Float32Array.from([...resultL, ...resultR]);
 
         let highFreq = (accumulatorL.highFreq + accumulatorR.highFreq) / (2 * (this.MAX_BIN - this.HIGH_PASS_BIN));
         let lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.LOW_PASS_BIN);
-        this.lastHighFreqs.shift();
-        this.lastHighFreqs.push(highFreq);
-        highFreq = HIGH_FREQ_SCALE * this.lastHighFreqs.reduce((acc, value) => {
-            return acc + value;
-        }, 0) / this.lastHighFreqs.length;
+        highFreq = HIGH_FREQ_SCALE * highFreq;
 
         this.drawVisualization(this.visualizationCtx, lowFreq, result, highFreq, timestamp);
         this.requestId = requestAnimationFrame(this.onAnalyze);
-        this.props.storeAnimationRequestId(this.requestId);
     }
 
     drawConstantQBins = (context, values, radius, color) => {
@@ -175,6 +155,7 @@ class AudioVisualizer extends React.Component {
     drawWaveForm = (context, centerAxis, color) => {
         const waveform = waveformLoader.waveform;
         if (waveform.length === 0) return;
+
         const waveformLength = waveform.length / 2;
         const twoPiPerWaveformLength = TWO_PI / waveformLength;
         context.beginPath();
@@ -253,7 +234,7 @@ class AudioVisualizer extends React.Component {
         // hsl derived from @light-blue: #4E86A4;
         const color = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
         // adjust large radius to change with the average of all values
-        const radius = RADIUS_BASE + lowFreq * RADIUS_SCALE;
+        const radius = this.RADIUS_BASE + lowFreq * this.RADIUS_SCALE;
         this.props.storeRadii(radius - 2 * WAVEFORM_HALF_HEIGHT, radius);
 
         this.drawConstantQBins(context, values, radius, color);
@@ -261,7 +242,19 @@ class AudioVisualizer extends React.Component {
         this.drawSeekArea(context, radius, color, timestamp);
     }
 
+    onResize = (element, event) => {
+        this.height = this.visualization.offsetHeight;
+        this.width = this.visualization.offsetWidth;
+        this.visualization.height = this.height;
+        this.visualization.width = this.width;
+        this.center_x = this.width / 2;
+        this.center_y = this.height / 2 + HEIGHT_ADJUST;
+        this.RADIUS_SCALE = this.center_y / 5.0;
+        this.RADIUS_BASE = this.center_y - this.RADIUS_SCALE;
+    }
+
     componentDidMount() {
+        window.addEventListener('resize', this.onResize);
         this.initializeVisualizer();
     }
 
@@ -271,7 +264,6 @@ class AudioVisualizer extends React.Component {
 
     shouldComponentUpdate(nextProps) {
         return false;
-        //return this.props.waveformLoader !== nextProps.waveformLoader;
     }
 
     render() {
@@ -284,20 +276,13 @@ class AudioVisualizer extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    currentPosition: state.audio_player.currentPosition,
-    analyzers: state.audio_player.analyzers,
-    isPlaying: state.audio_player.isPlaying,
-    duration: state.audio_player.duration,
-    prevTimestamp: state.audio_player.updateTimestamp,
     isHoverSeekring: state.audio_ui.isHoverSeekring,
     hoverAngle: state.audio_ui.angle,
-    volume: state.audio_player.volume,
-})
+});
 
 export default connect(
     mapStateToProps,
     {
-        storeAnimationRequestId,
         storeRadii
     }
 )(AudioVisualizer);

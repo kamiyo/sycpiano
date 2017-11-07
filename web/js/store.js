@@ -17,7 +17,6 @@ import { videoPlayerReducer, videoPlaylistReducer } from '@/js/components/Media/
 const reducersMap = {
     schedule_eventItems: eventItemsReducer,
     press_acclaimsList: acclaimsListReducer,
-    audio_player: audioPlayerReducer,
     audio_visualizer: audioVisualizerReducer,
     audio_ui: audioUIReducer,
     audio_playlist: audioPlaylistReducer,

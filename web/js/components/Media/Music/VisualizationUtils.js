@@ -27,6 +27,7 @@ export const cartesianToPolar = (x, y) => {
 }
 
 export const formatTime = (current) => {
+    if (current === -1) return "--:--";
     const minutes = Math.floor(current / 60);
     const seconds = Math.floor(current - 60 * minutes);
     const minutesDisplay = `${minutes < 10 ? '0' : ''}${minutes}`;

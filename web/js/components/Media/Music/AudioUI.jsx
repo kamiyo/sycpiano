@@ -29,9 +29,16 @@ class AudioUI extends React.Component {
         }
     }
 
-    componentDidMount() {
-        window.addEventListener('keydown', this.togglePlaying);
+    onResize = (element, event) => {
+        this.height = this.seekRing.offsetHeight;
+        this.width = this.seekRing.offsetWidth;
+        this.seekRing.height = this.height;
+        this.seekRing.width = this.width;
+        this.center_x = this.width / 2;
+        this.center_y = this.height / 2 - 100;  // 100 for adjustment - arbitrary
+    }
 
+    initializeUI = () => {
         this.seekRing.addEventListener('mousemove', this.handleMousemove);
         this.seekRing.addEventListener('mousedown', this.handleMousedown);
         this.seekRing.addEventListener('mouseup', this.handleMouseup);
@@ -152,6 +159,12 @@ class AudioUI extends React.Component {
         this.props.setHoverPlaypause(false);
     }
 
+    componentDidMount() {
+        window.addEventListener('keydown', this.togglePlaying);
+        window.addEventListener('resize', this.onResize);
+        this.initializeUI();
+    }
+
     render() {
         return (
             <div className="uiContainer">
@@ -188,9 +201,6 @@ class AudioUI extends React.Component {
 const mapStateToProps = state => ({
     innerRadius: state.audio_visualizer.innerRadius,
     outerRadius: state.audio_visualizer.outerRadius,
-    isPlaying: state.audio_player.isPlaying,
-    currentPosition: state.audio_player.currentPosition,
-    lastAction: state.audio_player.lastAction,
     isMouseMove: state.audio_ui.isMouseMove,
     isHoverPlaypause: state.audio_ui.isHoverPlaypause
 })

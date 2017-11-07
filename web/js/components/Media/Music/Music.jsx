@@ -5,15 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { waveformLoader, firLoader, constantQ } from '@/js/components/Media/Music/VisualizationUtils.js';
 import { TweenLite } from 'gsap';
-import {
-    fetchPlaylistAction,
-    selectTrack,
-    storeAnalyzers,
-    updatePlaybackPosition,
-    setIsPlaying,
-    storeDuration,
-    storeVolume,
-} from '@/js/components/Media/Music/actions.js';
+import { fetchPlaylistAction } from '@/js/components/Media/Music/actions.js';
 import AudioVisualizer from '@/js/components/Media/Music/AudioVisualizer.jsx';
 import AudioInfo from '@/js/components/Media/Music/AudioInfo.jsx';
 import AudioUI from '@/js/components/Media/Music/AudioUI.jsx';
@@ -23,6 +15,16 @@ class Music extends React.Component {
     autoPlay = false;
     wasPlaying = false;
     loaded = false;
+    state = {
+        analyzers: [null, null],
+        isPlaying: false,
+        volume: 1.0,
+        playbackPosition: 0.0,
+        lastUpdateTimestamp: 0,
+        duration: -1,
+        track: null,
+        currentTrack: {},
+    }
 
     play = () => {
         if (!this.loaded) {
@@ -58,15 +60,15 @@ class Music extends React.Component {
 
         window.audio = this.audio;
 
-        waitForConstantQ();
-        waitForPlaylist();
+        this.waitForConstantQ();
+        this.waitForPlaylist();
     }
 
     waitForConstantQ = async () => {
         try {
             await constantQ.loaded;
             this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
-            this.props.storeAnalyzers([this.analyzerL, this.analyzerR]);
+            this.setState({ analyzers: [this.analyzerL, this.analyzerR] });
         } catch (err) {
             console.error('constantQ init failed.', err);
         }
@@ -88,7 +90,7 @@ class Music extends React.Component {
             TweenLite.fromTo(this.audio, 0.3, { volume: 1 }, {
                 volume: 0,
                 onUpdate: () => {
-                    this.props.storeVolume(this.audio.volume);
+                    this.setState({ volume: this.audio.volume });
                 },
                 onComplete: () => {
                     setTimeout(resolve, 100);
@@ -96,7 +98,7 @@ class Music extends React.Component {
             });
         });
         this.audio.pause();
-        this.props.selectTrack(track);
+        this.setState({ currentTrack: track, duration: -1 });
         waveformLoader.loadWaveformFile(track.waveform);
         this.loaded = false;
         this.audio.src = track.url;
@@ -104,27 +106,36 @@ class Music extends React.Component {
         TweenLite.fromTo(this.audio, 0.3, { volume: 0 }, {
             volume: 1,
             onUpdate: () => {
-                this.props.storeVolume(this.audio.volume);
+                this.setState({ volume: this.audio.volume });
             },
         });
     }
 
     onTimeUpdate = () => {
-        this.props.updatePlaybackPosition(this.audio.currentTime, performance.now());
+        this.setState({
+            playbackPosition: this.audio.currentTime,
+            lastUpdateTimestamp: performance.now()
+        });
     }
 
     onEnded = () => {
-        this.props.setIsPlaying(false);
-        this.props.updatePlaybackPosition(0, performance.now());
+        this.setState({
+            isPlaying: false,
+            playbackPosition: 0,
+            lastUpdateTimestamp: performance.now()
+        });
     }
 
     onDrag = (percent) => {
         const position = percent * this.audio.duration;
-        this.props.updatePlaybackPosition(position, performance.now());
+        this.setState({
+            playbackPosition: position,
+            lastUpdateTimestamp: performance.now()
+        });
     }
 
     onStartDrag = (percent) => {
-        this.wasPlaying = this.props.isPlaying;
+        this.wasPlaying = this.state.isPlaying;
         const position = percent * this.audio.duration;
         this.audio.currentTime = position;
         this.audio.pause();
@@ -141,12 +152,12 @@ class Music extends React.Component {
     }
 
     audioOnLoad = async () => {
-        this.props.storeDuration(this.audio.duration);
+        this.setState({ duration: this.audio.duration });
         this.loaded = true;
         try {
             await Promise.all([constantQ.loaded, firLoader.loaded, waveformLoader.loaded]);
             if (this.autoPlay) {
-                this.props.setIsPlaying(true);
+                this.setState({ isPlaying: true });
                 this.audio.play();
             }
         } catch (err) {
@@ -155,13 +166,19 @@ class Music extends React.Component {
     }
 
     onPause = () => {
-        this.props.setIsPlaying(false);
-        this.props.updatePlaybackPosition(this.audio.currentTime, performance.now());
+        this.setState({
+            isPlaying: false,
+            playbackPosition: this.audio.currentTime,
+            lastUpdateTimestamp: performance.now(),
+        });
     }
 
     onPlaying = () => {
-        this.props.setIsPlaying(true);
-        this.props.updatePlaybackPosition(this.audio.currentTime, performance.now());
+        this.setState({
+            isPlaying: true,
+            playbackPosition: this.audio.currentTime,
+            lastUpdateTimestamp: performance.now(),
+        });
     }
 
     componentDidMount() {
@@ -172,37 +189,40 @@ class Music extends React.Component {
         return (
             <div className="mediaContent music">
                 <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
-                <MusicPlaylist onClick={this.loadTrack} />
+                <MusicPlaylist
+                    onClick={this.loadTrack}
+                    currentTrack={this.state.currentTrack}
+                />
                 <AudioUI
                     seekAudio={this.seekAudio}
                     onStartDrag={this.onStartDrag}
                     onDrag={this.onDrag}
-                    volume={this.volume}
+                    volume={this.state.volume}
                     play={this.play}
                     pause={this.pause}
+                    isPlaying={this.state.isPlaying}
+                    currentPosition={this.state.playbackPosition}
                 />
-                <AudioInfo />
-                <AudioVisualizer />
+                <AudioInfo
+                    duration={this.state.duration}
+                    currentTrack={this.state.currentTrack}
+                />
+                <AudioVisualizer
+                    currentPosition={this.state.playbackPosition}
+                    analyzers={this.state.analyzers}
+                    isPlaying={this.state.isPlaying}
+                    duration={this.state.duration}
+                    prevTimestamp={this.state.lastUpdateTimestamp}
+                    volume={this.state.volume}
+                />
             </div>
         );
     }
 }
 
-const mapStateToProps = state => ({
-    isPlaying: state.audio_player.isPlaying,
-    animationRequestId: state.audio_visualizer.animationRequestId,
-    currentTrack: state.audio_player.currentTrack,
-})
-
 export default connect(
-    mapStateToProps,
+    null,
     {
-        fetchPlaylistAction,
-        selectTrack,
-        storeAnalyzers,
-        updatePlaybackPosition,
-        setIsPlaying,
-        storeDuration,
-        storeVolume,
+        fetchPlaylistAction
     }
 )(Music);

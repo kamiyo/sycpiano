@@ -9,9 +9,9 @@ const AudioInfo = ({ currentTrack, duration }) => {
     const { title, composer, contributing } = currentTrack;
     return (
         <div className="audioInfoContainer">
-            <div className="audioInfo">
-                {`${composer} | ${title} ${(contributing) ? '| ' : ''} ${contributing} ${(duration) ? '| ' : ''}${formatTime(duration)}`}
-            </div>
+            <div className="audioInfo composer-title">{`${composer}: ${title}`}</div>
+            <div className="audioInfo contributing">{contributing}</div>
+            <div className="audioInfo duration">{formatTime(duration)}</div>
         </div>
     );
 };
@@ -20,12 +20,4 @@ AudioInfo.PropTypes = {
     currentTrack: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-    currentTrack: state.audio_player.currentTrack,
-    duration: state.audio_player.duration
-});
-
-export default connect(
-    mapStateToProps,
-    null
-)(AudioInfo);
+export default AudioInfo;

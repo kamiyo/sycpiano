@@ -23,7 +23,7 @@ apiRouter.get('/music', (req, res) => {
             url: '/music/spellbound.mp3',
             waveform: '/music/waveforms/spellbound.dat',
             id: 0,
-            duration: '00:06:18'
+            duration: '00:13:22'
         },
         {
             title: "Improvisation",
@@ -32,7 +32,7 @@ apiRouter.get('/music', (req, res) => {
             url: '/music/improv.mp3',
             waveform: '/music/waveforms/improv.dat',
             id: 1,
-            duration: '00:13:22'
+            duration: '00:06:18'
         }
     ]});
 })
