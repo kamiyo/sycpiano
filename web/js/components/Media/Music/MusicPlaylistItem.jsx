@@ -1,22 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
+import { Link, withRouter } from 'react-router-dom';
 
 const MusicPlaylistItem = ({ item, ...props }) => (
     <li
         className={`musicPlaylistItem${props.isActive ? ' active' : ''}`}
-        onClick={() => props.onClick(item, true)}
     >
-        <div className="itemContent">
-            <div className="section audioInfo">
-                <h4 className="text-top">
-                    {`${item.composer} - ${item.title}`}
-                </h4>
-                <h4 className="text-bottom">
-                    {durationToDisplay(item.duration)}
-                </h4>
+        <Link
+            to={`${props.baseRoute}/${item.id}`}
+            onClick={() => props.onClick(item, true)}
+        >
+            <div className="itemContent">
+                <div className="section audioInfo">
+                    <h4 className="text-top">
+                        {`${item.composer} - ${item.title}`}
+                    </h4>
+                    <h4 className="text-bottom">
+                        {durationToDisplay(item.duration)}
+                    </h4>
+                </div>
             </div>
-        </div>
+        </Link>
     </li>
 )
 
@@ -26,7 +31,7 @@ MusicPlaylistItem.propTypes = {
     item: PropTypes.object.isRequired
 };
 
-export default MusicPlaylistItem;
+export default withRouter(MusicPlaylistItem);
 
 // Helper functions
 

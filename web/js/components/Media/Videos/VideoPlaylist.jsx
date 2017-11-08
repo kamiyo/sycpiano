@@ -12,7 +12,6 @@ const VideoPlaylist = (props) => {
         <Playlist
             className="videoPlaylist"
             isShow={props.isShow}
-            isAppear={true}
             hasToggler={true}
             togglePlaylist={props.togglePlaylistAction}
             items={props.videos}

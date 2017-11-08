@@ -22,7 +22,7 @@ const Playlist = (props) => {
             appear={true}
             onEnter={(el, isAppearing) => {
                 const amount = ulRef.getBoundingClientRect().width;
-                if (!props.isAppear && isAppearing) {
+                if (!props.hasToggler && isAppearing) {
                     el.style.transform = "translateX(0)";
                 } else {
                     slideLeft(el, amount, (isAppearing) ? 0.25 : 0);
@@ -42,16 +42,14 @@ const Playlist = (props) => {
                     }}
                 /> : null}
                 <ul ref={(ul) => ulRef = ul}>
-                    {props.items.map((item, i) => {
-                        return (
-                            <props.ChildRenderer
-                                key={item.id}
-                                isActive={props.currentItemId === item.id}
-                                item={item}
-                                onClick={props.onClick}
-                            />
-                        )
-                    })}
+                    {props.items.map((item, i) => (
+                        <props.ChildRenderer
+                            key={item.id}
+                            isActive={props.currentItemId === item.id}
+                            item={item}
+                            onClick={props.onClick}
+                        />
+                    ))}
                 </ul>
             </div>
         </Transition>

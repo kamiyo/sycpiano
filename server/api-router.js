@@ -22,7 +22,7 @@ apiRouter.get('/music', (req, res) => {
             contributing: "New West Symphony",
             url: '/music/spellbound.mp3',
             waveform: '/music/waveforms/spellbound.dat',
-            id: 0,
+            id: 'spellbound',
             duration: '00:13:22'
         },
         {
@@ -31,7 +31,7 @@ apiRouter.get('/music', (req, res) => {
             contributing: "",
             url: '/music/improv.mp3',
             waveform: '/music/waveforms/improv.dat',
-            id: 1,
+            id: 'improv',
             duration: '00:06:18'
         }
     ]});

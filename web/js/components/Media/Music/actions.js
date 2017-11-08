@@ -62,19 +62,23 @@ const fetchPlaylist = () => async (dispatch) => {
     try {
         dispatch(fetchPlaylistRequest());
         const response = await axios.get('/api/music');
-        const firstTrack = response.data.items[0];
         dispatch(fetchPlaylistSuccess(response.data.items));
-        return firstTrack;
     } catch (err) {
         console.log('fetch music error', err);
         dispatch(fetchPlaylistError());
     }
 }
 
-export const fetchPlaylistAction = () => (dispatch, getState) => {
+export const fetchPlaylistAction = (track) => async (dispatch, getState) => {
     if (shouldFetchPlaylist(getState())) {
-        return dispatch(fetchPlaylist());
-    } else if (getState().audio_playlist.items.length) {
-        return getState().audio_playlist.items[0]
+        await dispatch(fetchPlaylist());
     }
+    const items = getState().audio_playlist.items;
+    let firstTrack = items[0];
+    if (track) {
+        firstTrack = getState().audio_playlist.items.find((item) => {
+            return track === item.id;
+        });
+    }
+    return firstTrack;
 }

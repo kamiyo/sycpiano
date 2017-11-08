@@ -3,6 +3,7 @@ import '@/less/Media/Music/music.less';
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Switch, Route } from 'react-router-dom';
 import { waveformLoader, firLoader, constantQ } from '@/js/components/Media/Music/VisualizationUtils.js';
 import { TweenLite } from 'gsap';
 import { fetchPlaylistAction } from '@/js/components/Media/Music/actions.js';
@@ -76,7 +77,7 @@ class Music extends React.Component {
 
     waitForPlaylist = async () => {
         try {
-            const firstTrack = await this.props.fetchPlaylistAction();
+            const firstTrack = await this.props.fetchPlaylistAction(this.props.match.params.track);
             this.loadTrack(firstTrack, false);
         }
         catch (err) {
@@ -202,6 +203,7 @@ class Music extends React.Component {
                 <MusicPlaylist
                     onClick={this.loadTrack}
                     currentTrack={this.state.currentTrack}
+                    baseRoute={this.props.baseRoute}
                 />
                 <AudioUI
                     seekAudio={this.seekAudio}
