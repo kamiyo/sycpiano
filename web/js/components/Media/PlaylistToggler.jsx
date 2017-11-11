@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const PlaylistToggler = (props) => (
-    <div className="playlistToggler" onClick={props.onClick}>
+    <div className="playlistToggler no-highlight" onClick={props.onClick}>
         {props.isPlaylistVisible ? '\u25B6' : '\u25C0'}
     </div>
 );

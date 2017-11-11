@@ -4,7 +4,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MusicPlaylistItem from '@/js/components/Media/Music/MusicPlaylistItem.jsx';
-import { togglePlaylist } from '@/js/components/Media/Music/actions.js';
 import Playlist from '@/js/components/Media/Playlist.jsx'
 
 const MusicPlaylist = (props) => {
@@ -21,10 +20,11 @@ const MusicPlaylist = (props) => {
     )
 }
 
-MusicPlaylist.PropTypes = {
+MusicPlaylist.propTypes = {
     items: PropTypes.array.isRequired,
     play: PropTypes.func.isRequired,
-    currentTrack: PropTypes.string.isRequired
+    currentTrack: PropTypes.string.isRequired,
+    onClick: PropTypes.function.isRequired
 }
 
 const mapStateToProps = (state) => ({

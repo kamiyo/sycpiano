@@ -5,7 +5,7 @@ import React from 'react';
 import NavBarLink from '@/js/components/App/NavBar/NavBarLink.jsx';
 
 const NavBarLinks = (props) => (
-    <div className='navBarLinks'>
+    <div className='navBarLinks no-highlight'>
         <ul>
             {props.links.map(function (link, i) {
                 let activeName = '';

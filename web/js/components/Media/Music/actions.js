@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { loadFIRFile } from '@/js/components/Media/Music/VisualizationUtils.js';
 
 export const AUDIO_ACTIONS = {
     STORE_RADII: 'AUDIO_ACTIONS--STORE_RADII',
@@ -45,7 +44,7 @@ const fetchPlaylistRequest = () => ({
     type: AUDIO_ACTIONS.FETCH_PLAYLIST_REQUEST
 });
 
-const fetchPlaylistSuccess = (items, firstTrack) => ({
+const fetchPlaylistSuccess = (items) => ({
     type: AUDIO_ACTIONS.FETCH_PLAYLIST_SUCCESS,
     items: items,
 });

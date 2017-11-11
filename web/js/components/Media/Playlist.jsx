@@ -34,7 +34,7 @@ const Playlist = (props) => {
             }}
             timeout={400}
         >
-            <div className={`playlist ${props.className}`}>
+            <div className={`playlist no-highlight ${props.className}`}>
                 {(props.hasToggler) ? <PlaylistToggler
                     isPlaylistVisible={props.isShow}
                     onClick={() => {

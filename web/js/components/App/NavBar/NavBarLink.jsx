@@ -19,7 +19,7 @@ const NavBarLink = (props) => (
             (props.subNavLinks) ?
                 <a
                     onClick={() => props.toggleSub()}
-                    className={`${props.activeName} unselectable`}
+                    className={`${props.activeName} no-highlight`}
                 >
                     <Highlight activeName={props.activeName} link={props.link} />
                 </a> :

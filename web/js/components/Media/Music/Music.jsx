@@ -2,8 +2,8 @@ import '@/less/Media/media-content.less';
 import '@/less/Media/Music/music.less';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Switch, Route } from 'react-router-dom';
 import { waveformLoader, firLoader, constantQ } from '@/js/components/Media/Music/VisualizationUtils.js';
 import { TweenLite } from 'gsap';
 import { fetchPlaylistAction } from '@/js/components/Media/Music/actions.js';
@@ -48,14 +48,14 @@ class Music extends React.Component {
         const audioSrc = audioCtx.createMediaElementSource(this.audio);
         this.analyzerL = audioCtx.createAnalyser();
         this.analyzerR = audioCtx.createAnalyser();
-        this.splitter = audioCtx.createChannelSplitter(2);
-        this.merger = audioCtx.createChannelMerger(2);
-        audioSrc.connect(this.splitter);
-        this.splitter.connect(this.analyzerL, 0);
-        this.splitter.connect(this.analyzerR, 1);
-        this.analyzerL.connect(this.merger, 0, 0);
-        this.analyzerR.connect(this.merger, 0, 1);
-        this.merger.connect(audioCtx.destination);
+        const splitter = audioCtx.createChannelSplitter(2);
+        const merger = audioCtx.createChannelMerger(2);
+        audioSrc.connect(splitter);
+        splitter.connect(this.analyzerL, 0);
+        splitter.connect(this.analyzerR, 1);
+        this.analyzerL.connect(merger, 0, 0);
+        this.analyzerR.connect(merger, 0, 1);
+        merger.connect(audioCtx.destination);
 
         this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(audioCtx.sampleRate / 192000, 2);
 
@@ -86,8 +86,9 @@ class Music extends React.Component {
     }
 
     loadTrack = async (track, autoPlay) => {
+        this.loaded = false;
         this.autoPlay = autoPlay;
-        await new Promise((resolve, reject) => {
+        await new Promise((resolve) => {
             TweenLite.fromTo(this.audio, 0.3, { volume: this.audio.volume }, {
                 volume: 0,
                 onUpdate: () => {
@@ -101,7 +102,6 @@ class Music extends React.Component {
         this.audio.pause();
         this.setState({ currentTrack: track, duration: -1 });
         waveformLoader.loadWaveformFile(track.waveform);
-        this.loaded = false;
         this.audio.src = track.url;
         await waveformLoader.loaded;
         TweenLite.fromTo(this.audio, 0.3, { volume: 0 }, {
@@ -230,6 +230,12 @@ class Music extends React.Component {
             </div>
         );
     }
+}
+
+Music.propTypes = {
+    baseRoute: PropTypes.String.isRequired,
+    fetchPlaylistAction: PropTypes.function.isRequired,
+    match: PropTypes.object.isRequired
 }
 
 export default connect(

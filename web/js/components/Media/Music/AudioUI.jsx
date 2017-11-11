@@ -3,7 +3,6 @@ import '@/less/Media/Music/audio-ui.less';
 import React from 'react';
 import { connect } from 'react-redux';
 import { TweenLite } from 'gsap';
-import { Transition } from 'react-transition-group';
 import { cartesianToPolar, formatTime } from '@/js/components/Media/Music/VisualizationUtils.js';
 import { setHoverSeekring, setHoverPlaypause, setMouseMove } from '@/js/components/Media/Music/actions.js';
 import { PlayIcon, PauseIcon, PlayButton, PauseButton } from '@/js/components/Media/Music/Buttons.jsx';
@@ -29,7 +28,7 @@ class AudioUI extends React.Component {
         }
     }
 
-    onResize = (element, event) => {
+    onResize = () => {
         this.height = this.seekRing.offsetHeight;
         this.width = this.seekRing.offsetWidth;
         this.seekRing.height = this.height;
@@ -74,9 +73,6 @@ class AudioUI extends React.Component {
     }
 
     isEventInSeekRing = (event) => {
-        const mouseX = event.clientX;
-        const mouseY = event.clientY;
-        const boundingRect = this.seekRing.getBoundingClientRect();
         const canvasPos = this.getMousePositionInCanvas(event);
         const isInOuter = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.outerRadius, [this.center_x, this.center_y]);
         const isInInner = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.innerRadius, [this.center_x, this.center_y]);
@@ -151,11 +147,11 @@ class AudioUI extends React.Component {
         }
     }
 
-    handleMouseover = (event) => {
+    handleMouseover = (zaSX) => {
         this.props.setHoverPlaypause(true);
     }
 
-    handleMouseout = (event) => {
+    handleMouseout = () => {
         this.props.setHoverPlaypause(false);
     }
 
@@ -176,7 +172,7 @@ class AudioUI extends React.Component {
     render() {
         return (
             <div className="uiContainer">
-                <div className="currentTime">
+                <div className="currentTime no-highlight">
                     {formatTime(this.props.currentPosition)}
                 </div>
                 <PauseIcon setRef={this.setPauseButtonRef} />
