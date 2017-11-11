@@ -1,0 +1,26 @@
+@import '../variables.less';
+@import '../fonts.less';
+@import '../mixins.less';
+
+@itemBorderColor: 1px solid rgba(120, 120, 120, 0.3);
+
+.playlist {
+    position: fixed;
+    height: inherit;
+    right: 0;
+    width: @playlistWidth;
+    .transform(translateX(@playlistWidth - @playlistTogglerWidth));
+    font-family: @lato1;
+    z-index: 50;
+    .flex-display();
+
+    ul {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        .flex(1);
+        .align-self(flex-start);
+    }
+}

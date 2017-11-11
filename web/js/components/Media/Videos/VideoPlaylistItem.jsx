@@ -2,25 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-const VideoPlaylistItem = ({ video, ...props }) => (
+const VideoPlaylistItem = ({ item, ...props }) => (
     <li
         className={`videoPlaylistItem${props.isActive ? ' active' : ''}`}
-        onClick={() => props.onClick(video.id)}
+        onClick={() => props.onClick(item.id)}
     >
         <div className="itemContent">
             <div className="imageContainer section">
-                <img src={video.snippet.thumbnails.high.url}></img>
+                <img src={item.snippet.thumbnails.high.url}></img>
                 <span className="duration">
-                    {videoDurationToDisplay(video.contentDetails.duration)}
+                    {videoDurationToDisplay(item.contentDetails.duration)}
                 </span>
             </div>
             <div className="section videoInfo">
                 <h4 className="text-top">
-                    {video.snippet.title}
+                    {item.snippet.title}
                 </h4>
                 <h4 className="text-bottom">
-                    {video.statistics.viewCount} views
-                        | published on {publishedDateToDisplay(video.snippet.publishedAt)}
+                    {item.statistics.viewCount} views
+                        | published on {publishedDateToDisplay(item.snippet.publishedAt)}
                 </h4>
             </div>
         </div>
@@ -30,7 +30,7 @@ const VideoPlaylistItem = ({ video, ...props }) => (
 VideoPlaylistItem.propTypes = {
     isActive: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired,
-    video: PropTypes.object.isRequired
+    item: PropTypes.object.isRequired
 };
 
 export default VideoPlaylistItem;

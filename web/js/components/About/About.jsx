@@ -1,7 +1,7 @@
 import '@/less/About/about.less';
 
 import React from 'react';
-
+import moment from 'moment-timezone';
 import blurbs from '@/js/components/About/blurbs.js';
 
 const About = () => (
@@ -11,8 +11,8 @@ const About = () => (
             {blurbs.map((blurb, i) => {
                 if (i == 0) {
                     const firstLetter = blurb[0];
-                    const bday = parseInt((new Date() - new Date(1988, 8, 27))/31536000000);
-                    blurb = blurb.replace(/##/, bday);
+                    const age = moment().diff('1988-08-27', 'year');
+                    blurb = blurb.replace(/##/, age);
                     const withoutFirstLetter = blurb.slice(1);
                     const nameLocation = withoutFirstLetter.indexOf('Sean Chen');
                     const name = withoutFirstLetter.slice(nameLocation, nameLocation + 9);

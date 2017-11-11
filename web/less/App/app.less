@@ -1,5 +1,6 @@
 @import '../colors.less';
 @import '../mixins.less';
+@import '../font-face.less';
 
 * {
     box-sizing: border-box;
@@ -40,9 +41,6 @@ a {
     .link(@logo-blue);
 }
 
-.unselectable {
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
+.no-highlight {
+    .user-select(none);
 }

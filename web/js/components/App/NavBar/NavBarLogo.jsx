@@ -6,7 +6,7 @@ import { LogoInstance } from '@/js/components/LogoSVG.jsx'
 const NavBarLogo = (props) => (
     <div className="navBarLogo" onClick={props.onClick}>
         <LogoInstance />
-        <div className="navBarLogoText unselectable">
+        <div className="navBarLogoText no-highlight">
             <span>SEAN CHEN</span>
         </div>
     </div>
