@@ -111,7 +111,7 @@ class AudioUI extends React.Component {
     }
 
     handleMouseup = (event) => {
-        const prevMoving = this.props.isMoving;
+        const prevMoving = this.props.isMouseMove;
         if (this.isDragging) {
             this.props.seekAudio(this.mousePositionToPercentage(event));
             this.isDragging = false;
@@ -208,7 +208,6 @@ AudioUI.propTypes = {
     innerRadius: PropTypes.number.isRequired,
     isHoverPlaypause: PropTypes.bool.isRequired,
     isMouseMove: PropTypes.bool.isRequired,
-    isMoving: PropTypes.bool.isRequired,
     isPlaying: PropTypes.bool.isRequired,
     onDrag: PropTypes.func.isRequired,
     onStartDrag: PropTypes.func.isRequired,

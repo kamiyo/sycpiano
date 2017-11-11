@@ -23,9 +23,8 @@ const MusicPlaylist = (props) => {
 MusicPlaylist.propTypes = {
     baseRoute: PropTypes.string.isRequired,
     items: PropTypes.array.isRequired,
-    play: PropTypes.func.isRequired,
-    currentTrack: PropTypes.string.isRequired,
-    onClick: PropTypes.function.isRequired
+    currentTrack: PropTypes.object.isRequired,
+    onClick: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({

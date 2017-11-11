@@ -1,7 +1,9 @@
 import { AUDIO_ACTIONS } from '@/js/components/Media/Music/actions.js';
 
 export const audioVisualizerReducer = (state = {
-    isHover: false
+    isHover: false,
+    innerRadius: 0,
+    outerRadius: 0,
 }, action) => {
     switch(action.type) {
         case AUDIO_ACTIONS.STORE_RADII:
@@ -23,7 +25,7 @@ export const audioUIReducer = (state = {
     isHoverSeekring: false,
     isHoverPlaypause: false,
     isMouseMove: false,
-    angle: null
+    angle: 0
 }, action) => {
     switch(action.type) {
         case AUDIO_ACTIONS.IS_HOVER_SEEKRING:

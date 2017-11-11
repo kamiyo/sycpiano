@@ -22,7 +22,7 @@ export const setHoverSeekring = (isHover, angle) => dispatch => (
     dispatch({
         type: AUDIO_ACTIONS.IS_HOVER_SEEKRING,
         isHoverSeekring: isHover,
-        angle: angle
+        angle: angle ? angle : 0,
     })
 );
 

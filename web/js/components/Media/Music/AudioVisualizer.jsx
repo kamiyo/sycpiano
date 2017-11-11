@@ -279,7 +279,7 @@ AudioVisualizer.propTypes = {
     currentPosition: PropTypes.number.isRequired,
     duration: PropTypes.number.isRequired,
     hoverAngle: PropTypes.number.isRequired,
-    isHoverSeekring: PropTypes.func.isRequired,
+    isHoverSeekring: PropTypes.bool.isRequired,
     isPlaying: PropTypes.bool.isRequired,
     prevTimestamp: PropTypes.number.isRequired,
     storeRadii: PropTypes.func.isRequired,
