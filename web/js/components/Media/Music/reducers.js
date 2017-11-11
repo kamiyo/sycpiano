@@ -1,5 +1,4 @@
 import { AUDIO_ACTIONS } from '@/js/components/Media/Music/actions.js';
-import { WaveformLoader } from '@/js/components/Media/Music/VisualizationUtils.js';
 
 export const audioVisualizerReducer = (state = {
     isHover: false

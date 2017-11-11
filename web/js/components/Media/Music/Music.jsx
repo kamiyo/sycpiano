@@ -234,7 +234,7 @@ class Music extends React.Component {
 
 Music.propTypes = {
     baseRoute: PropTypes.String.isRequired,
-    fetchPlaylistAction: PropTypes.function.isRequired,
+    fetchPlaylistAction: PropTypes.func.isRequired,
     match: PropTypes.object.isRequired
 }
 

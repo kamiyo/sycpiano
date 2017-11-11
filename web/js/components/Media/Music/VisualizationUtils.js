@@ -54,7 +54,7 @@ export class WaveformLoader {
     loadWaveformFile = (filename) => {
         this.header = null;
         this.waveform = [];
-        this.loaded = new Promise((resolve, reject) => {
+        this.loaded = new Promise((resolve) => {
             jbinary.loadData(filename, (error, data) => {
                 const j = new jbinary(new jdv(data, 0, data.byteLength, true));
                 const header = j.read(this.headerStructure);
@@ -66,7 +66,7 @@ export class WaveformLoader {
                     if (Math.abs(value) > acc) acc = value;
                     return acc;
                 }, 0);
-                this.waveform = Float32Array.from(body.values, (number, index) => number / maxAbs);
+                this.waveform = Float32Array.from(body.values, (number) => number / maxAbs);
                 this.header = header;
                 return resolve();
             });
@@ -94,7 +94,7 @@ class FIRLoader {
     }
 
     loadFIRFile = () => (
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
             jbinary.loadData('/binary/fir.dat', (error, data) => {
                 const j = new jbinary(new jdv(data, 0, data.byteLength, true));
                 const header = j.read(this.headerStructure);
@@ -138,7 +138,7 @@ class ConstantQ {
     }
 
     loadMatrix = (filename) => (
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
             jbinary.loadData(filename, (error, data) => {
                 const j = new jbinary(new jdv(data, 0, data.byteLength, true));
                 const header = j.read(this.headerStructure);

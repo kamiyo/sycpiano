@@ -1,6 +1,7 @@
 import '@/less/Media/Music/audio-ui.less';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { TweenLite } from 'gsap';
 import { cartesianToPolar, formatTime } from '@/js/components/Media/Music/VisualizationUtils.js';
@@ -147,7 +148,7 @@ class AudioUI extends React.Component {
         }
     }
 
-    handleMouseover = (zaSX) => {
+    handleMouseover = () => {
         this.props.setHoverPlaypause(true);
     }
 
@@ -202,11 +203,29 @@ class AudioUI extends React.Component {
     }
 }
 
+AudioUI.propTypes = {
+    currentPosition: PropTypes.number.isRequired,
+    innerRadius: PropTypes.number.isRequired,
+    isHoverPlaypause: PropTypes.bool.isRequired,
+    isMouseMove: PropTypes.bool.isRequired,
+    isMoving: PropTypes.bool.isRequired,
+    isPlaying: PropTypes.bool.isRequired,
+    onDrag: PropTypes.func.isRequired,
+    onStartDrag: PropTypes.func.isRequired,
+    outerRadius: PropTypes.number.isRequired,
+    pause: PropTypes.func.isRequired,
+    play: PropTypes.func.isRequired,
+    seekAudio: PropTypes.func.isRequired,
+    setHoverPlaypause: PropTypes.func.isRequired,
+    setHoverSeekring: PropTypes.func.isRequired,
+    setMouseMove: PropTypes.func.isRequired,
+}
+
 const mapStateToProps = state => ({
     innerRadius: state.audio_visualizer.innerRadius,
-    outerRadius: state.audio_visualizer.outerRadius,
+    isHoverPlaypause: state.audio_ui.isHoverPlaypause,
     isMouseMove: state.audio_ui.isMouseMove,
-    isHoverPlaypause: state.audio_ui.isHoverPlaypause
+    outerRadius: state.audio_visualizer.outerRadius,
 })
 
 export default connect(

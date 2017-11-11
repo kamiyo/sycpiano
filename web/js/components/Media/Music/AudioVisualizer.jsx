@@ -1,13 +1,13 @@
 import '@/less/Media/Music/audio-visualizer.less';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { waveformLoader, constantQ, firLoader, polarToCartesian, drawCircleMask } from '@/js/components/Media/Music/VisualizationUtils.js'
 import { storeRadii } from '@/js/components/Media/Music/actions.js'
 
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;
-const PI = Math.PI;
 const CIRCLE_SAMPLES = 2048;
 const INV_CIRCLE_SAMPLES = 1 / CIRCLE_SAMPLES;
 const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI * INV_CIRCLE_SAMPLES;
@@ -34,7 +34,6 @@ class AudioVisualizer extends React.Component {
         try {
             await Promise.all([constantQ.loaded, firLoader.loaded]);
 
-            const cq = constantQ.matrix;
             this.frequencyData = new Uint8Array(constantQ.numRows);
             this.FFT_HALF_SIZE = constantQ.numRows;
             this.CQ_BINS = constantQ.numCols * 2;
@@ -78,10 +77,10 @@ class AudioVisualizer extends React.Component {
         }
 
         this.props.analyzers[0].getByteFrequencyData(this.frequencyData);
-        const normalizedDataL = Float32Array.from(this.frequencyData, (number, index) => number / 255);
+        const normalizedDataL = Float32Array.from(this.frequencyData, (number) => number / 255);
 
         this.props.analyzers[1].getByteFrequencyData(this.frequencyData);
-        const normalizedDataR = Float32Array.from(this.frequencyData, (number, index) => number / 255);
+        const normalizedDataR = Float32Array.from(this.frequencyData, (number) => number / 255);
 
         const accumulatorL = normalizedDataL.reduce(this.accumulateLowHighFreq, {
             highFreq: 0,
@@ -242,7 +241,7 @@ class AudioVisualizer extends React.Component {
         this.drawSeekArea(context, radius, color, timestamp);
     }
 
-    onResize = (element, event) => {
+    onResize = () => {
         this.height = this.visualization.offsetHeight;
         this.width = this.visualization.offsetWidth;
         this.visualization.height = this.height;
@@ -262,7 +261,7 @@ class AudioVisualizer extends React.Component {
         cancelAnimationFrame(this.requestId);
     }
 
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate() {
         return false;
     }
 
@@ -273,6 +272,18 @@ class AudioVisualizer extends React.Component {
             </div>
         )
     }
+}
+
+AudioVisualizer.propTypes = {
+    analyzers: PropTypes.arrayOf(PropTypes.object).isRequired,
+    currentPosition: PropTypes.number.isRequired,
+    duration: PropTypes.number.isRequired,
+    hoverAngle: PropTypes.number.isRequired,
+    isHoverSeekring: PropTypes.func.isRequired,
+    isPlaying: PropTypes.bool.isRequired,
+    prevTimestamp: PropTypes.number.isRequired,
+    storeRadii: PropTypes.func.isRequired,
+    volume: PropTypes.number.isRequired,
 }
 
 const mapStateToProps = state => ({
