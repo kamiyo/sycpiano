@@ -1,15 +1,7 @@
 const path = require('path');
 const HappyPack = require('happypack');
 const Webpack = require('webpack');
-
-function getEntryPoint(entryPointPath) {
-    return [
-        'babel-polyfill',
-        'webpack-dev-server/client?http://localhost:8080/',
-        'webpack/hot/dev-server',
-        path.resolve(__dirname, entryPointPath),
-    ]
-}
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const config = {
     devtool: 'inline-source-map',
@@ -24,7 +16,7 @@ const config = {
     module: {
         loaders: [
             {
-                loaders: ['happypack/loader?id=babel'],
+                loader: 'happypack/loader?id=babel',
                 test: /\.jsx?$/,
                 include: [
                     path.resolve(__dirname, 'web/js'),
@@ -34,17 +26,18 @@ const config = {
                 ],
             },
             {
-                loaders: ['happypack/loader?id=style'],
+                loader: 'happypack/loader?id=style',
                 test: /\.(css|less)$/,
                 include: [
                     path.resolve(__dirname, 'web/less'),
+                    // need following for admin page
                     path.resolve(__dirname, 'node_modules/react-datepicker/dist'),
                     path.resolve(__dirname, 'node_modules/react-dates/lib/css'),
                     path.resolve(__dirname, 'node_modules/react-select/dist')
                 ],
             },
             {
-                loaders: ['happypack/loader?id=url'],
+                loader: 'happypack/loader?id=url',
                 test: /\.(ttf|eot|woff|woff2|svg|png|jpg)$/,
                 include: [
                     path.resolve(__dirname, 'web/assets/images'),
@@ -54,10 +47,11 @@ const config = {
         ]
     },
     plugins: [
+        new CleanWebpackPlugin([path.resolve(__dirname, 'web/build')]),
         new Webpack.HotModuleReplacementPlugin(),
         new HappyPack({
             id: 'babel',
-            threads: 1,
+            threads: 4,
             loaders: [
                 {
                     loader: 'babel-loader',
