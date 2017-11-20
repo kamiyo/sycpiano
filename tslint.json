@@ -1,9 +1,15 @@
 {
+    "defaultSeverity": "warning",
     "extends": [
         "tslint:recommended",
         "tslint-react"
     ],
     "rules": {
-        "no-console": false
+        "no-console": false,
+        "quotemark": [true, "single"]
+    },
+    "jsRules": {
+        "no-console": false,
+        "quotemark": [true, "single"]
     }
 }

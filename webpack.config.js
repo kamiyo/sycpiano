@@ -14,16 +14,14 @@ const config = {
     entry: {
         sycpiano: path.resolve(__dirname, 'web/js/main.jsx'),
         calendarAdmin: path.resolve(__dirname, 'web/js/admin/main.jsx'),
-        // vendor: vendorDep
     },
     output: {
         path: path.resolve(__dirname, 'web/build'),
         filename: '[name].bundle.js',
-        // chunkFilename: '[chunkhash].js'
     },
     module: {
         loaders: [{
-            test: /\.ts|\.tsx|\.js|\.jsx$/,
+            test: /\.(t|j)sx?$/,
             include: [
                 path.resolve(__dirname, 'web/js'),
                 path.resolve(__dirname, 'web/js/components'),
@@ -33,16 +31,6 @@ const config = {
             loader: 'happypack/loader?id=ts'
 
         },
-        // {
-        //     test: /\.jsx?$/,
-        //     include: [
-        //         path.resolve(__dirname, 'web/js'),
-        //         path.resolve(__dirname, 'web/js/components'),
-        //         path.resolve(__dirname, 'web/js/admin'),
-        //         path.resolve(__dirname, 'web/js/admin/components'),
-        //     ],
-        //     loader: 'happypack/loader?id=js'
-        // },
         {
             loader: 'happypack/loader?id=style',
             test: /\.(css|less)$/,
@@ -65,7 +53,7 @@ const config = {
     plugins: [
         new ForkTsCheckerWebpackPlugin({
             checkSyntacticErrors: true,
-            tslint: true,
+            tslint: path.resolve(__dirname, 'tslint.json'),
             watch: [
                 path.resolve(__dirname, 'web/js'),
                 path.resolve(__dirname, 'web/js/components'),
@@ -79,33 +67,15 @@ const config = {
             id: 'ts',
             threadPool: happyThreadPool,
             loaders: [
-                // {
-                //     loader: 'babel-loader',
-                //     options: {
-                //         presets: ['env', 'react']
-                //     }
-                // },
                 {
                     loader: 'ts-loader',
                     options: {
-                        happyPackMode: true
+                        happyPackMode: true,
+                        transpileOnly: true
                     }
                 }
             ]
         }),
-        // new HappyPack({
-        //     id: 'js',
-        //     threadPool: happyThreadPool,
-        //     loaders: [
-        //         {
-        //             loader: 'babel-loader',
-        //             query: {
-        //                 plugins: ['transform-runtime'],
-        //                 presets: ['env', 'stage-0', 'react']
-        //             }
-        //         }
-        //     ],
-        // }),
         new HappyPack({
             id: 'style',
             threadPool: happyThreadPool,
@@ -120,8 +90,8 @@ const config = {
     resolve: {
         extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
         alias: {
-            "js": path.resolve('./web/js'),
-            "less": path.resolve('./web/less')
+            "js": path.resolve(__dirname, 'web/js'),
+            "less": path.resolve(__dirname, 'web/less')
         }
     }
 };
