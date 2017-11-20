@@ -1,9 +1,9 @@
 import React from 'react';
 import { Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
-import FrontVideo from '@/js/components/App/Front/FrontVideo.jsx';
-import FrontLogo from '@/js/components/App/Front/FrontLogo.jsx';
-import FrontName from '@/js/components/App/Front/FrontName.jsx';
+import FrontVideo from 'js/components/App/Front/FrontVideo.jsx';
+import FrontLogo from 'js/components/App/Front/FrontLogo.jsx';
+import FrontName from 'js/components/App/Front/FrontName.jsx';
 
 const logoEnter = (element) => {
     TweenLite.fromTo(element, 0.8,

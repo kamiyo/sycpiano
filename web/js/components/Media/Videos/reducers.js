@@ -1,4 +1,4 @@
-import { VIDEO_ACTIONS } from '@/js/components/Media/Videos/actions.js';
+import { VIDEO_ACTIONS } from 'js/components/Media/Videos/actions.js';
 
 export const videoPlayerReducer = (state = {
     isPlayerReady: false,

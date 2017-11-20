@@ -1,4 +1,4 @@
-import '@/less/Press/acclaims-list-item.less';
+import 'less/Press/acclaims-list-item.less';
 
 import React from 'react';
 

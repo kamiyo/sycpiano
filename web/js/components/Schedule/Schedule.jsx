@@ -1,11 +1,11 @@
-import '@/less/Schedule/schedule.less';
+import 'less/Schedule/schedule.less';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { createFetchEventsAction } from '@/js/components/Schedule/actions.js'
+import { createFetchEventsAction } from 'js/components/Schedule/actions.js'
 import { Switch, Route } from 'react-router-dom';
-import ConnectedEventDetails from '@/js/components/Schedule/EventDetails.jsx';
-import EventList from '@/js/components/Schedule/EventList.jsx';
+import ConnectedEventDetails from 'js/components/Schedule/EventDetails.jsx';
+import EventList from 'js/components/Schedule/EventList.jsx';
 
 class Schedule extends React.Component {
     componentWillMount() {

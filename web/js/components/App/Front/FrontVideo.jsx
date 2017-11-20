@@ -1,4 +1,4 @@
-import '@/less/App/Front/front-video.less';
+import 'less/App/Front/front-video.less';
 
 import React from 'react';
 

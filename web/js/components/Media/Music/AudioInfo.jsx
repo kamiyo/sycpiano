@@ -1,8 +1,8 @@
-import '@/less/Media/Music/audio-info.less';
+import 'less/Media/Music/audio-info.less';
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { formatTime } from '@/js/Components/Media/Music/VisualizationUtils.js';
+import { formatTime } from 'js/components/Media/Music/VisualizationUtils.js';
 
 const AudioInfo = ({ currentTrack, duration }) => {
     const { title = "", composer = "", contributing = null } = currentTrack;

@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import createListItem from '@/js/components/Schedule/createListItem.js';
+import createListItem from 'js/components/Schedule/createListItem.js';
 
 /**
  * Takes an event resource as returned by the Calendar API, and extracts the

@@ -1,12 +1,12 @@
-import '@/less/Media/Music/audio-ui.less';
+import 'less/Media/Music/audio-ui.less';
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { TweenLite } from 'gsap';
-import { cartesianToPolar, formatTime } from '@/js/components/Media/Music/VisualizationUtils.js';
-import { setHoverSeekring, setHoverPlaypause, setMouseMove } from '@/js/components/Media/Music/actions.js';
-import { PlayIcon, PauseIcon, PlayButton, PauseButton } from '@/js/components/Media/Music/Buttons.jsx';
+import { cartesianToPolar, formatTime } from 'js/components/Media/Music/VisualizationUtils.js';
+import { setHoverSeekring, setHoverPlaypause, setMouseMove } from 'js/components/Media/Music/actions.js';
+import { PlayIcon, PauseIcon, PlayButton, PauseButton } from 'js/components/Media/Music/Buttons.jsx';
 
 class AudioUI extends React.Component {
     setPlayButtonRef = (ref) => {

@@ -1,4 +1,4 @@
-import '@/less/Schedule/event-item.less';
+import 'less/Schedule/event-item.less';
 
 import _ from 'lodash'
 import React from 'react';

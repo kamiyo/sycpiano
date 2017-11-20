@@ -1,22 +1,21 @@
-import '@/less/App/app.less';
+import 'less/App/app.less';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import { Route, Switch } from 'react-router-dom';
 import { TransitionGroup, Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
 
-import { LogoSVG } from '@/js/components/LogoSVG.jsx';
-import Front from '@/js/components/App/Front/Front.jsx';
-import NavBar from '@/js/components/App/NavBar/NavBar.jsx';
+import { LogoSVG } from 'js/components/LogoSVG.jsx';
+import Front from 'js/components/App/Front/Front.jsx';
+import NavBar from 'js/components/App/NavBar/NavBar.jsx';
 
-import About from '@/js/components/About/About.jsx';
-import Contact from '@/js/components/Contact/Contact.jsx';
-import Home from '@/js/components/Home/Home.jsx';
-import Media from '@/js/components/Media/Media.jsx';
-import Press from '@/js/components/Press/Press.jsx';
-import Schedule from '@/js/components/Schedule/Schedule.jsx';
+import About from 'js/components/About/About.jsx';
+import Contact from 'js/components/Contact/Contact.jsx';
+import Home from 'js/components/Home/Home.jsx';
+import Media from 'js/components/Media/Media.jsx';
+import Press from 'js/components/Press/Press.jsx';
+import Schedule from 'js/components/Schedule/Schedule.jsx';
 
 
 const fadeOnEnter = (element, isAppearing) => {

@@ -1,11 +1,11 @@
-import '@/less/Media/Videos/video-playlist.less';
+import 'less/Media/Videos/video-playlist.less';
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import VideoPlaylistItem from '@/js/components/Media/Videos/VideoPlaylistItem.jsx';
-import { playVideo, togglePlaylistAction } from '@/js/components/Media/Videos/actions.js';
-import Playlist from '@/js/components/Media/Playlist.jsx'
+import VideoPlaylistItem from 'js/components/Media/Videos/VideoPlaylistItem.jsx';
+import { playVideo, togglePlaylistAction } from 'js/components/Media/Videos/actions.js';
+import Playlist from 'js/components/Media/Playlist.jsx'
 
 const VideoPlaylist = (props) => {
     return (

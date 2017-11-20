@@ -1,10 +1,10 @@
-import '@/less/Media/playlist.less';
+import 'less/Media/playlist.less';
 
 import React from 'react';
 import { connect } from 'react-redux';
 import { Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
-import PlaylistToggler from '@/js/components/Media/PlaylistToggler.jsx';
+import PlaylistToggler from 'js/components/Media/PlaylistToggler.jsx';
 
 const slideLeft = (element, amount, delay = 0) => {
     TweenLite.fromTo(element, 0.4, { x: amount }, { x: 0, ease: "Power3.easeOut", delay: delay });

@@ -1,4 +1,4 @@
-import youTube from '@/js/YouTube.js';
+import youTube from 'js/YouTube.js';
 
 export const VIDEO_ACTIONS = {
     FETCH_PLAYLIST_SUCCESS: 'VIDEO--FETCH_PLAYLIST_SUCCESS',

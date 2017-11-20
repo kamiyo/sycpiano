@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
-import createSycStore from '@/js/store.js';
+import createSycStore from 'js/store.js';
 
-import App from '@/js/components/App/App.jsx';
+import App from 'js/components/App/App.jsx';
 
 main();
 

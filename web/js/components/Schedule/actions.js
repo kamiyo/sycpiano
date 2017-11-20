@@ -1,5 +1,5 @@
-import { transformGCalEventsToListItems } from '@/js/components/Schedule/utils.js';
-import { googleAPI } from '@/js/services/GoogleAPI.js';
+import { transformGCalEventsToListItems } from 'js/components/Schedule/utils.js';
+import { googleAPI } from 'js/services/GoogleAPI.js';
 import moment from 'moment-timezone';
 
 export const SCHEDULE_ACTIONS = {

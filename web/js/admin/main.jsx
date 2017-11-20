@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import URI from 'urijs';
-import CalendarAdmin from '@/js/admin/components/CalendarAdmin.jsx';
-import { TOKEN_KEY } from '@/js/admin/constants.js';
+import CalendarAdmin from 'js/admin/components/CalendarAdmin.jsx';
+import { TOKEN_KEY } from 'js/admin/constants.js';
 
 main();
 

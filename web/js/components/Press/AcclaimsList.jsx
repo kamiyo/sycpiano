@@ -1,11 +1,11 @@
-import '@/less/Press/acclaims-list.less';
+import 'less/Press/acclaims-list.less';
 
 import React from 'react';
 import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
-import { createFetchAcclaimsAction } from '@/js/components/Press/actions.js'
+import { createFetchAcclaimsAction } from 'js/components/Press/actions.js'
 
-import AcclaimsListItem from '@/js/components/Press/AcclaimsListItem.jsx';
+import AcclaimsListItem from 'js/components/Press/AcclaimsListItem.jsx';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 

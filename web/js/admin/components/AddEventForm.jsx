@@ -1,6 +1,6 @@
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-select/dist/react-select.css';
-import '@/less/admin/components/add-event-form.less';
+import 'less/admin/components/add-event-form.less';
 
 import $ from 'cash-dom';
 import moment from 'moment';
@@ -9,9 +9,9 @@ import React from 'react';
 import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 
-import Button from '@/js/components/_reusable/Button.jsx';
-import { googleAPI } from '@/js/services/GoogleAPI.js'
-import { CalendarEvent } from '@/js/admin/models.js';
+import Button from 'js/components/_reusable/Button.jsx';
+import { googleAPI } from 'js/services/GoogleAPI.js'
+import { CalendarEvent } from 'js/admin/models.js';
 
 var eventTypes = [
     { value: 'solo', label: 'Solo' },

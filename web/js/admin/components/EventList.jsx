@@ -2,7 +2,7 @@
 // Also link to website
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-select/dist/react-select.css';
-import '@/less/admin/components/event-list.less';
+import 'less/admin/components/event-list.less';
 
 import $ from 'cash-dom';
 import moment from 'moment';
@@ -12,9 +12,9 @@ import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 import { connect } from 'react-redux';
 
-import Button from '@/js/components/_reusable/Button.jsx';
-import { googleAPI } from '@/js/services/GoogleAPI.js'
-import { CalendarEvent } from '@/js/admin/models.js';
+import Button from 'js/components/_reusable/Button.jsx';
+import { googleAPI } from 'js/services/GoogleAPI.js'
+import { CalendarEvent } from 'js/admin/models.js';
 
 class ListItem extends React.Component {
 

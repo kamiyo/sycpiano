@@ -1,7 +1,7 @@
-import '@/less/App/Front/front-logo.less';
+import 'less/App/Front/front-logo.less';
 
 import React from 'react';
-import { LogoInstance } from '@/js/components/LogoSVG.jsx';
+import { LogoInstance } from 'js/components/LogoSVG.jsx';
 
 const FrontLogo = (props) => {
     let { hover, ...other } = props;

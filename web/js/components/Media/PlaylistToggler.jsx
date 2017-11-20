@@ -1,4 +1,4 @@
-import '@/less/Media/playlist-toggler.less';
+import 'less/Media/playlist-toggler.less';
 
 import React from 'react';
 import PropTypes from 'prop-types';

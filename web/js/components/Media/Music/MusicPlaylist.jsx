@@ -1,10 +1,10 @@
-import '@/less/Media/Music/music-playlist.less';
+import 'less/Media/Music/music-playlist.less';
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import MusicPlaylistItem from '@/js/components/Media/Music/MusicPlaylistItem.jsx';
-import Playlist from '@/js/components/Media/Playlist.jsx'
+import MusicPlaylistItem from 'js/components/Media/Music/MusicPlaylistItem.jsx';
+import Playlist from 'js/components/Media/Playlist.jsx'
 
 const MusicPlaylist = (props) => {
     return (

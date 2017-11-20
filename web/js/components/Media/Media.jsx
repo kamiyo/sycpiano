@@ -1,11 +1,11 @@
-import '@/less/Media/media.less';
+import 'less/Media/media.less';
 
 import React from 'react';
 
 import { Switch, Route } from 'react-router-dom';
-import Videos from '@/js/components/Media/Videos/Videos.jsx';
-import Music from '@/js/components/Media/Music/Music.jsx';
-import Photos from '@/js/components/Media/Photos/Photos.jsx';
+import Videos from 'js/components/Media/Videos/Videos.jsx';
+import Music from 'js/components/Media/Music/Music.jsx';
+import Photos from 'js/components/Media/Photos/Photos.jsx';
 
 const Media = () => (
 	<div className='mediaContainer container'>

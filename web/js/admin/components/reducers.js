@@ -1,7 +1,7 @@
 import moment from 'moment';
 
-import { eventTypes } from '@/js/admin/constants.js';
-import { simplifyArray } from '@/js/admin/utils.js';
+import { eventTypes } from 'js/admin/constants.js';
+import { simplifyArray } from 'js/admin/utils.js';
 
 function parseEvent(event) {
     let description = {};

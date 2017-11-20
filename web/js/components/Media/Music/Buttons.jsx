@@ -1,7 +1,7 @@
-import '@/less/Media/Music/audio-buttons.less';
+import 'less/Media/Music/audio-buttons.less';
 
 import React from 'react';
-import { PlaySVG, PauseSVG } from '@/js/components/Media/Music/IconSVGs.jsx';
+import { PlaySVG, PauseSVG } from 'js/components/Media/Music/IconSVGs.jsx';
 
 export const PlayIcon = ({ setRef }) => (
     <div

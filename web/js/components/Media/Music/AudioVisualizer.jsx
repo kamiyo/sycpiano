@@ -1,10 +1,10 @@
-import '@/less/Media/Music/audio-visualizer.less';
+import 'less/Media/Music/audio-visualizer.less';
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { waveformLoader, constantQ, firLoader, polarToCartesian, drawCircleMask } from '@/js/components/Media/Music/VisualizationUtils.js'
-import { storeRadii } from '@/js/components/Media/Music/actions.js'
+import { waveformLoader, constantQ, firLoader, polarToCartesian, drawCircleMask } from 'js/components/Media/Music/VisualizationUtils.js'
+import { storeRadii } from 'js/components/Media/Music/actions.js'
 
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;

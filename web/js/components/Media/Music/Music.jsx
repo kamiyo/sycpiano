@@ -1,16 +1,16 @@
-import '@/less/Media/media-content.less';
-import '@/less/Media/Music/music.less';
+import 'less/Media/media-content.less';
+import 'less/Media/Music/music.less';
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { waveformLoader, firLoader, constantQ } from '@/js/components/Media/Music/VisualizationUtils.js';
+import { waveformLoader, firLoader, constantQ } from 'js/components/Media/Music/VisualizationUtils.js';
 import { TweenLite } from 'gsap';
-import { fetchPlaylistAction } from '@/js/components/Media/Music/actions.js';
-import AudioVisualizer from '@/js/components/Media/Music/AudioVisualizer.jsx';
-import AudioInfo from '@/js/components/Media/Music/AudioInfo.jsx';
-import AudioUI from '@/js/components/Media/Music/AudioUI.jsx';
-import MusicPlaylist from '@/js/components/Media/Music/MusicPlaylist.jsx';
+import { fetchPlaylistAction } from 'js/components/Media/Music/actions.js';
+import AudioVisualizer from 'js/components/Media/Music/AudioVisualizer.jsx';
+import AudioInfo from 'js/components/Media/Music/AudioInfo.jsx';
+import AudioUI from 'js/components/Media/Music/AudioUI.jsx';
+import MusicPlaylist from 'js/components/Media/Music/MusicPlaylist.jsx';
 
 class Music extends React.Component {
     autoPlay = false;

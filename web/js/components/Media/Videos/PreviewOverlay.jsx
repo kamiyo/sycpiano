@@ -1,11 +1,11 @@
-import '@/less/Media/preview-overlay.less';
+import 'less/Media/preview-overlay.less';
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TweenLite } from 'gsap';
 import { Transition } from 'react-transition-group';
 import { connect } from 'react-redux';
-import { playVideo } from '@/js/components/Media/Videos/actions.js';
+import { playVideo } from 'js/components/Media/Videos/actions.js';
 
 
 const PreviewOverlay = (props) => (

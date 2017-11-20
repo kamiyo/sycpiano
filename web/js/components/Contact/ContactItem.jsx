@@ -1,4 +1,4 @@
-import '@/less/Contact/contact-item.less';
+import 'less/Contact/contact-item.less';
 
 import React from 'react';
 

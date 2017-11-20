@@ -1,10 +1,10 @@
-import '@/less/App/NavBar/nav-bar.less';
-import '@/less/App/NavBar/nav-bar-layout.less';
+import 'less/App/NavBar/nav-bar.less';
+import 'less/App/NavBar/nav-bar-layout.less';
 
 import React from 'react';
 
-import NavBarLogo from '@/js/components/App/NavBar/NavBarLogo.jsx';
-import NavBarLinks from '@/js/components/App/NavBar/NavBarLinks.jsx';
+import NavBarLogo from 'js/components/App/NavBar/NavBarLogo.jsx';
+import NavBarLinks from 'js/components/App/NavBar/NavBarLinks.jsx';
 
 const links = [
     { name: 'home', path: '/' },

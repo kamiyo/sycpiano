@@ -1,7 +1,7 @@
 import moment from 'moment';
 import 'moment-timezone';
-import { googleAPI } from '@/js/services/GoogleAPI.js';
-import { simplifyArray } from '@/js/admin/utils.js';
+import { googleAPI } from 'js/services/GoogleAPI.js';
+import { simplifyArray } from 'js/admin/utils.js';
 
 /**
  * Set the hour and minute components of given datetime.

@@ -1,4 +1,4 @@
-import { SCHEDULE_ACTIONS } from '@/js/components/Schedule/actions.js';
+import { SCHEDULE_ACTIONS } from 'js/components/Schedule/actions.js';
 
 export const eventItemsReducer = (state = {
     items: [],

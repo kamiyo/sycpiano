@@ -1,4 +1,4 @@
-import '@/less/admin/components/calendar-admin.less';
+import 'less/admin/components/calendar-admin.less';
 
 import React from 'react';
 
@@ -8,12 +8,12 @@ import { combineReducers, createStore } from 'redux';
 import {
     eventFormReducer,
     eventListReducer,
-} from '@/js/admin/components/reducers.js';
+} from 'js/admin/components/reducers.js';
 
-import { validateToken, CLIENT_ID } from '@/js/services/GoogleOAuth.js';
-import AuthInterface from '@/js/admin/components/AuthInterface.jsx';
-import EventForm from '@/js/admin/components/EventForm.jsx';
-import EventList from '@/js/admin/components/EventList.jsx';
+import { validateToken, CLIENT_ID } from 'js/services/GoogleOAuth.js';
+import AuthInterface from 'js/admin/components/AuthInterface.jsx';
+import EventForm from 'js/admin/components/EventForm.jsx';
+import EventList from 'js/admin/components/EventList.jsx';
 
 const reducersMap = {
     eventForm: eventFormReducer,

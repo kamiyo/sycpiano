@@ -1,13 +1,13 @@
-import '@/less/Schedule/event-list.less';
+import 'less/Schedule/event-list.less';
 
 import moment from 'moment-timezone';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
-import EventItem from '@/js/components/Schedule/EventItem.jsx';
-import EventMonthItem from '@/js/components/Schedule/EventMonthItem.jsx';
-import { dispatchSelectEvent, dispatchAnimateStart, dispatchAnimateFinish } from '@/js/components/Schedule/actions.js';
-import animateFn from '@/js/components/animate.js';
+import EventItem from 'js/components/Schedule/EventItem.jsx';
+import EventMonthItem from 'js/components/Schedule/EventMonthItem.jsx';
+import { dispatchSelectEvent, dispatchAnimateStart, dispatchAnimateFinish } from 'js/components/Schedule/actions.js';
+import animateFn from 'js/components/animate.js';
 import { easeQuadOut } from 'd3-ease';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });

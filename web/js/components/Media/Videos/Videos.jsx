@@ -1,5 +1,5 @@
-import '@/less/Media/media-content.less';
-import '@/less/Media/Videos/videos.less';
+import 'less/Media/media-content.less';
+import 'less/Media/Videos/videos.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -7,11 +7,11 @@ import PropTypes from 'prop-types';
 import { TweenLite } from 'gsap';
 import { Transition } from 'react-transition-group';
 import { connect } from 'react-redux';
-import LoadingOverlay from '@/js/components/Media/LoadingOverlay.jsx';
-import PreviewOverlay from '@/js/components/Media/Videos/PreviewOverlay.jsx';
-import VideoPlaylist from '@/js/components/Media/Videos/VideoPlaylist.jsx';
-import { createFetchPlaylistAction, resetPlayer, initializeYoutubeElement } from '@/js/components/Media/Videos/actions.js';
-import youTube from '@/js/YouTube.js';
+import LoadingOverlay from 'js/components/Media/LoadingOverlay.jsx';
+import PreviewOverlay from 'js/components/Media/Videos/PreviewOverlay.jsx';
+import VideoPlaylist from 'js/components/Media/Videos/VideoPlaylist.jsx';
+import { createFetchPlaylistAction, resetPlayer, initializeYoutubeElement } from 'js/components/Media/Videos/actions.js';
+import youTube from 'js/YouTube.js';
 
 class Videos extends React.Component {
     componentDidMount() {

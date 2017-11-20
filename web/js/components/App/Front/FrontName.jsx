@@ -1,4 +1,4 @@
-import '@/less/App/Front/front-name.less';
+import 'less/App/Front/front-name.less';
 
 import React from 'react';
 
