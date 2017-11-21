@@ -26,6 +26,9 @@
         "outDir": "./web/build",
         "baseUrl": "./web"
     },
+    // "files": [
+    //     "node_modules/@types/youtube/index.d.ts"
+    // ],
     "include": [
         "./web/js"
     ]
