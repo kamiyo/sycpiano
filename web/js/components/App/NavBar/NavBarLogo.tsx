@@ -1,9 +1,13 @@
 import 'less/App/NavBar/nav-bar-logo.less';
 
-import React from 'react';
-import { LogoInstance } from 'js/components/LogoSVG.jsx'
+import * as React from 'react';
+import { LogoInstance } from 'js/components/LogoSVG'
 
-const NavBarLogo = (props) => (
+interface NavBarLogoProps {
+    onClick: (event: MouseEvent) => void;
+}
+
+const NavBarLogo: React.SFC<NavBarLogoProps & React.HTMLAttributes<HTMLDivElement> > = (props) => (
     <div className="navBarLogo" onClick={props.onClick}>
         <LogoInstance />
         <div className="navBarLogoText no-highlight">

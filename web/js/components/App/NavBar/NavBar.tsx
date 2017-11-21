@@ -3,10 +3,11 @@ import 'less/App/NavBar/nav-bar-layout.less';
 
 import * as React from 'react';
 
-import NavBarLogo from 'js/components/App/NavBar/NavBarLogo.jsx';
-import NavBarLinks from 'js/components/App/NavBar/NavBarLinks.jsx';
+import { LinkShape } from 'js/components/App/NavBar/types';
+import NavBarLogo from 'js/components/App/NavBar/NavBarLogo';
+import NavBarLinks from 'js/components/App/NavBar/NavBarLinks';
 
-const links = [
+const links: LinkShape[] = [
     { name: 'home', path: '/' },
     { name: 'about', path: '/about' },
     { name: 'schedule', path: '/schedule' },

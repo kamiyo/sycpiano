@@ -17,5 +17,5 @@ function main() {
                 <Route path='/' component={App} />
             </BrowserRouter>
         </Provider>
-    ), document.getElementById('hero-container'));
+    ), document.getElementById('hero-container') as HTMLElement);
 }

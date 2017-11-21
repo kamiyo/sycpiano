@@ -1,8 +1,8 @@
 import 'less/App/Front/front-video.less';
 
-import React from 'react';
+import * as React from 'react';
 
-const FrontVideo = (props) => (
+const FrontVideo: React.SFC<React.HTMLAttributes<HTMLDivElement> > = () => (
     <div className='frontVideo'>
         <video autoPlay loop>
             <source src="/videos/front_video.mp4" type="video/mp4" />

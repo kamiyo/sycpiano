@@ -1,9 +1,13 @@
 import 'less/App/Front/front-logo.less';
 
-import React from 'react';
-import { LogoInstance } from 'js/components/LogoSVG.jsx';
+import * as React from 'react';
+import { LogoInstance } from 'js/components/LogoSVG';
 
-const FrontLogo = (props) => {
+interface FrontLogoProps {
+    hover: boolean;
+}
+
+const FrontLogo: React.SFC<FrontLogoProps & React.HTMLAttributes<HTMLElement> > = (props) => {
     let { hover, ...other } = props;
     return (
         <div className='frontLogo' >

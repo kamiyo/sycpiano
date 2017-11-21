@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
-import FrontVideo from 'js/components/App/Front/FrontVideo.jsx';
-import FrontLogo from 'js/components/App/Front/FrontLogo.jsx';
-import FrontName from 'js/components/App/Front/FrontName.jsx';
+import FrontVideo from 'js/components/App/Front/FrontVideo';
+import FrontLogo from 'js/components/App/Front/FrontLogo';
+import FrontName from 'js/components/App/Front/FrontName';
 
 const logoEnter = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.8,
@@ -41,7 +41,7 @@ const nameExit = (element: HTMLElement) => {
 
 interface FrontProps {
     show: boolean;
-    onClick(): void;
+    onClick: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
 interface FrontState {

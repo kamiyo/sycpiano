@@ -1,19 +1,28 @@
 import 'less/App/NavBar/sub-nav.less';
 
-import React from 'react';
+import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
 import SubNav from 'js/components/SubNav/SubNav.jsx';
 
-const Highlight = ({ activeName, link }) => (
+const Highlight: React.SFC<{ activeName: string; link: string; }> = ({ activeName, link }) => (
     <div>
         <div className={`highlight ${activeName}`}></div>
         <div className='hyperlink'>{link}</div>
     </div>
 );
 
-const NavBarLink = (props) => (
+interface NavBarLinkProps {
+    activeName: string;
+    link: string;
+    showSub: boolean;
+    subNavLinks: string[];
+    to: string;
+    toggleSub: (show?: boolean) => void;
+}
+
+const NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
     <li className='navBarLink'>
         {
             (props.subNavLinks) ?
@@ -37,7 +46,7 @@ const NavBarLink = (props) => (
                 mountOnEnter={true}
                 unmountOnExit={true}
                 in={props.subNavLinks && props.showSub}
-                onEnter={(el) => el.style.opacity = 1}
+                onEnter={(el) => el.style.opacity = '1'}
                 onExit={(el) => TweenLite.fromTo(el, 0.25, { opacity: 1 }, { opacity: 0 })}
                 timeout={250}
             >

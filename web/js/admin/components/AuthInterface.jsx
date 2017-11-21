@@ -1,7 +1,7 @@
 import 'less/Admin/components/auth-interface.less';
 
 import React from 'react';
-import Button from 'js/components/_reusable/Button.jsx';
+import Button from 'js/components/_reusable/Button';
 import { authorize } from 'js/services/GoogleOAuth.js';
 import { calendarScopes } from 'js/services/GoogleOAuthScopes.js';
 

@@ -1,8 +1,8 @@
 import 'less/App/Front/front-name.less';
 
-import React from 'react';
+import * as React from 'react';
 
-const FrontName = (props) => {
+const FrontName: React.SFC<{ hover: boolean } & React.HTMLAttributes<HTMLDivElement> > = (props) => {
     let { hover, ...other } = props;
     return (
         <div className='frontName'>

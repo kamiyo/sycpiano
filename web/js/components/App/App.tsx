@@ -6,11 +6,11 @@ import { Route, Switch } from 'react-router-dom';
 import { TransitionGroup, Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
 
-import { LogoSVG } from 'js/components/LogoSVG.jsx';
+import { LogoSVG } from 'js/components/LogoSVG';
 import Front from 'js/components/App/Front/Front';
 import NavBar from 'js/components/App/NavBar/NavBar';
 
-import About from 'js/components/About/About.jsx';
+import About from 'js/components/About/About';
 import Contact from 'js/components/Contact/Contact.jsx';
 import Home from 'js/components/Home/Home.jsx';
 import Media from 'js/components/Media/Media.jsx';
