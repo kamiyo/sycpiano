@@ -1,7 +1,7 @@
 import 'less/App/NavBar/nav-bar.less';
 import 'less/App/NavBar/nav-bar-layout.less';
 
-import React from 'react';
+import * as React from 'react';
 
 import NavBarLogo from 'js/components/App/NavBar/NavBarLogo.jsx';
 import NavBarLinks from 'js/components/App/NavBar/NavBarLinks.jsx';
@@ -15,7 +15,16 @@ const links = [
     { name: 'contact', path: '/contact' }
 ];
 
-export default class NavBar extends React.Component {
+interface NavBarProps {
+    onClick(): void;
+    currentBasePath: string;
+}
+
+interface NavBarState {
+    showSub: boolean;
+}
+
+export default class NavBar extends React.Component<NavBarProps, NavBarState> {
     state = {
         showSub: false
     };

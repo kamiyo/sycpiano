@@ -1,4 +1,4 @@
-import 'less/admin/components/calendar-admin.less';
+import 'less/Admin/components/calendar-admin.less';
 
 import React from 'react';
 

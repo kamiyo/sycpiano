@@ -75,9 +75,13 @@
     "webpack-stream": "^4.0.0"
   },
   "devDependencies": {
+    "@types/gsap": "^1.19.1",
     "@types/mathjs": "0.0.35",
     "@types/react": "^16.0.22",
     "@types/react-dom": "^16.0.3",
+    "@types/react-redux": "^5.0.13",
+    "@types/react-router-dom": "^4.2.1",
+    "@types/react-transition-group": "^2.0.6",
     "babel-eslint": "^7.1.1",
     "babel-jest": "^20.0.3",
     "babel-plugin-transform-runtime": "^6.23.0",

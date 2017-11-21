@@ -1,14 +1,14 @@
 import 'less/App/app.less';
 
-import React from 'react';
+import * as React from 'react';
 
 import { Route, Switch } from 'react-router-dom';
 import { TransitionGroup, Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
 
 import { LogoSVG } from 'js/components/LogoSVG.jsx';
-import Front from 'js/components/App/Front/Front.jsx';
-import NavBar from 'js/components/App/NavBar/NavBar.jsx';
+import Front from 'js/components/App/Front/Front';
+import NavBar from 'js/components/App/NavBar/NavBar';
 
 import About from 'js/components/About/About.jsx';
 import Contact from 'js/components/Contact/Contact.jsx';
@@ -16,27 +16,31 @@ import Home from 'js/components/Home/Home.jsx';
 import Media from 'js/components/Media/Media.jsx';
 import Press from 'js/components/Press/Press.jsx';
 import Schedule from 'js/components/Schedule/Schedule.jsx';
+import { RouteComponentProps } from 'react-router';
 
-
-const fadeOnEnter = (element, isAppearing) => {
+const fadeOnEnter = (element: HTMLElement, isAppearing: boolean) => {
     const delay = (isAppearing) ? 0.3 : 0;
     TweenLite.fromTo(element, 0.25, { opacity: 0 }, { opacity: 1, delay: delay });
 }
 
-const fadeOnExit = (element) => {
+const fadeOnExit = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.25, { opacity: 1 }, { opacity: 0, });
 }
 
-const slideDownOnEnter = (element) => {
+const slideDownOnEnter = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.5, { y: -90 }, { y: 0, delay: 0.55, ease: "Power3.easeOut" });
 }
 
-const slideUpOnExit = (element) => {
+const slideUpOnExit = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.5, { y: 0 }, { y: -90, delay: 0.55, ease: "Power3.easeOut" });
 }
 
-export default class App extends React.Component {
-    constructor(props) {
+interface AppState {
+    isFront: boolean;
+}
+
+export default class App extends React.Component<RouteComponentProps<void>, AppState> {
+    constructor(props: any) {
         super(props);
         // uncomment the following comments to allow showing video on Home
         // const initialFront = this.props.location.pathname === '/';
@@ -50,23 +54,23 @@ export default class App extends React.Component {
 
     showFront = () => {
         this.setState({ isFront: true });
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, true));
         window.addEventListener('keydown', this.checkDownArrow);
     }
 
     hideFront = () => {
         this.setState({ isFront: false });
-        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront, { passive: true }));
+        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront, true));
         window.removeEventListener('keydown', this.checkDownArrow);
     }
 
-    checkDownArrow = event => {
+    checkDownArrow = (event: KeyboardEvent) => {
         if (event.keyCode == 40)
             this.hideFront();
     }
 
     componentDidMount() {
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, true));
         window.addEventListener('keydown', this.checkDownArrow);
     }
 

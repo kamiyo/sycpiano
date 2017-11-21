@@ -1,4 +1,4 @@
-import 'less/admin/components/auth-interface.less';
+import 'less/Admin/components/auth-interface.less';
 
 import React from 'react';
 import Button from 'js/components/_reusable/Button.jsx';

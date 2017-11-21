@@ -7,7 +7,7 @@ import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtuali
 import EventItem from 'js/components/Schedule/EventItem.jsx';
 import EventMonthItem from 'js/components/Schedule/EventMonthItem.jsx';
 import { dispatchSelectEvent, dispatchAnimateStart, dispatchAnimateFinish } from 'js/components/Schedule/actions.js';
-import animateFn from 'js/components/animate.js';
+import animateFn from 'js/components/animate';
 import { easeQuadOut } from 'd3-ease';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });

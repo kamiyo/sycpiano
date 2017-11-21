@@ -12,7 +12,7 @@ const config = {
     cache: true,
     devtool: 'inline-source-map',
     entry: {
-        sycpiano: path.resolve(__dirname, 'web/js/main.jsx'),
+        sycpiano: path.resolve(__dirname, 'web/js/main.tsx'),
         calendarAdmin: path.resolve(__dirname, 'web/js/admin/main.jsx'),
     },
     output: {

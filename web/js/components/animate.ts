@@ -2,11 +2,11 @@ const animateFn = (
     startValue = 0,
     endValue = 1,
     duration = 200, // ms
-    fn,             // the function to use as animation (is called every frame)
-    easing,         // function input: t => [0, 1], output: eased t => [0, 1]
-    callback,       // callback for when animation finishes (i.e. return promise)
-    animationRequestHandler     // for dealing with requestIds (in case you want to cancel it on scroll, etc)
-) => {
+    fn: (parameter: number) => void,             // the function to use as animation (is called every frame)
+    easing: (input: number) => number,         // function input: t => [0, 1], output: eased t => [0, 1]
+    callback: () => void,       // callback for when animation finishes (i.e. return promise)
+    animationRequestHandler: (requestId: number) => void     // for dealing with requestIds (in case you want to cancel it on scroll, etc)
+): void => {
     if (!fn) {
         return;
     }
@@ -14,11 +14,11 @@ const animateFn = (
         easing = (t) => (t);
     }
 
-    let startTimestamp = null;
+    let startTimestamp: number = undefined;
     const durationInv = 1 / duration;    // to avoid dividing in the loop
     const startToEndValue = endValue - startValue;
 
-    const animationStep = timestamp => {
+    const animationStep = (timestamp: number): void => {
         if (!startTimestamp) {
             startTimestamp = timestamp;
             window.requestAnimationFrame(animationStep);
