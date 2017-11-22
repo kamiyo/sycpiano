@@ -1,6 +1,7 @@
 import SCHEDULE_ACTIONS from 'js/components/Schedule/actionTypeKeys';
 import * as ActionTypes from 'js/components/Schedule/actionTypes';
 import { GlobalStateShape } from 'js/store';
+import { EventItemShape, DayItemShape } from 'js/components/Schedule/types';
 
 import moment from 'moment-timezone';
 import { Dispatch } from 'redux';
@@ -17,7 +18,7 @@ const fetchEventsError = (): ActionTypes.FetchEventsError => ({
     type: SCHEDULE_ACTIONS.FETCH_EVENTS_ERROR
 });
 
-const fetchEventsSuccess = (listItems: any[], currentItem: any): ActionTypes.FetchEventsSuccess => ({
+const fetchEventsSuccess = (listItems: EventItemShape[], currentItem: EventItemShape): ActionTypes.FetchEventsSuccess => ({
     type: SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS,
     listItems: listItems,
     // Initially default to the closest upcoming event.
@@ -36,9 +37,8 @@ const fetchEvents = (initialEventDateString: string) => async (dispatch: Dispatc
         dispatch(fetchEventsRequest());
         const calendarResponse = await googleAPI.getCalendarEvents();
         const listItems = transformGCalEventsToListItems(calendarResponse.data.items);
-        const currentItem = listItems.find(
-            item => item.type !== 'month'
-                && moment(initialEventDateString).isSame(item.dateTime, 'day')
+        const currentItem = listItems.find(item =>
+            item.type === 'day' && moment(initialEventDateString).isSame((item as DayItemShape).dateTime, 'day')
         ) || listItems.find(item => item.type !== 'month');
         dispatch(fetchEventsSuccess(listItems, currentItem));
     } catch (err) {
@@ -90,20 +90,20 @@ export const createFetchLatLngAction = (location: string) => (dispatch: Dispatch
     }
 }
 
-export const dispatchSelectEvent = (eventItem) => (dispatch) => (
+export const dispatchSelectEvent = (eventItem: EventItemShape) => (dispatch: Dispatch<GlobalStateShape>) => (
     dispatch({
         type: SCHEDULE_ACTIONS.SELECT_EVENT,
         eventItem: eventItem
     })
 );
 
-export const dispatchAnimateStart = () => (dispatch) => (
+export const dispatchAnimateStart = () => (dispatch: Dispatch<GlobalStateShape>) => (
     dispatch({
         type: SCHEDULE_ACTIONS.SCROLL_START
     })
 );
 
-export const dispatchAnimateFinish = () => (dispatch) => (
+export const dispatchAnimateFinish = () => (dispatch: Dispatch<GlobalStateShape>) => (
     dispatch({
         type: SCHEDULE_ACTIONS.SCROLL_FINISH
     })

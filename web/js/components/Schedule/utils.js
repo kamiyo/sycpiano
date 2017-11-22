@@ -1,6 +1,20 @@
 import { default as moment, Moment } from 'moment-timezone';
 
 import createListItem from 'js/components/Schedule/createListItem.js';
+import { EventItemShape } from 'js/components/Schedule/types';
+
+interface GCalEvent {
+    description: any;
+    id: string;
+    location: string;
+    start: {
+        dateTime?: Moment;
+        date?: Moment;
+        timeZone?: string;
+    };
+    summary: string;
+    [key: string]: any; // other params
+}
 
 /**
  * Takes an event resource as returned by the Calendar API, and extracts the
@@ -8,7 +22,7 @@ import createListItem from 'js/components/Schedule/createListItem.js';
  * @param  {object} event
  * @return {moment}
  */
-const extractEventDateTime = (event: any) => {
+const extractEventDateTime = (event: GCalEvent) => {
     if (event.start.dateTime) {
         return moment(event.start.dateTime).tz(event.start.timeZone);
     } else {
@@ -22,7 +36,7 @@ const extractEventDateTime = (event: any) => {
  * @param  {object} event
  * @return {object}
  */
-const extractEventDescription = (event: any) => {
+const extractEventDescription = (event: GCalEvent) => {
     try {
         return JSON.parse(event.description);
     } catch (e) {
@@ -30,22 +44,10 @@ const extractEventDescription = (event: any) => {
     }
 };
 
-interface GCalEvent {
-    description: any;
-    id: string;
-    location: string;
-    start: {
-        dateTime?: Moment;
-        date?: Moment;
-        timeZone?: string;
-    };
-    summary: string;
-}
-
 /**
  * Takes gcal events, and processes them into a list of list items (i.e. DayItem or MonthItem).
  */
-export const transformGCalEventsToListItems = (events: GCalEvent[]) => {
+export const transformGCalEventsToListItems = (events: GCalEvent[]): EventItemShape[] => {
     const monthsSeen = new Set();
 
     return events.reduce((runningEventsArr, event) => {

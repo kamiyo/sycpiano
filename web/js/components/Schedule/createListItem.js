@@ -1,18 +1,5 @@
 import { Moment } from 'moment-timezone';
-
-interface DayInputShape {
-    id: string;
-    name: string;
-    collaborators: string[];
-    eventType: 'concerto' | 'chamber' | 'solo' | 'masterclass';
-    dateTime: Moment;
-    location: string;
-    program: string[];
-}
-
-interface MonthInputShape {
-    month: string;
-}
+import { DayItemInputShape, MonthItemInputShape } from 'js/components/Schedule/types';
 
 class DayItem {
     id: string;
@@ -24,7 +11,7 @@ class DayItem {
     dateTime: Moment;
     location: string;
 
-    constructor(properties: DayInputShape) {
+    constructor(properties: DayItemInputShape) {
         this.id = properties.id;
         this.type = 'day';
         this.name = properties.name;
@@ -39,18 +26,18 @@ class DayItem {
 class MonthItem {
     type: 'month';
     month: string;
-    constructor(properties: MonthInputShape) {
+    constructor(properties: MonthItemInputShape) {
         this.type = 'month';
         this.month = properties.month;
     }
 }
 
-export default (itemType: 'day' | 'month', properties: DayInputShape | MonthInputShape) => {
+export default (itemType: 'day' | 'month', properties: DayItemInputShape | MonthItemInputShape) => {
     switch (itemType) {
         case 'day':
-            return new DayItem(properties as DayInputShape);
+            return new DayItem(properties as DayItemInputShape);
         case 'month':
-            return new MonthItem(properties as MonthInputShape);
+            return new MonthItem(properties as MonthItemInputShape);
         default:
             return null;
     }
