@@ -6,10 +6,19 @@
     ],
     "rules": {
         "no-console": false,
-        "quotemark": [true, "single"]
+        "quotemark": [true, "single"],
+        "max-line-length": false,
+        "object-literal-sort-keys": false,
+        "interface-name": false,
+        "jsx-no-lambda": false,
+        "jsx-no-multiline-js": false
     },
     "jsRules": {
         "no-console": false,
-        "quotemark": [true, "single"]
+        "quotemark": [true, "single"],
+        "max-line-length": false,
+        "object-literal-sort-keys": false,
+        "jsx-no-lambda": false,
+        "jsx-no-multiline-js": false
     }
 }

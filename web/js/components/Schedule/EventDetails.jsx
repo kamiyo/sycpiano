@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import withScriptJs from "react-google-maps/lib/async/withScriptjs";
 
-import { googleMapsUrl } from 'js/services/GoogleAPI.js';
+import { googleMapsUrl } from 'js/services/GoogleAPI';
 import { createFetchLatLngAction } from 'js/components/Schedule/actions.js';
 
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import moment from 'moment';
+import { default as moment, Moment } from 'moment';
 
 const tzAPIKey = 'AIzaSyDnJI7CLrfcEDmFG6_AB0PcVXjzqN1nDVM';
 const calAPIKey = 'AIzaSyB1g_4E0UTqwX0TxezROJiNj3cAY0rr16w';
@@ -13,61 +13,61 @@ export const googleMapsUrl = `https://maps.googleapis.com/maps/api/js?v=3.28&lib
  * NOTE: All GoogleAPI functions return promises.
  */
 class GoogleAPI {
-    createEvent(
-        summary,
-        description,
-        location,
-        startDatetime,
-        endDatetime,
-        timezone,
-        timeTBD,
-        accessToken
+    public createEvent(
+        summary: string,
+        description: string,
+        location: string,
+        startDatetime: Moment,
+        endDatetime: Moment,
+        timezone: string,
+        timeTBD: boolean,
+        accessToken: string,
     ) {
         const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
         const eventResource = {
-            summary: summary,
-            description: description,
-            location: location,
+            summary,
+            description,
+            location,
             start: (timeTBD) ? {date: startDatetime.format('YYYY-MM-DD')} : {dateTime: startDatetime.format(), timeZone: timezone},
             end: (timeTBD) ? {date: endDatetime.format('YYYY-MM-DD')} : {dateTime: endDatetime.format(), timeZone: timezone},
         };
         return axios.post(url, eventResource, {
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         });
     }
 
-    updateEvent(
-        eventId,
-        summary,
-        description,
-        location,
-        startDatetime,
-        endDatetime,
-        timezone,
-        timeTBD,
-        accessToken
-    ){
+    public updateEvent(
+        eventId: string,
+        summary: string,
+        description: string,
+        location: string,
+        startDatetime: Moment,
+        endDatetime: Moment,
+        timezone: string,
+        timeTBD: boolean,
+        accessToken: string,
+    ) {
         console.log(startDatetime.format());
         const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${eventId}`;
         const eventResource = {
-            summary: summary,
-            description: description,
-            location: location,
+            summary,
+            description,
+            location,
             start: (timeTBD) ? {date: startDatetime.format('YYYY-MM-DD')} : {dateTime: startDatetime.format(), timeZone: timezone},
             end: (timeTBD) ? {date: endDatetime.format('YYYY-MM-DD')} : {dateTime: endDatetime.format(), timeZone: timezone},
         };
         return axios.put(url, eventResource, {
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         });
     }
 
-    geocode(address) {
+    public geocode(address: string) {
         const url = 'https://maps.googleapis.com/maps/api/geocode/json';
-        return axios.get(url, { params: { address: address, key: tzAPIKey }});
+        return axios.get(url, { params: { address, key: tzAPIKey }});
     }
 
     /**
@@ -75,7 +75,7 @@ class GoogleAPI {
      *
      * @param {moment} timeMin - the lower bound for end time of events to be returned.
      */
-    getCalendarEvents(timeMin = moment()) {
+    public getCalendarEvents(timeMin = moment()) {
         const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
         return axios.get(url, {
             params: {
@@ -83,7 +83,7 @@ class GoogleAPI {
                 singleEvents: true,
                 timeMin: timeMin.format(),
                 key: calAPIKey,
-            }
+            },
         });
     }
 
@@ -95,7 +95,7 @@ class GoogleAPI {
      * @param {number} timestamp - Seconds since midnight, January 1, 1970 UTC.
      *                             Used for determining whether DST is active.
      */
-    getTimezone(lat, long, timestamp) {
+    public getTimezone(lat: number, long: number, timestamp: number) {
         const loc = `${lat.toString()},${long.toString()}`;
         const url = `https://maps.googleapis.com/maps/api/timezone/json`;
         return axios.get(url, {
@@ -103,9 +103,9 @@ class GoogleAPI {
                 location: loc,
                 timestamp: timestamp.toString(),
                 key: tzAPIKey,
-            }
+            },
         });
     }
 }
 
-export let googleAPI = new GoogleAPI();
+export const googleAPI = new GoogleAPI();

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import 'moment-timezone';
-import { googleAPI } from 'js/services/GoogleAPI.js';
+import { googleAPI } from 'js/services/GoogleAPI';
 import { simplifyArray } from 'js/admin/utils.js';
 
 /**
