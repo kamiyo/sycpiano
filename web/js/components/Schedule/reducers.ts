@@ -1,5 +1,5 @@
-import ActionType from 'js/components/Schedule/actionTypes';
 import SCHEDULE_ACTIONS from 'js/components/Schedule/actionTypeKeys';
+import ActionType from 'js/components/Schedule/actionTypes';
 
 export interface EventItemsStateShape {
     items: any[];
@@ -17,11 +17,11 @@ export interface EventItemsStateShape {
 export const eventItemsReducer = (state: EventItemsStateShape = {
     items: [],
     currentItem: null,
-    currentLatLng: { lat: undefined, lng: undefined },
+    currentLatLng: null,
     hasEventBeenSelected: false,
     isFetching: false,
     isFetchingLatLng: false,
-    isAnimatingScroll: false
+    isAnimatingScroll: false,
 }, action: ActionType) => {
     switch (action.type) {
         case SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS:
@@ -29,16 +29,29 @@ export const eventItemsReducer = (state: EventItemsStateShape = {
                 ...state,
                 items: action.listItems,
                 isFetching: false,
-                currentItem: action.currentItem
+                currentItem: action.currentItem,
             };
         case SCHEDULE_ACTIONS.FETCH_EVENTS_REQUEST:
-            return { ...state, isFetching: true };
+            return {
+                ...state,
+                isFetching: true,
+            };
         case SCHEDULE_ACTIONS.FETCH_EVENTS_ERROR:
-            return { ...state, isFetching: false };
+            return {
+                ...state,
+                isFetching: false,
+            };
         case SCHEDULE_ACTIONS.FETCH_LAT_LNG_REQUEST:
-            return { ...state, isFetchingLatLng: true };
+            return {
+                ...state,
+                isFetchingLatLng: true,
+                currentLatLng: null,
+            };
         case SCHEDULE_ACTIONS.FETCH_LAT_LNG_ERROR:
-            return { ...state, isFetchingLatLng: false };
+            return {
+                ...state,
+                isFetchingLatLng: false,
+            };
         case SCHEDULE_ACTIONS.FETCH_LAT_LNG_SUCCESS:
             return {
                 ...state,
@@ -58,14 +71,14 @@ export const eventItemsReducer = (state: EventItemsStateShape = {
         case SCHEDULE_ACTIONS.SCROLL_START:
             return {
                 ...state,
-                isAnimatingScroll: true
+                isAnimatingScroll: true,
             };
         case SCHEDULE_ACTIONS.SCROLL_FINISH:
             return {
                 ...state,
-                isAnimatingScroll: false
-            }
+                isAnimatingScroll: false,
+            };
         default:
             return state;
-    };
+    }
 };

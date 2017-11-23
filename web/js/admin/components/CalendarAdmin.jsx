@@ -10,7 +10,7 @@ import {
     eventListReducer,
 } from 'js/admin/components/reducers.js';
 
-import { validateToken, CLIENT_ID } from 'js/services/GoogleOAuth.js';
+import { validateToken, CLIENT_ID } from 'js/services/GoogleOAuth';
 import AuthInterface from 'js/admin/components/AuthInterface.jsx';
 import EventForm from 'js/admin/components/EventForm.jsx';
 import EventList from 'js/admin/components/EventList.jsx';

@@ -12,7 +12,9 @@
         "interface-name": false,
         "jsx-no-lambda": false,
         "jsx-no-multiline-js": false,
-        "member-access": false
+        "member-access": false,
+        "align": [true, "statements", "members", "elements"],
+        "max-classes-per-file": false
     },
     "jsRules": {
         "no-console": false,
@@ -21,6 +23,8 @@
         "object-literal-sort-keys": false,
         "jsx-no-lambda": false,
         "jsx-no-multiline-js": false,
-        "member-access": false
+        "member-access": false,
+        "align": [true, "statements", "members", "elements"],
+        "max-classes-per-file": false
     }
 }

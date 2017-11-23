@@ -11,7 +11,7 @@ export const LogoSVG = () => (
     </svg>
 );
 
-export const LogoInstance: React.SFC<React.HTMLAttributes<{}> > = (props) => (
+export const LogoInstance: React.SFC<React.SVGAttributes<{}> > = (props) => (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
         <use xlinkHref='#logo_template' />
     </svg>

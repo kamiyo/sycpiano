@@ -11,11 +11,11 @@ import Front from 'js/components/App/Front/Front';
 import NavBar from 'js/components/App/NavBar/NavBar';
 
 import About from 'js/components/About/About';
-import Contact from 'js/components/Contact/Contact.jsx';
-import Home from 'js/components/Home/Home.jsx';
-import Media from 'js/components/Media/Media.jsx';
-import Press from 'js/components/Press/Press.jsx';
-import Schedule from 'js/components/Schedule/Schedule.jsx';
+import Contact from 'js/components/Contact/Contact';
+import Home from 'js/components/Home/Home';
+import Media from 'js/components/Media/Media';
+import Press from 'js/components/Press/Press';
+import Schedule from 'js/components/Schedule/Schedule';
 import { RouteComponentProps } from 'react-router';
 
 const fadeOnEnter = (element: HTMLElement, isAppearing: boolean) => {

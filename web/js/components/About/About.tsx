@@ -2,7 +2,7 @@ import 'less/About/about.less';
 
 import * as React from 'react';
 import * as moment from 'moment-timezone';
-import blurbs from 'js/components/About/blurbs.js';
+import blurbs from 'js/components/About/blurbs';
 
 const About = () => (
     <div className='aboutContainer container'>

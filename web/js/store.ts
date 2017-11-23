@@ -10,21 +10,11 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
-import { audioPlaylistReducer, audioUIReducer, audioVisualizerReducer } from 'js/components/Media/Music/reducers.js';
-import { videoPlayerReducer, videoPlaylistReducer } from 'js/components/Media/Videos/reducers.js';
-import { acclaimsListReducer } from 'js/components/Press/reducers.js';
-import { eventItemsReducer, EventItemsStateShape } from 'js/components/Schedule/reducers';
-
-// update as types are filled
-export interface GlobalStateShape {
-    audio_playlist: any;
-    audio_ui: any;
-    audio_visualizer: any;
-    press_acclaimsList: any;
-    schedule_eventItems: EventItemsStateShape;
-    video_player: any;
-    video_playlist: any;
-}
+import { audioPlaylistReducer, audioUIReducer, audioVisualizerReducer } from 'js/components/Media/Music/reducers';
+import { videoPlayerReducer, videoPlaylistReducer } from 'js/components/Media/Videos/reducers';
+import { acclaimsListReducer } from 'js/components/Press/reducers';
+import { eventItemsReducer } from 'js/components/Schedule/reducers';
+import { GlobalStateShape } from 'js/types';
 
 const reducersMap = {
     audio_playlist: audioPlaylistReducer,

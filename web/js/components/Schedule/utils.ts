@@ -1,6 +1,6 @@
 import { default as moment, Moment } from 'moment-timezone';
 
-import createListItem from 'js/components/Schedule/createListItem.js';
+import createListItem from 'js/components/Schedule/createListItem';
 import { EventItemShape } from 'js/components/Schedule/types';
 
 interface GCalEvent {

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
-import SubNav from 'js/components/SubNav/SubNav.jsx';
+import SubNav from 'js/components/SubNav/SubNav';
 
 const Highlight: React.SFC<{ activeName: string; link: string; }> = ({ activeName, link }) => (
     <div>

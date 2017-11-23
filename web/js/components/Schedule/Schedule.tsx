@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 
-import { createFetchEventsAction } from 'js/components/Schedule/actions.js';
-import ConnectedEventDetails from 'js/components/Schedule/EventDetails.jsx';
-import EventList from 'js/components/Schedule/EventList.jsx';
+import { createFetchEventsAction } from 'js/components/Schedule/actions';
+import ConnectedEventDetails from 'js/components/Schedule/EventDetails';
+import EventList from 'js/components/Schedule/EventList';
 import { EventItemShape } from 'js/components/Schedule/types';
-import { GlobalStateShape } from 'js/store';
+import { GlobalStateShape } from 'js/types';
 
 interface ScheduleProps {
     createFetchEventsAction: (date: string) => void;
