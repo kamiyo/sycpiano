@@ -6,3 +6,8 @@ export interface AcclaimItemShape {
     shortAuthor: string;
     date: string;
 }
+
+export interface AcclaimsListStateShape {
+    isFetching: boolean;
+    items: AcclaimItemShape[];
+}

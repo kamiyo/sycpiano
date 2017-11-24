@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { Dispatch } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 
 import PRESS_ACTIONS from 'js/components/Press/actionTypeKeys';
 import * as ActionTypes from 'js/components/Press/actionTypes';
@@ -37,7 +38,7 @@ const fetchAcclaims = () => async (dispatch: Dispatch<GlobalStateShape>) => {
     }
 };
 
-export const createFetchAcclaimsAction = () => (dispatch: Dispatch<GlobalStateShape>, getState: () => GlobalStateShape) => {
+export const createFetchAcclaimsAction = (): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
     if (shouldFetchAcclaims(getState())) {
         dispatch(fetchAcclaims());
     }

@@ -65,8 +65,9 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
     }
 
     checkDownArrow = (event: KeyboardEvent) => {
-        if (event.keyCode == 40)
+        if (event.keyCode == 40) {
             this.hideFront();
+        }
     }
 
     componentDidMount() {

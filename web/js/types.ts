@@ -1,5 +1,5 @@
-import { AcclaimsListStateShape } from 'js/components/Press/reducers';
-import { EventItemsStateShape } from 'js/components/Schedule/reducers';
+import { AcclaimsListStateShape } from 'js/components/Press/types';
+import { EventItemsStateShape } from 'js/components/Schedule/types';
 
 export interface GlobalStateShape {
     audio_playlist: any;

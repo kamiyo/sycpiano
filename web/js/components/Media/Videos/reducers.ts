@@ -1,69 +1,72 @@
-import { VIDEO_ACTIONS } from 'js/components/Media/Videos/actions.js';
+import VIDEO_ACTIONS from 'js/components/Media/Videos/actionTypeKeys';
+import ActionTypes from 'js/components/Media/Videos/actionTypes';
 
-export const videoPlayerReducer = (state = {
+import { VideoPlayerStateShape, VideoPlaylistStateShape } from 'js/components/Media/Videos/types';
+
+export const videoPlayerReducer = (state: VideoPlayerStateShape = {
     isPlayerReady: false,
     videoId: '',
     isPreviewOverlay: false,
-    isPlaying: false
-}, action) => {
+    isPlaying: false,
+}, action: ActionTypes) => {
     switch (action.type) {
         case VIDEO_ACTIONS.PLAYER_IS_READY:
             return {
                 ...state,
                 isPlayerReady: true,
-                isPreviewOverlay: true
-            }
+                isPreviewOverlay: true,
+            };
         case VIDEO_ACTIONS.PLAY_ITEM:
             return {
                 ...state,
                 videoId: action.videoId,
                 isPlaying: true,
-                isPreviewOverlay: false
-            }
+                isPreviewOverlay: false,
+            };
         case VIDEO_ACTIONS.FETCH_PLAYLIST_SUCCESS:
             return {
                 ...state,
-                videoId: action.videoId
-            }
+                videoId: action.videoId,
+            };
         case VIDEO_ACTIONS.RESET_PLAYER:
             return {
                 ...state,
                 isPlayerReady: false,
                 videoId: '',
                 isPlaying: false,
-                isPreviewOverlay: false
-            }
+                isPreviewOverlay: false,
+            };
         default: return state;
     }
 };
 
-export const videoPlaylistReducer = (state = {
+export const videoPlaylistReducer = (state: VideoPlaylistStateShape = {
     items: [],
     isFetching: false,
-    isShow: false
-}, action) => {
+    isShow: false,
+}, action: ActionTypes) => {
     switch (action.type) {
         case VIDEO_ACTIONS.FETCH_PLAYLIST_REQUEST:
             return {
-                ...state, isFetching: true
-            }
+                ...state, isFetching: true,
+            };
         case VIDEO_ACTIONS.FETCH_PLAYLIST_SUCCESS:
             return {
                 ...state,
                 isFetching: false,
                 items: action.videos,
-                isShow: true
-            }
-        case VIDEO_ACTIONS.FETCHP_PLAYLIST_ERROR:
+                isShow: true,
+            };
+        case VIDEO_ACTIONS.FETCH_PLAYLIST_ERROR:
             return {
                 ...state,
-                isFetching: false
-            }
+                isFetching: false,
+            };
         case VIDEO_ACTIONS.TOGGLE_PLAYLIST:
             return {
                 ...state,
-                isShow: action.isShow
-            }
+                isShow: action.isShow,
+            };
         default: return state;
-    };
+    }
 };

@@ -1,12 +1,16 @@
 import 'less/Media/loading-overlay.less';
 
-import React from 'react';
+import * as React from 'react';
 import { Transition } from 'react-transition-group';
 import { TweenLite } from 'gsap';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { GlobalStateShape } from 'js/types';
 
-const LoadingOverlay = (props) => (
+interface LoadingOverlayProps {
+    isPlayerReady: boolean;
+}
+
+const LoadingOverlay = (props: LoadingOverlayProps) => (
     <Transition
         in={!props.isPlayerReady}
         onExit={(el) => { TweenLite.fromTo(el, 0.3, { opacity: 1 }, { opacity: 0 }) }}
@@ -28,15 +32,11 @@ const LoadingOverlay = (props) => (
     </Transition>
 );
 
-LoadingOverlay.PropTypes = {
-    isPlayerReady: PropTypes.bool.isRequired
-}
-
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: GlobalStateShape) => ({
     isPlayerReady: state.video_player.isPlayerReady
 });
 
-export default connect(
+export default connect<LoadingOverlayProps, void, void>(
     mapStateToProps,
     null
 )(LoadingOverlay)

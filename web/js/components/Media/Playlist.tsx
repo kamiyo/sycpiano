@@ -1,21 +1,40 @@
 import 'less/Media/playlist.less';
 
-import React from 'react';
-import { connect } from 'react-redux';
+import * as React from 'react';
 import { Transition } from 'react-transition-group';
+
 import { TweenLite } from 'gsap';
-import PlaylistToggler from 'js/components/Media/PlaylistToggler.jsx';
 
-const slideLeft = (element, amount, delay = 0) => {
-    TweenLite.fromTo(element, 0.4, { x: amount }, { x: 0, ease: "Power3.easeOut", delay: delay });
+import PlaylistToggler from 'js/components/Media/PlaylistToggler';
+
+const slideLeft = (element: HTMLElement, amount: number, delay = 0) => {
+    TweenLite.fromTo(element, 0.4, { x: amount }, { x: 0, ease: 'Power3.easeOut', delay });
+};
+
+const slideRight = (element: HTMLElement, amount: number, delay = 0) => {
+    TweenLite.fromTo(element, 0.4, { x: 0 }, { x: amount, ease: 'Power3.easeOut', delay });
+};
+
+interface ChildRendererProps {
+    key: number | string;
+    isActive: boolean;
+    item: any;
+    onClick: () => void;
 }
 
-const slideRight = (element, amount, delay = 0) => {
-    TweenLite.fromTo(element, 0.4, { x: 0 }, { x: amount, ease: "Power3.easeOut", delay: delay });
+interface PlaylistProps {
+    ChildRenderer: (childrenProps: ChildRendererProps) => JSX.Element;
+    className: string;
+    currentItemId: number | string;
+    hasToggler: boolean;
+    isShow: boolean;
+    items: any[];
+    onClick: () => void;
+    togglePlaylist: (isShow?: boolean) => void;
 }
 
-const Playlist = (props) => {
-    let ulRef = null;
+const Playlist = (props: PlaylistProps) => {
+    let ulRef: HTMLUListElement = null;
     return (
         <Transition
             in={props.isShow}
@@ -23,7 +42,7 @@ const Playlist = (props) => {
             onEnter={(el, isAppearing) => {
                 const amount = ulRef.getBoundingClientRect().width;
                 if (!props.hasToggler && isAppearing) {
-                    el.style.transform = "translateX(0)";
+                    el.style.transform = 'translateX(0)';
                 } else {
                     slideLeft(el, amount, (isAppearing) ? 0.25 : 0);
                 }
@@ -42,7 +61,7 @@ const Playlist = (props) => {
                     }}
                 /> : null}
                 <ul ref={(ul) => ulRef = ul}>
-                    {props.items.map((item, i) => (
+                    {props.items.map((item: any) => (
                         <props.ChildRenderer
                             key={item.id}
                             isActive={props.currentItemId === item.id}
@@ -53,7 +72,7 @@ const Playlist = (props) => {
                 </ul>
             </div>
         </Transition>
-    )
-}
+    );
+};
 
 export default Playlist;

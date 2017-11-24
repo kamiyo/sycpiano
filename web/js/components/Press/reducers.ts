@@ -1,12 +1,7 @@
 import PRESS_ACTIONS from 'js/components/Press/actionTypeKeys';
 
 import ActionTypes from 'js/components/Press/actionTypes';
-import { AcclaimItemShape } from 'js/components/Press/types';
-
-export interface AcclaimsListStateShape {
-    isFetching: boolean;
-    items: AcclaimItemShape[];
-}
+import { AcclaimsListStateShape } from 'js/components/Press/types';
 
 export const acclaimsListReducer = (state: AcclaimsListStateShape = {
     isFetching: false,

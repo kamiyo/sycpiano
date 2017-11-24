@@ -102,7 +102,7 @@ class YouTube {
         });
     }
 
-    private destroyPlayer() {
+    public destroyPlayer() {
         if (this.player) {
             this.player.destroy();
             this.player = null;

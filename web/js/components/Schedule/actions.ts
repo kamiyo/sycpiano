@@ -5,6 +5,7 @@ import { GlobalStateShape } from 'js/types';
 
 import moment from 'moment-timezone';
 import { Dispatch } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 
 import { transformGCalEventsToListItems } from 'js/components/Schedule/utils';
 import { googleAPI } from 'js/services/GoogleAPI';
@@ -31,7 +32,7 @@ const shouldFetchEvents = (state: GlobalStateShape) => {
     return (eventItemsReducer.items.length === 0 && !eventItemsReducer.isFetching);
 };
 
-const fetchEvents = (initialEventDateString: string) => async (dispatch: Dispatch<GlobalStateShape>) => {
+const fetchEvents = (initialEventDateString: string): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
     try {
         dispatch(fetchEventsRequest());
         const calendarResponse = await googleAPI.getCalendarEvents();

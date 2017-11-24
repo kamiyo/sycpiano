@@ -1,18 +1,6 @@
 import SCHEDULE_ACTIONS from 'js/components/Schedule/actionTypeKeys';
 import ActionType from 'js/components/Schedule/actionTypes';
-
-export interface EventItemsStateShape {
-    items: any[];
-    currentItem: any;
-    currentLatLng: {
-        lat: number;
-        lng: number;
-    };
-    hasEventBeenSelected: boolean;
-    isFetching: boolean;
-    isFetchingLatLng: boolean;
-    isAnimatingScroll: boolean;
-}
+import { EventItemsStateShape } from 'js/components/Schedule/types';
 
 export const eventItemsReducer = (state: EventItemsStateShape = {
     items: [],

@@ -23,3 +23,16 @@ export interface MonthItemShape extends MonthItemInputShape {
 }
 
 export type EventItemShape = DayItemShape | MonthItemShape;
+
+export interface EventItemsStateShape {
+    items: any[];
+    currentItem: any;
+    currentLatLng: {
+        lat: number;
+        lng: number;
+    };
+    hasEventBeenSelected: boolean;
+    isFetching: boolean;
+    isFetchingLatLng: boolean;
+    isAnimatingScroll: boolean;
+}

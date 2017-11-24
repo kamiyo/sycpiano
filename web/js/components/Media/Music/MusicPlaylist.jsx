@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MusicPlaylistItem from 'js/components/Media/Music/MusicPlaylistItem.jsx';
-import Playlist from 'js/components/Media/Playlist.jsx'
+import Playlist from 'js/components/Media/Playlist'
 
 const MusicPlaylist = (props) => {
     return (
