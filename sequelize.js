@@ -32,6 +32,8 @@ const password = secret.password;
 module.exports = new Sequelize(dbName, username, password, {
     host,
     dialect: 'postgres',
+    operatorsAliases: false,        // need to change if we are using operators
     pool: { max: 5, min: 0, idle: 10000 },
     define: { freezeTable: true },
+    logging: false,                 // change to log to output
 });

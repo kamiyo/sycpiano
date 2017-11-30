@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-const mustachex = require('mustachex');
+const mustacheExpress = require('mustache-express');
 const initDB = require('./server/initDB.js');
 const apiRouter = require('./server/api-router.js');
 
@@ -16,7 +16,7 @@ initDB().then(() => {
     app.use(express.static(path.join(__dirname, '/web/build')));
 
     app.use(morgan('common'));
-    app.engine('html', mustachex.express);
+    app.engine('html', mustacheExpress());
     app.set('view engine', 'html');
     app.set('views', path.join(__dirname, '/web/partials'));
 
