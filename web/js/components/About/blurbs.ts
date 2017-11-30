@@ -13,5 +13,5 @@ export default [
 
     `Born in Florida, Mr. Chen grew up in the Los Angeles area of Oak Park, California. His impressive achievements before college include the NFAA ARTSweek, Los Angeles Music Center’s Spotlight, and 2006 Presidential Scholars awards. These honors combined with diligent schoolwork facilitated offers of acceptance by MIT, Harvard, and The Juilliard School. Choosing to study music, Mr. Chen earned his Bachelor and Master of Music from Juilliard, meanwhile garnering several awards, most notably the Paul and Daisy Soros Fellowship for New Americans. He received his Artist Diploma in 2014 at the Yale School of Music as a George W. Miles Fellow. His teachers include Hung-Kuan Chen, Tema Blackstone, Edward Francis, Jerome Lowenthal, and Matti Raekallio.`,
 
-    `Mr. Chen is currently living in Kansas City, Missouri with his wife, Betty, who plays violin in the Kansas City Symphony. When not at the piano, Mr. Chen enjoys tinkering with computers.`
+    `Mr. Chen is currently living in Kansas City, Missouri with his wife, Betty, who plays violin in the Kansas City Symphony. When not at the piano, Mr. Chen enjoys tinkering with computers.`,
 ];

@@ -43,7 +43,7 @@ const mapStateToProps = (state: GlobalStateShape) => ({
 });
 
 interface StateFromProps {
-    eventItems: any[];
+    eventItems: EventItemShape[];
 }
 
 interface DispatchFromProps {

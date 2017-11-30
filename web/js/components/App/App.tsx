@@ -2,13 +2,15 @@ import 'less/App/app.less';
 
 import * as React from 'react';
 
+import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
-import { TransitionGroup, Transition } from 'react-transition-group';
+import { Transition, TransitionGroup } from 'react-transition-group';
+
 import { TweenLite } from 'gsap';
 
-import { LogoSVG } from 'js/components/LogoSVG';
 import Front from 'js/components/App/Front/Front';
 import NavBar from 'js/components/App/NavBar/NavBar';
+import { LogoSVG } from 'js/components/LogoSVG';
 
 import About from 'js/components/About/About';
 import Contact from 'js/components/Contact/Contact';
@@ -16,24 +18,23 @@ import Home from 'js/components/Home/Home';
 import Media from 'js/components/Media/Media';
 import Press from 'js/components/Press/Press';
 import Schedule from 'js/components/Schedule/Schedule';
-import { RouteComponentProps } from 'react-router';
 
 const fadeOnEnter = (element: HTMLElement, isAppearing: boolean) => {
     const delay = (isAppearing) ? 0.3 : 0;
-    TweenLite.fromTo(element, 0.25, { opacity: 0 }, { opacity: 1, delay: delay });
-}
+    TweenLite.fromTo(element, 0.25, { opacity: 0 }, { opacity: 1, delay });
+};
 
 const fadeOnExit = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.25, { opacity: 1 }, { opacity: 0, });
-}
+    TweenLite.fromTo(element, 0.25, { opacity: 1 }, { opacity: 0 });
+};
 
 const slideDownOnEnter = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.5, { y: -90 }, { y: 0, delay: 0.55, ease: "Power3.easeOut" });
-}
+    TweenLite.fromTo(element, 0.5, { y: -90 }, { y: 0, delay: 0.55, ease: 'Power3.easeOut' });
+};
 
 const slideUpOnExit = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.5, { y: 0 }, { y: -90, delay: 0.55, ease: "Power3.easeOut" });
-}
+    TweenLite.fromTo(element, 0.5, { y: 0 }, { y: -90, delay: 0.55, ease: 'Power3.easeOut' });
+};
 
 interface AppState {
     isFront: boolean;
@@ -45,17 +46,17 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
         // uncomment the following comments to allow showing video on Home
         // const initialFront = this.props.location.pathname === '/';
         this.state = {
-            //isFront: initialFront
-            isFront: false
-        }
+            // isFront: initialFront
+            isFront: false,
+        };
     }
 
     getRouteBase = () => this.props.location.pathname.match(/^(\/\w*)(\/.*)*$/)[1];
 
     showFront = () => {
         this.setState({ isFront: true });
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, true));
-        window.addEventListener('keydown', this.checkDownArrow);
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
+        window.addEventListener('keydown', this.checkDownArrow, { passive: true });
     }
 
     hideFront = () => {
@@ -65,14 +66,14 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
     }
 
     checkDownArrow = (event: KeyboardEvent) => {
-        if (event.keyCode == 40) {
+        if (event.keyCode === 40) {
             this.hideFront();
         }
     }
 
     componentDidMount() {
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, true));
-        window.addEventListener('keydown', this.checkDownArrow);
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true }));
+        window.addEventListener('keydown', this.checkDownArrow, { passive: true });
     }
 
     render() {
@@ -80,7 +81,8 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
             <div className='appContainer'>
                 <LogoSVG />
                 <Front show={this.state.isFront} onClick={this.hideFront} />
-                <Transition in={!this.state.isFront}
+                <Transition
+                    in={!this.state.isFront}
                     onEnter={slideDownOnEnter}
                     onExit={slideUpOnExit}
                     timeout={250}
@@ -99,16 +101,16 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
                         appear={true}
                     >
                         <Switch location={this.props.location}>
-                            <Route path='/about' exact component={About} />
-                            <Route path='/contact' exact component={Contact} />
+                            <Route path='/about' exact={true} component={About} />
+                            <Route path='/contact' exact={true} component={Contact} />
                             <Route path='/media' component={Media} />
-                            <Route path='/press' exact component={Press} />
+                            <Route path='/press' exact={true} component={Press} />
                             <Route path='/schedule' component={Schedule} />
-                            <Route path='/' exact component={Home} />
+                            <Route path='/' exact={true} component={Home} />
                         </Switch>
                     </Transition>
                 </TransitionGroup>
             </div>
-        )
+        );
     }
 }

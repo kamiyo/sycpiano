@@ -1,15 +1,17 @@
 import 'less/About/about.less';
 
 import * as React from 'react';
+
 import * as moment from 'moment-timezone';
+
 import blurbs from 'js/components/About/blurbs';
 
 const About = () => (
     <div className='aboutContainer container'>
-        <div className='leftContainer'></div>
+        <div className='leftContainer' />
         <div className='rightContainer'>
             {blurbs.map((blurb, i) => {
-                if (i == 0) {
+                if (i === 0) {
                     const firstLetter = blurb[0];
                     const age = moment().diff('1988-08-27', 'year');
                     blurb = blurb.replace(/##/, age.toString());
@@ -29,7 +31,7 @@ const About = () => (
                             </span>
                             {afterName}
                         </p>
-                    )
+                    );
                 }
                 return <p key={i}>{blurb}</p>;
             })}

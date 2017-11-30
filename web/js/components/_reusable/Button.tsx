@@ -9,11 +9,11 @@ interface ButtonProps {
 
 function mergeClasses(classes: string[]): string {
     return classes.reduce((accumulator: string, value: string): string => {
-        return accumulator += `${value} `
+        return accumulator += `${value} `;
     }, '');
 }
 
-const Button: React.SFC<ButtonProps & React.HTMLAttributes<HTMLElement> > = ({ children, extraClasses, onClick }) => (
+const Button: React.SFC<ButtonProps & React.HTMLAttributes<HTMLElement>> = ({ children, extraClasses, onClick }) => (
     <div
         className={mergeClasses(['Button', ...extraClasses])}
         onClick={onClick}

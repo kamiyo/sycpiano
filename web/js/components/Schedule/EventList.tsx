@@ -11,7 +11,7 @@ import moment from 'moment-timezone';
 import { dispatchAnimateFinish, dispatchAnimateStart, dispatchSelectEvent } from 'js/components/Schedule/actions';
 import EventItem from 'js/components/Schedule/EventItem';
 import EventMonthItem from 'js/components/Schedule/EventMonthItem';
-import { DayItemShape, EventItemShape, MonthItemShape } from 'js/components/Schedule/types';
+import { DayItemShape, EventItemShape, ListWithGrid, MonthItemShape } from 'js/components/Schedule/types';
 import { GlobalStateShape } from 'js/types';
 
 import animateFn from 'js/components/animate';
@@ -35,7 +35,7 @@ class EventList extends React.Component<RouteComponentProps<{ date: string }> & 
     private currentOffset: number;
     private maxOffset: number;
     private requestId: number;
-    private List: List;
+    private List: ListWithGrid;
 
     constructor(props: RouteComponentProps<{ date: string }> & EventListProps & HTMLDivElement) {
         super(props);

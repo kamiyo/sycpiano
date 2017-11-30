@@ -1,43 +1,48 @@
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
+
 import { TweenLite } from 'gsap';
-import FrontVideo from 'js/components/App/Front/FrontVideo';
+
 import FrontLogo from 'js/components/App/Front/FrontLogo';
 import FrontName from 'js/components/App/Front/FrontName';
+import FrontVideo from 'js/components/App/Front/FrontVideo';
 
 const logoEnter = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.8,
         { y: -50, opacity: 0 },
-        { y: 0, opacity: 1, ease: "Power3.easeOut", delay: 0.5 }
+        { y: 0, opacity: 1, ease: 'Power3.easeOut', delay: 0.5 },
     );
-}
+};
 const logoExit = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.8,
         { y: 0, opacity: 1 },
-        { y: -50, opacity: 0, ease: "Power3.easeOut" }
+        { y: -50, opacity: 0, ease: 'Power3.easeOut' },
     );
-}
+};
 const videoEnter = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.5,
         { height: 0 },
-        { height: `100%`, ease: "Power3.easeOut" }
+        { height: `100%`, ease: 'Power3.easeOut' },
     );
-}
+};
 const videoExit = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.5,
         { height: `100%` },
-        { height: 0, ease: "Power3.easeOut" });
-}
+        { height: 0, ease: 'Power3.easeOut' },
+    );
+};
 const nameEnter = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.8,
         { opacity: 0 },
-        { opacity: 1, ease: "Power3.easeOut", delay: 0.5 });
-}
+        { opacity: 1, ease: 'Power3.easeOut', delay: 0.5 },
+    );
+};
 const nameExit = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.8,
         { opacity: 1 },
-        { opacity: 0, ease: "Power3.easeOut" });
-}
+        { opacity: 0, ease: 'Power3.easeOut' },
+    );
+};
 
 interface FrontProps {
     show: boolean;
@@ -50,7 +55,7 @@ interface FrontState {
 
 export default class Front extends React.Component<FrontProps, FrontState> {
     state = {
-        isHover: false
+        isHover: false,
     };
     doMouseOver = () => {
         this.setState({ isHover: true });
@@ -105,6 +110,6 @@ export default class Front extends React.Component<FrontProps, FrontState> {
                     <FrontVideo />
                 </Transition>
             </div>
-        )
+        );
     }
 }

@@ -13,7 +13,7 @@ const config = {
     devtool: 'inline-source-map',
     entry: {
         sycpiano: path.resolve(__dirname, 'web/js/main.tsx'),
-        calendarAdmin: path.resolve(__dirname, 'web/js/admin/main.jsx'),
+        calendarAdmin: path.resolve(__dirname, 'web/js/admin/main.tsx'),
     },
     output: {
         path: path.resolve(__dirname, 'web/build'),

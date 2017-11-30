@@ -1,11 +1,11 @@
-import 'less/App/NavBar/nav-bar.less';
 import 'less/App/NavBar/nav-bar-layout.less';
+import 'less/App/NavBar/nav-bar.less';
 
 import * as React from 'react';
 
-import { LinkShape } from 'js/components/App/NavBar/types';
-import NavBarLogo from 'js/components/App/NavBar/NavBarLogo';
 import NavBarLinks from 'js/components/App/NavBar/NavBarLinks';
+import NavBarLogo from 'js/components/App/NavBar/NavBarLogo';
+import { LinkShape } from 'js/components/App/NavBar/types';
 
 const links: LinkShape[] = [
     { name: 'home', path: '/' },
@@ -13,7 +13,7 @@ const links: LinkShape[] = [
     { name: 'schedule', path: '/schedule' },
     { name: 'media', path: '/media', subPaths: ['videos', 'music', 'photos'] },
     { name: 'press', path: '/press' },
-    { name: 'contact', path: '/contact' }
+    { name: 'contact', path: '/contact' },
 ];
 
 interface NavBarProps {
@@ -27,7 +27,7 @@ interface NavBarState {
 
 export default class NavBar extends React.Component<NavBarProps, NavBarState> {
     state = {
-        showSub: false
+        showSub: false,
     };
 
     toggleSubNav = (arg = !this.state.showSub) => {
@@ -47,6 +47,6 @@ export default class NavBar extends React.Component<NavBarProps, NavBarState> {
                     currentBasePath={this.props.currentBasePath}
                 />
             </div>
-        )
+        );
     }
-};
+}

@@ -1,4 +1,5 @@
 import { Moment } from 'moment-timezone';
+import { Grid, List } from 'react-virtualized';
 
 export interface DayItemInputShape {
     id: string;
@@ -35,4 +36,12 @@ export interface EventItemsStateShape {
     isFetching: boolean;
     isFetchingLatLng: boolean;
     isAnimatingScroll: boolean;
+}
+
+export interface GridWithScrolllingContainer extends Grid {
+    _scrollingContainer: HTMLElement;
+}
+
+export interface ListWithGrid extends List {
+    Grid?: GridWithScrolllingContainer;
 }

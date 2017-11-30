@@ -20,8 +20,8 @@ class GoogleAPI {
         startDatetime: Moment,
         endDatetime: Moment,
         timezone: string,
-        timeTBD: boolean,
         accessToken: string,
+        timeTBD?: boolean,
     ) {
         const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
         const eventResource = {

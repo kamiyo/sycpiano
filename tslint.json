@@ -14,7 +14,8 @@
         "jsx-no-multiline-js": false,
         "member-access": false,
         "align": [true, "statements", "members", "elements"],
-        "max-classes-per-file": false
+        "max-classes-per-file": false,
+        "member-ordering": false
     },
     "jsRules": {
         "no-console": false,
@@ -25,6 +26,10 @@
         "jsx-no-multiline-js": false,
         "member-access": false,
         "align": [true, "statements", "members", "elements"],
-        "max-classes-per-file": false
+        "max-classes-per-file": false,
+        "member-ordering": false
+    },
+    "linterOptions": {
+        "exclude": "**/node_modules/**/*"
     }
 }

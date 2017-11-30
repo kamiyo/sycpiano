@@ -19,7 +19,7 @@ interface ChildRendererProps {
     key: number | string;
     isActive: boolean;
     item: any;
-    onClick: () => void;
+    onClick: (...args: any[]) => void;
 }
 
 interface PlaylistProps {
@@ -29,8 +29,8 @@ interface PlaylistProps {
     hasToggler: boolean;
     isShow: boolean;
     items: any[];
-    onClick: () => void;
-    togglePlaylist: (isShow?: boolean) => void;
+    onClick: (...args: any[]) => void;
+    togglePlaylist?: (isShow?: boolean) => void;
 }
 
 const Playlist = (props: PlaylistProps) => {

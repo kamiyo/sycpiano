@@ -724,3 +724,48 @@ namespace Youtube {
         longitude?: number;
     }
 }
+
+namespace GoogleCalendar {
+    export interface Event {
+        kind: 'calendar#event';
+        etag: etag;
+        id: string;
+        status: string;
+        htmlLink: string;
+        created: datetime;
+        updated: datetime;
+        summary: string;
+        description?: string;
+        location: string;
+        start: {
+            date: date;
+            dateTime: datetime;
+            timeZone?: string
+        };
+        end: {
+            date: date;
+            dateTime: datetime;
+            timeZone?: string
+        };
+        [key: string]: any;
+    }
+
+    export interface EventsList {
+        kind: 'calendar#events';
+        etag: string;
+        summary: string;
+        description: string;
+        updated: string;
+        timeZone: string;
+        accessRole: string;
+        defaultReminders: [
+            {
+                method: string;
+                minutes: number;
+            }
+        ];
+        nextPageToken: string;
+        nextSyncToken: string;
+        items: Event[];
+    }
+}

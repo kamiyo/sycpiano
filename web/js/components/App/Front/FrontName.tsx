@@ -3,7 +3,7 @@ import 'less/App/Front/front-name.less';
 import * as React from 'react';
 
 const FrontName: React.SFC<{ hover: boolean } & React.HTMLAttributes<HTMLDivElement> > = (props) => {
-    let { hover, ...other } = props;
+    const { hover, ...other } = props;
     return (
         <div className='frontName'>
             <div className={hover ? 'blur-hover' : 'blur'}>
@@ -27,7 +27,7 @@ const FrontName: React.SFC<{ hover: boolean } & React.HTMLAttributes<HTMLDivElem
                 </div>
             </div>
         </div>
-    )
+    );
 };
 
 export default FrontName;
