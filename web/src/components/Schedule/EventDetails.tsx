@@ -2,30 +2,31 @@ import 'less/Schedule/event-details.less';
 
 import React from 'react';
 import { connect } from 'react-redux';
-// temporary workaround for untyped react-google-maps
-/* tslint:disable:no-var-requires */
-const googleMaps: any = require('react-google-maps');
-const withScriptjs = googleMaps.withScriptjs;
-const GoogleMap = googleMaps.GoogleMap;
-const Marker = googleMaps.Marker;
-const withGoogleMap = googleMaps.withGoogleMap;
-/* tslint:enable:no-var-requires */
-// import { withScriptjs, GoogleMap, Marker, withGoogleMap } from 'react-google-maps';  wait for types to be published
+
+import { withScriptjs, GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 
 import { createFetchLatLngAction } from 'src/components/Schedule/actions';
 import { googleMapsUrl } from 'src/services/GoogleAPI';
 
 import { DayItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
+import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
+import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
+import { ClockIcon } from 'src/components/Schedule/ClockIconSVG';
 
 // TODO make map persistent, and not reload everytime
+interface EventMapProps {
+    lat?: number;
+    lng?: number;
+}
+
 const EventMap = withScriptjs(
-    withGoogleMap(({ lat, lng }: { lat: number; lng: number; }) => {
+    withGoogleMap(({ lat = 39.0997, lng = -94.5786 }: EventMapProps) => {
         const position = { lat, lng };
         return (
             <GoogleMap
-                defaultZoom={8}
-                defaultCenter={position}
+                zoom={8}
+                center={position}
             >
                 <Marker position={position} />
             </GoogleMap>
@@ -72,22 +73,23 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
         return (
             <div className='event-details'>
                 <h2>{name}</h2>
-                <div>{dateTime.format('dddd, MMMM M')}</div>
+                <div>{dateTime.format('dddd, MMMM D, YYYY')}</div>
                 <div>{collaborators}</div>
 
                 <div>{location}</div>
                 <div>{program}</div>
 
-                {
-                    !this.props.isFetchingLatLng && this.props.currentLatLng && !this.props.isAnimatingScroll &&
-                    <EventMap
-                        containerElement={<div />}
-                        mapElement={<div className='event-map' />}
-                        googleMapURL={googleMapsUrl}
-                        loadingElement={<div />}
-                        {...this.props.currentLatLng}
-                    />
-                }
+                <EventMap
+                    containerElement={<div />}
+                    mapElement={<div className='event-map' />}
+                    googleMapURL={googleMapsUrl}
+                    loadingElement={<div />}
+                    {...this.props.currentLatLng}
+                />
+
+                <DateIconInstance className='date-icon' date={dateTime} />
+                <LocationIconInstance className='location-icon' />
+                <ClockIcon className='clock-icon' date={dateTime} />
             </div>
         );
     }

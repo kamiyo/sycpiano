@@ -2,7 +2,7 @@ import 'less/Media/Music/audio-info.less';
 
 import * as React from 'react';
 
-import { formatTime } from 'src/components/Media/Music/VisualizationUtils';
+import { formatTime } from 'src/utils';
 
 import { MusicItem } from 'src/components/Media/Music/types';
 

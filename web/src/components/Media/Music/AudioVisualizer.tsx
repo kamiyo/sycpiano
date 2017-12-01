@@ -4,8 +4,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { storeRadii } from 'src/components/Media/Music/actions';
-import { constantQ, drawCircleMask, firLoader, polarToCartesian, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
+import { constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
+import { polarToCartesian } from 'src/utils';
 
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;

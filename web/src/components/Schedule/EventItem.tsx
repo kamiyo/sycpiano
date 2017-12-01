@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { DayItemShape } from 'src/components/Schedule/types';
 
-const DateContainer: React.SFC<{ dateTime: Moment }> = ({ dateTime }) => (
+const DateContainer: React.SFC<{ readonly dateTime: Moment }> = ({ dateTime }) => (
     <div className='event-item__date-container'>
         <div className='event-item__date'>
             <div className='event-item__day'>

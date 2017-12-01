@@ -11,3 +11,44 @@
     height: 300px;
     margin: 25px 0 0;
 }
+
+.date-icon {
+    fill: @light-blue;
+    stroke: black;
+    width: 120px;
+    height: 120px;
+
+    rect.active {
+        fill: @light-blue;
+    }
+    rect.inactive {
+        fill: #eeeeee;
+    }
+}
+
+.location-icon {
+    fill: white;
+    stroke: #000;
+    width: 120px;
+    height: 120px;
+}
+
+#location-icon-marker-part {
+    fill: @light-blue;
+    stroke: @light-blue;
+}
+
+.clock-icon {
+    width: 120px;
+    height: 120px;
+
+    #clock-border {
+        stroke: #000;
+        stroke-width: 2px;
+    }
+
+    #hour-hand, #minute-hand {
+        stroke: @light-blue;
+        stroke-width: 5px;
+    }
+}

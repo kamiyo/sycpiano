@@ -49,13 +49,13 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
 
     showFront = () => {
         this.setState({ isFront: true });
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true } as any));
-        window.addEventListener('keydown', this.checkDownArrow, { passive: true });
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        window.addEventListener('keydown', this.checkDownArrow);
     }
 
     hideFront = () => {
         this.setState({ isFront: false });
-        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront, true));
+        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront));
         window.removeEventListener('keydown', this.checkDownArrow);
     }
 
@@ -66,8 +66,8 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
     }
 
     componentDidMount() {
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront, { passive: true } as any));
-        window.addEventListener('keydown', this.checkDownArrow, { passive: true });
+        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
+        window.addEventListener('keydown', this.checkDownArrow);
     }
 
     render() {

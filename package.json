@@ -39,6 +39,7 @@
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
     "lodash": "^4.17.4",
+    "luxon": "^0.2.3",
     "mathjs": "^3.17.0",
     "moment": "^2.19.3",
     "moment-timezone": "^0.5.14",

@@ -10,6 +10,8 @@ import ConnectedEventDetails from 'src/components/Schedule/EventDetails';
 import EventList from 'src/components/Schedule/EventList';
 import { EventItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
+import { DateIconSVG } from 'src/components/Schedule/DateIconSVG';
+import { LocationIconSVG } from 'src/components/Schedule/LocationIconSVG';
 
 interface ScheduleStateFromProps {
     readonly eventItems: EventItemShape[];
@@ -32,17 +34,21 @@ class Schedule extends React.Component<RouteComponentProps<ParamProps> & Schedul
 
     render() {
         return (
+            <>
+            <DateIconSVG />
+            <LocationIconSVG />
             <div className='schedule container'>
                 <div className='schedule__event-details'>
                     <ConnectedEventDetails />
                 </div>
                 <div className='schedule__events'>
                     <Switch>
-                        <Route path='/schedule/:date' component={EventList} exact={true}/>
-                        <Route path='/schedule' component={EventList} exact={true}/>
+                        <Route path='/schedule/:date' component={EventList} exact={true} />
+                        <Route path='/schedule' component={EventList} exact={true} />
                     </Switch>
                 </div>
             </div>
+            </>
         );
     }
 }
