@@ -308,6 +308,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
     }
 
     componentWillUnmount() {
+        window.removeEventListener('resize', this.onResize);
         cancelAnimationFrame(this.requestId);
     }
 
