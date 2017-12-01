@@ -34,9 +34,6 @@ class Schedule extends React.Component<RouteComponentProps<ParamProps> & Schedul
 
     render() {
         return (
-            <>
-            <DateIconSVG />
-            <LocationIconSVG />
             <div className='schedule container'>
                 <div className='schedule__event-details'>
                     <ConnectedEventDetails />
@@ -47,8 +44,9 @@ class Schedule extends React.Component<RouteComponentProps<ParamProps> & Schedul
                         <Route path='/schedule' component={EventList} exact={true} />
                     </Switch>
                 </div>
+                <DateIconSVG />
+                <LocationIconSVG />
             </div>
-            </>
         );
     }
 }

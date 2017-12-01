@@ -19,9 +19,8 @@ import Media from 'src/components/Media/Media';
 import Press from 'src/components/Press/Press';
 import Schedule from 'src/components/Schedule/Schedule';
 
-const fadeOnEnter = (element: HTMLElement, isAppearing: boolean) => {
-    const delay = (isAppearing) ? 0.3 : 0;
-    TweenLite.fromTo(element, 0.25, { opacity: 0 }, { opacity: 1, delay });
+const fadeOnEnter = (element: HTMLElement) => {
+    TweenLite.fromTo(element, 0.25, { opacity: 0 }, { opacity: 1, delay: 0.25 });
 };
 
 const fadeOnExit = (element: HTMLElement) => {
@@ -45,7 +44,18 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
         isFront: false,
     };
 
-    getRouteBase = () => this.props.location.pathname.match(/^(\/\w*)(\/.*)*$/)[1];
+    isSubPath = (path: string) => {
+        return path === '/photos' || path === '/videos' || path === '/music';
+    }
+
+    getRouteBase = () => {
+        const matches: string[] = this.props.location.pathname.match(/^\/([^\/]+)?(\/[^\/]+)?/);
+        if (matches[2] && this.isSubPath(matches[2])) {
+            return `${matches[1]}${matches[2]}`;
+        } else {
+            return matches[1];
+        }
+    }
 
     showFront = () => {
         this.setState({ isFront: true });
@@ -91,7 +101,7 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
                         key={this.getRouteBase()}
                         onEntering={fadeOnEnter}
                         onExiting={fadeOnExit}
-                        timeout={550}
+                        timeout={500}
                         appear={true}
                     >
                         <Switch location={this.props.location}>
