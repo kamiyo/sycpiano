@@ -9,7 +9,7 @@ const webpackConfig = require('./webpack.config.js');
 
 gulp.task('build', () => {
     // src is overwritten by webpack entry points
-    gulp.src('./web/js/main.jsx')
+    gulp.src('./web/src/main.jsx')
         .pipe(webpackStream(webpackConfig), webpack)
         .pipe(gulp.dest('./web/build'));
 });

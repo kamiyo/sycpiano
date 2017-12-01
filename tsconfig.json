@@ -35,6 +35,6 @@
         "baseUrl": "."
     },
     "include": [
-        "web/js"
+        "web/src"
     ]
 }

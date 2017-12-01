@@ -12,8 +12,8 @@ const config = {
     cache: true,
     devtool: 'inline-source-map',
     entry: {
-        sycpiano: path.resolve(__dirname, 'web/js/main.tsx'),
-        calendarAdmin: path.resolve(__dirname, 'web/js/admin/main.tsx'),
+        sycpiano: path.resolve(__dirname, 'web/src/main.tsx'),
+        calendarAdmin: path.resolve(__dirname, 'web/src/admin/main.tsx'),
     },
     output: {
         path: path.resolve(__dirname, 'web/build'),
@@ -23,10 +23,10 @@ const config = {
         loaders: [{
             test: /\.(t|j)sx?$/,
             include: [
-                path.resolve(__dirname, 'web/js'),
-                path.resolve(__dirname, 'web/js/components'),
-                path.resolve(__dirname, 'web/js/admin'),
-                path.resolve(__dirname, 'web/js/admin/components'),
+                path.resolve(__dirname, 'web/src'),
+                path.resolve(__dirname, 'web/src/components'),
+                path.resolve(__dirname, 'web/src/admin'),
+                path.resolve(__dirname, 'web/src/admin/components'),
             ],
             loader: 'happypack/loader?id=ts'
 
@@ -55,10 +55,10 @@ const config = {
             checkSyntacticErrors: true,
             tslint: path.resolve(__dirname, 'tslint.json'),
             watch: [
-                path.resolve(__dirname, 'web/js'),
-                path.resolve(__dirname, 'web/js/components'),
-                path.resolve(__dirname, 'web/js/admin'),
-                path.resolve(__dirname, 'web/js/admin/components'),
+                path.resolve(__dirname, 'web/src'),
+                path.resolve(__dirname, 'web/src/components'),
+                path.resolve(__dirname, 'web/src/admin'),
+                path.resolve(__dirname, 'web/src/admin/components'),
             ],
         }),
         new CleanWebpackPlugin([path.resolve(__dirname, 'web/build')]),
@@ -90,7 +90,7 @@ const config = {
     resolve: {
         extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
         alias: {
-            "js": path.resolve(__dirname, 'web/js'),
+            "src": path.resolve(__dirname, 'web/src'),
             "less": path.resolve(__dirname, 'web/less')
         }
     }
