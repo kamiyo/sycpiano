@@ -3,16 +3,17 @@ import 'less/Schedule/event-details.less';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { withScriptjs, GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
 
 import { createFetchLatLngAction } from 'src/components/Schedule/actions';
 import { googleMapsUrl } from 'src/services/GoogleAPI';
 
 import { DayItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
+
+import { ClockIcon } from 'src/components/Schedule/ClockIconSVG';
 import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
-import { ClockIcon } from 'src/components/Schedule/ClockIconSVG';
 
 // TODO make map persistent, and not reload everytime
 interface EventMapProps {

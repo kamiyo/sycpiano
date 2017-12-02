@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import { TweenLite } from 'gsap';
 import { setHoverPlaypause, setHoverSeekring, setMouseMove } from 'src/components/Media/Music/actions';
 import { PauseButton, PauseIcon, PlayButton, PlayIcon } from 'src/components/Media/Music/Buttons';
-import { cartesianToPolar, formatTime } from 'src/utils';
 import { GlobalStateShape } from 'src/types';
+import { cartesianToPolar, formatTime } from 'src/utils';
 
 interface AudioUIStateToProps {
     readonly innerRadius: number;
