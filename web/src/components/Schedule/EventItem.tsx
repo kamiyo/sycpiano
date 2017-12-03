@@ -1,6 +1,6 @@
 import 'less/Schedule/event-item.less';
 
-import _ from 'lodash';
+import { startCase } from 'lodash-es/string';
 import { Moment } from 'moment-timezone';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
@@ -58,7 +58,7 @@ const EventItem: React.SFC<EventItemProps> = ({ event, style, handleSelect }) =>
                     {time}
                 </div>
                 <div className='event-item__info-type'>
-                    {_.startCase(event.eventType)}
+                    {startCase(event.eventType)}
                 </div>
             </div>
         </div>

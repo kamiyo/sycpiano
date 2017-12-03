@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import moment from 'moment-timezone';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { MusicItem } from 'src/components/Media/Music/types';
 
@@ -34,7 +34,7 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
     </li>
 );
 
-export default withRouter(MusicPlaylistItem);
+export default MusicPlaylistItem;
 
 // Helper functions
 

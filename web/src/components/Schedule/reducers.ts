@@ -5,7 +5,10 @@ import { EventItemsStateShape } from 'src/components/Schedule/types';
 export const eventItemsReducer = (state: EventItemsStateShape = {
     items: [],
     currentItem: null,
-    currentLatLng: null,
+    currentLatLng: {
+        lat: 39.0997,
+        lng: -94.5786,
+    },
     hasEventBeenSelected: false,
     isFetching: false,
     isFetchingLatLng: false,
@@ -33,7 +36,6 @@ export const eventItemsReducer = (state: EventItemsStateShape = {
             return {
                 ...state,
                 isFetchingLatLng: true,
-                currentLatLng: null,
             };
         case SCHEDULE_ACTIONS.FETCH_LAT_LNG_ERROR:
             return {
@@ -53,7 +55,6 @@ export const eventItemsReducer = (state: EventItemsStateShape = {
                 // Reset lat, long every time a new item is selected.
                 // The EventDetails component is responsible for setting the
                 // currentLatLng state via async dispatch.
-                currentLatLng: null,
                 currentItem: action.eventItem,
             };
         case SCHEDULE_ACTIONS.SCROLL_START:

@@ -19,15 +19,17 @@ import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
 interface EventMapProps {
     lat?: number;
     lng?: number;
+    setRef: (map: GoogleMap) => void;
 }
 
 const EventMap = withScriptjs(
-    withGoogleMap(({ lat = 39.0997, lng = -94.5786 }: EventMapProps) => {
+    withGoogleMap(({ lat, lng, setRef }: EventMapProps) => {
         const position = { lat, lng };
         return (
             <GoogleMap
+                ref={(map: GoogleMap) => setRef(map)}
                 zoom={8}
-                center={position}
+                defaultCenter={position}
             >
                 <Marker position={position} />
             </GoogleMap>
@@ -46,15 +48,20 @@ interface EventDetailsStateToProps {
 }
 
 interface EventDetailsDispatchToProps {
-    readonly createFetchLatLngAction: (location: string) => void;
+    readonly createFetchLatLngAction: (location: string) => any;
 }
 
 type EventDetailsProps = EventDetailsStateToProps & EventDetailsDispatchToProps;
 
 class EventDetails extends React.Component<EventDetailsProps, {}> {
+    mapComponent: GoogleMap;
+
     componentWillUpdate(nextProps: EventDetailsProps) {
-        if (nextProps.currentItem && !nextProps.currentLatLng) {
-            nextProps.createFetchLatLngAction(nextProps.currentItem.location);
+        if (nextProps.currentItem !== this.props.currentItem) {
+            this.props.createFetchLatLngAction(nextProps.currentItem.location);
+        }
+        if (nextProps.currentLatLng !== this.props.currentLatLng) {
+            this.mapComponent && this.mapComponent.panTo(nextProps.currentLatLng);
         }
     }
 
@@ -81,6 +88,7 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
                 <div>{program}</div>
 
                 <EventMap
+                    setRef={(map: GoogleMap) => this.mapComponent = map}
                     containerElement={<div />}
                     mapElement={<div className='event-map' />}
                     googleMapURL={googleMapsUrl}

@@ -79,7 +79,7 @@ const fetchLatLng = (location: string) => async (dispatch: Dispatch<GlobalStateS
         dispatch(fetchLatLngRequest());
         const geocodeResponse = await googleAPI.geocode(location);
         const firstMatch: google.maps.GeocoderResult = geocodeResponse.data.results[0];
-        return dispatch(fetchLatLngSuccess(firstMatch));
+        dispatch(fetchLatLngSuccess(firstMatch));
     } catch (err) {
         dispatch(fetchLatLngError());
         console.log('failed to fetch geocode', err);

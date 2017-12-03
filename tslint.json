@@ -15,7 +15,8 @@
         "member-access": false,
         "align": [true, "statements", "members", "elements"],
         "max-classes-per-file": false,
-        "member-ordering": false
+        "member-ordering": false,
+        "no-unused-expression": [true, "allow-fast-null-checks"]
     },
     "jsRules": {
         "no-console": false,
@@ -27,7 +28,8 @@
         "member-access": false,
         "align": [true, "statements", "members", "elements"],
         "max-classes-per-file": false,
-        "member-ordering": false
+        "member-ordering": false,
+        "no-unused-expression": [true, "allow-fast-null-checks"]
     },
     "linterOptions": {
         "exclude": "**/node_modules/**/*"
