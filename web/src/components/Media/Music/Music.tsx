@@ -5,7 +5,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { match } from 'react-router';
 
-import { TweenLite } from 'gsap';
+import TweenLite from 'gsap/TweenLite';
 import { constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 
 import { fetchPlaylistAction } from 'src/components/Media/Music/actions';

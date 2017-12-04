@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { default as moment, Moment } from 'moment';
+import { default as moment, Moment } from 'moment-timezone';
 
 const tzAPIKey = 'AIzaSyDnJI7CLrfcEDmFG6_AB0PcVXjzqN1nDVM';
 const calAPIKey = 'AIzaSyB1g_4E0UTqwX0TxezROJiNj3cAY0rr16w';

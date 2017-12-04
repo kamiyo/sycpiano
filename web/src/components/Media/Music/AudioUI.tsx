@@ -3,7 +3,7 @@ import 'less/Media/Music/audio-ui.less';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { TweenLite } from 'gsap';
+import TweenLite from 'gsap/TweenLite';
 import { setHoverPlaypause, setHoverSeekring, setMouseMove } from 'src/components/Media/Music/actions';
 import { PauseButton, PauseIcon, PlayButton, PlayIcon } from 'src/components/Media/Music/Buttons';
 import { GlobalStateShape } from 'src/types';

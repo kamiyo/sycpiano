@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { TweenLite } from 'gsap';
+import TweenLite from 'gsap/TweenLite';
 import { Transition, TransitionGroup } from 'react-transition-group';
 
 import SubNavLink from 'src/components/SubNav/SubNavLink';

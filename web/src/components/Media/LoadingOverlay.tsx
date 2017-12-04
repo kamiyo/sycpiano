@@ -4,7 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Transition } from 'react-transition-group';
 
-import { TweenLite } from 'gsap';
+import TweenLite from 'gsap/TweenLite';
 
 import { GlobalStateShape } from 'src/types';
 

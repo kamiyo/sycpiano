@@ -3,8 +3,7 @@ import 'less/Admin/components/event-list.less';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import moment from 'moment';
-import 'moment-timezone';
+import moment from 'moment-timezone';
 
 import { AdminStoreShape } from 'src/admin/components/types';
 import Button from 'src/components/_reusable/Button';

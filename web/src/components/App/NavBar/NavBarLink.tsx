@@ -4,7 +4,7 @@ import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 
-import { TweenLite } from 'gsap';
+import TweenLite from 'gsap/TweenLite';
 
 import SubNav from 'src/components/SubNav/SubNav';
 

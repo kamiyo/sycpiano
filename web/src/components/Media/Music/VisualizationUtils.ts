@@ -1,7 +1,10 @@
 /* tslint:disable:no-var-requires */
-const math: any = require('mathjs');
+const mathCore: any = require('mathjs/core');
 const jBinary: any = require('jbinary');
 const jDataView: any = require('jdataview');
+const math = mathCore.create();
+math.import(require('mathjs/lib/type/matrix'));
+math.import(require('mathjs/lib/function/arithmetic/multiply'));
 /* tslint:enable:no-var-requires */
 
 type DrawCircleMaskShape = (

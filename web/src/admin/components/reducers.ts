@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import { AdminEventFormStateShape, AdminEventListStateShape } from 'src/admin/components/types';
 import { eventTypes } from 'src/admin/constants';

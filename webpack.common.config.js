@@ -6,11 +6,9 @@ const HappyPack = require('happypack');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const happyThreadPool = HappyPack.ThreadPool({ size: 6 });
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const config = {
     cache: true,
-    devtool: 'inline-source-map',
     entry: {
         sycpiano: path.resolve(__dirname, 'web/src/main.tsx'),
         calendarAdmin: path.resolve(__dirname, 'web/src/admin/main.tsx'),
@@ -51,18 +49,9 @@ const config = {
         }]
     },
     plugins: [
-        new ForkTsCheckerWebpackPlugin({
-            checkSyntacticErrors: true,
-            tslint: path.resolve(__dirname, 'tslint.json'),
-            watch: [
-                path.resolve(__dirname, 'web/src'),
-                path.resolve(__dirname, 'web/src/components'),
-                path.resolve(__dirname, 'web/src/admin'),
-                path.resolve(__dirname, 'web/src/admin/components'),
-            ],
-        }),
+        new webpack.EnvironmentPlugin(['NODE_ENV']),
+        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
         new CleanWebpackPlugin([path.resolve(__dirname, 'web/build')]),
-        new webpack.HotModuleReplacementPlugin(),
         new HappyPack({
             id: 'ts',
             threadPool: happyThreadPool,
@@ -90,8 +79,8 @@ const config = {
     resolve: {
         extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
         alias: {
-            "src": path.resolve(__dirname, 'web/src'),
-            "less": path.resolve(__dirname, 'web/less')
+            'src': path.resolve(__dirname, 'web/src'),
+            'less': path.resolve(__dirname, 'web/less'),
         }
     }
 };

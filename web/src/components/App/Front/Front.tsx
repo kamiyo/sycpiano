@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
 
-import { TweenLite } from 'gsap';
+import TweenLite from 'gsap/TweenLite';
 
 import FrontLogo from 'src/components/App/Front/FrontLogo';
 import FrontName from 'src/components/App/Front/FrontName';

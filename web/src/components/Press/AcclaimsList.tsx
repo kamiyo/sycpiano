@@ -2,7 +2,9 @@ import 'less/Press/acclaims-list.less';
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, List, ListRowRenderer } from 'react-virtualized';
+import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
+import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
+import { List, ListRowRenderer } from 'react-virtualized/dist/es/List';
 
 import { createFetchAcclaimsAction } from 'src/components/Press/actions';
 

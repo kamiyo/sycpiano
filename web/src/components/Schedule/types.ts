@@ -1,5 +1,6 @@
 import { Moment } from 'moment-timezone';
-import { Grid, List } from 'react-virtualized';
+import { Grid } from 'react-virtualized/dist/es/Grid';
+import { List } from 'react-virtualized/dist/es/List';
 
 export interface GCalEvent {
     readonly description: any;

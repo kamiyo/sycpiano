@@ -6,7 +6,8 @@ import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
 
-import { TweenLite } from 'gsap';
+import 'gsap/CSSPlugin';
+import TweenLite from 'gsap/TweenLite';
 
 import Front from 'src/components/App/Front/Front';
 import NavBar from 'src/components/App/NavBar/NavBar';

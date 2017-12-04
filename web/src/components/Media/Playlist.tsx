@@ -3,7 +3,7 @@ import 'less/Media/playlist.less';
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
 
-import { TweenLite } from 'gsap';
+import TweenLite from 'gsap/TweenLite';
 
 import PlaylistToggler from 'src/components/Media/PlaylistToggler';
 

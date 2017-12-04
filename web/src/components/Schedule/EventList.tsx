@@ -3,7 +3,9 @@ import 'less/Schedule/event-list.less';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, List, ListRowRenderer } from 'react-virtualized';
+import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
+import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
+import { List, ListRowRenderer } from 'react-virtualized/dist/es/List';
 
 import { easeQuadOut } from 'd3-ease';
 import moment from 'moment-timezone';

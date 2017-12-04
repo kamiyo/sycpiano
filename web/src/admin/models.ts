@@ -1,5 +1,4 @@
-import { default as moment, Moment } from 'moment';
-import 'moment-timezone';
+import { default as moment, Moment } from 'moment-timezone';
 
 import { CalendarEventShape } from 'src/admin/components/types';
 import { simplifyStringArray } from 'src/admin/utils';

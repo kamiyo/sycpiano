@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import * as React from 'react';
 
 import { VideoItemShape } from 'src/components/Media/Videos/types';

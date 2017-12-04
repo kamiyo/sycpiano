@@ -5,6 +5,8 @@ const mustacheExpress = require('mustache-express');
 const initDB = require('./server/initDB.js');
 const apiRouter = require('./server/api-router.js');
 
+require('dotenv').config();
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 initDB().then(() => {
