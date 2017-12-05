@@ -9,7 +9,7 @@ const webpackConfig = (process.env.NODE_ENV === 'production') ? require('./webpa
 
 gulp.task('build', () => {
     // src is overwritten by webpack entry points
-    gulp.src('./web/src/main.jsx')
+    gulp.src('./web/src/main.tsx')
         .pipe(webpackStream(webpackConfig), webpack)
         .pipe(gulp.dest('./web/build'));
 });

@@ -27,7 +27,6 @@ const config = {
                 path.resolve(__dirname, 'web/src/admin/components'),
             ],
             loader: 'happypack/loader?id=ts'
-
         },
         {
             loader: 'happypack/loader?id=style',

@@ -15,7 +15,7 @@ $ npm run start-dev
 et Voila! This command will run a gulp task that starts the server and watches for changes you make to your code, in which case it will trigger a rebuild.
 
 ## Production
-First, setup a .env file with at least these entries (not needed on heroku, which parses info from database URL):
+First, setup a .env file with at least these entries:
 ```
 DB_NAME=<database name, probably sycpiano>
 DB_HOST=<production host, probably loopback: 127.0.0.1>
@@ -23,10 +23,16 @@ DB_USER=<username>
 DB_PASS=<password>
 PORT=<production port number>
 ```
+If deploying on heroku, make sure `DB_URL` is set, which contains the above info.
+
 Then, run:
 ```
 $ npm run start-prod
 ```
+
+Make sure: disable happyPack thread pools if you only have one core. Because of that, it might be better to directly run npm start or node app.js, after setting the correct environmental variabls.
+Also, make sure that it is not in a subPath, (i.e. project root must be /, not /somePath relative to the domain).
+Change database type to match the server (mddhosting uses MariaDB, heroku uses Postgres).
 
 ## Seeding the database
 sycpiano uses a PostgreSQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).
