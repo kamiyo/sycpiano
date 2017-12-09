@@ -10,7 +10,7 @@ export const eventItemsReducer = (state: EventItemsStateShape = {
         lng: -94.5786,
     },
     hasEventBeenSelected: false,
-    isFetching: false,
+    isFetchingList: false,
     isFetchingLatLng: false,
     isAnimatingScroll: false,
 }, action: ActionType) => {
@@ -19,18 +19,18 @@ export const eventItemsReducer = (state: EventItemsStateShape = {
             return {
                 ...state,
                 items: action.listItems,
-                isFetching: false,
+                isFetchingList: false,
                 currentItem: action.currentItem,
             };
         case SCHEDULE_ACTIONS.FETCH_EVENTS_REQUEST:
             return {
                 ...state,
-                isFetching: true,
+                isFetchingList: true,
             };
         case SCHEDULE_ACTIONS.FETCH_EVENTS_ERROR:
             return {
                 ...state,
-                isFetching: false,
+                isFetchingList: false,
             };
         case SCHEDULE_ACTIONS.FETCH_LAT_LNG_REQUEST:
             return {

@@ -7,7 +7,7 @@ import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
 import { List, ListRowRenderer } from 'react-virtualized/dist/es/List';
 
-import { easeQuadOut } from 'd3-ease';
+// import { easeQuadOut } from 'd3-ease';
 import moment from 'moment-timezone';
 
 import { dispatchAnimateFinish, dispatchAnimateStart, dispatchSelectEvent } from 'src/components/Schedule/actions';
@@ -16,7 +16,7 @@ import EventMonthItem from 'src/components/Schedule/EventMonthItem';
 import { DayItemShape, EventItemShape, ListWithGrid, MonthItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
-import animateFn from 'src/components/animate';
+// import animateFn from 'src/components/animate';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
@@ -34,32 +34,50 @@ interface EventListDispatchToProps {
 type EventListProps = RouteComponentProps<{ date: string }> & EventListStateToProps & EventListDispatchToProps;
 
 class EventList extends React.Component<EventListProps, {}> {
-    private currentOffset = 0;
-    private maxOffset = 0;
-    private requestId: number;
+    // private currentOffset = 0;
+    // private maxOffset = 0;
+    // private requestId: number;
     private List: ListWithGrid;
+    private Months = new Set<HTMLDivElement>();
+
+    removeRef = (div: HTMLDivElement) => {
+        this.Months.delete(div);
+        // console.log(this.Months);
+        console.log('remove', [...this.Months].reduce((acc, element) => {
+            return `${acc} ${element.innerText}: ${element.getBoundingClientRect().top}`;
+        }, ''));
+    }
+
+    setRef = (div: HTMLDivElement) => {
+        this.Months.add(div);
+        // console.log(this.Months);
+
+        console.log('add', [...this.Months].reduce((acc, element) => {
+            return `${acc} ${element.innerText}: ${element.getBoundingClientRect().top}`;
+        }, ''));
+    }
 
     componentDidUpdate() {
-        if (this.props.eventItems.length !== 0) {
-            const outerHeight = Math.floor(document.getElementsByClassName('event-list')[0].clientHeight);
-            const innerHeight = this.List.Grid._scrollingContainer.scrollHeight;        // HACK! Virtualized does not expose this to us =(
-            this.maxOffset = innerHeight - outerHeight;
-        }
+        // if (this.props.eventItems.length !== 0) {
+        // const outerHeight = Math.floor(document.getElementsByClassName('event-list')[0].clientHeight);
+        // const innerHeight = this.List.Grid._scrollingContainer.scrollHeight;        // HACK! Virtualized does not expose this to us =(
+        // this.maxOffset = innerHeight - outerHeight;
+        // }'
         if (this.props.hasEventBeenSelected) {
-            this.scrollToSelectedRow();
+            // this.scrollToSelectedRow();
             return;
         }
         if (this.props.match.params.date) {
             const scrollIndex = this.getScrollIndex();
             this.List.scrollToPosition(this.List.getOffsetForRow({ index: scrollIndex }));
         } else {
-            this.List.scrollToRow(0);
+            this.List.scrollToRow(this.getDateIndex(11));
         }
     }
 
-    animationRequestHandler = (requestId: number) => {
-        this.requestId = requestId;
-    }
+    // animationRequestHandler = (requestId: number) => {
+    // this.requestId = requestId;
+    // }
 
     render() {
         return (
@@ -75,15 +93,16 @@ class EventList extends React.Component<EventListProps, {}> {
                                 rowHeight={cache.rowHeight}
                                 deferredMeasurementCache={cache}
                                 rowRenderer={this.rowItemRenderer}
-                                scrollToAlignment='start'
+                                scrollToAlignment='center'
                                 noRowsRenderer={() => <div />}
                                 // react-virtualized needs estimatedRowSize to be a close approximation
                                 // to the actual calculated row size:
                                 // https://github.com/bvaughn/react-virtualized/blob/master/source/Grid/utils/CellSizeAndPositionManager.js#L152
                                 estimatedRowSize={300}
                                 onScroll={({ scrollTop }: { scrollTop: number }) => {
-                                    window.cancelAnimationFrame(this.requestId);        // if we scroll manually, hijack the animation.
-                                    this.currentOffset = scrollTop;
+                                    if (scrollTop < 600) {
+
+                                    }
                                 }}
                             />
                         )}
@@ -93,20 +112,20 @@ class EventList extends React.Component<EventListProps, {}> {
         );
     }
 
-    private scrollToSelectedRow = () => {
-        const targetIndex = this.getScrollIndex();
-        const targetOffset = Math.min(this.List.getOffsetForRow({ index: targetIndex }), this.maxOffset);
-        this.props.dispatchAnimateStart();
-        setTimeout(() => animateFn(
-            this.currentOffset,
-            targetOffset,
-            Math.min(Math.abs(this.currentOffset - targetOffset) / 2, 500),
-            (position) => this.List.scrollToPosition(position),
-            easeQuadOut,
-            () => { this.props.dispatchAnimateFinish(); },
-            this.animationRequestHandler,
-        ), 200);
-    }
+    // private scrollToSelectedRow = () => {
+    //     const targetIndex = this.getScrollIndex();
+    //     const targetOffset = Math.min(this.List.getOffsetForRow({ index: targetIndex }), this.maxOffset);
+    //     this.props.dispatchAnimateStart();
+    //     setTimeout(() => animateFn(
+    //         this.currentOffset,
+    //         targetOffset,
+    //         Math.min(Math.abs(this.currentOffset - targetOffset) / 2, 500),
+    //         (position) => this.List.scrollToPosition(position),
+    //         easeQuadOut,
+    //         () => { this.props.dispatchAnimateFinish(); },
+    //         this.animationRequestHandler,
+    //     ), 200);
+    // }
 
     private getScrollIndex = () => (
         Math.max(0, this.props.eventItems.findIndex(
@@ -118,12 +137,29 @@ class EventList extends React.Component<EventListProps, {}> {
         ))
     )
 
+    private getDateIndex = (num: number) => {
+        let count = 0;
+        let dayCount = 0;
+        for (const item of this.props.eventItems) {
+            if (dayCount === num) {
+                return count;
+            }
+            count++;
+            if (item.type === 'day') {
+                dayCount++;
+            }
+        }
+    }
+
     private renderEventItem = (index: number, style: React.CSSProperties) => {
         const item = this.props.eventItems[index];
         if (item.type === 'month') {
             return (
                 <EventMonthItem
+                    setRef={this.setRef}
+                    removeRef={this.removeRef}
                     month={(item as MonthItemShape).month}
+                    year={(item as MonthItemShape).year}
                     style={style}
                 />
             );

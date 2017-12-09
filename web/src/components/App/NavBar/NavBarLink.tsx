@@ -53,7 +53,7 @@ const NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                 mountOnEnter={true}
                 unmountOnExit={true}
                 in={props.subNavLinks && props.showSub}
-                onEnter={(el) => el.style.opacity = '1'}
+                onEnter={(el) => TweenLite.fromTo(el, 0.25, { opacity: 0 }, { opacity: 1 })}
                 onExit={(el) => TweenLite.fromTo(el, 0.25, { opacity: 1 }, { opacity: 0 })}
                 timeout={250}
             >

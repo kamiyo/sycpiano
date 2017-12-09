@@ -35,6 +35,7 @@ const VideoPlaylist: React.SFC<VideoPlaylistProps> = (props) => {
             currentItemId={props.videoId}
             onClick={props.playVideo}
             ChildRenderer={VideoPlaylistItem}
+            shouldAppear={false}
         />
     );
 };

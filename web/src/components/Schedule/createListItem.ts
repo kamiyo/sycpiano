@@ -27,9 +27,11 @@ class DayItem {
 class MonthItem {
     readonly type: 'month';
     readonly month: string;
+    readonly year: number;
     constructor(properties: MonthItemInputShape) {
         this.type = 'month';
         this.month = properties.month;
+        this.year = properties.year;
     }
 }
 

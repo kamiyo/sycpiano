@@ -31,6 +31,7 @@ interface PlaylistProps {
     readonly items: any[];
     readonly onClick: (...args: any[]) => void;
     readonly togglePlaylist?: (isShow?: boolean) => void;
+    readonly shouldAppear: boolean;
 }
 
 const Playlist: React.SFC<PlaylistProps> = (props) => {
@@ -41,7 +42,7 @@ const Playlist: React.SFC<PlaylistProps> = (props) => {
             appear={true}
             onEnter={(el, isAppearing) => {
                 const amount = ulRef.getBoundingClientRect().width;
-                if (!props.hasToggler && isAppearing) {
+                if ((!props.hasToggler || !props.shouldAppear) && isAppearing) {
                     el.style.transform = 'translateX(0)';
                 } else {
                     slideLeft(el, amount, (isAppearing) ? 0.25 : 0);

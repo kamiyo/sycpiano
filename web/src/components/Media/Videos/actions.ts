@@ -42,7 +42,7 @@ const fetchPlaylist = () => async (dispatch: Dispatch<GlobalStateShape>) => {
         await videosResponse.data.items.forEach((item: Youtube.Video, i: number) => {
             videoItems[i] = { ...videoItems[i], ...item };
         });
-        setTimeout(() => dispatch(fetchPlaylistSuccess(videoItems)), 500);
+        dispatch(fetchPlaylistSuccess(videoItems));
     } catch (err) {
         dispatch(fetchPlaylistError());
         console.log('fetch videos error', err);

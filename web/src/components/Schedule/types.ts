@@ -15,6 +15,19 @@ export interface GCalEvent {
     readonly [key: string]: any; // other params
 }
 
+export interface CachedEvent {
+    readonly UUID: string;
+    readonly location: string;
+    readonly dateTime: string;
+    readonly timezone: string;
+    readonly name: string;
+    readonly description: string;
+}
+
+interface DayOrMonth {
+    type: 'day' | 'month';
+}
+
 export interface DayItemInputShape {
     readonly id: string;
     readonly name: string;
@@ -26,16 +39,13 @@ export interface DayItemInputShape {
 }
 
 export interface MonthItemInputShape {
-    month: string;
+    readonly month: string;
+    readonly year: number;
 }
 
-export interface DayItemShape extends DayItemInputShape {
-    type: 'day' | 'month';
-}
+export type DayItemShape = DayOrMonth & DayItemInputShape;
 
-export interface MonthItemShape extends MonthItemInputShape {
-    type: 'day' | 'month';
-}
+export type MonthItemShape = DayOrMonth & MonthItemInputShape;
 
 export type EventItemShape = DayItemShape | MonthItemShape;
 
@@ -47,7 +57,7 @@ export interface EventItemsStateShape {
         readonly lng: number;
     };
     readonly hasEventBeenSelected: boolean;
-    readonly isFetching: boolean;
+    readonly isFetchingList: boolean;
     readonly isFetchingLatLng: boolean;
     readonly isAnimatingScroll: boolean;
 }

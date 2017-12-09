@@ -44,7 +44,7 @@ interface EventItemProps {
 }
 
 const EventItem: React.SFC<EventItemProps> = ({ event, style, handleSelect }) => {
-    const time = event.dateTime.format('h:mm z');
+    const time = event.dateTime.format('h:mm a z');
     return (
         <div className='event-item' style={style}>
             <DateContainer dateTime={event.dateTime} />

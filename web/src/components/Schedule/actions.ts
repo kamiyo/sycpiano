@@ -3,11 +3,13 @@ import * as ActionTypes from 'src/components/Schedule/actionTypes';
 import { DayItemShape, EventItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
-import moment from 'moment-timezone';
+import axios from 'axios';
+
+import { default as moment, Moment } from 'moment-timezone';
 import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { transformGCalEventsToListItems } from 'src/components/Schedule/utils';
+import { transformCachedEventsToListItems } from 'src/components/Schedule/utils';
 import { googleAPI } from 'src/services/GoogleAPI';
 
 const fetchEventsRequest = (): ActionTypes.FetchEventsRequest => ({
@@ -29,14 +31,25 @@ const shouldFetchEvents = (state: GlobalStateShape) => {
     const eventItemsReducer = state.schedule_eventItems;
     // should not call api if have items or isFetching
     // will update if we need to add functionality to get more events
-    return (eventItemsReducer.items.length === 0 && !eventItemsReducer.isFetching);
+    return !eventItemsReducer.isFetchingList;
 };
 
-const fetchEvents = (initialEventDateString: string): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
+interface FetchEventsArguments {
+    initialEventDateString?: string;
+    before?: Moment;
+    after?: Moment;
+}
+
+const fetchEvents = ({ initialEventDateString, before, after }: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
     try {
         dispatch(fetchEventsRequest());
-        const calendarResponse = await googleAPI.getCalendarEvents();
-        const listItems = transformGCalEventsToListItems(calendarResponse.data.items);
+
+        const calendarResponse = await axios.get('/api/calendar', {
+            params: {
+                after: moment().format(),
+            },
+        });
+        const listItems = transformCachedEventsToListItems(calendarResponse.data);
         const currentItem = listItems.find((item) =>
             item.type === 'day'
             && moment(initialEventDateString).isSame((item as DayItemShape).dateTime, 'day'),
@@ -48,10 +61,10 @@ const fetchEvents = (initialEventDateString: string): ThunkAction<void, GlobalSt
     }
 };
 
-export const createFetchEventsAction = (initialEventDateString: string): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
+export const createFetchEventsAction = (args: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
     if (shouldFetchEvents(getState())) {
         // need to fetch items
-        dispatch(fetchEvents(initialEventDateString));
+        dispatch(fetchEvents(args));
     }
 };
 

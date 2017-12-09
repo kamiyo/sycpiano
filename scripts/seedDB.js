@@ -51,7 +51,11 @@ function promptForInput() {
 
             const attrsArray = _.each(content, obj => _.omit(obj, ['ID']));
             models[fileName].bulkCreate(attrsArray).then(
-                () => console.log('Done! Happy coding!')
+                () => {
+                    console.log('Done! Happy coding!');
+
+                    process.exit();
+                }
             );
         });
     });

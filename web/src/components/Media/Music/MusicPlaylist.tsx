@@ -30,6 +30,7 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
         currentItemId={props.currentTrackId}
         onClick={props.onClick}
         ChildRenderer={(childProps) => <MusicPlaylistItem {...childProps} baseRoute={props.baseRoute} />}
+        shouldAppear={false}
     />
 );
 
