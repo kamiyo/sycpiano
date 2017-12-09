@@ -24,14 +24,16 @@ const EventMap = withScriptJs(
 );
 
 const Collaborators = ({ collaborators }) => (
-    collaborators.length ? (
-        <div className="collaborators">
-            <div>with</div>
-            {collaborators.map((collab, idx) => (
-                <div key={idx} className="collaborator__item">{collab}</div>
-            ))}
-        </div>
-    ) : <div>This is a solo concert.</div>
+    <div className="collaborators">
+        {collaborators.length ? <div>with</div> : null}
+        {
+            collaborators.length ? (
+                collaborators.map((collab, idx) => (
+                    <div key={idx} className="collaborator__item">{collab}</div>
+                ))
+            ) : <div>Solo Concert</div>
+        }
+    </div>
 );
 
 class EventDetails extends React.Component {
