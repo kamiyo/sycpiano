@@ -1,6 +1,6 @@
 import 'less/Schedule/event-details.less';
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { GoogleMap, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
@@ -35,6 +35,19 @@ const EventMap = withScriptjs(
             </GoogleMap>
         );
     }),
+);
+
+const Collaborators = ({ collaborators }) => (
+    <div className="collaborators">
+        {collaborators.length ? <div>with</div> : null}
+        {
+            collaborators.length ? (
+                collaborators.map((collab, idx) => (
+                    <div key={idx} className="collaborator__item">{collab}</div>
+                ))
+            ) : <div>Solo Concert</div>
+        }
+    </div>
 );
 
 interface EventDetailsStateToProps {
@@ -80,8 +93,11 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
 
         return (
             <div className='event-details'>
-                <h2>{name}</h2>
-                <div>{dateTime.format('dddd, MMMM D, YYYY')}</div>
+                <h1 className="event-details__name">{name}</h1>
+
+                <Collaborators collaborators={collaborators} />
+
+                {/* <div>{dateTime.format('dddd, MMMM D, YYYY')}</div>
                 <div>{collaborators}</div>
 
                 <div>{location}</div>
@@ -98,7 +114,7 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
 
                 <DateIconInstance className='date-icon' date={dateTime} />
                 <LocationIconInstance className='location-icon' />
-                <ClockIcon className='clock-icon' date={dateTime} />
+                <ClockIcon className='clock-icon' date={dateTime} /> */}
             </div>
         );
     }
