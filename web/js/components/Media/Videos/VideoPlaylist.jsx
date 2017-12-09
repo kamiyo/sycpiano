@@ -1,26 +1,45 @@
 import '@/less/Media/Videos/video-playlist.less';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import PlaylistManagerHOC from '@/js/components/Media/HigherOrder/PlaylistManagerHOC.jsx';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import VideoPlaylistItem from '@/js/components/Media/Videos/VideoPlaylistItem.jsx';
+import { playVideo, togglePlaylistAction } from '@/js/components/Media/Videos/actions.js';
+import Playlist from '@/js/components/Media/Playlist.jsx'
 
 const VideoPlaylist = (props) => {
-    let playlistItems = Object.keys(props.items).map((id) => {
-        let item = props.items[id];
-        return (
-            <VideoPlaylistItem key={item.id}
-                isActive={props.currentItemId === id}
-                video={item}
-                onClick={props.playlistItemOnClick} />
-            );
-    });
-
     return (
-        <div className="videoPlaylist">
-            <ul>{playlistItems}</ul>
-        </div>
-        );
+        <Playlist
+            className="videoPlaylist"
+            isShow={props.isShow}
+            hasToggler={true}
+            togglePlaylist={props.togglePlaylistAction}
+            items={props.videos}
+            currentItemId={props.videoId}
+            onClick={props.playVideo}
+            ChildRenderer={VideoPlaylistItem}
+        />
+    )
 }
 
-export default PlaylistManagerHOC(VideoPlaylist);
+VideoPlaylist.PropTypes = {
+    videos: PropTypes.array.isRequired,
+    isShow: PropTypes.bool.isRequired,
+    playVideo: PropTypes.func.isRequired,
+    togglePlaylistAction: PropTypes.func.isRequired,
+    videoId: PropTypes.string.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    videos: state.video_playlist.items,
+    videoId: state.video_player.videoId,
+    isShow: state.video_playlist.isShow
+})
+
+export default connect(
+    mapStateToProps,
+    {
+        playVideo,
+        togglePlaylistAction
+    }
+)(VideoPlaylist);

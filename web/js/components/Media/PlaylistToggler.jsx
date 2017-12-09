@@ -1,19 +1,17 @@
-import '@/less/Media/Videos/playlist-toggler.less';
-import PropTypes from 'prop-types';
+import '@/less/Media/playlist-toggler.less';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
-export default class PlaylistToggler extends React.Component {
-    render() {
-        return (
-            <div className="playlistToggler" onClick={this.props.onClick}>
-                {!this.props.isPlaylistVisible ? '\u25C0' : '\u25B6'}
-            </div>
-            );
-    }
+const PlaylistToggler = (props) => (
+    <div className="playlistToggler no-highlight" onClick={props.onClick}>
+        {props.isPlaylistVisible ? '\u25B6' : '\u25C0'}
+    </div>
+);
+
+PlaylistToggler.PropTypes = {
+    onClick: PropTypes.func.isRequired,
+    isPlaylistVisible: PropTypes.bool.isRequired
 }
 
-PlaylistToggler.propTypes = {
-    isPlaylistVisible: PropTypes.bool.isRequired,
-    onClick: PropTypes.func.isRequired
-};
+export default PlaylistToggler;

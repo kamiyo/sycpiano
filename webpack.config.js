@@ -63,7 +63,7 @@ const config = {
                     loader: 'babel-loader',
                     query: {
                         plugins: ['transform-runtime'],
-                        presets: ['es2015', 'stage-0', 'react']
+                        presets: ['env', 'stage-0', 'react']
                     },
                 },
             ],

@@ -11,7 +11,11 @@ const Media = () => (
 	<div className='mediaContainer container'>
 		<Switch>
 			<Route path='/media/videos' component={Videos} exact />
-			<Route path='/media/music' component={Music} exact />
+			<Route path='/media/music' render={(props) =>
+				<Route path='/media/music/:track?' render={(childProps) => (
+					<Music {...childProps} baseRoute={props.match.url} />
+				)} exact />
+			} />
 			<Route path='/media/pictures' component={Photos} exact />
 		</Switch>
 	</div>

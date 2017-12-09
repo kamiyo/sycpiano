@@ -1,8 +1,9 @@
 import '@/less/App/NavBar/sub-nav.less';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { NavLink, withRouter } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { Transition } from 'react-transition-group';
+import { TweenLite } from 'gsap';
 import SubNav from '@/js/components/SubNav/SubNav.jsx';
 
 const Highlight = ({ activeName, link }) => (
@@ -15,10 +16,10 @@ const Highlight = ({ activeName, link }) => (
 const NavBarLink = (props) => (
     <li className='navBarLink'>
         {
-            (props.link === 'media') ?
+            (props.subNavLinks) ?
                 <a
                     onClick={() => props.toggleSub()}
-                    className={`${props.activeName} unselectable`}
+                    className={`${props.activeName} no-highlight`}
                 >
                     <Highlight activeName={props.activeName} link={props.link} />
                 </a> :
@@ -32,11 +33,22 @@ const NavBarLink = (props) => (
                 </NavLink>
         }
         {
-            (props.subNavLinks && props.showSub) ?
-                <SubNav links={props.subNavLinks} /> :
-                null
+            <Transition
+                mountOnEnter={true}
+                unmountOnExit={true}
+                in={props.subNavLinks && props.showSub}
+                onEnter={(el) => el.style.opacity = 1}
+                onExit={(el) => TweenLite.fromTo(el, 0.25, { opacity: 1 }, { opacity: 0 })}
+                timeout={250}
+            >
+                <SubNav
+                    basePath={props.to}
+                    links={props.subNavLinks}
+                    onClick={() => props.toggleSub(false)}
+                />
+            </Transition>
         }
     </li>
 )
 
-export default withRouter(NavBarLink);
+export default NavBarLink;

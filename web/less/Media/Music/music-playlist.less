@@ -1,0 +1,76 @@
+@import '../../variables.less';
+@import '../../fonts.less';
+@import '../../mixins.less';
+
+@itemHeight: 50px;
+@itemBorderColor: 1px solid rgba(120, 120, 120, 0.3);
+
+.playlist.musicPlaylist {
+    width: 25%;
+    ul {
+        background-color: @playlistBackground;
+    }
+
+    .musicPlaylistItem {
+        @padding: 10px;
+        background-color: @playlistBackground;
+
+        list-style: none;
+        cursor: pointer;
+        width: 100%;
+        height: @itemHeight + @padding * 2;
+        padding: @padding 0 @padding 15px;
+        border-left: 7px solid transparent;
+        border-bottom: @itemBorderColor;
+
+        .transition(all 0.15s);
+
+        &:hover, &.active {
+            background-color: rgba(255, 255, 255, 1);
+
+            .imageContainer img {
+                .filter(brightness(60%));
+            }
+        }
+
+        &.active {
+            border-left-color: #4E86A4;
+        }
+
+        .itemContent {
+            height: 100%;
+            width: 100%;
+        }
+
+        .section {
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        .audioInfo {
+            width: 100%;
+            height: 100%;
+            padding: 0 0 20px 0;
+            position: relative;
+
+            h4 {
+                margin: 0;
+                color: black;
+                font-size: 15px;
+                position: absolute;
+
+                &.text-top {
+                    padding-top: 5px;
+                    top: 0;
+                }
+
+                &.text-bottom {
+                    font-size: 12px;
+                    padding: 0 20px 5px 0;
+                    bottom: 0;
+                    text-align: right;
+                }
+            }
+        }
+    }
+}

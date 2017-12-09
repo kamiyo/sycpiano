@@ -2,169 +2,245 @@ import '@/less/Media/media-content.less';
 import '@/less/Media/Music/music.less';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { max, shuffle, sum } from 'lodash';
-import $ from 'cash-dom';
-import { ParticleExplosionsManager } from '@/js/components/Media/Music/Particles.js';
-
-// const url = 'http://seanchenpiano.com/musicfiles/composing/improv.mp3';
-const url = '/music/spellbound.mp3';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { waveformLoader, firLoader, constantQ } from '@/js/components/Media/Music/VisualizationUtils.js';
+import { TweenLite } from 'gsap';
+import { fetchPlaylistAction } from '@/js/components/Media/Music/actions.js';
+import AudioVisualizer from '@/js/components/Media/Music/AudioVisualizer.jsx';
+import AudioInfo from '@/js/components/Media/Music/AudioInfo.jsx';
+import AudioUI from '@/js/components/Media/Music/AudioUI.jsx';
+import MusicPlaylist from '@/js/components/Media/Music/MusicPlaylist.jsx';
 
 class Music extends React.Component {
-    componentDidMount() {
-        this.$el = $(ReactDOM.findDOMNode(this));
-        this.$audio = this.$el.find('audio').first();
-        this.audio = this.$audio.get(0);
-        this.audio.src = url;
+    autoPlay = false;
+    wasPlaying = false;
+    loaded = false;
+    state = {
+        analyzers: [null, null],
+        isPlaying: false,
+        volume: 0.0,
+        playbackPosition: 0.0,
+        lastUpdateTimestamp: 0,
+        duration: -1,
+        track: null,
+        currentTrack: {},
+    }
 
-        this.$visualization = this.$el.find('.visualization').first();
-        this.visualization = this.$visualization.get(0);
+    play = () => {
+        if (!this.loaded) {
+            this.autoPlay = false;
+        }
+        this.audio.play();
+    }
+    pause = () => {
+        this.audio.pause();
+    }
 
-        this.height = this.$visualization.height();
-        this.width = this.$visualization.width();
-        this.visualization.height = this.height;
-        this.visualization.width = this.width;
-        this.visualizationCtx = this.visualization.getContext('2d');
-        this.visualizationCtx.globalCompositionOperation = "lighter";
+    initializeAudioPlayer = async () => {
+        this.audio.addEventListener('loadeddata', this.audioOnLoad);
+        this.audio.addEventListener('playing', this.onPlaying);
+        this.audio.addEventListener('timeupdate', this.onTimeUpdate);
+        this.audio.addEventListener('pause', this.onPause);
+        this.audio.addEventListener('ended', this.onEnded);
 
-        this.explosions = new ParticleExplosionsManager(this.visualizationCtx);
+        const audioCtx = new AudioContext();
+        const audioSrc = audioCtx.createMediaElementSource(this.audio);
+        this.analyzerL = audioCtx.createAnalyser();
+        this.analyzerR = audioCtx.createAnalyser();
+        const splitter = audioCtx.createChannelSplitter(2);
+        const merger = audioCtx.createChannelMerger(2);
+        audioSrc.connect(splitter);
+        splitter.connect(this.analyzerL, 0);
+        splitter.connect(this.analyzerR, 1);
+        this.analyzerL.connect(merger, 0, 0);
+        this.analyzerR.connect(merger, 0, 1);
+        merger.connect(audioCtx.destination);
 
-        this.$audio.on('loadeddata', () => {
-            const audioCtx = new AudioContext();
-            const audioSrc = audioCtx.createMediaElementSource(this.audio);
-            this.analyser = audioCtx.createAnalyser();
-            // we have to connect the MediaElementSource with the analyser
-            audioSrc.connect(this.analyser);
-            this.analyser.connect(audioCtx.destination);
-            this.analyser.fftSize = 32;
+        this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(audioCtx.sampleRate / 192000, 2);
 
-            // frequencyBinCount tells you how many values you'll receive from the analyser
-            this.frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
+        this.audio.volume = 0;
 
-            this.audio.volume = 1;
-            // this.audio.play();
-            window.audio = this.audio;
+        this.waitForConstantQ();
+        this.waitForPlaylist();
+    }
 
-            this.lastUpdateTime = null;
-            this.lastTimeAboveThresh = null;
-            this.newCenterIn = 1 + Math.random() * 25;
-            this.explosionCenterX = this.width / 2;
-            this.explosionCenterY = this.height / 2;
+    waitForConstantQ = async () => {
+        try {
+            await constantQ.loaded;
+            this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
+            this.setState({ analyzers: [this.analyzerL, this.analyzerR] });
+        } catch (err) {
+            console.error('constantQ init failed.', err);
+        }
+    }
 
+    waitForPlaylist = async () => {
+        try {
+            const firstTrack = await this.props.fetchPlaylistAction(this.props.match.params.track);
+            this.loadTrack(firstTrack, false);
+        }
+        catch (err) {
+            console.error('playlist init failed.', err);
+        }
+    }
 
-            window.createExplosion = () => {
-                this.explosions.createExplosion(this.width / 2, this.height / 2);
-                this.update();
-            };
-
-            // this.onAnalyze();
-
-            this.$audio.on('play', () => {
-                this.onAnalyze();
+    loadTrack = async (track, autoPlay) => {
+        this.loaded = false;
+        this.autoPlay = autoPlay;
+        await new Promise((resolve) => {
+            TweenLite.fromTo(this.audio, 0.3, { volume: this.audio.volume }, {
+                volume: 0,
+                onUpdate: () => {
+                    this.setState({ volume: this.audio.volume });
+                },
+                onComplete: () => {
+                    setTimeout(resolve, 100);
+                }
             });
+        });
+        this.audio.pause();
+        this.setState({ currentTrack: track, duration: -1 });
+        waveformLoader.loadWaveformFile(track.waveform);
+        this.audio.src = track.url;
+        await waveformLoader.loaded;
+        TweenLite.fromTo(this.audio, 0.3, { volume: 0 }, {
+            volume: 1,
+            onUpdate: () => {
+                this.setState({ volume: this.audio.volume });
+            },
         });
     }
 
-    onAnalyze() {
-        this.analyser.getByteFrequencyData(this.frequencyData);
-        // this.drawCircles(200, this.frequencyData);
+    onTimeUpdate = () => {
+        this.setState({
+            playbackPosition: this.audio.currentTime,
+            lastUpdateTimestamp: performance.now()
+        });
+    }
 
-        const now = Date.now();
-        const deltaMs = this.lastTimeAboveThresh ? now - this.lastTimeAboveThresh : 0;
+    onEnded = () => {
+        this.setState({
+            isPlaying: false,
+            playbackPosition: 0,
+            lastUpdateTimestamp: performance.now()
+        });
+    }
 
-        if (max(this.frequencyData) < 150) {
-            if (deltaMs > 1000) {
-                this.createExplosion(this.frequencyData);
+    onDrag = (percent) => {
+        const position = percent * this.audio.duration;
+        this.setState({
+            playbackPosition: position,
+            lastUpdateTimestamp: performance.now()
+        });
+    }
+
+    onStartDrag = (percent) => {
+        this.wasPlaying = this.state.isPlaying;
+        const position = percent * this.audio.duration;
+        this.audio.currentTime = position;
+        this.audio.pause();
+        this.onDrag(percent);
+    }
+
+    seekAudio = (percent) => {
+        this.onDrag(percent);
+        const position = percent * this.audio.duration;
+        this.audio.currentTime = position;
+        if (this.wasPlaying) {
+            this.audio.play();
+        }
+    }
+
+    audioOnLoad = async () => {
+        this.setState({ duration: this.audio.duration });
+        this.loaded = true;
+        try {
+            await Promise.all([constantQ.loaded, firLoader.loaded, waveformLoader.loaded]);
+            if (this.autoPlay) {
+                this.setState({ isPlaying: true });
+                this.audio.play();
             }
-        } else {
-            this.lastTimeAboveThresh = now;
-            this.createExplosion(this.frequencyData);
-        }
-
-        // this.createExplosion(this.frequencyData);
-
-        this.update();
-        requestAnimationFrame(this.onAnalyze.bind(this));
-    }
-
-    update() {
-        const context = this.visualizationCtx;
-
-        context.clearRect(0, 0, this.width, this.height);
-        const now = Date.now();
-        const deltaMs = this.lastUpdateTime ? now - this.lastUpdateTime : 0;
-        this.lastUpdateTime = now;
-        this.explosions.update(deltaMs);
-        this.newCenterIn--;
-
-        if (this.newCenterIn <= 0) {
-            this.explosionCenterX = Math.random() * this.width;
-            this.explosionCenterY = Math.random() * this.height;
-            this.newCenterIn = 1 + Math.random() * 25;
+        } catch (err) {
+            console.error('music component init failed.', err);
         }
     }
 
-    createExplosion(data) {
-        const randX = Math.random();
-        const randY = Math.random();
-        const maxAmplitude = max(data);
-
-        const posX = Math.max(this.explosionCenterX + (randX - 0.5) / 0.5 * 100, 0);
-        const posY = Math.max(this.explosionCenterY + (randY - 0.5) / 0.5 * 100, 0);
-
-        const sizes = shuffle(data.map(d => 50 * -Math.log10(d / 255)));
-
-        this.explosions.createExplosion(posX, posY, sizes);
+    onPause = () => {
+        this.setState({
+            isPlaying: false,
+            playbackPosition: this.audio.currentTime,
+            lastUpdateTimestamp: performance.now(),
+        });
     }
 
-    drawCircles(radius, radii) {
-        const context = this.visualization.getContext('2d');
-        context.clearRect(0, 0, this.width, this.height);
+    onPlaying = () => {
+        this.setState({
+            isPlaying: true,
+            playbackPosition: this.audio.currentTime,
+            lastUpdateTimestamp: performance.now(),
+        });
+    }
 
-        const count = radii.length;
-        const twoPi = 2 * Math.PI;
-        const pi = Math.PI;
+    componentDidMount() {
+        this.initializeAudioPlayer();
+    }
 
-        for (let j = 0; j < 2; j++) {
-            for (let i = 0; i < count; i++) {
-                const angle = i * pi / count + j * pi;
-                const scale = radii[i] / 255;
-
-                // const rad = radius + scale * radius;
-                const rad = radius;
-
-                const x = rad * Math.cos(angle) + this.width / 2;
-                const y = rad * Math.sin(angle) + this.height / 2;
-                const r = 20 * scale;
-
-                // const x = (100 + radius * scale) * Math.cos(angle) + this.width / 2;
-                // const y = (100 + radius * scale) * Math.sin(angle) + this.height / 2;
-                // const r = 10;
-
-                context.beginPath();
-                context.arc(x, y, r, 0, twoPi, false);
-                context.fillStyle = '#fff';
-                context.fill();
-            }
-        }
-
-        context.save();
-        context.beginPath();
-        context.arc(this.width / 2, this.height / 2, radius, 0, twoPi);
-        context.closePath();
-        context.clip();
-        context.clearRect(0, 0, this.width, this.height);
-        context.restore();
+    componentWillUnmount() {
+        this.audio.removeEventListener('loadeddata', this.audioOnLoad);
+        this.audio.removeEventListener('playing', this.onPlaying);
+        this.audio.removeEventListener('timeupdate', this.onTimeUpdate);
+        this.audio.removeEventListener('pause', this.onPause);
+        this.audio.removeEventListener('ended', this.onEnded);
+        this.audio.pause();
+        waveformLoader.reset();
     }
 
     render() {
         return (
             <div className="mediaContent music">
-                <audio id="audio" crossOrigin="anonymous"/>
-                <canvas className="visualization"></canvas>
+                <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
+                <MusicPlaylist
+                    onClick={this.loadTrack}
+                    currentTrack={this.state.currentTrack}
+                    baseRoute={this.props.baseRoute}
+                />
+                <AudioUI
+                    seekAudio={this.seekAudio}
+                    onStartDrag={this.onStartDrag}
+                    onDrag={this.onDrag}
+                    volume={this.state.volume}
+                    play={this.play}
+                    pause={this.pause}
+                    isPlaying={this.state.isPlaying}
+                    currentPosition={this.state.playbackPosition}
+                />
+                <AudioInfo
+                    duration={this.state.duration}
+                    currentTrack={this.state.currentTrack}
+                />
+                <AudioVisualizer
+                    currentPosition={this.state.playbackPosition}
+                    analyzers={this.state.analyzers}
+                    isPlaying={this.state.isPlaying}
+                    duration={this.state.duration}
+                    prevTimestamp={this.state.lastUpdateTimestamp}
+                    volume={this.state.volume}
+                />
             </div>
-            );
+        );
     }
 }
 
-export default Music;
+Music.propTypes = {
+    baseRoute: PropTypes.string.isRequired,
+    fetchPlaylistAction: PropTypes.func.isRequired,
+    match: PropTypes.object.isRequired
+}
+
+export default connect(
+    null,
+    {
+        fetchPlaylistAction
+    }
+)(Music);

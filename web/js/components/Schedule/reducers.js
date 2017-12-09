@@ -17,12 +17,13 @@ export const eventItemsReducer = (state = {
                 currentItem: action.currentItem
             };
         case SCHEDULE_ACTIONS.FETCH_EVENTS_REQUEST:
-            return state.isFetching ? state : { ...state, isFetching: true };
+            return { ...state, isFetching: true };
+        case SCHEDULE_ACTIONS.FETCH_EVENTS_ERROR:
+            return { ...state, isFetching: false };
         case SCHEDULE_ACTIONS.FETCH_LAT_LNG_REQUEST:
-            return {
-                ...state,
-                isFetchingLatLng: true
-            };
+            return { ...state, isFetchingLatLng: true };
+        case SCHEDULE_ACTIONS.FETCH_LAT_LNG_ERROR:
+            return { ...state, isFetchingLatLng: false };
         case SCHEDULE_ACTIONS.FETCH_LAT_LNG_SUCCESS:
             return {
                 ...state,

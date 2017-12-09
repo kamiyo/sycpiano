@@ -14,4 +14,27 @@ apiRouter.get('/acclaims', (req, res) => {
     models.Acclaim.findAll(params).then(object => res.json(object));
 });
 
+apiRouter.get('/music', (req, res) => {
+    res.json({items: [
+        {
+            title: "Spellbound Concerto",
+            composer: "Miklos Rosza",
+            contributing: "New West Symphony",
+            url: '/music/spellbound.mp3',
+            waveform: '/music/waveforms/spellbound.dat',
+            id: 'spellbound',
+            duration: '00:13:22'
+        },
+        {
+            title: "Improvisation",
+            composer: "Sean Chen",
+            contributing: "",
+            url: '/music/improv.mp3',
+            waveform: '/music/waveforms/improv.dat',
+            id: 'improv',
+            duration: '00:06:18'
+        }
+    ]});
+})
+
 module.exports = apiRouter;
