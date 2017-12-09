@@ -1,8 +1,8 @@
-The official web page of pianist Sean Chen.
+# The official web page of pianist Sean Chen.
 
 It is an [express](http://expressjs.com/) app with a PostgreSQL database, with the express app serving very little HTML. In fact, most of the app is on the client, built with [react](https://facebook.github.io/react/) and bundled with [webpack](https://webpack.github.io/).
 
-### Getting Started
+## Getting Started
 Make sure at least version 8.4.0 of Node.js is installed.
 After you've cloned the repository and have navigated to the project root, run:
 ```
@@ -12,7 +12,27 @@ After installing your node dependencies, you're ready to start dev process.
 ```
 $ npm run start-dev
 ```
-Voila! This command will run a gulp task that starts the server and watches for changes you make to your code, in which case it will trigger a rebuild.
+et Voila! This command will run a gulp task that starts the server and watches for changes you make to your code, in which case it will trigger a rebuild.
+
+## Production
+First, setup a .env file with at least these entries:
+```
+DB_NAME=<database name, probably sycpiano>
+DB_HOST=<production host, probably loopback: 127.0.0.1>
+DB_USER=<username>
+DB_PASS=<password>
+PORT=<production port number>
+```
+If deploying on heroku, make sure `DB_URL` is set, which contains the above info.
+
+Then, run:
+```
+$ npm run start-prod
+```
+
+Make sure: disable happyPack thread pools if you only have one core. Because of that, it might be better to directly run npm start or node app.js, after setting the correct environmental variabls.
+Also, make sure that it is not in a subPath, (i.e. project root must be /, not /somePath relative to the domain).
+Change database type to match the server (mddhosting uses MariaDB, heroku uses Postgres).
 
 ## Seeding the database
 sycpiano uses a PostgreSQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).

@@ -5,11 +5,11 @@ const gulp = require('gulp');
 const gutil = require('gulp-util');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
-const webpackConfig = require('./webpack.config.js');
+const webpackConfig = (process.env.NODE_ENV === 'production') ? require('./webpack.prod.config.js') : require('./webpack.dev.config.js');
 
 gulp.task('build', () => {
     // src is overwritten by webpack entry points
-    gulp.src('./web/js/main.jsx')
+    gulp.src('./web/src/main.tsx')
         .pipe(webpackStream(webpackConfig), webpack)
         .pipe(gulp.dest('./web/build'));
 });
