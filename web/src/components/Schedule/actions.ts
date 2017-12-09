@@ -12,6 +12,8 @@ import { ThunkAction } from 'redux-thunk';
 import { transformCachedEventsToListItems } from 'src/components/Schedule/utils';
 import { googleAPI } from 'src/services/GoogleAPI';
 
+const FETCH_LIMIT = 10;
+
 const fetchEventsRequest = (): ActionTypes.FetchEventsRequest => ({
     type: SCHEDULE_ACTIONS.FETCH_EVENTS_REQUEST,
 });
@@ -40,11 +42,22 @@ interface FetchEventsArguments {
     after?: Moment;
 }
 
-const fetchEvents = ({ initialEventDateString, before, after }: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
+const fetchEvents = ({ initialEventDateString = '', before, after }: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
     try {
         dispatch(fetchEventsRequest());
+        let params: {
+            before?: string;
+            after?: string;
+            limit: number;
+        };
+        if (before) {
+            params.before = before.format();
+        } else if (after) {
+            params.after = after.format();
+        }
+        params.limit = FETCH_LIMIT;
 
-        const calendarResponse = await axios.get('/api/calendar', {
+        calendarResponse = await axios.get('/api/calendar', {
             params: {
                 after: moment().format(),
             },
