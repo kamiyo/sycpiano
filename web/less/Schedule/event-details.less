@@ -2,6 +2,7 @@
 @import '../fonts.less';
 
 @marker-dimension: 50px;
+@icon-dimension: 80px;
 
 .event-details {
     font-family: @lato1;
@@ -12,7 +13,9 @@
     border-bottom: 1px solid #c3c3c3;
 }
 
-.collaborator {
+.collaborators {
+    padding-bottom: 5px;
+    border-bottom: 1px solid #c3c3c3;
 }
 
 .event-map {
@@ -25,8 +28,8 @@
     display: block;
     fill: @light-blue;
     stroke: black;
-    width: 120px;
-    height: 120px;
+    width: @icon-dimension;
+    height: @icon-dimension;
 
     rect.active {
         fill: @light-blue;
@@ -40,8 +43,8 @@
     display: block;
     fill: white;
     stroke: #000;
-    width: 120px;
-    height: 120px;
+    width: @icon-dimension;
+    height: @icon-dimension;
 }
 
 #location-icon-marker-part {
@@ -51,8 +54,8 @@
 
 .clock-icon {
     display: block;
-    width: 120px;
-    height: 120px;
+    width: @icon-dimension;
+    height: @icon-dimension;
 
     #clock-border {
         stroke: #000;
@@ -72,7 +75,7 @@
 
 .treble-icon {
     display: block;
-    width: 120px;
-    height: 120px;
+    width: @icon-dimension;
+    height: @icon-dimension;
     fill: @light-blue;
 }

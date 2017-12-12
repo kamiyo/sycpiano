@@ -12,7 +12,11 @@ export const DateIconSVG: React.SFC<{}> = () => {
     );
 };
 
-export const DateIconInstance: React.SFC<React.SVGAttributes<{}> & { readonly date: Moment; }> = ({ date, ...props }) => {
+interface DateIconProps extends React.SVGAttributes<{}> {
+    readonly date: Moment;
+}
+
+export const DateIconInstance: React.SFC<DateIconProps> = ({ date, ...props }) => {
     const startOfMonth = moment(date).startOf('month');
     const startDay = startOfMonth.isoWeekday() % 7;
     const firstDayOfCalendar = moment(startOfMonth).subtract({ days: startDay });
