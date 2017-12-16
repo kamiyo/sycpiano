@@ -1,6 +1,6 @@
 import { Moment } from 'moment-timezone';
 
-import { DayItemInputShape, MonthItemInputShape } from 'src/components/Schedule/types';
+import { DayItemInputShape, EventItemInputShape, MonthItemInputShape } from 'src/components/Schedule/types';
 
 class DayItem {
     readonly id: string;
@@ -28,14 +28,16 @@ class MonthItem {
     readonly type: 'month';
     readonly month: string;
     readonly year: number;
+    readonly dateTime: Moment;
     constructor(properties: MonthItemInputShape) {
         this.type = 'month';
         this.month = properties.month;
         this.year = properties.year;
+        this.dateTime = properties.dateTime;
     }
 }
 
-export default (itemType: 'day' | 'month', properties: DayItemInputShape | MonthItemInputShape) => {
+export default (itemType: 'day' | 'month', properties: EventItemInputShape) => {
     switch (itemType) {
         case 'day':
             return new DayItem(properties as DayItemInputShape);

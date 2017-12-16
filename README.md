@@ -66,4 +66,15 @@ $ node scripts/seedDB.js
 ```
 When it asks for your usename and password, you can provide those of any postgres user that has INSERT privilege. The file path you provide (as the third argument) must be a JSON file, and the objects of that JSON file must match the schema of the sequelize models defined under `server/models/`.
 
+## ~~Syncing~~ Overwriting/Populating the Google Calendar local cache
+A local cache of google calendar is implemented. Populate by running
+```bash
+# From project root
+$ node server/syncGoogleCalendar.js
+```
+TODO: figure out use scripts or server folder for this.
+TODO: really make it sync instead of overwrite.
+
+If you want to repopulate the cache, you need to DROP the 'calendars' table first, otherwise you will get duplicate entries.
+
 Remember, before running `npm run start-dev`, make sure the postgres server is running.

@@ -7,77 +7,177 @@ import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
 import { List, ListRowRenderer } from 'react-virtualized/dist/es/List';
 
-// import { easeQuadOut } from 'd3-ease';
-import moment from 'moment-timezone';
+import debounce from 'lodash-es/debounce';
+import { default as moment, Moment } from 'moment-timezone';
 
-import { dispatchAnimateFinish, dispatchAnimateStart, dispatchSelectEvent } from 'src/components/Schedule/actions';
+import { createFetchEventsAction, selectEvent, switchList } from 'src/components/Schedule/actions';
+import { EventListName } from 'src/components/Schedule/actionTypes';
 import EventItem from 'src/components/Schedule/EventItem';
 import EventMonthItem from 'src/components/Schedule/EventMonthItem';
-import { DayItemShape, EventItemShape, ListWithGrid, MonthItemShape } from 'src/components/Schedule/types';
+import { DayItemShape, EventItemShape, FetchEventsArguments, ListWithGrid, MonthItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
-
-// import animateFn from 'src/components/animate';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
 interface EventListStateToProps {
     readonly eventItems: EventItemShape[];
     readonly hasEventBeenSelected: boolean;
+    readonly minDate: Moment;
+    readonly maxDate: Moment;
+    readonly currentItem: DayItemShape;
+    readonly isFetchingList: boolean;
+    readonly activeName: EventListName;
 }
 
 interface EventListDispatchToProps {
-    readonly dispatchSelectEvent: (item: EventItemShape) => void;
-    readonly dispatchAnimateStart: () => void;
-    readonly dispatchAnimateFinish: () => void;
+    readonly selectEvent: (item: EventItemShape) => void;
+    readonly createFetchEventsAction: (args: FetchEventsArguments) => void;
+    readonly switchList: (name: EventListName) => void;
 }
 
-type EventListProps = RouteComponentProps<{ date: string }> & EventListStateToProps & EventListDispatchToProps;
+interface EventListOwnProps {
+    readonly type: EventListName;
+}
 
-class EventList extends React.Component<EventListProps, {}> {
-    // private currentOffset = 0;
-    // private maxOffset = 0;
-    // private requestId: number;
+type EventListProps = RouteComponentProps<ParamProps> & EventListOwnProps & EventListStateToProps & EventListDispatchToProps;
+
+interface ParamProps {
+    readonly date: string;
+}
+
+interface EventListState {
+    scrollUpdater: boolean;
+}
+
+class EventList extends React.Component<EventListProps, EventListState> {
     private List: ListWithGrid;
-    private Months = new Set<HTMLDivElement>();
+    private updateReason: 'listChange' | 'selectItem' | 'typeChange' | 'activeChange' | 'initialList' | 'unsetScroll';
+    state = {
+        scrollUpdater: false,
+    };
 
-    removeRef = (div: HTMLDivElement) => {
-        this.Months.delete(div);
-        // console.log(this.Months);
-        console.log('remove', [...this.Months].reduce((acc, element) => {
-            return `${acc} ${element.innerText}: ${element.getBoundingClientRect().top}`;
-        }, ''));
+    componentWillMount() {
+        // enforce if date is after now, use upcoming
+        // or if date is before now, use archive
+        const date = this.props.match.params.date;
+        if (date) {
+            if (moment(date).isSameOrAfter(moment(), 'day') && this.props.type === 'archive') {
+                this.props.history.replace(`/schedule/upcoming/${date}`);
+            } else if (moment(date).isBefore(moment(), 'day') && this.props.type === 'upcoming') {
+                this.props.history.replace(`/schedule/archive/${date}`);
+            }
+        }
+
+        // activate redux state for current type
+        this.props.switchList(this.props.type);
+        let params;
+        if (date) {
+            params = { date: moment(date, 'YYYY-MM-DD'), scrollTo: true };
+        } else if (this.props.type === 'upcoming') {
+            params = { after: moment(), scrollTo: true };
+        } else if (this.props.type === 'archive') {
+            params = { before: moment(), scrollTo: true };
+        }
+        this.props.createFetchEventsAction({ ...params });
     }
 
-    setRef = (div: HTMLDivElement) => {
-        this.Months.add(div);
-        // console.log(this.Months);
-
-        console.log('add', [...this.Months].reduce((acc, element) => {
-            return `${acc} ${element.innerText}: ${element.getBoundingClientRect().top}`;
-        }, ''));
+    componentWillUpdate(nextProps: EventListProps) {
+        if (this.updateReason === 'typeChange') {
+            nextProps.switchList(nextProps.type);
+            return;
+        } else if (this.updateReason === 'activeChange') {
+            const date = nextProps.match.params.date;
+            let params;
+            if (nextProps.eventItems.length === 0) {
+                if (date) {
+                    params = { date: moment(date, 'YYYY-MM-DD'), scrollTo: true };
+                } else {
+                    if (nextProps.activeName === 'upcoming') {
+                        params = { after: moment(), scrollTo: true };
+                    } else if (nextProps.activeName === 'archive') {
+                        params = { before: moment(), scrollTo: true };
+                    }
+                }
+            } else if (date && nextProps.eventItems.find((value) => {
+                return value.dateTime.isSame(moment(date), 'day');
+            })) {
+                params = { date: moment(date, 'YYYY-MM-DD'), scrollTo: true };
+            } else {
+                return;
+            }
+            nextProps.createFetchEventsAction({ ...params });
+        }
     }
 
+    // used to force List component to unset scrollToIndex prop on List
+    // after successful update of any non-unset-scroll type, because
+    // bug in library causes upwards scroll to lock if the prop is set.
     componentDidUpdate() {
-        // if (this.props.eventItems.length !== 0) {
-        // const outerHeight = Math.floor(document.getElementsByClassName('event-list')[0].clientHeight);
-        // const innerHeight = this.List.Grid._scrollingContainer.scrollHeight;        // HACK! Virtualized does not expose this to us =(
-        // this.maxOffset = innerHeight - outerHeight;
-        // }'
-        if (this.props.hasEventBeenSelected) {
-            // this.scrollToSelectedRow();
+        if (this.updateReason !== 'unsetScroll') {
+            this.setState({ scrollUpdater: !this.state.scrollUpdater });
+        }
+    }
+
+    shouldComponentUpdate(nextProps: EventListProps, nextState: any) {
+        if (nextProps.type !== this.props.type) {
+            this.updateReason = 'typeChange';
+            return true;
+        }
+        if (nextProps.activeName !== this.props.activeName) {
+            this.updateReason = 'activeChange';
+            return true;
+        }
+        if (!this.props.eventItems.length && nextProps.eventItems.length) {
+            this.updateReason = 'initialList';
+            return true;
+        }
+        if (nextProps.eventItems.length !== this.props.eventItems.length) {
+            this.updateReason = 'listChange';
+            return true;
+        }
+        if (nextProps.currentItem !== this.props.currentItem) {
+            this.updateReason = 'selectItem';
+            return false;
+        }
+        if (nextState.scrollUpdater !== this.state.scrollUpdater) {
+            this.updateReason = 'unsetScroll';
+            return true;
+        }
+        this.updateReason = null;
+        return false;
+    }
+
+    onScroll = ({ clientHeight, scrollTop, scrollHeight }: { scrollTop: number; scrollHeight: number; clientHeight: number }) => {
+        if (this.props.isFetchingList) {
             return;
         }
-        if (this.props.match.params.date) {
-            const scrollIndex = this.getScrollIndex();
-            this.List.scrollToPosition(this.List.getOffsetForRow({ index: scrollIndex }));
-        } else {
-            this.List.scrollToRow(this.getDateIndex(11));
-        }
+        debounce(() => {
+            if (scrollTop + clientHeight > scrollHeight - 400) {
+                if (this.props.type === 'upcoming') {
+                    this.props.createFetchEventsAction({
+                        after: this.props.maxDate,
+                    });
+                } else if (this.props.type === 'archive') {
+                    this.props.createFetchEventsAction({
+                        before: this.props.minDate,
+                    });
+                }
+            }
+        }, 1000, { leading: true })();
     }
 
-    // animationRequestHandler = (requestId: number) => {
-    // this.requestId = requestId;
-    // }
+    getScrollTarget = () => {
+        if (this.updateReason === 'initialList' ||
+            this.updateReason === 'activeChange') {
+            if (this.props.currentItem) {
+                return this.getScrollIndex(this.props.currentItem);
+            } else {
+                return 0;
+            }
+        } else {
+            return -1;
+        }
+    }
 
     render() {
         return (
@@ -95,15 +195,9 @@ class EventList extends React.Component<EventListProps, {}> {
                                 rowRenderer={this.rowItemRenderer}
                                 scrollToAlignment='center'
                                 noRowsRenderer={() => <div />}
-                                // react-virtualized needs estimatedRowSize to be a close approximation
-                                // to the actual calculated row size:
-                                // https://github.com/bvaughn/react-virtualized/blob/master/source/Grid/utils/CellSizeAndPositionManager.js#L152
-                                estimatedRowSize={300}
-                                onScroll={({ scrollTop }: { scrollTop: number }) => {
-                                    if (scrollTop < 600) {
-
-                                    }
-                                }}
+                                estimatedRowSize={200}
+                                onScroll={this.onScroll as any}
+                                scrollToIndex={this.getScrollTarget()}
                             />
                         )}
                     </AutoSizer>
@@ -112,52 +206,22 @@ class EventList extends React.Component<EventListProps, {}> {
         );
     }
 
-    // private scrollToSelectedRow = () => {
-    //     const targetIndex = this.getScrollIndex();
-    //     const targetOffset = Math.min(this.List.getOffsetForRow({ index: targetIndex }), this.maxOffset);
-    //     this.props.dispatchAnimateStart();
-    //     setTimeout(() => animateFn(
-    //         this.currentOffset,
-    //         targetOffset,
-    //         Math.min(Math.abs(this.currentOffset - targetOffset) / 2, 500),
-    //         (position) => this.List.scrollToPosition(position),
-    //         easeQuadOut,
-    //         () => { this.props.dispatchAnimateFinish(); },
-    //         this.animationRequestHandler,
-    //     ), 200);
-    // }
-
-    private getScrollIndex = () => (
+    private getScrollIndex = (currentItem: DayItemShape) => (
         Math.max(0, this.props.eventItems.findIndex(
             (item) => (
-                item.type === 'day' &&
+                item && item.type === 'day' &&
                 // in case we change parameter format, compare using moment
-                (item as DayItemShape).dateTime.isSame(moment(this.props.match.params.date), 'day')
+                (item as DayItemShape).dateTime.isSame(currentItem.dateTime, 'day')
             ),
         ))
     )
 
-    private getDateIndex = (num: number) => {
-        let count = 0;
-        let dayCount = 0;
-        for (const item of this.props.eventItems) {
-            if (dayCount === num) {
-                return count;
-            }
-            count++;
-            if (item.type === 'day') {
-                dayCount++;
-            }
-        }
-    }
-
-    private renderEventItem = (index: number, style: React.CSSProperties) => {
+    private renderEventItem = (index: number, style: React.CSSProperties, measure: () => void) => {
         const item = this.props.eventItems[index];
         if (item.type === 'month') {
             return (
                 <EventMonthItem
-                    setRef={this.setRef}
-                    removeRef={this.removeRef}
+                    measure={measure}
                     month={(item as MonthItemShape).month}
                     year={(item as MonthItemShape).year}
                     style={style}
@@ -166,11 +230,13 @@ class EventList extends React.Component<EventListProps, {}> {
         }
         return (
             <EventItem
+                measure={measure}
                 event={item as DayItemShape}
                 style={style}
                 handleSelect={() => {
-                    this.props.dispatchSelectEvent(item);
+                    this.props.selectEvent(item);
                 }}
+                type={this.props.type}
             />
         );
     }
@@ -183,21 +249,32 @@ class EventList extends React.Component<EventListProps, {}> {
             rowIndex={index}
             parent={parent}
         >
-            {() => this.renderEventItem(index, style)}
+            {({ measure }) => this.renderEventItem(index, style, measure)}
         </CellMeasurer>
     )
 }
 
-const mapStateToProps = (state: GlobalStateShape) => ({
-    eventItems: state.schedule_eventItems.items,
-    hasEventBeenSelected: state.schedule_eventItems.hasEventBeenSelected,
-});
+const mapStateToProps = (state: GlobalStateShape): EventListStateToProps => {
+    const name = state.schedule_eventItems.activeName;
+    const reducer = state.schedule_eventItems[name];
+    return {
+        eventItems: reducer.items.toArray(),
+        hasEventBeenSelected: reducer.hasEventBeenSelected,
+        minDate: reducer.minDate,
+        maxDate: reducer.maxDate,
+        currentItem: reducer.currentItem,
+        isFetchingList: reducer.isFetchingList,
+        activeName: name,
+    };
+};
 
-export default connect<EventListStateToProps, EventListDispatchToProps>(
+const mapDispatchToProps: EventListDispatchToProps = {
+    selectEvent,
+    createFetchEventsAction,
+    switchList,
+};
+
+export default connect<EventListStateToProps, EventListDispatchToProps, EventListOwnProps>(
     mapStateToProps,
-    {
-        dispatchSelectEvent,
-        dispatchAnimateStart,
-        dispatchAnimateFinish,
-    },
+    mapDispatchToProps,
 )(EventList);

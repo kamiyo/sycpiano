@@ -4,7 +4,7 @@ const moment = require('moment');
 
 const apiRouter = express.Router();
 
-const { gte, lt } = require('sequelize').Op;
+const { gt, gte, lt, lte } = require('sequelize').Op;
 
 apiRouter.get('/acclaims', (req, res) => {
     const attributes = ['short', 'quote', 'author', 'shortAuthor'];
@@ -17,29 +17,105 @@ apiRouter.get('/acclaims', (req, res) => {
     models.Acclaim.findAll(params).then(object => res.json(object));
 });
 
-apiRouter.get('/calendar', async (req, res) => {
-    const after = req.query.after ? req.query.after : moment(0).format("YYYY-MM-DD");
-    console.log(after);
-    const model = models.Calendar;
-    const eventsAfter = await model.findAll({
+// Excludes the date specified (less than)
+function getEventsBefore(before, limit, model) {
+    return model.findAll({
         where: {
             dateTime: {
-                [gte]: after,
+                [lt]: before,
             },
         },
-        limit: 10,
-        order: [['dateTime', 'ASC']],
-    });
-    const eventsBefore = await model.findAll({
-        where: {
-            dateTime: {
-                [lt]: after,
-            },
-        },
-        limit: 10,
+        limit,
         order: [['dateTime', 'DESC']],
     });
-    res.json([...(eventsBefore.reverse()), ...eventsAfter]);
+}
+
+// Includes the date specified (greater than)
+function getEventsAfter(after, limit, model) {
+    return model.findAll({
+        where: {
+            dateTime: {
+                [gt]: after,
+            },
+        },
+        limit,
+        order: [['dateTime', 'ASC']],
+    });
+}
+
+// The interval is open on the less-than side.
+function getEventsBetween(start, end, order, model) {
+    return model.findAll({
+        where: {
+            dateTime: {
+                [gt]: start,
+                [lt]: end,
+            },
+        },
+        order: [['dateTime', order]],
+    });
+}
+
+const AFTER = 2;
+const FUTURE = 1;
+const ALL = 0;
+const PAST = -1;
+const BEFORE = -2;
+
+apiRouter.get('/calendar', async (req, res) => {
+    console.log(req.query);
+    const model = models.Calendar;
+
+    const limit = req.query.limit;
+    const date = req.query.date;
+    const before = req.query.before;
+    const after = req.query.after;
+
+    let type;
+    const dateMoment = moment(date);
+    const nowMoment = moment().startOf('day');
+
+    if (!date) {
+        if (before) {
+            type = BEFORE;
+        } else if (after) {
+            type = AFTER;
+        } else {
+            type = ALL;
+        }
+    } else if (dateMoment.isSameOrAfter(nowMoment, 'day')) {
+        type = FUTURE;
+    } else {
+        type = PAST;
+    }
+
+    let response, betweenEvents, futureEvents, pastEvents;
+    switch (type) {
+        case FUTURE:
+            betweenEvents = await getEventsBetween(nowMoment.format(), date, 'ASC', model);
+            futureEvents = await getEventsAfter(date, 5, model);
+            response = [...betweenEvents, ...futureEvents];
+            break;
+        case PAST:
+            betweenEvents = await getEventsBetween(date, nowMoment.format(), 'DESC', model);
+            pastEvents = await getEventsBefore(date, 5, model);
+            response = [...betweenEvents.reverse(), ...pastEvents];
+            break;
+        case ALL:
+            response = await model.findAll();
+            break;
+        case AFTER:
+            response = await getEventsAfter(after, limit, model);
+            break;
+        case BEFORE:
+            response = await getEventsBefore(before, limit, model);
+            break;
+        default:
+            break;
+    }
+
+    console.log(response.length);
+    res.json(response);
 });
 
 apiRouter.get('/music', (req, res) => {

@@ -23,6 +23,14 @@ function getCalendarEvents(timeMin = moment(0)) {
     });
 }
 
+const extractEventDescription = (event) => {
+    try {
+        return JSON.parse(event.description);
+    } catch (e) {
+        return {};
+    }
+};
+
 async function main () {
     try {
         await initDB();
@@ -32,7 +40,12 @@ async function main () {
         const items = response.data.items.map(event => {
             const dateTime = event.start.dateTime ? event.start.dateTime : event.start.date;
             const timezone = event.start.dateTime ? event.start.timeZone : '';
-            const description = event.description;
+            const {
+                collaborators,
+                type,
+                program,
+            } = extractEventDescription(event);
+
             const UUID = event.id;
             const name = event.summary;
             const location = event.location;
@@ -42,7 +55,9 @@ async function main () {
                 dateTime,
                 timezone,
                 location,
-                description,
+                collaborators,
+                type,
+                program,
             };
         });
         await model.bulkCreate(items);

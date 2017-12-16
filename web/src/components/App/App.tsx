@@ -54,7 +54,7 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
         // if (matches[2] && this.isSubPath(matches[2])) {
         //     return `${matches[1]}${matches[2]}`;
         // } else {
-            return matches[1];
+        return matches[1] || '/';
         // }
     }
 

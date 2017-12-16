@@ -2,6 +2,9 @@ import { Moment } from 'moment-timezone';
 import { Grid } from 'react-virtualized/dist/es/Grid';
 import { List } from 'react-virtualized/dist/es/List';
 
+import { SortedArraySet } from 'collections/sorted-array-set';
+import { EventListName } from 'src/components/Schedule/actionTypes';
+
 export interface GCalEvent {
     readonly description: any;
     readonly id: string;
@@ -21,7 +24,12 @@ export interface CachedEvent {
     readonly dateTime: string;
     readonly timezone: string;
     readonly name: string;
-    readonly description: string;
+    readonly collaborators: string[];
+    readonly type: {
+        value: string;
+        label: string;
+    };
+    readonly program: string[];
 }
 
 interface DayOrMonth {
@@ -39,9 +47,12 @@ export interface DayItemInputShape {
 }
 
 export interface MonthItemInputShape {
+    readonly dateTime: Moment;
     readonly month: string;
     readonly year: number;
 }
+
+export type EventItemInputShape = DayItemInputShape | MonthItemInputShape;
 
 export type DayItemShape = DayOrMonth & DayItemInputShape;
 
@@ -49,9 +60,15 @@ export type MonthItemShape = DayOrMonth & MonthItemInputShape;
 
 export type EventItemShape = DayItemShape | MonthItemShape;
 
+export interface ScheduleStateShape {
+    activeName: EventListName;
+    upcoming: EventItemsStateShape;
+    archive: EventItemsStateShape;
+}
+
 export interface EventItemsStateShape {
-    readonly items: any[];
-    readonly currentItem: any;
+    readonly items: SortedArraySet<EventItemShape>;
+    readonly currentItem: DayItemShape;
     readonly currentLatLng: {
         readonly lat: number;
         readonly lng: number;
@@ -59,13 +76,52 @@ export interface EventItemsStateShape {
     readonly hasEventBeenSelected: boolean;
     readonly isFetchingList: boolean;
     readonly isFetchingLatLng: boolean;
-    readonly isAnimatingScroll: boolean;
+    readonly minDate: Moment;
+    readonly maxDate: Moment;
+    readonly setOfMonths: Set<string>;
+    readonly hasMore: boolean;
 }
 
-export interface GridWithScrolllingContainer extends Grid {
+export class GridWithScrollingContainer extends Grid {
+    /* tslint:disable:variable-name */
     _scrollingContainer: HTMLElement;
+    /* ts-lint:enable:variable-name */
 }
 
-export interface ListWithGrid extends List {
-    Grid?: GridWithScrolllingContainer;
+export class ListWithGrid extends List {
+    Grid?: GridWithScrollingContainer;
+}
+
+export interface FetchEventsArguments {
+    date?: Moment;
+    after?: Moment;
+    before?: Moment;
+    scrollTo?: boolean;
+}
+
+export interface FetchEventsAPIParams {
+    date?: string;
+    after?: string;
+    before?: string;
+    limit: number;
+}
+
+export interface LatLngLiteral {
+    lat: number; lng: number;
+}
+
+export declare class LatLng {
+    constructor(lat: number, lng: number, noWrap?: boolean);
+    /** Comparison function. */
+    equals(other: LatLng): boolean;
+    /** Returns the latitude in degrees. */
+    lat: number;
+    /** Returns the longitude in degrees. */
+    lng: number;
+    /** Converts to string representation. */
+    toString(): string;
+    /** Returns a string of the form "lat,lng". We round the lat/lng values to 6 decimal places by default. */
+    toUrlValue(precision?: number): string;
+    /** Converts to JSON representation. This function is intended to be used via JSON.stringify. */
+    toJSON(): LatLngLiteral;
 }

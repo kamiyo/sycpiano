@@ -20,9 +20,17 @@ const Calendar = (sequelize, DataTypes) => (
             type: DataTypes.STRING,
             field: 'location',
         },
-        description: {
-            type: DataTypes.TEXT,
-            field: 'description',
+        collaborators: {
+            type: DataTypes.JSON,
+            field: 'collaborators',
+        },
+        type: {
+            type: DataTypes.JSON,
+            field: 'type',
+        },
+        program: {
+            type: DataTypes.JSON,
+            field: 'program',
         },
     })
 );

@@ -49,15 +49,17 @@ class Videos extends React.Component<VideosProps, any> {
     }
 }
 
-const mapStateToProps = (state: GlobalStateShape) => ({
+const mapStateToProps = (state: GlobalStateShape): VideosStateToProps => ({
     videoId: state.video_player.videoId,
 });
 
+const mapDispatchToProps: VideosDispatchToProps = {
+    initializeYoutubeElement,
+    createFetchPlaylistAction,
+    resetPlayer,
+};
+
 export default connect<VideosStateToProps, VideosDispatchToProps>(
     mapStateToProps,
-    {
-        initializeYoutubeElement,
-        createFetchPlaylistAction,
-        resetPlayer,
-    },
+    mapDispatchToProps,
 )(Videos);

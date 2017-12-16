@@ -40,16 +40,18 @@ const VideoPlaylist: React.SFC<VideoPlaylistProps> = (props) => {
     );
 };
 
-const mapStateToProps = (state: GlobalStateShape) => ({
+const mapStateToProps = (state: GlobalStateShape): VideoPlaylistStateToProps => ({
     videos: state.video_playlist.items,
     videoId: state.video_player.videoId,
     isShow: state.video_playlist.isShow,
 });
 
+const mapDispatchToProps: VideoPlaylistDispatchToProps = {
+    playVideo,
+    togglePlaylistAction,
+};
+
 export default connect<VideoPlaylistStateToProps, VideoPlaylistDispatchToProps>(
     mapStateToProps,
-    {
-        playVideo,
-        togglePlaylistAction,
-    },
+    mapDispatchToProps,
 )(VideoPlaylist);

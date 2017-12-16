@@ -10,7 +10,7 @@ import { LinkShape } from 'src/components/App/NavBar/types';
 const links: LinkShape[] = [
     { name: 'home', path: '/' },
     { name: 'about', path: '/about' },
-    { name: 'schedule', path: '/schedule' },
+    { name: 'schedule', path: '/schedule', subPaths: ['upcoming', 'archive'] },
     { name: 'media', path: '/media', subPaths: ['videos', 'music', 'photos'] },
     { name: 'press', path: '/press' },
     { name: 'contact', path: '/contact' },
@@ -22,16 +22,20 @@ interface NavBarProps {
 }
 
 interface NavBarState {
-    readonly showSub: boolean;
+    readonly showSub: string;
 }
 
 export default class NavBar extends React.Component<NavBarProps, NavBarState> {
     state = {
-        showSub: false,
+        showSub: '',
     };
 
-    toggleSubNav = (arg = !this.state.showSub) => {
-        this.setState({showSub: arg});
+    toggleSubNav = (arg = '') => {
+        if (arg === this.state.showSub) {
+            this.setState({ showSub: '' });
+        } else {
+            this.setState({ showSub: arg });
+        }
     }
 
     render() {

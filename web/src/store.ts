@@ -13,7 +13,7 @@ import thunk from 'redux-thunk';
 import { audioPlaylistReducer, audioUIReducer, audioVisualizerReducer } from 'src/components/Media/Music/reducers';
 import { videoPlayerReducer, videoPlaylistReducer } from 'src/components/Media/Videos/reducers';
 import { acclaimsListReducer } from 'src/components/Press/reducers';
-import { eventItemsReducer } from 'src/components/Schedule/reducers';
+import { scheduleReducer } from 'src/components/Schedule/reducers';
 import { GlobalStateShape } from 'src/types';
 
 const reducersMap = {
@@ -21,7 +21,7 @@ const reducersMap = {
     audio_ui: audioUIReducer,
     audio_visualizer: audioVisualizerReducer,
     press_acclaimsList: acclaimsListReducer,
-    schedule_eventItems: eventItemsReducer,
+    schedule_eventItems: scheduleReducer,
     video_player: videoPlayerReducer,
     video_playlist: videoPlaylistReducer,
 };

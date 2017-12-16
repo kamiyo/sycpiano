@@ -330,7 +330,11 @@ const mapStateToProps = (state: GlobalStateShape) => ({
     hoverAngle: state.audio_ui.angle,
 });
 
+const mapDispatchToProps: AudioVisualizerDispatchToProps = {
+    storeRadii,
+};
+
 export default connect<AudioVisualizerStateToProps, AudioVisualizerDispatchToProps>(
     mapStateToProps,
-    { storeRadii },
+    mapDispatchToProps,
 )(AudioVisualizer);

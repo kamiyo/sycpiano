@@ -10,9 +10,9 @@ import { GlobalStateShape } from 'src/types';
 
 export const initializeYoutubeElement = (el: HTMLElement) => (dispatch: Dispatch<GlobalStateShape>) => {
     youTube.initializePlayerOnElement(el);
-    youTube.executeWhenPlayerReady(() => dispatch({
+    youTube.executeWhenPlayerReady(() => dispatch<ActionTypes.PlayerIsReady>({
         type: VIDEO_ACTIONS.PLAYER_IS_READY,
-    } as ActionTypes.PlayerIsReady));
+    }));
 };
 
 const fetchPlaylistRequest = (): ActionTypes.FetchPlaylistRequest => ({
@@ -92,7 +92,7 @@ export const playVideo = (videoId: string): ThunkAction<void, GlobalStateShape, 
 
 export const resetPlayer = (): ThunkAction<void, GlobalStateShape, void> => (dispatch) => {
     youTube.destroyPlayer();
-    dispatch({
+    dispatch<ActionTypes.ResetPlayer>({
         type: VIDEO_ACTIONS.RESET_PLAYER,
-    } as ActionTypes.ResetPlayer);
+    });
 };

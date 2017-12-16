@@ -70,11 +70,15 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
     }
 }
 
-const mapStateToProps = (state: GlobalStateShape) => ({
+const mapStateToProps = (state: GlobalStateShape): AcclaimsListStateToProps => ({
     acclaims: state.press_acclaimsList.items,
 });
 
+const mapDispatchToProps: AcclaimsListDispatchToProps = {
+    createFetchAcclaimsAction,
+};
+
 export default connect<AcclaimsListStateToProps, AcclaimsListDispatchToProps>(
     mapStateToProps,
-    { createFetchAcclaimsAction },
+    mapDispatchToProps,
 )(AcclaimsList);

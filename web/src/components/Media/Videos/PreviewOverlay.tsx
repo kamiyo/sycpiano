@@ -41,11 +41,15 @@ const PreviewOverlay: React.SFC<PreviewOverlayProps> = (props) => (
     </Transition>
 );
 
-const mapStateToProps = (state: GlobalStateShape) => ({
+const mapStateToProps = (state: GlobalStateShape): PreviewOverlayStateToProps => ({
     isPreviewOverlay: state.video_player.isPreviewOverlay,
 });
 
+const mapDispatchToProps: PreviewOverlayDispatchToProps = {
+    playVideo,
+};
+
 export default connect<PreviewOverlayStateToProps, PreviewOverlayDispatchToProps>(
     mapStateToProps,
-    { playVideo },
+    mapDispatchToProps,
 )(PreviewOverlay);

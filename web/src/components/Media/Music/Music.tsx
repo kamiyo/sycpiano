@@ -2,7 +2,7 @@ import 'less/Media/media-content.less';
 import 'less/Media/Music/music.less';
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 import { match } from 'react-router';
 
 import TweenLite from 'gsap/TweenLite';
@@ -16,6 +16,7 @@ import AudioVisualizer from 'src/components/Media/Music/AudioVisualizer';
 import MusicPlaylist from 'src/components/Media/Music/MusicPlaylist';
 
 import { MusicItem } from 'src/components/Media/Music/types';
+import { GlobalStateShape } from 'src/types';
 
 interface MusicState {
     readonly isPlaying: boolean;
@@ -27,8 +28,7 @@ interface MusicState {
 }
 
 interface MusicDispatchToProps {
-    readonly fetchPlaylistAction: (track: string) => any;
-    // readonly fetchPlaylistAction: (trackId: string) => MusicItem;
+    readonly fetchPlaylistAction: (trackId: string) => Promise<MusicItem>;
 }
 
 interface MusicOwnProps {
@@ -267,9 +267,11 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 }
 
+const mapDispatchToProps = (dispatch: Dispatch<GlobalStateShape>): MusicDispatchToProps => ({
+    fetchPlaylistAction: (track: string) => dispatch(fetchPlaylistAction(track)),
+});
+
 export default connect<{}, MusicDispatchToProps>(
     undefined,
-    {
-        fetchPlaylistAction,
-    },
+    mapDispatchToProps,
 )(Music);

@@ -1,7 +1,7 @@
 import { default as moment } from 'moment-timezone';
 
 import createListItem from 'src/components/Schedule/createListItem';
-import { CachedEvent, EventItemShape, GCalEvent } from 'src/components/Schedule/types';
+import { CachedEvent, DayItemInputShape, EventItemShape, GCalEvent } from 'src/components/Schedule/types';
 
 /**
  * Takes an event resource as returned by the Calendar API, and extracts the
@@ -23,7 +23,7 @@ const extractEventDateTime = (event: GCalEvent) => {
  * @param  {object} event
  * @return {object}
  */
-const extractEventDescription = (event: GCalEvent | CachedEvent) => {
+const extractEventDescription = (event: GCalEvent) => {
     try {
         return JSON.parse(event.description);
     } catch (e) {
@@ -44,9 +44,11 @@ export const transformGCalEventsToListItems = (events: GCalEvent[]): EventItemSh
         const description = extractEventDescription(event);
 
         const nextEventsArr = [];
-        if (!monthsSeen.has(`${month} ${year}`)) {
-            monthsSeen.add(`${month} ${year}`);
-            nextEventsArr.push(createListItem('month', { month, year }));
+        const monthYearString = `${month} ${year}`;
+        if (!monthsSeen.has(monthYearString)) {
+            monthsSeen.add(monthYearString);
+            const monthMoment = moment(monthYearString, 'MMMM YYYY');
+            nextEventsArr.push(createListItem('month', { dateTime: monthMoment, month, year }));
         }
 
         nextEventsArr.push(createListItem('day', {
@@ -63,31 +65,31 @@ export const transformGCalEventsToListItems = (events: GCalEvent[]): EventItemSh
     }, []);
 };
 
-export const transformCachedEventsToListItems = (events: CachedEvent[]) => {
-    const monthsSeen = new Set();
+export const transformCachedEventsToListItems = (events: CachedEvent[], monthsSeen: Set<string>): EventItemShape[] => {
 
     return events.reduce((runningEventsArr, event) => {
         let eventDateTime = moment(event.dateTime);
         if (event.timezone) { eventDateTime = eventDateTime.tz(event.timezone); }
         const month = eventDateTime.format('MMMM');
         const year = eventDateTime.year();
-        const description = extractEventDescription(event);
 
         const nextEventsArr = [];
-        if (!monthsSeen.has(`${month} ${year}`)) {
-            monthsSeen.add(`${month} ${year}`);
-            nextEventsArr.push(createListItem('month', { month, year }));
+        const monthYearString = `${month} ${year}`;
+        if (!monthsSeen.has(monthYearString)) {
+            monthsSeen.add(monthYearString);
+            const monthMoment = moment(monthYearString, 'MMMM YYYY');
+            nextEventsArr.push(createListItem('month', { dateTime: monthMoment, month, year }));
         }
 
         nextEventsArr.push(createListItem('day', {
             id: event.UUID,
             name: event.name,
             dateTime: eventDateTime,
-            collaborators: description.collaborators,
-            eventType: description.type.value,
+            collaborators: event.collaborators,
+            eventType: event.type.value,
             location: event.location,
-            program: description.program,
-        }));
+            program: event.program,
+        } as DayItemInputShape));
 
         return [...runningEventsArr, ...nextEventsArr];
     }, []);

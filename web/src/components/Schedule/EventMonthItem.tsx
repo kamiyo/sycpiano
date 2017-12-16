@@ -6,19 +6,12 @@ interface EventMonthItemProps {
     readonly style: React.CSSProperties;
     readonly month: string;
     readonly year: number;
-    readonly setRef: (el: HTMLDivElement) => void;
-    readonly removeRef: (el: HTMLDivElement) => void;
+    readonly measure: () => void;
 }
 
 class EventMonthItem extends React.Component<EventMonthItemProps, {}> {
-    ref: HTMLDivElement;
-
-    componentWillUnmount() {
-        this.props.removeRef(this.ref);
-    }
-
     componentDidMount() {
-        this.props.setRef(this.ref);
+        this.props.measure();
     }
 
     render() {
@@ -26,9 +19,6 @@ class EventMonthItem extends React.Component<EventMonthItemProps, {}> {
             <div
                 className='event-month-item'
                 style={this.props.style}
-                ref={(div) => {
-                    this.ref = div;
-                }}
             >
                 {`${this.props.month} ${this.props.year}`}
             </div>

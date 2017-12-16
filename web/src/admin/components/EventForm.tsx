@@ -240,18 +240,20 @@ const mapStateToProps = (state: AdminStoreShape): EventFormStateToProps => {
     return state.eventForm;
 };
 
+const mapDispatchToProps: EventFormDispatchToProps = {
+    onCollaboratorsChange,
+    onDateChange,
+    onGeocodeError,
+    onLocationChange,
+    onNameChange,
+    onNoTimeChange,
+    onProgramChange,
+    onTimeChange,
+    onTypeChange,
+    onWebsiteChange,
+};
+
 export default connect<EventFormStateToProps, EventFormDispatchToProps, EventFormOwnProps>(
     mapStateToProps,
-    {
-        onCollaboratorsChange,
-        onDateChange,
-        onGeocodeError,
-        onLocationChange,
-        onNameChange,
-        onNoTimeChange,
-        onProgramChange,
-        onTimeChange,
-        onTypeChange,
-        onWebsiteChange,
-    },
+    mapDispatchToProps,
 )(EventForm);
