@@ -137,7 +137,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
         }
         if (nextProps.currentItem !== this.props.currentItem) {
             this.updateReason = 'selectItem';
-            return false;
+            return true;
         }
         if (nextState.scrollUpdater !== this.state.scrollUpdater) {
             this.updateReason = 'unsetScroll';
@@ -233,10 +233,9 @@ class EventList extends React.Component<EventListProps, EventListState> {
                 measure={measure}
                 event={item as DayItemShape}
                 style={style}
-                handleSelect={() => {
-                    this.props.selectEvent(item);
-                }}
+                handleSelect={() => this.props.selectEvent(item)}
                 type={this.props.type}
+                active={(item as DayItemShape).id === this.props.currentItem.id}
             />
         );
     }

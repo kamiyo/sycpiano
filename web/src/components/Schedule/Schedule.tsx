@@ -1,7 +1,7 @@
 import 'less/Schedule/schedule.less';
 
 import * as React from 'react';
-import { Redirect, Route, Switch } from 'react-router';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import ConnectedEventDetails from 'src/components/Schedule/EventDetails';
 import EventList from 'src/components/Schedule/EventList';

@@ -65,6 +65,7 @@ const fetchEvents = ({ after, before, date, scrollTo }: FetchEventsArguments): T
 
         let currentItem: DayItemShape;
         const desiredDate = date || after || before;
+        // find closest event to desired date.
         if (scrollTo) {
             currentItem = listItems.reduce((acc, item) => {
                 if (!acc) {
