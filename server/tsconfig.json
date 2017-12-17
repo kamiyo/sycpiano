@@ -1,0 +1,39 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "lib": [
+            "es2017"
+        ],
+        "paths": {
+            "*": [
+                "../node_modules/*",
+                "../@types/*",
+                "./src/*"
+            ]
+        },
+        "typeRoots": [
+            "../node_modules/@types",
+            "../@types"
+        ],
+        "module": "commonjs",
+        "target": "es2017",
+        "allowJs": true,
+        "moduleResolution": "classic",
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "sourceMap": false,
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
+        "outDir": "build",
+        "baseUrl": "."
+    },
+    "exclude": [
+        "**/node_modules/*"
+    ],
+    "include": [
+        "./src"
+    ]
+}

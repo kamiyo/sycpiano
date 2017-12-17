@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const secret = require('./secret.js');
+const secret = require('./secret');
 const isProduction = process.env.NODE_ENV === 'production';
 
 require('dotenv').config();

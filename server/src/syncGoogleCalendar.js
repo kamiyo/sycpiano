@@ -1,6 +1,6 @@
 const moment = require('moment');
-const sequelize = require('../sequelize.js');
-const initDB = require('../server/initDB.js');
+const sequelize = require('./sequelize');
+const initDB = require('./initDB');
 
 const axios = require('axios');
 

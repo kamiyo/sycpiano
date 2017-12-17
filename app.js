@@ -2,8 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const mustacheExpress = require('mustache-express');
-const initDB = require('./server/initDB.js');
-const apiRouter = require('./server/api-router.js');
+const apiRouter = require('./server/build/api-router.js');
 
 require('dotenv').config();
 

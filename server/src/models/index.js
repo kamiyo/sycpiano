@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const sequelize = require('../../sequelize.js');
+const sequelize = require('../sequelize.js');
 
 /**
  * Loops through a list of model files, and transforms them into a map that
