@@ -4,9 +4,12 @@ const nodemon = require('gulp-nodemon');
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const ts = require('gulp-typescript');
+const tslint = require('gulp-tslint');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 const webpackConfig = (process.env.NODE_ENV === 'production') ? require('./webpack.prod.config.js') : require('./webpack.dev.config.js');
+
+const tsProject = ts.createProject('server/tsconfig.json');
 
 gulp.task('build', () => {
     // src is overwritten by webpack entry points
@@ -16,15 +19,22 @@ gulp.task('build', () => {
 });
 
 gulp.task('build-server', () => {
-    const tsProject = ts.createProject('server/tsconfig.json');
     return tsProject.src()
         .pipe(tsProject()).js.pipe(gulp.dest("./server/build"));
 });
 
 gulp.task('build-prod', ['build-server', 'build']);
 
+gulp.task('lint-server', () => {
+    return gulp.src('server/src/**/*.ts')
+        .pipe(tslint({
+            configuration: 'server/tsconfig.json',
+        }))
+        .pipe(tslint.report());
+});
+
 gulp.task('run-dev', ['watch-dev', 'watch'], () => {
-    nodemon({
+    return nodemon({
         script: './app.js',
         watch: ['web/build', 'server/build/api-router.js'],
     });
@@ -42,6 +52,6 @@ gulp.task('watch', () => {
     });
 });
 
-gulp.task('watch-dev', () => {
-    return gulp.watch('server/src/*', ['build-server']);
+gulp.task('watch-dev', ['build-server'], () => {
+    return gulp.watch('server/src/**/*', ['build-server']);
 });

@@ -222,7 +222,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         this.initializeAudioPlayer();
     }
 
-    componentWillUnmount() {
+    async componentWillUnmount() {
         this.audio.removeEventListener('loadeddata', this.audioOnLoad);
         this.audio.removeEventListener('playing', this.onPlaying);
         this.audio.removeEventListener('timeupdate', this.onTimeUpdate);

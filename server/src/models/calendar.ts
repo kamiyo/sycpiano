@@ -1,4 +1,6 @@
-const Calendar = (sequelize, DataTypes) => (
+import { Sequelize, DataTypes } from "sequelize";
+
+const Calendar = (sequelize: Sequelize, DataTypes: DataTypes) => (
     sequelize.define('calendar', {
         UUID: {
             type: DataTypes.STRING,
@@ -35,4 +37,4 @@ const Calendar = (sequelize, DataTypes) => (
     })
 );
 
-module.exports = Calendar;
+export default Calendar;

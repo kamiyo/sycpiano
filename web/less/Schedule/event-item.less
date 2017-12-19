@@ -1,23 +1,30 @@
 @import '../colors.less';
 @import '../fonts.less';
 @import '../mixins.less';
-
 @date-container-dimension: 107px;
-
 .event-item {
     padding: 30px 0 30px 30px;
     display: flex;
     font-family: @lato1;
     align-items: center;
+    color: black;
+    transition: 0.2s all;
+    &.active {
+        background-color: @light-blue;
+        color: #FFFFFF;
+        .event-item__date {
+            background-color: white;
+            color: @light-blue;
+            font-weight: bold;
+        }
+    }
 }
 
-.event-item--active {
-    background-color: @light-blue;
-    color: #FFFFFF;
-
-    .event-item__date {
-        background-color: white;
-        color: @light-blue;
+a:hover {
+    .event-item {
+         &:not(.active) {
+            color: @light-blue;
+        }
     }
 }
 

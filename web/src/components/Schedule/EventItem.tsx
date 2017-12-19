@@ -1,6 +1,6 @@
 import 'less/Schedule/event-item.less';
 
-import { startCase } from 'lodash-es/string';
+import { startCase } from 'lodash/string';
 import { Moment } from 'moment-timezone';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
@@ -102,7 +102,7 @@ class EventItem extends React.Component<EventItemProps, {}> {
                 onClick={handleSelect}
                 style={style}
             >
-                <div className={classNames('event-item', { 'event-item--active': active })}>
+                <div className={classNames('event-item', { active })}>
                     <DateContainer dateTime={event.dateTime} />
                     <div className='event-item__info'>
                         <EventName name={event.name} />

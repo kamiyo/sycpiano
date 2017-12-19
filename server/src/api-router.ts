@@ -1,16 +1,17 @@
-const express = require('express');
-const models = require('./models');
-const moment = require('moment');
+import * as express from 'express';
+import models from './models/index';
+import * as moment from 'moment-timezone';
 
 const apiRouter = express.Router();
 
-const { gt, gte, lt, lte } = require('sequelize').Op;
+import Sequelize, { Model } from 'sequelize';
+const { gt, lt } = Sequelize.Op;
 
 apiRouter.get('/acclaims', (req, res) => {
     const attributes = ['short', 'quote', 'author', 'shortAuthor'];
 
     // TODO: add order-by http://docs.sequelizejs.com/en/v3/docs/querying/
-    const params = { attributes };
+    const params: Sequelize.FindOptions<{}> = { attributes };
     if (req.query.hasOwnProperty('count')) {
         params.limit = req.params.count;
     }
@@ -18,7 +19,7 @@ apiRouter.get('/acclaims', (req, res) => {
 });
 
 // Excludes the date specified (less than)
-function getEventsBefore(before, limit, model) {
+function getEventsBefore(before: string, limit: number, model: Model<{}, {}>) {
     return model.findAll({
         where: {
             dateTime: {
@@ -31,7 +32,7 @@ function getEventsBefore(before, limit, model) {
 }
 
 // Includes the date specified (greater than)
-function getEventsAfter(after, limit, model) {
+function getEventsAfter(after: string, limit: number, model: Model<{}, {}>) {
     return model.findAll({
         where: {
             dateTime: {
@@ -44,7 +45,7 @@ function getEventsAfter(after, limit, model) {
 }
 
 // The interval is open on the less-than side.
-function getEventsBetween(start, end, order, model) {
+function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC', model: Model<{}, {}>) {
     return model.findAll({
         where: {
             dateTime: {
@@ -63,7 +64,6 @@ const PAST = -1;
 const BEFORE = -2;
 
 apiRouter.get('/calendar', async (req, res) => {
-    console.log(req.query);
     const model = models.Calendar;
 
     const limit = req.query.limit;
@@ -118,7 +118,7 @@ apiRouter.get('/calendar', async (req, res) => {
     res.json(response);
 });
 
-apiRouter.get('/music', (req, res) => {
+apiRouter.get('/music', (_, res) => {
     res.json({
         items: [
             {

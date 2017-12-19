@@ -1,4 +1,6 @@
-const Acclaim = (sequelize, DataTypes) => (
+import { Sequelize, DataTypes } from "sequelize";
+
+const Acclaim = (sequelize: Sequelize, DataTypes: DataTypes) => (
     sequelize.define('acclaim', {
         quote: {
             type: DataTypes.TEXT,
@@ -23,4 +25,4 @@ const Acclaim = (sequelize, DataTypes) => (
     })
 );
 
-module.exports = Acclaim;
+export default Acclaim;
