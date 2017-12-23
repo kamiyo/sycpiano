@@ -82,7 +82,7 @@ export const transformCachedEventsToListItems = (events: CachedEvent[], monthsSe
         }
 
         nextEventsArr.push(createListItem('day', {
-            id: event.UUID,
+            id: event.id,
             name: event.name,
             dateTime: eventDateTime,
             collaborators: event.collaborators,

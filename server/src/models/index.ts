@@ -1,7 +1,7 @@
 import { startCase } from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
-import sequelizer from '../sequelizer';
+import sequelize from '../sequelize';
 import { Sequelize, Model } from 'sequelize';
 
 /**
@@ -33,10 +33,10 @@ const importModels = (sequelizer: Sequelize): ModelMap => {
 }
 
 const db = Object.assign({
-    sequelizer,
+    sequelize,
     // Export the function, in case we ever want to use it with
     // a different DB connection.
     importModels,
-}, importModels(sequelizer));
+}, importModels(sequelize));
 
 export default db;

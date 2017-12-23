@@ -19,7 +19,7 @@ export interface GCalEvent {
 }
 
 export interface CachedEvent {
-    readonly UUID: string;
+    readonly id: string;
     readonly location: string;
     readonly dateTime: string;
     readonly timezone: string;

@@ -60,8 +60,8 @@ class Music extends React.Component<MusicProps, MusicState> {
         },
     };
 
-    analyzerL: AnalyserNode = undefined;
-    analyzerR: AnalyserNode = undefined;
+    analyzerL: AnalyserNode;
+    analyzerR: AnalyserNode;
 
     play = () => {
         if (!this.loaded) {
@@ -143,7 +143,9 @@ class Music extends React.Component<MusicProps, MusicState> {
         TweenLite.fromTo(this.audio, 0.3, { volume: 0 }, {
             volume: 1,
             onUpdate: () => {
-                this.setState({ volume: this.audio.volume });
+                if (this.audio) {
+                    this.setState({ volume: this.audio.volume });
+                }
             },
         });
     }

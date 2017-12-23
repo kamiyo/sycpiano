@@ -95,7 +95,6 @@ class EventItem extends React.Component<EventItemProps, {}> {
             type,
         } = this.props;
         const time = event.dateTime.format('h:mm a z');
-        console.log(time, active);
         return (
             <Link
                 to={`/schedule/${type}/${event.dateTime.format('YYYY-MM-DD')}`}

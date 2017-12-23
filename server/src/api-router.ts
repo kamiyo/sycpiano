@@ -15,7 +15,7 @@ apiRouter.get('/acclaims', (req, res) => {
     if (req.query.hasOwnProperty('count')) {
         params.limit = req.params.count;
     }
-    models.Acclaim.findAll(params).then(object => res.json(object));
+    models.Acclaims.findAll(params).then(object => res.json(object));
 });
 
 // Excludes the date specified (less than)
@@ -64,6 +64,7 @@ const PAST = -1;
 const BEFORE = -2;
 
 apiRouter.get('/calendar', async (req, res) => {
+    console.log(models.Calendar);
     const model = models.Calendar;
 
     const limit = req.query.limit;
@@ -141,6 +142,22 @@ apiRouter.get('/music', (_, res) => {
             }
         ]
     });
-})
+});
 
-module.exports = apiRouter;
+apiRouter.get('/images', (_, res) => {
+    res.json({
+        items: [
+            'bg_1.jpg',
+            'cliburn1.jpg',
+            'cliburn4.jpg',
+            'cliburn7.jpg',
+            'syc_chair.jpg',
+            'syc_headshot1.jpg',
+            'syc_walking.jpg',
+            'syc_withpiano.jpg',
+            'syc_withpiano_bw.jpg',
+        ],
+    });
+});
+
+export const ApiRouter = apiRouter;

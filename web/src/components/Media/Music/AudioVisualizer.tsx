@@ -119,7 +119,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
 
     onAnalyze = (timestamp = 0) => {
         // don't render anything if analyzers are null, i.e. audio not set up yet
-        if (this.props.analyzers[0] === null || this.props.analyzers[1] === null) {
+        if (!this.props.analyzers[0] || !this.props.analyzers[1]) {
             this.requestId = requestAnimationFrame(this.onAnalyze);
             return;
         }

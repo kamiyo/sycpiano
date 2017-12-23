@@ -21,7 +21,9 @@ DB_NAME=<database name, probably sycpiano>
 DB_HOST=<production host, probably loopback: 127.0.0.1>
 DB_USER=<username>
 DB_PASS=<password>
-PORT=<production port number>
+DB_PORT=<database port>
+DB_DIALECT=<sql dialect>
+PORT=<http production port number>
 ```
 If deploying on heroku, make sure `DB_URL` is set, which contains the above info.
 

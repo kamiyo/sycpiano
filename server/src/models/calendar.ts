@@ -2,38 +2,22 @@ import { Sequelize, DataTypes } from "sequelize";
 
 const Calendar = (sequelize: Sequelize, DataTypes: DataTypes) => (
     sequelize.define('calendar', {
-        UUID: {
+        id: {
+            allowNull: false,
+            autoIncrement: false,
+            primaryKey: true,
             type: DataTypes.STRING,
-            field: 'UUID',
+            unique: true,
         },
-        name: {
-            type: DataTypes.STRING,
-            field: 'name',
-        },
-        dateTime: {
-            type: DataTypes.DATE,
-            field: 'dateTime',
-        },
-        timezone: {
-            type: DataTypes.STRING,
-            field: 'timezone',
-        },
-        location: {
-            type: DataTypes.STRING,
-            field: 'location',
-        },
-        collaborators: {
-            type: DataTypes.JSON,
-            field: 'collaborators',
-        },
-        type: {
-            type: DataTypes.JSON,
-            field: 'type',
-        },
-        program: {
-            type: DataTypes.JSON,
-            field: 'program',
-        },
+        name: DataTypes.STRING,
+        dateTime: DataTypes.DATE,
+        timezone: DataTypes.STRING,
+        location: DataTypes.STRING,
+        collaborators: DataTypes.JSON,
+        type: DataTypes.JSON,
+        program: DataTypes.JSON,
+    }, {
+        timestamps: false,
     })
 );
 

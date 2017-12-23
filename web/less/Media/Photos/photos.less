@@ -1,0 +1,36 @@
+@import '../../mixins.less';
+@import '../../colors.less';
+
+.photos {
+    .pushed;
+    width: 100%;
+    background-color: white;
+}
+
+.photo-row {
+    color: black;
+    font-weight: bold;
+
+    img {
+        &:first-child {
+            margin-left: 10px;
+        }
+        &:last-child {
+            margin-right: 10px;
+        }
+        height: calc(~'100% - 10px');
+        width: auto;
+        border-radius: 10px;
+        margin: 10px 5px 0 5px;
+        filter: saturate(.5);
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        cursor: default;
+
+        &:hover {
+            border: 1px solid @light-blue;
+            filter: saturate(1);
+            cursor: pointer;
+        }
+    }
+}

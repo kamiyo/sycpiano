@@ -24,7 +24,7 @@ const Media: React.SFC<{}> = () => (
                     />
                 }
             />
-            <Route path='/media/pictures' component={Photos} exact={true} />
+            <Route path='/media/photos' component={Photos} exact={true} />
         </Switch>
     </div>
 );

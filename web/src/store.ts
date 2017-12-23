@@ -11,6 +11,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
 import { audioPlaylistReducer, audioUIReducer, audioVisualizerReducer } from 'src/components/Media/Music/reducers';
+import { photoListReducer } from 'src/components/Media/Photos/reducers';
 import { videoPlayerReducer, videoPlaylistReducer } from 'src/components/Media/Videos/reducers';
 import { acclaimsListReducer } from 'src/components/Press/reducers';
 import { scheduleReducer } from 'src/components/Schedule/reducers';
@@ -20,6 +21,7 @@ const reducersMap = {
     audio_playlist: audioPlaylistReducer,
     audio_ui: audioUIReducer,
     audio_visualizer: audioVisualizerReducer,
+    photo_list: photoListReducer,
     press_acclaimsList: acclaimsListReducer,
     schedule_eventItems: scheduleReducer,
     video_player: videoPlayerReducer,

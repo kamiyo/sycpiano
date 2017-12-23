@@ -1,12 +1,8 @@
-import moment from 'moment-timezone';
-import sequelizer from './sequelizer';
-import initDB from './initDB';
+import * as moment from 'moment';
 
 import axios from 'axios';
 
-import models from './models/index';
-import { Model } from 'sequelize';
-const importModels = models.importModels;
+import { QueryInterface } from 'sequelize';
 
 const calAPIKey = 'AIzaSyC8YGSlCPlqT-MAHN_LvM2T3K-ltaiqQMI';
 const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
@@ -16,7 +12,6 @@ type Moment = moment.Moment;
 
 function getCalendarEvents(timeMin = moment(0)) {
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
-    console.log(url);
     return axios.get(url, {
         params: {
             orderBy: 'startTime',
@@ -48,11 +43,8 @@ const extractEventDescription = (event: GCalEvent) => {
     }
 };
 
-async function main () {
+export const up = async (queryInterface: QueryInterface) => {
     try {
-        await initDB();
-        const model: Model<{}, {}> = importModels(sequelizer)['Calendar'];
-        await model.destroy({ where: {}, truncate: true });
         const response = await getCalendarEvents();
         const items = response.data.items.map((event: GCalEvent) => {
             const dateTime = event.start.dateTime ? event.start.dateTime : event.start.date;
@@ -63,27 +55,29 @@ async function main () {
                 program,
             } = extractEventDescription(event);
 
-            const UUID = event.id;
+            const id = event.id;
             const name = event.summary;
             const location = event.location;
+
+            console.log(program, type);
             return {
-                UUID,
+                id,
                 name,
                 dateTime,
                 timezone,
                 location,
-                collaborators,
-                type,
-                program,
+                collaborators: JSON.stringify(collaborators),
+                type: JSON.stringify(type),
+                program: JSON.stringify(program),
             };
         });
-        await model.bulkCreate(items);
-        console.log('successfully created');
-        process.exit();
+        return queryInterface.bulkInsert('calendar', items);
     } catch (e) {
         console.log(e);
-        process.exit();
+        return;
     }
 };
 
-main();
+export const down = async (queryInterface: QueryInterface) => {
+    return queryInterface.bulkDelete('calendar', null);
+};
