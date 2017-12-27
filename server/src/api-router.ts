@@ -4,7 +4,8 @@ import * as moment from 'moment-timezone';
 
 const apiRouter = express.Router();
 
-import Sequelize, { Model } from 'sequelize';
+import Sequelize from 'sequelize';
+import { CalendarModel } from 'types';
 const { gt, lt } = Sequelize.Op;
 
 apiRouter.get('/acclaims', (req, res) => {
@@ -15,11 +16,11 @@ apiRouter.get('/acclaims', (req, res) => {
     if (req.query.hasOwnProperty('count')) {
         params.limit = req.params.count;
     }
-    models.Acclaims.findAll(params).then(object => res.json(object));
+    models.acclaim.findAll(params).then(object => res.json(object));
 });
 
 // Excludes the date specified (less than)
-function getEventsBefore(before: string, limit: number, model: Model<{}, {}>) {
+function getEventsBefore(before: string, limit: number, model: CalendarModel) {
     return model.findAll({
         where: {
             dateTime: {
@@ -32,7 +33,7 @@ function getEventsBefore(before: string, limit: number, model: Model<{}, {}>) {
 }
 
 // Includes the date specified (greater than)
-function getEventsAfter(after: string, limit: number, model: Model<{}, {}>) {
+function getEventsAfter(after: string, limit: number, model: CalendarModel) {
     return model.findAll({
         where: {
             dateTime: {
@@ -45,7 +46,7 @@ function getEventsAfter(after: string, limit: number, model: Model<{}, {}>) {
 }
 
 // The interval is open on the less-than side.
-function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC', model: Model<{}, {}>) {
+function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC', model: CalendarModel) {
     return model.findAll({
         where: {
             dateTime: {
@@ -64,8 +65,7 @@ const PAST = -1;
 const BEFORE = -2;
 
 apiRouter.get('/calendar', async (req, res) => {
-    console.log(models.Calendar);
-    const model = models.Calendar;
+    const model = models.calendar;
 
     const limit = req.query.limit;
     const date = req.query.date;

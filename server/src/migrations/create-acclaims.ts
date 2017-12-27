@@ -1,31 +1,23 @@
 import { QueryInterface, DataTypes } from 'sequelize';
 
-export const up = (queryInterface: QueryInterface, DataTypes: DataTypes) => {
-    return queryInterface.createTable('acclaims', {
+export const up = async (queryInterface: QueryInterface, DataTypes: DataTypes) => {
+    await queryInterface.createTable('acclaim', {
         id: {
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,
             type: DataTypes.INTEGER,
         },
-        quote: {
-            type: DataTypes.TEXT,
-        },
-        short: {
-            type: DataTypes.TEXT,
-        },
-        author: {
-            type: DataTypes.STRING,
-        },
-        shortAuthor: {
-            type: DataTypes.STRING,
-        },
-        date: {
-            type: DataTypes.STRING,
-        },
+        quote: DataTypes.TEXT,
+        short: DataTypes.TEXT,
+        author: DataTypes.STRING,
+        shortAuthor: DataTypes.STRING,
+        date: DataTypes.STRING,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE,
     });
 };
 
-export const down = (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable('acclaims');
+export const down = async (queryInterface: QueryInterface) => {
+    await queryInterface.dropTable('acclaim');
 };

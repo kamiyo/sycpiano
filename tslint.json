@@ -16,7 +16,8 @@
         "align": [true, "statements", "members", "elements"],
         "max-classes-per-file": false,
         "member-ordering": false,
-        "no-unused-expression": [true, "allow-fast-null-checks"]
+        "no-unused-expression": [true, "allow-fast-null-checks"],
+        "no-var-requires": false
     },
     "jsRules": {
         "no-console": false,
@@ -29,7 +30,8 @@
         "align": [true, "statements", "members", "elements"],
         "max-classes-per-file": false,
         "member-ordering": false,
-        "no-unused-expression": [true, "allow-fast-null-checks"]
+        "no-unused-expression": [true, "allow-fast-null-checks"],
+        "no-var-requires": false
     },
     "linterOptions": {
         "exclude": "**/node_modules/**/*"

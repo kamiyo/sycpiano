@@ -1,4 +1,5 @@
 import { Sequelize, DataTypes } from "sequelize";
+import { CalendarModel } from "types";
 
 const Calendar = (sequelize: Sequelize, DataTypes: DataTypes) => (
     sequelize.define('calendar', {
@@ -16,9 +17,7 @@ const Calendar = (sequelize: Sequelize, DataTypes: DataTypes) => (
         collaborators: DataTypes.JSON,
         type: DataTypes.JSON,
         program: DataTypes.JSON,
-    }, {
-        timestamps: false,
-    })
+    }) as CalendarModel
 );
 
 export default Calendar;

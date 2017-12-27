@@ -15,7 +15,8 @@
             ]
         },
         "types": [
-            "node"
+            "node",
+            "bluebird-global"
         ],
         "typeRoots": [
             "node_modules/@types",

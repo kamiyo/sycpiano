@@ -1,7 +1,8 @@
 import { Sequelize, DataTypes } from "sequelize";
+import { AcclaimModel } from "types";
 
 const Acclaim = (sequelize: Sequelize, DataTypes: DataTypes) => (
-    sequelize.define('acclaims', {
+    sequelize.define('acclaim', {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -14,9 +15,7 @@ const Acclaim = (sequelize: Sequelize, DataTypes: DataTypes) => (
         author: DataTypes.STRING,
         shortAuthor: DataTypes.STRING,
         date: DataTypes.STRING,
-    }, {
-        timestamps: false,
-    })
+    }) as AcclaimModel
 );
 
 export default Acclaim;

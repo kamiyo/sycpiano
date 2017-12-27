@@ -1,9 +1,10 @@
-import { QueryInterface } from 'sequelize';
 import * as fs from 'fs';
 import * as path from 'path';
 import { omit } from 'lodash';
+import { ModelMap } from 'types';
 
-export const up = async (queryInterface: QueryInterface) => {
+export const up = async (models: ModelMap) => {
+    const model = models.acclaim;
     const filePath = path.join(__dirname, '../../../web/assets/data/acclaim.json');
     fs.readFile(filePath, (err: NodeJS.ErrnoException, content: any) => {
         if (err) {
@@ -14,10 +15,11 @@ export const up = async (queryInterface: QueryInterface) => {
          }[] = JSON.parse(content);
 
         const items = json.map((obj) => omit(obj, ['ID']));
-        return queryInterface.bulkInsert('acclaims', items);
+        return model.bulkCreate(items);
     });
 };
 
-export const down = async (queryInterface: QueryInterface) => {
-    return queryInterface.bulkDelete('acclaims', null);
+export const down = async (models: ModelMap) => {
+    console.log(models['acclaim']);
+    return models.acclaim.destroy({ truncate: true });
 };

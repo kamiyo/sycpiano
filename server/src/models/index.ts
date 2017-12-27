@@ -1,35 +1,31 @@
-import { startCase } from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
 import sequelize from '../sequelize';
-import { Sequelize, Model } from 'sequelize';
+import { Sequelize } from 'sequelize';
+import { ModelMap, Model } from 'types';
 
 /**
  * Loops through a list of model files, and transforms them into a map that
  * maps each model name to the corresponding sequelize model.
  */
 
-interface ModelMap {
-    [name: string]: Model<{}, {}>;
-}
+const importModels = (sequelize: Sequelize): ModelMap => {
+    const modelMap = fs.readdirSync(__dirname).filter(file => {
+        return (file.indexOf('.') !== 0) && (file !== 'index.js') && (file.slice(-3) === '.js');
+    }).reduce((out, file) => {
+        const model = sequelize.import(path.join(__dirname, file)) as Model<any, any>;
+        out[model.name] = model;
+        return out;
+    }, {} as ModelMap);
 
-interface ModelWithName<TI, TA> extends Model<TI, TA> {
-    name: string;
-}
+    // execute associations
+    Object.keys(modelMap).forEach((modelName) => {
+        if (modelMap[modelName].associate) {
+            modelMap[modelName].associate(modelMap);
+        }
+    });
 
-const importModels = (sequelizer: Sequelize): ModelMap => {
-    const modelFiles = fs.readdirSync(__dirname);
-
-    return modelFiles.reduce((runningMap, file) => {
-        if (file === 'index.ts' || file === 'index.js') return runningMap;
-
-        const model: ModelWithName<{}, {}> = sequelizer.import(path.join(__dirname, file)) as ModelWithName<{}, {}>;
-        return {
-            ...runningMap,
-            // Let's make the model key title-cased.
-            [startCase(model.name)]: model,
-        };
-    }, {});
+    return modelMap;
 }
 
 const db = Object.assign({

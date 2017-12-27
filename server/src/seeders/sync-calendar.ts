@@ -2,7 +2,7 @@ import * as moment from 'moment';
 
 import axios from 'axios';
 
-import { QueryInterface } from 'sequelize';
+import { ModelMap } from 'types';
 
 const calAPIKey = 'AIzaSyC8YGSlCPlqT-MAHN_LvM2T3K-ltaiqQMI';
 const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
@@ -43,7 +43,7 @@ const extractEventDescription = (event: GCalEvent) => {
     }
 };
 
-export const up = async (queryInterface: QueryInterface) => {
+export const up = async (models: ModelMap) => {
     try {
         const response = await getCalendarEvents();
         const items = response.data.items.map((event: GCalEvent) => {
@@ -59,25 +59,24 @@ export const up = async (queryInterface: QueryInterface) => {
             const name = event.summary;
             const location = event.location;
 
-            console.log(program, type);
             return {
                 id,
                 name,
                 dateTime,
                 timezone,
                 location,
-                collaborators: JSON.stringify(collaborators),
-                type: JSON.stringify(type),
-                program: JSON.stringify(program),
+                collaborators: collaborators,
+                type: type,
+                program: program,
             };
         });
-        return queryInterface.bulkInsert('calendar', items);
+        return models.calendar.bulkCreate(items);
     } catch (e) {
         console.log(e);
         return;
     }
 };
 
-export const down = async (queryInterface: QueryInterface) => {
-    return queryInterface.bulkDelete('calendar', null);
+export const down = async (models: ModelMap) => {
+    return models.calendar.destroy({ truncate: true });
 };

@@ -12,6 +12,11 @@ const {
     dialect,
 } = config;
 
+export const options = {
+    database,
+    username
+};
+
 export default new Sequelize(database, username, password, {
     host,
     port,
