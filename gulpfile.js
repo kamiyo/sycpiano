@@ -5,6 +5,7 @@ const gulp = require('gulp');
 const gutil = require('gulp-util');
 const ts = require('gulp-typescript');
 const tslint = require('gulp-tslint');
+const linter = require('tslint');
 const webpack = require('webpack');
 const del = require('del');
 const webpackStream = require('webpack-stream');
@@ -26,14 +27,19 @@ gulp.task('clean-server', () => {
 });
 
 gulp.task('lint-server', () => {
+    const program = linter.Linter.createProgram("server/tsconfig.json");
+
     return gulp.src('server/src/**/*.ts')
         .pipe(tslint({
-            configuration: 'server/tsconfig.json',
+            formatter: 'stylish',
+            program,
         }))
-        .pipe(tslint.report());
+        .pipe(tslint.report({
+            emitError: false,
+        }));
 });
 
-gulp.task('build-server', ['clean-server'], () => {
+gulp.task('build-server', ['clean-server', 'lint-server'], () => {
     return tsProject.src()
         .pipe(tsProject()).js.pipe(gulp.dest("./server/build"));
 });

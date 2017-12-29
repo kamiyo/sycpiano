@@ -1,20 +1,20 @@
-import { QueryInterface, DataTypes } from 'sequelize';
+import { DataTypes, QueryInterface } from 'sequelize';
 
-export const up = async (queryInterface: QueryInterface, DataTypes: DataTypes) => {
+export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) => {
     await queryInterface.createTable('acclaim', {
         id: {
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,
-            type: DataTypes.INTEGER,
+            type: dataTypes.INTEGER,
         },
-        quote: DataTypes.TEXT,
-        short: DataTypes.TEXT,
-        author: DataTypes.STRING,
-        shortAuthor: DataTypes.STRING,
-        date: DataTypes.STRING,
-        createdAt: DataTypes.DATE,
-        updatedAt: DataTypes.DATE,
+        quote: dataTypes.TEXT,
+        short: dataTypes.TEXT,
+        author: dataTypes.STRING,
+        shortAuthor: dataTypes.STRING,
+        date: dataTypes.STRING,
+        createdAt: dataTypes.DATE,
+        updatedAt: dataTypes.DATE,
     });
 };
 

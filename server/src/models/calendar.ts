@@ -1,22 +1,22 @@
-import { Sequelize, DataTypes } from "sequelize";
-import { CalendarModel } from "types";
+import { DataTypes, Sequelize } from 'sequelize';
+import { CalendarModel } from 'types';
 
-const Calendar = (sequelize: Sequelize, DataTypes: DataTypes) => (
+const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => (
     sequelize.define('calendar', {
         id: {
             allowNull: false,
             autoIncrement: false,
             primaryKey: true,
-            type: DataTypes.STRING,
+            type: dataTypes.STRING,
             unique: true,
         },
-        name: DataTypes.STRING,
-        dateTime: DataTypes.DATE,
-        timezone: DataTypes.STRING,
-        location: DataTypes.STRING,
-        collaborators: DataTypes.JSON,
-        type: DataTypes.JSON,
-        program: DataTypes.JSON,
+        name: dataTypes.STRING,
+        dateTime: dataTypes.DATE,
+        timezone: dataTypes.STRING,
+        location: dataTypes.STRING,
+        collaborators: dataTypes.JSON,
+        type: dataTypes.JSON,
+        program: dataTypes.JSON,
     }) as CalendarModel
 );
 

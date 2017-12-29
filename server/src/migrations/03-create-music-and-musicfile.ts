@@ -1,20 +1,20 @@
-import { QueryInterface, DataTypes } from 'sequelize';
+import { DataTypes, QueryInterface } from 'sequelize';
 
-export const up = async (queryInterface: QueryInterface, DataTypes: DataTypes) => {
+export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) => {
     try {
         await queryInterface.createTable('music', {
             id: {
                 allowNull: false,
-                defaultValue: DataTypes.UUIDV4,
+                defaultValue: dataTypes.UUIDV4,
                 primaryKey: true,
-                type: DataTypes.UUID,
+                type: dataTypes.UUID,
                 unique: true,
             },
-            composer: DataTypes.STRING,
-            piece: DataTypes.STRING,
-            contributors: DataTypes.STRING,
-            createdAt: DataTypes.DATE,
-            updatedAt: DataTypes.DATE,
+            composer: dataTypes.STRING,
+            piece: dataTypes.STRING,
+            contributors: dataTypes.STRING,
+            createdAt: dataTypes.DATE,
+            updatedAt: dataTypes.DATE,
         });
     } catch (e) {
         console.log(e);
@@ -23,17 +23,17 @@ export const up = async (queryInterface: QueryInterface, DataTypes: DataTypes) =
         await queryInterface.createTable('musicfile', {
             id: {
                 allowNull: false,
-                defaultValue: DataTypes.UUIDV4,
+                defaultValue: dataTypes.UUIDV4,
                 primaryKey: true,
-                type: DataTypes.UUID,
+                type: dataTypes.UUID,
                 unique: true,
             },
-            name: DataTypes.STRING,
-            filePath: DataTypes.STRING,
-            waveformPath: DataTypes.STRING,
-            durationSeconds: DataTypes.INTEGER,
+            name: dataTypes.STRING,
+            filePath: dataTypes.STRING,
+            waveformPath: dataTypes.STRING,
+            durationSeconds: dataTypes.INTEGER,
             musicId: {
-                type: DataTypes.UUID,
+                type: dataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: 'music',
@@ -42,8 +42,8 @@ export const up = async (queryInterface: QueryInterface, DataTypes: DataTypes) =
                 onDelete: 'CASCADE',
                 onUpdate: 'NO ACTION',
             },
-            createdAt: DataTypes.DATE,
-            updatedAt: DataTypes.DATE,
+            createdAt: dataTypes.DATE,
+            updatedAt: dataTypes.DATE,
         });
     } catch (e) {
         console.log(e);

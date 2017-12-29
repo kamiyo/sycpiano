@@ -1,19 +1,19 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import sequelize from '../sequelize';
 import { Sequelize } from 'sequelize';
-import { ModelMap, Model } from 'types';
+import { Model, ModelMap } from 'types';
+import sequelize from '../sequelize';
 
 /**
  * Loops through a list of model files, and transforms them into a map that
  * maps each model name to the corresponding sequelize model.
  */
 
-const importModels = (sequelize: Sequelize): ModelMap => {
-    const modelMap = fs.readdirSync(__dirname).filter(file => {
+const importModels = (seq: Sequelize): ModelMap => {
+    const modelMap = fs.readdirSync(__dirname).filter((file) => {
         return (file.indexOf('.') !== 0) && (file !== 'index.js') && (file.slice(-3) === '.js');
     }).reduce((out, file) => {
-        const model = sequelize.import(path.join(__dirname, file)) as Model<any, any>;
+        const model = seq.import(path.join(__dirname, file)) as Model<any, any>;
         out[model.name] = model;
         return out;
     }, {} as ModelMap);
@@ -26,7 +26,7 @@ const importModels = (sequelize: Sequelize): ModelMap => {
     });
 
     return modelMap;
-}
+};
 
 const db = Object.assign({
     sequelize,

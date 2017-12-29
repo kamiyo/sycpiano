@@ -2,8 +2,8 @@ const username = 'sycpiano';
 const password = 'sycpiano';
 
 const secret = {
-    username: username,
-    password: password
+    username,
+    password,
 };
 
 export default secret;

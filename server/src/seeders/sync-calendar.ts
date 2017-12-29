@@ -65,9 +65,9 @@ export const up = async (models: ModelMap) => {
                 dateTime,
                 timezone,
                 location,
-                collaborators: collaborators,
-                type: type,
-                program: program,
+                collaborators,
+                type,
+                program,
             };
         });
         return models.calendar.bulkCreate(items);

@@ -14,7 +14,7 @@ const {
 
 export const options = {
     database,
-    username
+    username,
 };
 
 export default new Sequelize(database, username, password, {

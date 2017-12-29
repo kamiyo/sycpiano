@@ -1,20 +1,20 @@
-import { Sequelize, DataTypes } from "sequelize";
-import { AcclaimModel } from "types";
+import { DataTypes, Sequelize } from 'sequelize';
+import { AcclaimModel } from 'types';
 
-const Acclaim = (sequelize: Sequelize, DataTypes: DataTypes) => (
+const Acclaim = (sequelize: Sequelize, dataTypes: DataTypes) => (
     sequelize.define('acclaim', {
         id: {
-            type: DataTypes.INTEGER,
+            type: dataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false,
             unique: true,
         },
-        quote: DataTypes.TEXT,
-        short: DataTypes.TEXT,
-        author: DataTypes.STRING,
-        shortAuthor: DataTypes.STRING,
-        date: DataTypes.STRING,
+        quote: dataTypes.TEXT,
+        short: dataTypes.TEXT,
+        author: dataTypes.STRING,
+        shortAuthor: dataTypes.STRING,
+        date: dataTypes.STRING,
     }) as AcclaimModel
 );
 

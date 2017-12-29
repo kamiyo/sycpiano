@@ -1,20 +1,20 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { MusicModel } from 'types';
 
-const Music = (sequelize: Sequelize, DataTypes: DataTypes) => {
+const Music = (sequelize: Sequelize, dataTypes: DataTypes) => {
     const music = sequelize.define('music', {
         id: {
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            defaultValue: dataTypes.UUIDV4,
             primaryKey: true,
-            type: DataTypes.UUID,
+            type: dataTypes.UUID,
             unique: true,
         },
-        composer: DataTypes.STRING,
-        piece: DataTypes.STRING,
-        contributors: DataTypes.STRING,
-        createdAt: DataTypes.DATE,
-        updatedAt: DataTypes.DATE,
+        composer: dataTypes.STRING,
+        piece: dataTypes.STRING,
+        contributors: dataTypes.STRING,
+        createdAt: dataTypes.DATE,
+        updatedAt: dataTypes.DATE,
     }) as MusicModel;
 
     music.associate = (db) => {

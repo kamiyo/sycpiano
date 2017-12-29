@@ -9,15 +9,15 @@ export const up = async (models: ModelMap) => {
         if (err) {
             console.log(err);
         }
-        const json: {
-            [key: string]: any
-         }[] = JSON.parse(content);
+        const json: Array<{
+            [key: string]: any,
+        }> = JSON.parse(content);
 
         json.forEach((item) => {
             model.create(item, {
-                include: [ models.musicfile ],
-            })
-        })
+                include: [models.musicfile],
+            });
+        });
     });
 };
 

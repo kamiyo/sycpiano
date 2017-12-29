@@ -1,6 +1,8 @@
 import secret from '../secret';
 
+/*tslint:disable:no-var-requires*/
 require('dotenv').config();
+/*tslint:disable:no-var-requires*/
 
 export const development = {
     host: '127.0.0.1',
@@ -34,14 +36,14 @@ const config = () => {
             portString,
             database,
         ] = dbUrl.match(/postgres:\/\/(.+):(.+)@(.+):(.+)\/(.+)/);
-        port = parseInt(portString);
+        port = parseInt(portString, 10);
         dialect = 'postgres';
     } else {
         username = process.env.DB_USER;
         password = process.env.DB_PASS;
         host = process.env.DB_HOST;
         database = process.env.DB_NAME;
-        port = parseInt(process.env.DB_PORT);
+        port = parseInt(process.env.DB_PORT, 10);
         dialect = process.env.DB_DIALECT;
     }
     return {
@@ -52,8 +54,8 @@ const config = () => {
         port,
         dialect,
         define: { freezeTableName: true },
-    }
-}
+    };
+};
 
 export const test = config();
 export const production = config();

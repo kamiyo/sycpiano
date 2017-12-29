@@ -1,5 +1,5 @@
-import * as path from 'path';
 import * as Promise from 'bluebird';
+import * as path from 'path';
 import * as Umzug from 'umzug';
 
 import db from './models/index';
@@ -9,7 +9,7 @@ const sequelize = db.sequelize;
 const umzug = new Umzug({
     storage: 'sequelize',
     storageOptions: {
-        sequelize: sequelize,
+        sequelize,
         modelName: 'seeders',
     },
 
@@ -17,11 +17,11 @@ const umzug = new Umzug({
         params: [
             db, // models
             () => {
-                throw new Error('Migration tried to use old style "done" callback. Please upgrade to "umzug" and return a promise instead.');
-            }
+                throw new Error(`Migration tried to use old style 'done' callback. Please upgrade to 'umzug' and return a promise instead.`);
+            },
         ],
         path: path.join(__dirname, 'seeders'),
-        pattern: /\.js$/
+        pattern: /\.js$/,
     },
 
     logging: (message: string) => {
@@ -32,8 +32,7 @@ const umzug = new Umzug({
 const logUmzugEvent = (eventName: string) =>
     (name: string) => {
         console.log(`${name} ${eventName}`);
-    }
-
+    };
 
 umzug.on('migrating', logUmzugEvent('migrating'));
 umzug.on('migrated', logUmzugEvent('migrated'));
@@ -66,15 +65,15 @@ const cmdStatus = async () => {
 
     const current = executed.length > 0 ? executed[0].file : '<NO_MIGRATIONS>';
     const status = {
-        current: current,
-        executed: executed.map(m => m.file),
-        pending: pending.map(m => m.file),
-    }
+        current,
+        executed: executed.map((m) => m.file),
+        pending: pending.map((m) => m.file),
+    };
 
-    console.log(JSON.stringify(status, null, 2))
+    console.log(JSON.stringify(status, null, 2));
 
     return { executed, pending };
-}
+};
 
 const cmdMigrate = () => (
     umzug.up()
@@ -87,8 +86,7 @@ const cmdMigrateNext = async () => {
     }
     const next = pending[0].name;
     return umzug.up({ to: next });
-
-}
+};
 
 const cmdReset = () => (
     umzug.down({ to: 0 })
@@ -101,8 +99,7 @@ const cmdResetPrev = async () => {
     }
     const prev = executed[executed.length - 1].name;
     return umzug.down({ to: prev });
-}
-
+};
 
 const main = async () => {
     const cmd = process.argv[2].trim();
@@ -142,13 +139,13 @@ const main = async () => {
         await executedCmd;
         const doneStr = `${cmd.toUpperCase()} DONE`;
         console.log(doneStr);
-        console.log("=".repeat(doneStr.length));
+        console.log('='.repeat(doneStr.length));
     } catch (err) {
         const errorStr = `${cmd.toUpperCase()} ERROR`;
         console.log(errorStr);
-        console.log("=".repeat(errorStr.length));
+        console.log('='.repeat(errorStr.length));
         console.log(err);
-        console.log("=".repeat(errorStr.length));
+        console.log('='.repeat(errorStr.length));
     }
 
     try {
@@ -159,6 +156,6 @@ const main = async () => {
         console.log(e);
     }
     process.exit(0);
-}
+};
 
 main();

@@ -1,6 +1,7 @@
 import * as express from 'express';
-import models from './models/index';
 import * as moment from 'moment-timezone';
+
+import models from './models/index';
 
 const apiRouter = express.Router();
 
@@ -13,12 +14,12 @@ apiRouter.get('/acclaims', (req, res) => {
     const params: Sequelize.FindOptions<{}> = {
         attributes: {
             exclude: ['createdAt', 'updatedAt'],
-        }
+        },
     };
     if (req.query.hasOwnProperty('count')) {
         params.limit = req.params.count;
     }
-    models.acclaim.findAll(params).then(object => res.json(object));
+    models.acclaim.findAll(params).then((object) => res.json(object));
 });
 
 // Excludes the date specified (less than)
@@ -101,7 +102,10 @@ apiRouter.get('/calendar', async (req, res) => {
         type = PAST;
     }
 
-    let response, betweenEvents, futureEvents, pastEvents;
+    let response;
+    let betweenEvents;
+    let futureEvents;
+    let pastEvents;
     switch (type) {
         case FUTURE:
             betweenEvents = await getEventsBetween(nowMoment.format(), date, 'ASC', model);
@@ -143,7 +147,7 @@ apiRouter.get('/music', async (_, res) => {
             },
         }],
         order: [
-            [ models.musicfile, 'name', 'ASC' ]
+            [ models.musicfile, 'name', 'ASC' ],
         ],
     });
     res.json(response);

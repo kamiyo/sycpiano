@@ -1,21 +1,21 @@
-import { Sequelize, DataTypes } from "sequelize";
-import { MusicFileModel } from "types";
+import { DataTypes, Sequelize } from 'sequelize';
+import { MusicFileModel } from 'types';
 
-const MusicFile = (sequelize: Sequelize, DataTypes: DataTypes) => (
+const MusicFile = (sequelize: Sequelize, dataTypes: DataTypes) => (
     sequelize.define('musicfile', {
         id: {
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            defaultValue: dataTypes.UUIDV4,
             primaryKey: true,
-            type: DataTypes.UUID,
+            type: dataTypes.UUID,
             unique: true,
         },
-        name: DataTypes.STRING,
-        filePath: DataTypes.STRING,
-        waveformPath: DataTypes.STRING,
-        durationSeconds: DataTypes.INTEGER,
-        createdAt: DataTypes.DATE,
-        updatedAt: DataTypes.DATE,
+        name: dataTypes.STRING,
+        filePath: dataTypes.STRING,
+        waveformPath: dataTypes.STRING,
+        durationSeconds: dataTypes.INTEGER,
+        createdAt: dataTypes.DATE,
+        updatedAt: dataTypes.DATE,
     }) as MusicFileModel
 );
 

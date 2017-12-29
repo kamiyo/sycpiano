@@ -1,4 +1,4 @@
-import { default as Sequelize, DataTypeUUID } from "sequelize";
+import { DataTypeUUID, default as Sequelize } from 'sequelize';
 
 export interface Model<TI, TA> extends Sequelize.Model<TI, TA> {
     name: string;
