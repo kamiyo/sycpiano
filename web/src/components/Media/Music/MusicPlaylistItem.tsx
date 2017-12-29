@@ -23,21 +23,23 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
         const musicfile = item.musicfiles[0];
         return (
             <li
-                className={`musicPlaylistItem${(currentItemId === musicfile.id) ? ' active' : ''}`}
+                className={'musicPlaylistItem'}
             >
-                <Link
-                    to={`${baseRoute}/${fileFromPath(musicfile.filePath)}`}
-                    onClick={() => onClick(musicfile, true)}
-                >
-                    <div className='section audioInfo'>
-                        <h4 className='text-top'>
-                            {`${item.composer}: ${item.piece}`}
-                        </h4>
-                        <h4 className='text-bottom'>
-                            {formatTime(musicfile.durationSeconds)}
-                        </h4>
-                    </div>
-                </Link>
+                <div className={`highlight${(currentItemId === musicfile.id) ? ' active' : ''}`}>
+                    <Link
+                        to={path.normalize(`${baseRoute}/${fileFromPath(musicfile.filePath)}`)}
+                        onClick={() => onClick(musicfile, true)}
+                    >
+                        <div className='section audioInfo'>
+                            <h4 className='text-top'>
+                                {`${item.composer}: ${item.piece}`}
+                            </h4>
+                            <h4 className='text-bottom'>
+                                {formatTime(musicfile.durationSeconds)}
+                            </h4>
+                        </div>
+                    </Link>
+                </div>
             </li>
         );
     } else {
@@ -54,23 +56,25 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                     {item.musicfiles.map((musicfile, index) => (
                         <li
                             key={index}
-                            className={`musicPlaylistItem${(currentItemId === musicfile.id) ? ' active' : ''}`}
+                            className={'musicPlaylistItem'}
                         >
-                            <Link
-                                to={`${baseRoute}/${fileFromPath(musicfile.filePath)}`}
-                                onClick={() => onClick(musicfile, true)}
-                            >
-                                <div className='itemContent'>
-                                    <div className='section audioInfo'>
-                                        <h4 className='text-top'>
-                                            {musicfile.name}
-                                        </h4>
-                                        <h4 className='text-bottom'>
-                                            {formatTime(musicfile.durationSeconds)}
-                                        </h4>
+                            <div className={`highlight${(currentItemId === musicfile.id) ? ' active' : ''}`}>
+                                <Link
+                                    to={path.normalize(`${baseRoute}/${fileFromPath(musicfile.filePath)}`)}
+                                    onClick={() => onClick(musicfile, true)}
+                                >
+                                    <div className='itemContent'>
+                                        <div className='section audioInfo'>
+                                            <h4 className='text-top'>
+                                                {musicfile.name}
+                                            </h4>
+                                            <h4 className='text-bottom'>
+                                                {formatTime(musicfile.durationSeconds)}
+                                            </h4>
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
+                                </Link>
+                            </div>
                         </li>
                     ))}
                 </ul>

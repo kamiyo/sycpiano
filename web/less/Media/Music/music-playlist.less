@@ -1,25 +1,27 @@
 @import '../../variables.less';
 @import '../../fonts.less';
 @import '../../mixins.less';
+@import '../../colors.less';
 
-@itemBorderColor:rgba(120, 120, 120, 0.3);
+@itemBorderColor:rgba(222, 222, 222, 1);
 
 .playlist.musicPlaylist {
     width: 25%;
     ul {
         background-color: @playlistBackground;
+        padding-top: 5px;
     }
 
     .musicPlaylistCollection {
 
         .musicPlaylistItem {
-            padding: 10px 0 10px 15px;
             margin-left: 15px;
             width: auto;
-            border-top: 1px solid @itemBorderColor;
-            border-bottom: 1px solid transparent;
-            .transition(all 0.15s);
+            border: none;
 
+            &:not(:first-child) {
+                border-top: 1px solid @itemBorderColor;
+            }
         }
 
         .collectionTitle {
@@ -28,9 +30,21 @@
                 color: black;
                 font-size: 15px;
             }
+            position: relative;
             height: 100%;
             background-color: @playlistBackground;
             padding: 10px 0 10px 25px;
+            border-bottom: 1px solid @itemBorderColor;
+        }
+
+        .highlight {
+            padding: 10px 0 10px 15px;
+            border-left: none;
+            .transition(border 0.15s);
+
+            &.active {
+                border-left: 7px solid @light-blue;
+            }
         }
 
         border-bottom: 1px solid @itemBorderColor;
@@ -43,23 +57,25 @@
         list-style: none;
         cursor: pointer;
         width: 100%;
-        padding: @padding 0 @padding 15px;
-        border-top: 1px solid transparent;
-        border-left: 7px solid transparent;
         border-bottom: 1px solid @itemBorderColor;
 
         .transition(all 0.15s);
 
         &:hover, &.active {
-            background-color: rgba(255, 255, 255, 1);
+            background-color: white;
 
             .imageContainer img {
                 .filter(brightness(60%));
             }
         }
 
-        &.active {
-            border-left-color: #4E86A4;
+        .highlight {
+            padding: 10px 0 10px 15px;
+            border-left: 7px solid transparent;
+
+            &.active {
+                border-left-color: @light-blue;
+            }
         }
 
         .section {
