@@ -6,6 +6,7 @@ const gutil = require('gulp-util');
 const ts = require('gulp-typescript');
 const tslint = require('gulp-tslint');
 const webpack = require('webpack');
+const del = require('del');
 const webpackStream = require('webpack-stream');
 const webpackConfig = (process.env.NODE_ENV === 'production') ? require('./webpack.prod.config.js') : require('./webpack.dev.config.js');
 
@@ -18,12 +19,11 @@ gulp.task('build', () => {
         .pipe(gulp.dest('./web/build'));
 });
 
-gulp.task('build-server', () => {
-    return tsProject.src()
-        .pipe(tsProject()).js.pipe(gulp.dest("./server/build"));
+gulp.task('clean-server', () => {
+    return del([
+        'server/build/**/*.js',
+    ]);
 });
-
-gulp.task('build-prod', ['build-server', 'build']);
 
 gulp.task('lint-server', () => {
     return gulp.src('server/src/**/*.ts')
@@ -32,6 +32,13 @@ gulp.task('lint-server', () => {
         }))
         .pipe(tslint.report());
 });
+
+gulp.task('build-server', ['clean-server'], () => {
+    return tsProject.src()
+        .pipe(tsProject()).js.pipe(gulp.dest("./server/build"));
+});
+
+gulp.task('build-prod', ['build-server', 'build']);
 
 gulp.task('run-dev', ['watch-dev', 'watch'], () => {
     return nodemon({

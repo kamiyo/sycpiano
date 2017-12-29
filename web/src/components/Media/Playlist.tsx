@@ -17,7 +17,7 @@ const slideRight = (element: HTMLElement, amount: number, delay = 0) => {
 
 interface ChildRendererProps {
     readonly key: number | string;
-    readonly isActive: boolean;
+    readonly currentItemId: number | string;
     readonly item: any;
     readonly onClick: (...args: any[]) => void;
 }
@@ -65,7 +65,7 @@ const Playlist: React.SFC<PlaylistProps> = (props) => {
                     {props.items.map((item: any) => (
                         <props.ChildRenderer
                             key={item.id}
-                            isActive={props.currentItemId === item.id}
+                            currentItemId={props.currentItemId}
                             item={item}
                             onClick={props.onClick}
                         />

@@ -15,7 +15,7 @@ import AudioUI from 'src/components/Media/Music/AudioUI';
 import AudioVisualizer from 'src/components/Media/Music/AudioVisualizer';
 import MusicPlaylist from 'src/components/Media/Music/MusicPlaylist';
 
-import { MusicItem } from 'src/components/Media/Music/types';
+import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 interface MusicState {
@@ -27,8 +27,12 @@ interface MusicState {
     readonly currentTrack: MusicItem;
 }
 
+interface MusicStateToProps {
+    readonly items: MusicItem[];
+}
+
 interface MusicDispatchToProps {
-    readonly fetchPlaylistAction: (trackId: string) => Promise<MusicItem>;
+    readonly fetchPlaylistAction: (trackId: string) => Promise<MusicFileItem>;
 }
 
 interface MusicOwnProps {
@@ -36,7 +40,7 @@ interface MusicOwnProps {
     match: match<any>;
 }
 
-type MusicProps = MusicOwnProps & MusicDispatchToProps;
+type MusicProps = MusicOwnProps & MusicStateToProps & MusicDispatchToProps;
 
 class Music extends React.Component<MusicProps, MusicState> {
     autoPlay = false;
@@ -50,13 +54,18 @@ class Music extends React.Component<MusicProps, MusicState> {
         lastUpdateTimestamp: 0,
         duration: -1,
         currentTrack: {
-            title: '',
-            composer: '',
-            contributing: '',
-            url: '',
-            waveform: '',
             id: '',
-            duration: '',
+            piece: '',
+            composer: '',
+            contributors: '',
+            musicfiles: [{
+                id: '',
+                name: '',
+                filePath: '',
+                waveformPath: '',
+                durationSeconds: -1,
+                musicId: '',
+            }],
         },
     };
 
@@ -121,7 +130,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         }
     }
 
-    loadTrack = async (track: MusicItem, autoPlay: boolean) => {
+    loadTrack = async (track: MusicFileItem, autoPlay: boolean) => {
         this.loaded = false;
         this.autoPlay = autoPlay;
         await new Promise((resolve) => {
@@ -136,9 +145,17 @@ class Music extends React.Component<MusicProps, MusicState> {
             });
         });
         this.audio.pause();
-        this.setState({ currentTrack: track, duration: -1 });
-        waveformLoader.loadWaveformFile(track.waveform);
-        this.audio.src = track.url;
+        this.setState({
+            currentTrack: {
+                ...this.props.items.find((music) => {
+                    return music.id === track.musicId;
+                }),
+                musicfiles: [track],
+            },
+            duration: -1,
+        });
+        waveformLoader.loadWaveformFile(track.waveformPath);
+        this.audio.src = track.filePath;
         await waveformLoader.loaded;
         TweenLite.fromTo(this.audio, 0.3, { volume: 0 }, {
             volume: 1,
@@ -240,7 +257,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                 <audio id='audio' crossOrigin='anonymous' ref={(audio) => this.audio = audio} />
                 <MusicPlaylist
                     onClick={this.loadTrack}
-                    currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.id : ''}
+                    currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicfiles[0].id : ''}
                     baseRoute={this.props.baseRoute}
                 />
                 <AudioUI
@@ -269,11 +286,15 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 }
 
+const mapStateToProps = (state: GlobalStateShape): MusicStateToProps => ({
+    items: state.audio_playlist.items,
+});
+
 const mapDispatchToProps = (dispatch: Dispatch<GlobalStateShape>): MusicDispatchToProps => ({
     fetchPlaylistAction: (track: string) => dispatch(fetchPlaylistAction(track)),
 });
 
-export default connect<{}, MusicDispatchToProps>(
-    undefined,
+export default connect<MusicStateToProps, MusicDispatchToProps>(
+    mapStateToProps,
     mapDispatchToProps,
 )(Music);

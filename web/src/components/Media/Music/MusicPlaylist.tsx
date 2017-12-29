@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
 import Playlist from 'src/components/Media/Playlist';
 
-import { MusicItem } from 'src/components/Media/Music/types';
+import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 interface MusicPlaylistStateToProps {
@@ -16,7 +16,7 @@ interface MusicPlaylistStateToProps {
 interface MusicPlaylistOwnProps {
     readonly baseRoute: string;
     readonly currentTrackId: string;
-    readonly onClick: (item: MusicItem, autoPlay: boolean) => void;
+    readonly onClick: (item: MusicFileItem, autoPlay: boolean) => void;
 }
 
 type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;

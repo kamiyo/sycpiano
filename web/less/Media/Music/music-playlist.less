@@ -2,13 +2,38 @@
 @import '../../fonts.less';
 @import '../../mixins.less';
 
-@itemHeight: 50px;
-@itemBorderColor: 1px solid rgba(120, 120, 120, 0.3);
+@itemBorderColor:rgba(120, 120, 120, 0.3);
 
 .playlist.musicPlaylist {
     width: 25%;
     ul {
         background-color: @playlistBackground;
+    }
+
+    .musicPlaylistCollection {
+
+        .musicPlaylistItem {
+            padding: 10px 0 10px 15px;
+            margin-left: 15px;
+            width: auto;
+            border-top: 1px solid @itemBorderColor;
+            border-bottom: 1px solid transparent;
+            .transition(all 0.15s);
+
+        }
+
+        .collectionTitle {
+            h4 {
+                margin: 0;
+                color: black;
+                font-size: 15px;
+            }
+            height: 100%;
+            background-color: @playlistBackground;
+            padding: 10px 0 10px 25px;
+        }
+
+        border-bottom: 1px solid @itemBorderColor;
     }
 
     .musicPlaylistItem {
@@ -18,10 +43,10 @@
         list-style: none;
         cursor: pointer;
         width: 100%;
-        height: @itemHeight + @padding * 2;
         padding: @padding 0 @padding 15px;
+        border-top: 1px solid transparent;
         border-left: 7px solid transparent;
-        border-bottom: @itemBorderColor;
+        border-bottom: 1px solid @itemBorderColor;
 
         .transition(all 0.15s);
 
@@ -37,11 +62,6 @@
             border-left-color: #4E86A4;
         }
 
-        .itemContent {
-            height: 100%;
-            width: 100%;
-        }
-
         .section {
             vertical-align: middle;
             display: inline-block;
@@ -50,25 +70,21 @@
         .audioInfo {
             width: 100%;
             height: 100%;
-            padding: 0 0 20px 0;
             position: relative;
 
             h4 {
                 margin: 0;
                 color: black;
                 font-size: 15px;
-                position: absolute;
+                display: inline-block;
 
                 &.text-top {
-                    padding-top: 5px;
-                    top: 0;
+                    float: left;
                 }
 
                 &.text-bottom {
                     font-size: 12px;
-                    padding: 0 20px 5px 0;
-                    bottom: 0;
-                    text-align: right;
+                    float: right;
                 }
             }
         }

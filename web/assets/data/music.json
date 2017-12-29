@@ -1,0 +1,49 @@
+[
+    {
+        "piece": "Spellbound Concerto",
+        "composer": "Miklos Rosza",
+        "contributors": "New West Symphony",
+        "musicfiles": [
+            {
+                "filePath": "/music/spellbound.mp3",
+                "waveformPath": "/music/waveforms/spellbound.dat",
+                "durationSeconds": 802
+            }
+        ]
+    },
+    {
+        "piece": "Improvisation",
+        "composer": "Sean Chen",
+        "musicfiles": [
+            {
+                "filePath": "/music/improv.mp3",
+                "waveformPath": "/music/waveforms/improv.dat",
+                "durationSeconds": 378
+            }
+        ]
+    },
+    {
+        "piece": "3 Etudes, Op.18",
+        "composer": "Bela Bartok",
+        "musicfiles": [
+            {
+                "name": "I. Allegro molto",
+                "filePath": "/music/bartok_etude_1.mp3",
+                "waveformPath": "/music/waveforms/bartok_etude_1.dat",
+                "durationSeconds": 140
+            },
+            {
+                "name": "II. Andante sostenuto",
+                "filePath": "/music/bartok_etude_2.mp3",
+                "waveformPath": "/music/waveforms/bartok_etude_2.dat",
+                "durationSeconds": 218
+            },
+            {
+                "name": "III. Rubato - Tempo giusto",
+                "filePath": "/music/bartok_etude_3.mp3",
+                "waveformPath": "/music/waveforms/bartok_etude_3.dat",
+                "durationSeconds": 157
+            }
+        ]
+    }
+]

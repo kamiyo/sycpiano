@@ -9,10 +9,12 @@ import { CalendarModel } from 'types';
 const { gt, lt } = Sequelize.Op;
 
 apiRouter.get('/acclaims', (req, res) => {
-    const attributes = ['short', 'quote', 'author', 'shortAuthor'];
-
     // TODO: add order-by http://docs.sequelizejs.com/en/v3/docs/querying/
-    const params: Sequelize.FindOptions<{}> = { attributes };
+    const params: Sequelize.FindOptions<{}> = {
+        attributes: {
+            exclude: ['createdAt', 'updatedAt'],
+        }
+    };
     if (req.query.hasOwnProperty('count')) {
         params.limit = req.params.count;
     }
@@ -22,6 +24,9 @@ apiRouter.get('/acclaims', (req, res) => {
 // Excludes the date specified (less than)
 function getEventsBefore(before: string, limit: number, model: CalendarModel) {
     return model.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt'],
+        },
         where: {
             dateTime: {
                 [lt]: before,
@@ -35,6 +40,9 @@ function getEventsBefore(before: string, limit: number, model: CalendarModel) {
 // Includes the date specified (greater than)
 function getEventsAfter(after: string, limit: number, model: CalendarModel) {
     return model.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt'],
+        },
         where: {
             dateTime: {
                 [gt]: after,
@@ -48,6 +56,9 @@ function getEventsAfter(after: string, limit: number, model: CalendarModel) {
 // The interval is open on the less-than side.
 function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC', model: CalendarModel) {
     return model.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt'],
+        },
         where: {
             dateTime: {
                 [gt]: start,
@@ -119,29 +130,23 @@ apiRouter.get('/calendar', async (req, res) => {
     res.json(response);
 });
 
-apiRouter.get('/music', (_, res) => {
-    res.json({
-        items: [
-            {
-                title: "Spellbound Concerto",
-                composer: "Miklos Rosza",
-                contributing: "New West Symphony",
-                url: '/music/spellbound.mp3',
-                waveform: '/music/waveforms/spellbound.dat',
-                id: 'spellbound',
-                duration: '00:13:22'
+apiRouter.get('/music', async (_, res) => {
+    const model = models.music;
+    const response = await model.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt'],
+        },
+        include: [{
+            model: models.musicfile,
+            attributes: {
+                exclude: ['createdAt', 'updatedAt'],
             },
-            {
-                title: "Improvisation",
-                composer: "Sean Chen",
-                contributing: "",
-                url: '/music/improv.mp3',
-                waveform: '/music/waveforms/improv.dat',
-                id: 'improv',
-                duration: '00:06:18'
-            }
-        ]
+        }],
+        order: [
+            [ models.musicfile, 'name', 'ASC' ]
+        ],
     });
+    res.json(response);
 });
 
 apiRouter.get('/images', (_, res) => {
