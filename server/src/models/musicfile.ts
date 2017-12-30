@@ -1,8 +1,8 @@
 import { DataTypes, Sequelize } from 'sequelize';
 import { MusicFileModel } from 'types';
 
-const MusicFile = (sequelize: Sequelize, dataTypes: DataTypes) => (
-    sequelize.define('musicfile', {
+const MusicFile = (sequelize: Sequelize, dataTypes: DataTypes) => {
+    const musicfile = sequelize.define('musicfile', {
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,
@@ -16,7 +16,13 @@ const MusicFile = (sequelize: Sequelize, dataTypes: DataTypes) => (
         durationSeconds: dataTypes.INTEGER,
         createdAt: dataTypes.DATE,
         updatedAt: dataTypes.DATE,
-    }) as MusicFileModel
-);
+    }) as MusicFileModel;
+
+    musicfile.associate = (db) => {
+        musicfile.belongsTo(db.music);
+    };
+
+    return musicfile;
+};
 
 export default MusicFile;

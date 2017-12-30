@@ -46,7 +46,10 @@ const extractEventDescription = (event: GCalEvent) => {
 export const up = async (models: ModelMap) => {
     try {
         const response = await getCalendarEvents();
-        const items = response.data.items.map((event: GCalEvent) => {
+        const model = models.calendar;
+        const items: Array<{
+            [key: string]: any,
+        }> = response.data.items.map((event: GCalEvent) => {
             const dateTime = event.start.dateTime ? event.start.dateTime : event.start.date;
             const timezone = event.start.dateTime ? event.start.timeZone : '';
             const {
@@ -65,12 +68,22 @@ export const up = async (models: ModelMap) => {
                 dateTime,
                 timezone,
                 location,
-                collaborators,
-                type,
-                program,
+                calendarDetails: {
+                    collaborators: collaborators.map((collab: string) => ({ name: collab })),
+                    pieces: program.map((piece: string) => ({ piece })),
+                },
+                type: type.value,
             };
         });
-        return models.calendar.bulkCreate(items);
+        items.forEach(async (item) => {
+            console.log(item);
+            await model.create(item, {
+                include: [{
+                    model: models.calendarDetail,
+                    include: [ models.collaborator, models.piece ],
+                }],
+            });
+        });
     } catch (e) {
         console.log(e);
         return;
@@ -78,5 +91,5 @@ export const up = async (models: ModelMap) => {
 };
 
 export const down = async (models: ModelMap) => {
-    return models.calendar.destroy({ truncate: true });
+    return models.calendar.destroy({ where: {}, cascade: true });
 };

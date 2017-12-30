@@ -5,7 +5,7 @@ import { ModelMap } from 'types';
 export const up = async (models: ModelMap) => {
     const model = models.music;
     const filePath = path.join(__dirname, '../../../web/assets/data/music.json');
-    fs.readFile(filePath, (err: NodeJS.ErrnoException, content: any) => {
+    return fs.readFile(filePath, (err: NodeJS.ErrnoException, content: any) => {
         if (err) {
             console.log(err);
         }
@@ -13,8 +13,9 @@ export const up = async (models: ModelMap) => {
             [key: string]: any,
         }> = JSON.parse(content);
 
-        json.forEach((item) => {
-            model.create(item, {
+        json.forEach(async (item) => {
+            console.log(item);
+            await model.create(item, {
                 include: [models.musicfile],
             });
         });

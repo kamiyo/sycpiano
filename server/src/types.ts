@@ -1,4 +1,4 @@
-import { DataTypeUUID, default as Sequelize } from 'sequelize';
+import { DataTypeString, DataTypeUUID, default as Sequelize } from 'sequelize';
 
 export interface Model<TI, TA> extends Sequelize.Model<TI, TA> {
     name: string;
@@ -68,3 +68,38 @@ export interface MusicAttributes {
 export interface MusicInstance extends Sequelize.Instance<MusicAttributes>, MusicAttributes {}
 
 export interface MusicModel extends Model<MusicInstance, MusicAttributes> {}
+
+export interface CollaboratorAttributes {
+    id: DataTypeUUID;
+    name: string;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+}
+
+export interface CollaboratorInstance extends Sequelize.Instance<CollaboratorAttributes>, CollaboratorAttributes {}
+
+export interface CollaboratorModel extends Model<CollaboratorInstance, CollaboratorAttributes> {}
+
+export interface PieceAttributes {
+    id: DataTypeUUID;
+    piece: string;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+}
+
+export interface PieceInstance extends Sequelize.Instance<PieceAttributes>, PieceAttributes {}
+
+export interface PieceModel extends Model<PieceInstance, PieceAttributes> {}
+
+export interface CalendarDetailAttributes {
+    id: DataTypeUUID;
+    calendarId: DataTypeString;
+    programId: DataTypeUUID;
+    collaboratorId: DataTypeUUID;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+}
+
+export interface CalendarDetailInstance extends Sequelize.Instance<CalendarDetailAttributes>, CalendarDetailAttributes {}
+
+export interface CalendarDetailModel extends Model<CalendarDetailInstance, CalendarDetailAttributes> {}

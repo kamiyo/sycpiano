@@ -1,24 +1,20 @@
 import { DataTypes, QueryInterface } from 'sequelize';
 
 export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) => {
-    await queryInterface.createTable('calendar', {
+    await queryInterface.createTable('piece', {
         id: {
             allowNull: false,
-            autoIncrement: false,
+            defaultValue: dataTypes.UUIDV4,
             primaryKey: true,
-            type: dataTypes.STRING,
+            type: dataTypes.UUID,
             unique: true,
         },
-        name: dataTypes.STRING,
-        dateTime: dataTypes.DATE,
-        timezone: dataTypes.STRING,
-        location: dataTypes.STRING,
-        type: dataTypes.STRING,
+        piece: dataTypes.STRING,
         createdAt: dataTypes.DATE,
         updatedAt: dataTypes.DATE,
     });
 };
 
 export const down = async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable('calendar');
+    await queryInterface.dropTable('piece');
 };
