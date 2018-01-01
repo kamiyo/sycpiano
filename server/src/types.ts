@@ -91,15 +91,26 @@ export interface PieceInstance extends Sequelize.Instance<PieceAttributes>, Piec
 
 export interface PieceModel extends Model<PieceInstance, PieceAttributes> {}
 
-export interface CalendarDetailAttributes {
+export interface CalendarPieceAttributes {
     id: DataTypeUUID;
     calendarId: DataTypeString;
     programId: DataTypeUUID;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+}
+
+export interface CalendarPieceInstance extends Sequelize.Instance<CalendarPieceAttributes>, CalendarPieceAttributes {}
+
+export interface CalendarPieceModel extends Model<CalendarPieceInstance, CalendarPieceAttributes> {}
+
+export interface CalendarCollaboratorAttributes {
+    id: DataTypeUUID;
+    calendarId: DataTypeString;
     collaboratorId: DataTypeUUID;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 }
 
-export interface CalendarDetailInstance extends Sequelize.Instance<CalendarDetailAttributes>, CalendarDetailAttributes {}
+export interface CalendarCollaboratorInstance extends Sequelize.Instance<CalendarCollaboratorAttributes>, CalendarCollaboratorAttributes {}
 
-export interface CalendarDetailModel extends Model<CalendarDetailInstance, CalendarDetailAttributes> {}
+export interface CalendarCollaboratorModel extends Model<CalendarCollaboratorInstance, CalendarCollaboratorAttributes> {}

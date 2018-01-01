@@ -18,9 +18,10 @@ const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
     }) as CalendarModel;
 
     calendar.associate = (db) => {
-        calendar.hasMany(db.calendarDetail);
-        calendar.belongsToMany(db.piece, { through: db.calendarDetail });
-        calendar.belongsToMany(db.collaborator, { through: db.calendarDetail });
+        calendar.hasMany(db.calendarPiece);
+        calendar.hasMany(db.calendarCollaborator);
+        calendar.belongsToMany(db.piece, { through: db.calendarPiece });
+        calendar.belongsToMany(db.collaborator, { through: db.calendarCollaborator });
     };
 
     return calendar;

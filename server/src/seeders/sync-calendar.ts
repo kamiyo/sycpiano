@@ -68,9 +68,11 @@ export const up = async (models: ModelMap) => {
                 dateTime,
                 timezone,
                 location,
-                calendarDetails: {
-                    collaborators: collaborators.map((collab: string) => ({ name: collab })),
+                calendarPieces: {
                     pieces: program.map((piece: string) => ({ piece })),
+                },
+                calendarCollaborators: {
+                    collaborators: collaborators.map((collab: string) => ({ name: collab })),
                 },
                 type: type.value,
             };
@@ -79,8 +81,11 @@ export const up = async (models: ModelMap) => {
             console.log(item);
             await model.create(item, {
                 include: [{
-                    model: models.calendarDetail,
-                    include: [ models.collaborator, models.piece ],
+                    model: models.calendarPiece,
+                    include: [ models.piece ],
+                }, {
+                    model: models.calendarCollaborator,
+                    include: [ models.collaborator ],
                 }],
             });
         });
