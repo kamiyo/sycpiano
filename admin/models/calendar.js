@@ -1,40 +1,26 @@
-'use strict';
-
-module.exports = (sequelize, DataTypes) => {
-  var Model = sequelize.define('calendar', {
-    name: {
-      type: DataTypes.STRING,
-    },
-    dateTime: {
-      type: DataTypes.DATE,
-    },
-    timezone: {
-      type: DataTypes.STRING,
-    },
-    location: {
-      type: DataTypes.STRING,
-    },
-    type: {
-      type: DataTypes.STRING,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-    },
-  }, {
-    tableName: 'calendar',
-
-    schema: process.env.DATABASE_SCHEMA,
-  });
-
-  Model.associate = (models) => {
-    Model.hasMany(models.calendarDetail);
-    Model.belongsToMany(models.piece, { through: models.calendarDetail });
-    Model.belongsToMany(models.collaborator, { through: models.calendarDetail });
-  };
-
-  return Model;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Calendar = (sequelize, dataTypes) => {
+    const calendar = sequelize.define('calendar', {
+        id: {
+            allowNull: false,
+            autoIncrement: false,
+            primaryKey: true,
+            type: dataTypes.STRING,
+            unique: true,
+        },
+        name: dataTypes.STRING,
+        dateTime: dataTypes.DATE,
+        timezone: dataTypes.STRING,
+        location: dataTypes.STRING,
+        type: dataTypes.STRING,
+    });
+    calendar.associate = (db) => {
+        calendar.hasMany(db.calendarPiece);
+        calendar.hasMany(db.calendarCollaborator);
+        calendar.belongsToMany(db.piece, { through: db.calendarPiece });
+        calendar.belongsToMany(db.collaborator, { through: db.calendarCollaborator });
+    };
+    return calendar;
 };
-
+exports.default = Calendar;

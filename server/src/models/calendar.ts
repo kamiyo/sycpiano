@@ -2,6 +2,7 @@ import { DataTypes, Sequelize } from 'sequelize';
 import { CalendarModel } from 'types';
 
 const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
+    console.log(sequelize);
     const calendar = sequelize.define('calendar', {
         id: {
             allowNull: false,
@@ -11,7 +12,10 @@ const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
             unique: true,
         },
         name: dataTypes.STRING,
-        dateTime: dataTypes.DATE,
+        dateTime: {
+            type: dataTypes.DATE,
+            field: 'date_time',
+        },
         timezone: dataTypes.STRING,
         location: dataTypes.STRING,
         type: dataTypes.STRING,

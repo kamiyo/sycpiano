@@ -1,7 +1,7 @@
 import { DataTypes, QueryInterface } from 'sequelize';
 
 export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) => {
-    await queryInterface.createTable('calendarPiece', {
+    await queryInterface.createTable('calendar_piece', {
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,
@@ -11,6 +11,7 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
         },
         calendarId: {
             type: dataTypes.STRING,
+            field: 'calendar_id',
             references: {
                 model: 'calendar',
                 key: 'id',
@@ -20,6 +21,7 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
         },
         pieceId: {
             type: dataTypes.UUID,
+            field: 'piece_id',
             references: {
                 model: 'piece',
                 key: 'id',
@@ -27,11 +29,17 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE',
         },
-        createdAt: dataTypes.DATE,
-        updatedAt: dataTypes.DATE,
+        createdAt: {
+            type: dataTypes.DATE,
+            field: 'created_at',
+        },
+        updatedAt: {
+            type: dataTypes.DATE,
+            field: 'updated_at',
+        },
     });
 };
 
 export const down = async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable('calendarPiece');
+    await queryInterface.dropTable('calendar piece');
 };

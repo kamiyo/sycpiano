@@ -14,7 +14,7 @@ export const development = {
     logging: (str: string) => {
         console.log(str);
     },
-    define: { freezeTableName: true },
+    define: { freezeTableName: true, underscored: true },
 };
 
 const config = () => {
@@ -53,7 +53,10 @@ const config = () => {
         database,
         port,
         dialect,
-        define: { freezeTableName: true },
+        logging: (str: string) => {
+            console.log(str);
+        },
+        define: { freezeTableName: true, underscored: true },
     };
 };
 

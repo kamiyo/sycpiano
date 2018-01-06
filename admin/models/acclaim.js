@@ -1,38 +1,17 @@
-'use strict';
-
-module.exports = (sequelize, DataTypes) => {
-  var Model = sequelize.define('acclaim', {
-    quote: {
-      type: DataTypes.STRING,
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Acclaim = (sequelize, dataTypes) => sequelize.define('acclaim', {
+    id: {
+        type: dataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+        unique: true,
     },
-    short: {
-      type: DataTypes.STRING,
-    },
-    author: {
-      type: DataTypes.STRING,
-    },
-    shortAuthor: {
-      type: DataTypes.STRING,
-    },
-    date: {
-      type: DataTypes.STRING,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-    },
-  }, {
-    tableName: 'acclaim',
-
-
-    schema: process.env.DATABASE_SCHEMA,
-  });
-
-  Model.associate = (models) => {
-  };
-
-  return Model;
-};
-
+    quote: dataTypes.TEXT,
+    short: dataTypes.TEXT,
+    author: dataTypes.STRING,
+    shortAuthor: dataTypes.STRING,
+    date: dataTypes.STRING,
+});
+exports.default = Acclaim;

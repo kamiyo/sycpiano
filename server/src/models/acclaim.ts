@@ -13,7 +13,10 @@ const Acclaim = (sequelize: Sequelize, dataTypes: DataTypes) => (
         quote: dataTypes.TEXT,
         short: dataTypes.TEXT,
         author: dataTypes.STRING,
-        shortAuthor: dataTypes.STRING,
+        shortAuthor: {
+            type: dataTypes.STRING,
+            field: 'short_author',
+        },
         date: dataTypes.STRING,
     }) as AcclaimModel
 );

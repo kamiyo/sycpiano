@@ -10,8 +10,14 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
             unique: true,
         },
         piece: dataTypes.STRING,
-        createdAt: dataTypes.DATE,
-        updatedAt: dataTypes.DATE,
+        createdAt: {
+            type: dataTypes.DATE,
+            field: 'created_at',
+        },
+        updatedAt: {
+            type: dataTypes.DATE,
+            field: 'updated_at',
+        },
     });
 };
 

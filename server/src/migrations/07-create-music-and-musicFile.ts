@@ -13,14 +13,20 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
             composer: dataTypes.STRING,
             piece: dataTypes.STRING,
             contributors: dataTypes.STRING,
-            createdAt: dataTypes.DATE,
-            updatedAt: dataTypes.DATE,
+            createdAt: {
+                type: dataTypes.DATE,
+                field: 'created_at',
+            },
+            updatedAt: {
+                type: dataTypes.DATE,
+                field: 'updated_at',
+            },
         });
     } catch (e) {
         console.log(e);
     }
     try {
-        await queryInterface.createTable('musicfile', {
+        await queryInterface.createTable('music_file', {
             id: {
                 allowNull: false,
                 defaultValue: dataTypes.UUIDV4,
@@ -29,21 +35,37 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
                 unique: true,
             },
             name: dataTypes.STRING,
-            filePath: dataTypes.STRING,
-            waveformPath: dataTypes.STRING,
-            durationSeconds: dataTypes.INTEGER,
+            filePath: {
+                type: dataTypes.STRING,
+                field: 'file_path',
+            },
+            waveformPath: {
+                type: dataTypes.STRING,
+                field: 'waveform_path',
+            },
+            durationSeconds: {
+                type: dataTypes.INTEGER,
+                field: 'duration_seconds',
+            },
             musicId: {
                 type: dataTypes.UUID,
+                field: 'music_id',
                 allowNull: false,
                 references: {
                     model: 'music',
                     key: 'id',
                 },
                 onDelete: 'CASCADE',
-                onUpdate: 'NO ACTION',
+                onUpdate: 'CASCADE',
             },
-            createdAt: dataTypes.DATE,
-            updatedAt: dataTypes.DATE,
+            createdAt: {
+                type: dataTypes.DATE,
+                field: 'created_at',
+            },
+            updatedAt: {
+                type: dataTypes.DATE,
+                field: 'updated_at',
+            },
         });
     } catch (e) {
         console.log(e);
@@ -51,6 +73,6 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
 };
 
 export const down = async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable('musicfile');
+    await queryInterface.dropTable('music_file');
     await queryInterface.dropTable('music');
 };

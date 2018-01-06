@@ -2,7 +2,7 @@ import { DataTypes, Sequelize } from 'sequelize';
 import { CalendarCollaboratorModel } from 'types';
 
 const CalendarCollaborator = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    const model = sequelize.define('calendarDetail', {
+    const model = sequelize.define('calendarCollaborator', {
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,
@@ -10,13 +10,19 @@ const CalendarCollaborator = (sequelize: Sequelize, dataTypes: DataTypes) => {
             type: dataTypes.UUID,
             unique: true,
         },
-        calendarId: dataTypes.STRING,
-        collaboratorId: dataTypes.UUID,
-    }) as CalendarCollaboratorModel;
+        calendarId: {
+            type: dataTypes.STRING,
+            field: 'calendar_id',
+        },
+        collaboratorId: {
+            type: dataTypes.UUID,
+            field: 'collaborator_id',
+        },
+    },  { tableName: 'calendar_collaborator' }) as CalendarCollaboratorModel;
 
     model.associate = (db) => {
         model.belongsTo(db.calendar);
-        model.belongsTo(db.collaborator)
+        model.belongsTo(db.collaborator);
     };
 
     return model;

@@ -11,10 +11,19 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
         quote: dataTypes.TEXT,
         short: dataTypes.TEXT,
         author: dataTypes.STRING,
-        shortAuthor: dataTypes.STRING,
+        shortAuthor: {
+            type: dataTypes.STRING,
+            field: 'short_author',
+        },
         date: dataTypes.STRING,
-        createdAt: dataTypes.DATE,
-        updatedAt: dataTypes.DATE,
+        createdAt: {
+            type: dataTypes.DATE,
+            field: 'created_at',
+        },
+        updatedAt: {
+            type: dataTypes.DATE,
+            field: 'updated_at',
+        },
     });
 };
 

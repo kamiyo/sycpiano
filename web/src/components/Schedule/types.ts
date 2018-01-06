@@ -5,6 +5,8 @@ import { List } from 'react-virtualized/dist/es/List';
 import { SortedArraySet } from 'collections/sorted-array-set';
 import { EventListName } from 'src/components/Schedule/actionTypes';
 
+export type EventType = 'concerto' | 'chamber' | 'solo' | 'masterclass';
+
 export interface GCalEvent {
     readonly description: any;
     readonly id: string;
@@ -24,12 +26,13 @@ export interface CachedEvent {
     readonly dateTime: string;
     readonly timezone: string;
     readonly name: string;
-    readonly collaborators: string[];
-    readonly type: {
-        value: string;
-        label: string;
-    };
-    readonly program: string[];
+    readonly collaborators: Array<{
+        name: string;
+    }>;
+    readonly pieces: Array<{
+        piece: string;
+    }>;
+    readonly type: EventType;
 }
 
 interface DayOrMonth {
@@ -40,7 +43,7 @@ export interface DayItemInputShape {
     readonly id: string;
     readonly name: string;
     readonly collaborators: string[];
-    readonly eventType: 'concerto' | 'chamber' | 'solo' | 'masterclass';
+    readonly eventType: EventType;
     readonly dateTime: Moment;
     readonly location: string;
     readonly program: string[];

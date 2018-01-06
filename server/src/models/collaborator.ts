@@ -14,8 +14,8 @@ const Collaborator = (sequelize: Sequelize, dataTypes: DataTypes) => {
     }) as CollaboratorModel;
 
     collaborator.associate = (db) => {
-        collaborator.hasMany(db.calendarDetail);
-        collaborator.belongsToMany(db.calendar, { through: db.calendarDetail });
+        collaborator.hasMany(db.calendarCollaborator);
+        collaborator.belongsToMany(db.calendar, { through: db.calendarCollaborator });
     };
 
     return collaborator;

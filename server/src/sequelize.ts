@@ -10,6 +10,8 @@ const {
     host,
     port,
     dialect,
+    logging,
+    define,
 } = config;
 
 export const options = {
@@ -23,8 +25,6 @@ export default new Sequelize(database, username, password, {
     dialect,
     operatorsAliases: false,        // need to change if we are using operators
     pool: { max: 5, min: 0, idle: 10000 },
-    define: { freezeTableName: true } as any,
-    logging: (str: string) => {
-        console.log(str);
-    },                 // change to log to output
+    define,
+    logging,                 // change to log to output
 });

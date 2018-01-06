@@ -10,12 +10,21 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
             unique: true,
         },
         name: dataTypes.STRING,
-        dateTime: dataTypes.DATE,
+        dateTime: {
+            type: dataTypes.DATE,
+            field: 'date_time',
+        },
         timezone: dataTypes.STRING,
         location: dataTypes.STRING,
         type: dataTypes.STRING,
-        createdAt: dataTypes.DATE,
-        updatedAt: dataTypes.DATE,
+        createdAt: {
+            type: dataTypes.DATE,
+            field: 'created_at',
+        },
+        updatedAt: {
+            type: dataTypes.DATE,
+            field: 'updated_at',
+        },
     });
 };
 

@@ -14,8 +14,8 @@ const Piece = (sequelize: Sequelize, dataTypes: DataTypes) => {
     }) as PieceModel;
 
     piece.associate = (db) => {
-        piece.hasMany(db.calendarDetail);
-        piece.belongsToMany(db.calendar, { through: db.calendarDetail });
+        piece.hasMany(db.calendarPiece);
+        piece.belongsToMany(db.calendar, { through: db.calendarPiece });
     };
 
     return piece;

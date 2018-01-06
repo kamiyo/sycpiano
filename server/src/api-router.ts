@@ -6,7 +6,7 @@ import models from './models/index';
 const apiRouter = express.Router();
 
 import Sequelize from 'sequelize';
-import { CalendarModel } from 'types';
+// import { ModelMap } from 'types';
 const { gt, lt } = Sequelize.Op;
 
 apiRouter.get('/acclaims', (req, res) => {
@@ -23,11 +23,31 @@ apiRouter.get('/acclaims', (req, res) => {
 });
 
 // Excludes the date specified (less than)
-function getEventsBefore(before: string, limit: number, model: CalendarModel) {
-    return model.findAll({
+function getEventsBefore(before: string, limit: number) {
+    return models.calendar.findAll({
         attributes: {
             exclude: ['createdAt', 'updatedAt'],
         },
+        include: [
+            {
+                model: models.collaborator,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt'],
+                },
+                through: {
+                    attributes: [],
+                },
+            },
+            {
+                model: models.piece,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt'],
+                },
+                through: {
+                    attributes: [],
+                },
+            },
+        ],
         where: {
             dateTime: {
                 [lt]: before,
@@ -39,11 +59,31 @@ function getEventsBefore(before: string, limit: number, model: CalendarModel) {
 }
 
 // Includes the date specified (greater than)
-function getEventsAfter(after: string, limit: number, model: CalendarModel) {
-    return model.findAll({
+function getEventsAfter(after: string, limit: number) {
+    return models.calendar.findAll({
         attributes: {
             exclude: ['createdAt', 'updatedAt'],
         },
+        include: [
+            {
+                model: models.collaborator,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt'],
+                },
+                through: {
+                    attributes: [],
+                },
+            },
+            {
+                model: models.piece,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt'],
+                },
+                through: {
+                    attributes: [],
+                },
+            },
+        ],
         where: {
             dateTime: {
                 [gt]: after,
@@ -55,11 +95,31 @@ function getEventsAfter(after: string, limit: number, model: CalendarModel) {
 }
 
 // The interval is open on the less-than side.
-function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC', model: CalendarModel) {
-    return model.findAll({
+function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC') {
+    return models.calendar.findAll({
         attributes: {
             exclude: ['createdAt', 'updatedAt'],
         },
+        include: [
+            {
+                model: models.collaborator,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt'],
+                },
+                through: {
+                    attributes: [],
+                },
+            },
+            {
+                model: models.piece,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt'],
+                },
+                through: {
+                    attributes: [],
+                },
+            },
+        ],
         where: {
             dateTime: {
                 [gt]: start,
@@ -108,29 +168,28 @@ apiRouter.get('/calendar', async (req, res) => {
     let pastEvents;
     switch (type) {
         case FUTURE:
-            betweenEvents = await getEventsBetween(nowMoment.format(), date, 'ASC', model);
-            futureEvents = await getEventsAfter(date, 5, model);
+            betweenEvents = await getEventsBetween(nowMoment.format(), date, 'ASC');
+            futureEvents = await getEventsAfter(date, 5);
             response = [...betweenEvents, ...futureEvents];
             break;
         case PAST:
-            betweenEvents = await getEventsBetween(date, nowMoment.format(), 'DESC', model);
-            pastEvents = await getEventsBefore(date, 5, model);
+            betweenEvents = await getEventsBetween(date, nowMoment.format(), 'DESC');
+            pastEvents = await getEventsBefore(date, 5);
             response = [...betweenEvents.reverse(), ...pastEvents];
             break;
         case ALL:
             response = await model.findAll();
             break;
         case AFTER:
-            response = await getEventsAfter(after, limit, model);
+            response = await getEventsAfter(after, limit);
             break;
         case BEFORE:
-            response = await getEventsBefore(before, limit, model);
+            response = await getEventsBefore(before, limit);
             break;
         default:
             break;
     }
 
-    console.log(response.length);
     res.json(response);
 });
 
@@ -147,7 +206,8 @@ apiRouter.get('/music', async (_, res) => {
             },
         }],
         order: [
-            [ models.musicfile, 'name', 'ASC' ],
+            ['composer', 'ASC'],
+            [models.musicfile, 'name', 'ASC'],
         ],
     });
     res.json(response);
