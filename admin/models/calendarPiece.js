@@ -9,9 +9,15 @@ const CalendarProgram = (sequelize, dataTypes) => {
             type: dataTypes.UUID,
             unique: true,
         },
-        calendarId: dataTypes.STRING,
-        pieceId: dataTypes.UUID,
-    });
+        calendarId: {
+            type: dataTypes.STRING,
+            field: 'calendar_id',
+        },
+        pieceId: {
+            type: dataTypes.UUID,
+            field: 'piece_id',
+        },
+    }, { tableName: 'calendar_piece' });
     model.associate = (db) => {
         model.belongsTo(db.calendar);
         model.belongsTo(db.piece);

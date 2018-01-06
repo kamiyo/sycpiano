@@ -14,10 +14,13 @@ export const up = async (models: ModelMap) => {
         }> = JSON.parse(content);
 
         json.forEach(async (item) => {
-            console.log(item);
-            await model.create(item, {
-                include: [models.musicfile],
-            });
+            try {
+                await model.create(item, {
+                    include: [models.musicFile],
+                });
+            } catch (e) {
+                console.log(e);
+            }
         });
     });
 };

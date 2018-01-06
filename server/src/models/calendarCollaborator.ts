@@ -20,9 +20,9 @@ const CalendarCollaborator = (sequelize: Sequelize, dataTypes: DataTypes) => {
         },
     },  { tableName: 'calendar_collaborator' }) as CalendarCollaboratorModel;
 
-    model.associate = (db) => {
-        model.belongsTo(db.calendar);
-        model.belongsTo(db.collaborator);
+    model.associate = (models) => {
+        model.belongsTo(models.calendar);
+        model.belongsTo(models.collaborator);
     };
 
     return model;

@@ -16,11 +16,11 @@ const AudioInfo: React.SFC<AudioInfoProps> = ({ currentTrack, duration }) => {
         piece = '',
         composer = '',
         contributors = '',
-        musicfiles = [],
+        musicFiles = [],
     } = currentTrack;
     const {
         name: movement,
-    } = musicfiles[0];
+    } = musicFiles[0];
     const composerTitle = composer + ': ' + piece + ((movement) ? (' - ' + movement) : '');
     return (
         <div className='audioInfoContainer no-highlight'>

@@ -58,7 +58,7 @@ class Music extends React.Component<MusicProps, MusicState> {
             piece: '',
             composer: '',
             contributors: '',
-            musicfiles: [{
+            musicFiles: [{
                 id: '',
                 name: '',
                 filePath: '',
@@ -257,7 +257,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                 <audio id='audio' crossOrigin='anonymous' ref={(audio) => this.audio = audio} />
                 <MusicPlaylist
                     onClick={this.loadTrack}
-                    currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicfiles[0].id : ''}
+                    currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
                     baseRoute={this.props.baseRoute}
                 />
                 <AudioUI

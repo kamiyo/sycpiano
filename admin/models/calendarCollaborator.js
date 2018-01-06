@@ -9,9 +9,15 @@ const CalendarCollaborator = (sequelize, dataTypes) => {
             type: dataTypes.UUID,
             unique: true,
         },
-        calendarId: dataTypes.STRING,
-        collaboratorId: dataTypes.UUID,
-    });
+        calendarId: {
+            type: dataTypes.STRING,
+            field: 'calendar_id',
+        },
+        collaboratorId: {
+            type: dataTypes.UUID,
+            field: 'collaborator_id',
+        },
+    }, { tableName: 'calendar_collaborator' });
     model.associate = (db) => {
         model.belongsTo(db.calendar);
         model.belongsTo(db.collaborator);

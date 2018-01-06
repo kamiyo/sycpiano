@@ -12,11 +12,9 @@ const Music = (sequelize, dataTypes) => {
         composer: dataTypes.STRING,
         piece: dataTypes.STRING,
         contributors: dataTypes.STRING,
-        createdAt: dataTypes.DATE,
-        updatedAt: dataTypes.DATE,
     });
     music.associate = (db) => {
-        music.hasMany(db.musicfile);
+        music.hasMany(db.musicFile);
     };
     return music;
 };

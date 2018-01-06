@@ -11,7 +11,10 @@ const Acclaim = (sequelize, dataTypes) => sequelize.define('acclaim', {
     quote: dataTypes.TEXT,
     short: dataTypes.TEXT,
     author: dataTypes.STRING,
-    shortAuthor: dataTypes.STRING,
+    shortAuthor: {
+        type: dataTypes.STRING,
+        field: 'short_author',
+    },
     date: dataTypes.STRING,
 });
 exports.default = Acclaim;

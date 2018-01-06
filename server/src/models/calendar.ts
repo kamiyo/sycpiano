@@ -2,7 +2,6 @@ import { DataTypes, Sequelize } from 'sequelize';
 import { CalendarModel } from 'types';
 
 const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    console.log(sequelize);
     const calendar = sequelize.define('calendar', {
         id: {
             allowNull: false,
@@ -21,11 +20,11 @@ const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
         type: dataTypes.STRING,
     }) as CalendarModel;
 
-    calendar.associate = (db) => {
-        calendar.hasMany(db.calendarPiece);
-        calendar.hasMany(db.calendarCollaborator);
-        calendar.belongsToMany(db.piece, { through: db.calendarPiece });
-        calendar.belongsToMany(db.collaborator, { through: db.calendarCollaborator });
+    calendar.associate = (models) => {
+        calendar.hasMany(models.calendarPiece);
+        calendar.hasMany(models.calendarCollaborator);
+        calendar.belongsToMany(models.piece, { through: models.calendarPiece });
+        calendar.belongsToMany(models.collaborator, { through: models.calendarCollaborator });
     };
 
     return calendar;

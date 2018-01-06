@@ -6,31 +6,42 @@ export interface Model<TI, TA> extends Sequelize.Model<TI, TA> {
 }
 
 export interface ModelMap {
-    [name: string]: Model<any, any>;
+    [key: string]: Model<any, any>;
+}
+
+export interface DB {
+    sequelize: Sequelize.Sequelize;
+    importModels: (seq: Sequelize.Sequelize) => ModelMap;
+    models: ModelMap;
 }
 
 export interface CalendarAttributes {
-    id: string;
+    id?: string;
     name: string;
     dateTime: Date | string;
     timezone: string;
     location: string;
-    collaborators: string[];
-    type: {
-        label: string;
-        value: string;
-    };
-    program: string[];
+    type: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 }
 
-export interface CalendarInstance extends Sequelize.Instance<CalendarAttributes>, CalendarAttributes {}
+export interface CalendarInstance extends Sequelize.Instance<CalendarAttributes>, CalendarAttributes {
+    getPieces: Sequelize.BelongsToManyGetAssociationsMixin<PieceInstance>;
+    setPieces: Sequelize.BelongsToManySetAssociationsMixin<PieceInstance, PieceAttributes['id'], CalendarPieceAttributes>;
+    addPiece: Sequelize.BelongsToManyAddAssociationMixin<PieceInstance, PieceAttributes['id'], CalendarPieceAttributes>;
+    addPieces: Sequelize.BelongsToManyAddAssociationsMixin<PieceInstance, PieceAttributes['id'], CalendarPieceAttributes>;
+
+    getCollaborators: Sequelize.BelongsToManyGetAssociationsMixin<CollaboratorInstance>;
+    setCollaborators: Sequelize.BelongsToManySetAssociationsMixin<CollaboratorInstance, CollaboratorAttributes['id'], CalendarCollaboratorAttributes>;
+    addCollaborator: Sequelize.BelongsToManyAddAssociationMixin<CollaboratorInstance, CollaboratorAttributes['id'], CalendarCollaboratorAttributes>;
+    addCollaborators: Sequelize.BelongsToManyAddAssociationsMixin<CollaboratorInstance, CollaboratorAttributes['id'], CalendarCollaboratorAttributes>;
+}
 
 export interface CalendarModel extends Model<CalendarInstance, CalendarAttributes> {}
 
 export interface AcclaimAttributes {
-    id?: number;
+    id?: DataTypeUUID;
     quote: string;
     short: string;
     author: string;
@@ -48,7 +59,7 @@ export interface MusicFileAttributes {
     filePath: string;
     pathToWaveform: string;
     durationSeconds: number;
-    music_id?: DataTypeUUID;
+    musicId?: DataTypeUUID;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 }

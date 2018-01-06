@@ -10,7 +10,10 @@ const Calendar = (sequelize, dataTypes) => {
             unique: true,
         },
         name: dataTypes.STRING,
-        dateTime: dataTypes.DATE,
+        dateTime: {
+            type: dataTypes.DATE,
+            field: 'date_time',
+        },
         timezone: dataTypes.STRING,
         location: dataTypes.STRING,
         type: dataTypes.STRING,

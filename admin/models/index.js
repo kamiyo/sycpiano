@@ -6,7 +6,8 @@ var Sequelize = require('sequelize');
 let databaseOptions = {
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   pool: { maxConnections: 10, minConnections: 1 },
-  dialectOptions: {}
+  dialectOptions: {},
+  define: { freezeTableName: true, underscored: true },
 };
 
 if (process.env.SSL_DATABASE) {
@@ -29,7 +30,6 @@ fs
     try {
       var model = sequelize['import'](path.join(__dirname, file));
       db[model.name] = model;
-      console.log(model.name);
     } catch (error) {
       console.error('Model creation error: ' + error);
     }

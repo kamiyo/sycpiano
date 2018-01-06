@@ -15,8 +15,8 @@ const Music = (sequelize: Sequelize, dataTypes: DataTypes) => {
         contributors: dataTypes.STRING,
     }) as MusicModel;
 
-    music.associate = (db) => {
-        music.hasMany(db.musicFile);
+    music.associate = (models) => {
+        music.hasMany(models.musicFile);
     };
 
     return music;

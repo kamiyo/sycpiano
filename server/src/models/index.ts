@@ -28,11 +28,12 @@ const importModels = (seq: Sequelize): ModelMap => {
     return modelMap;
 };
 
-const db = Object.assign({
+const db = {
     sequelize,
     // Export the function, in case we ever want to use it with
     // a different DB connection.
     importModels,
-}, importModels(sequelize));
+    models: importModels(sequelize),
+};
 
 export default db;

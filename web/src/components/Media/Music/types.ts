@@ -3,7 +3,7 @@ export interface MusicItem {
     readonly piece: string;
     readonly composer: string;
     readonly contributors: string;
-    readonly musicfiles?: MusicFileItem[];
+    readonly musicFiles?: MusicFileItem[];
 }
 
 export interface MusicFileItem {

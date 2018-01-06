@@ -1,8 +1,12 @@
 import * as moment from 'moment';
 
 import axios from 'axios';
+import * as Promise from 'bluebird';
 
-import { ModelMap } from 'types';
+import { Op } from 'sequelize';
+import { CalendarAttributes, CalendarInstance, CalendarModel, CollaboratorModel, ModelMap, PieceModel } from 'types';
+
+const { eq } = Op;
 
 const calAPIKey = 'AIzaSyC8YGSlCPlqT-MAHN_LvM2T3K-ltaiqQMI';
 const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
@@ -46,7 +50,9 @@ const extractEventDescription = (event: GCalEvent) => {
 export const up = async (models: ModelMap) => {
     try {
         const response = await getCalendarEvents();
-        const model = models.calendar;
+        const calendarModel: CalendarModel = models.calendar;
+        const pieceModel: PieceModel = models.piece;
+        const collaboratorModel: CollaboratorModel = models.collaborator;
         const items: Array<{
             [key: string]: any,
         }> = response.data.items.map((event: GCalEvent) => {
@@ -68,23 +74,33 @@ export const up = async (models: ModelMap) => {
                 dateTime,
                 timezone,
                 location,
-                pieces: program.map((piece: string) => ({ piece })),
-                collaborators: collaborators.map((collab: string) => ({ name: collab })),
                 type: type.value,
+                program,
+                collaborators,
             };
         });
+
         items.forEach(async (item) => {
-            console.log(item);
-            await model.create(item, {
-                include: [
-                    {
-                        model: models.piece,
-                    },
-                    {
-                        model: models.collaborator,
-                    },
-                ],
+            const { program, collaborators, ...attributes } = item;
+            const itemInstance: CalendarInstance = await calendarModel.create(attributes as CalendarAttributes);
+            const pieceInstances = await Promise.map(program, async (piece: string) => {
+                const [pieceInstance] = await pieceModel.findOrCreate({
+                    where: { piece },
+                });
+                return pieceInstance;
             });
+            await itemInstance.setPieces(pieceInstances);
+            const collaboratorInstances = await Promise.map(collaborators, async (collaborator: string) => {
+                const [collaboratorInstance] = await collaboratorModel.findOrCreate({
+                    where: {
+                        name: {
+                            [eq]: collaborator,
+                        },
+                    },
+                });
+                return collaboratorInstance;
+            });
+            await itemInstance.setCollaborators(collaboratorInstances);
         });
     } catch (e) {
         console.log(e);

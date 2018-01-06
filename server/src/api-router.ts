@@ -1,7 +1,8 @@
 import * as express from 'express';
 import * as moment from 'moment-timezone';
 
-import models from './models/index';
+import db from './models/index';
+const models = db.models;
 
 const apiRouter = express.Router();
 
@@ -200,14 +201,14 @@ apiRouter.get('/music', async (_, res) => {
             exclude: ['createdAt', 'updatedAt'],
         },
         include: [{
-            model: models.musicfile,
+            model: models.musicFile,
             attributes: {
                 exclude: ['createdAt', 'updatedAt'],
             },
         }],
         order: [
             ['composer', 'ASC'],
-            [models.musicfile, 'name', 'ASC'],
+            [models.musicFile, 'name', 'ASC'],
         ],
     });
     res.json(response);
