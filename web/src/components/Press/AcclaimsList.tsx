@@ -62,7 +62,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
                 key={key}
                 columnIndex={0}
                 rowIndex={index}
-                parent={parent}
+                parent={parent as any}
             >
                 {() => this.renderAcclaimItem(key, index, style)}
             </CellMeasurer>

@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import { AutoSizer, List, ListRowRenderer } from 'react-virtualized';
 
 import { createFetchPhotosAction } from 'src/components/Media/Photos/actions';
+import { PhotoItemShape } from 'src/components/Media/Photos/types';
 import { GlobalStateShape } from 'src/types';
 
 const ITEMS_PER_ROW = 5;
 
 interface PhotosStateToProps {
-    readonly items: string[];
+    readonly items: PhotoItemShape[];
 }
 
 interface PhotosDispatchToProps {
@@ -25,6 +26,7 @@ class Photos extends React.Component<PhotosProps, {}> {
     }
 
     render() {
+        console.log(this.props.items);
         return (
             <div className='photos container'>
                 <AutoSizer>
@@ -54,7 +56,7 @@ class Photos extends React.Component<PhotosProps, {}> {
             {[...Array(ITEMS_PER_ROW).keys()].map((_, i) => {
                 const adjIndex = startIndex + i;
                 if (adjIndex < this.props.items.length) {
-                    return <img key={adjIndex} src={`/images/${this.props.items[adjIndex]}`} />;
+                    return <img key={adjIndex} src={`/images/gallery/${this.props.items[adjIndex].file}`} />;
                 }
             })}
         </div>);

@@ -214,20 +214,14 @@ apiRouter.get('/music', async (_, res) => {
     res.json(response);
 });
 
-apiRouter.get('/images', (_, res) => {
-    res.json({
-        items: [
-            'bg_1.jpg',
-            'cliburn1.jpg',
-            'cliburn4.jpg',
-            'cliburn7.jpg',
-            'syc_chair.jpg',
-            'syc_headshot1.jpg',
-            'syc_walking.jpg',
-            'syc_withpiano.jpg',
-            'syc_withpiano_bw.jpg',
-        ],
+apiRouter.get('/photos', async (_, res) => {
+    const model = models.photo;
+    const response = await model.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt'],
+        },
     });
+    res.json(response);
 });
 
 export const ApiRouter = apiRouter;

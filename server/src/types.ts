@@ -1,4 +1,4 @@
-import { DataTypeString, DataTypeUUID, default as Sequelize } from 'sequelize';
+import { DataTypeInteger, DataTypeString, DataTypeUUID, default as Sequelize } from 'sequelize';
 
 export interface Model<TI, TA> extends Sequelize.Model<TI, TA> {
     name: string;
@@ -125,3 +125,18 @@ export interface CalendarCollaboratorAttributes {
 export interface CalendarCollaboratorInstance extends Sequelize.Instance<CalendarCollaboratorAttributes>, CalendarCollaboratorAttributes {}
 
 export interface CalendarCollaboratorModel extends Model<CalendarCollaboratorInstance, CalendarCollaboratorAttributes> {}
+
+export interface PhotoAttributes {
+    id?: DataTypeUUID;
+    file: DataTypeString;
+    width: DataTypeInteger;
+    height: DataTypeInteger;
+    thumbnailWidth: DataTypeInteger;
+    thumbnailHeight: DataTypeInteger;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+}
+
+export interface PhotoInstance extends Sequelize.Instance<PhotoAttributes>, PhotoAttributes {}
+
+export interface PhotoModel extends Model<PhotoInstance, PhotoAttributes> {}

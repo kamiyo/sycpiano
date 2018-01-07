@@ -246,7 +246,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
             columnIndex={0}
             key={key}
             rowIndex={index}
-            parent={parent}
+            parent={parent as any}
         >
             {({ measure }) => this.renderEventItem(index, style, measure)}
         </CellMeasurer>

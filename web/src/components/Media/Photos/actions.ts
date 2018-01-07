@@ -31,9 +31,9 @@ export const createFetchPhotosAction = (): ThunkAction<void, GlobalStateShape, v
         if (shouldFetchPhotos(getState().photo_list)) {
             try {
                 dispatch(fetchPhotosRequest());
-                const response = await axios.get('/api/images');
+                const response = await axios.get('/api/photos');
                 console.log(response.data);
-                dispatch(fetchPhotosSuccess(response.data.items));
+                dispatch(fetchPhotosSuccess(response.data));
             } catch (e) {
                 console.log('fetch photos error: ', e);
                 dispatch(fetchPhotosError());
