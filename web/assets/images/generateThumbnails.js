@@ -6,7 +6,7 @@ const path = require('path');
 
 function main() {
     const out = [];
-    glob(path.join(__dirname, '../web/assets/images/gallery/*.jpg'), async (err, files) => {
+    glob(path.join(__dirname, './gallery/*.jpg'), async (err, files) => {
         await Promise.all(files.map(async (file) => {
             return new Promise(async (resolve, reject) => {
                 const outObj = {};
@@ -60,7 +60,7 @@ function main() {
         }));
 
         console.log(out);
-        fs.writeFile(path.join(__dirname, '../web/assets/data/photos.json'), JSON.stringify(out), (err) => {
+        fs.writeFile(path.join(__dirname, '../data/photos.json'), JSON.stringify(out), (err) => {
             if (err) {
                 throw err;
             }

@@ -1,20 +1,21 @@
 # The official web page of pianist Sean Chen.
 
-It is an [express](http://expressjs.com/) app with a PostgreSQL database, with the express app serving very little HTML. In fact, most of the app is on the client, built with [react](https://facebook.github.io/react/) and bundled with [webpack](https://webpack.github.io/).
+It is an [express](http://expressjs.com/) app with a PostgreSQL database, with the express app serving very little HTML. In fact, most of the app is on the client, built with [react](https://facebook.github.io/react/) and bundled with [webpack](https://webpack.github.io/). Use [yarn](https://yarnpkg.com/en/) for package management. Code is in [typescript](https://www.typescriptlang.org/) and [less](http://lesscss.org/).
 
 ## Getting Started
 Make sure at least version 8.4.0 of Node.js is installed.
 After you've cloned the repository and have navigated to the project root, run:
 ```
-$ npm install
+$ yarn install
 ```
 After installing your node dependencies, you're ready to start dev process.
 ```
-$ npm run start-dev
+$ yarn run start-dev
 ```
 et Voila! This command will run a gulp task that starts the server and watches for changes you make to your code, in which case it will trigger a rebuild.
 
 ## Production
+TODO: MORE
 First, setup a .env file with at least these entries:
 ```
 DB_NAME=<database name, probably sycpiano>
@@ -29,14 +30,14 @@ If deploying on heroku, make sure `DB_URL` is set, which contains the above info
 
 Then, run:
 ```
-$ npm run start-prod
+$ yarn run start-prod
 ```
 
 Make sure: disable happyPack thread pools if you only have one core. Because of that, it might be better to directly run npm start or node app.js, after setting the correct environmental variabls.
 Also, make sure that it is not in a subPath, (i.e. project root must be /, not /somePath relative to the domain).
 Change database type to match the server (mddhosting uses MariaDB, heroku uses Postgres).
 
-## Seeding the database
+## Initializing the database
 sycpiano uses a PostgreSQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).
 Here are the steps for seeding the database:
 * Install PostgreSQL for your OS
@@ -61,22 +62,47 @@ module.exports = {
   password: <password>
 };
 ```
-* Run `scripts/seedDB.js`
-```bash
-# From project root
-$ node scripts/seedDB.js
+
+## Migrations and Seeding
+sycpiano uses umzug and sequelize for migrations.
 ```
-When it asks for your usename and password, you can provide those of any postgres user that has INSERT privilege. The file path you provide (as the third argument) must be a JSON file, and the objects of that JSON file must match the schema of the sequelize models defined under `server/models/`.
-
-## ~~Syncing~~ Overwriting/Populating the Google Calendar local cache
-A local cache of google calendar is implemented. Populate by running
-```bash
-# From project root
-$ node server/syncGoogleCalendar.js
+$ node server/build/migrate [up|down]
+$ node server/build/seed [up|down]
 ```
-TODO: figure out use scripts or server folder for this.
-TODO: really make it sync instead of overwrite.
 
-If you want to repopulate the cache, you need to DROP the 'calendars' table first, otherwise you will get duplicate entries.
+Run `yarn run start-dev` or at least `yarn run build-server` so that the server/build folder actually has .js files!
 
-Remember, before running `npm run start-dev`, make sure the postgres server is running.
+Remember, before running `yarn run start-dev`, make sure the postgres server is running.
+
+## Admin
+sycpiano uses the Lumber framework for accessing the database.
+Right now, it is dev only. Make sure you have the .env file (or ask kamiyo).
+```
+$ cd admin
+$ yarn install
+```
+To run:
+```
+$ cd admin
+$ node bin/www
+```
+and follow the command line instructions.
+Make sure if you change any of the models in the server to also paste the built .js files into the model folder of admin.
+
+TODO: deploy admin
+
+## Utilities
+
+### Audio Waveforms
+There is a waveform generation utility script included in web/assets/music called genWaveform.sh.
+```
+$ genWaveform.sh -i input.mp3 -l desiredWaveformLength
+```
+Must have the [audiowaveform](https://github.com/bbc/audiowaveform) package installed (linux or macosx only, windows via WSL). Only does mp3 files. For now, `desiredWaveformLength = 1024`.
+
+### Picture Thumbnails
+There is a thumbanil generation utility (and creates .json file for seeding the photos table in the database) in web/assets/images called generateThumbnails.js
+```
+$ node generateThumbnails
+```
+Must have [graphicsmagick](http://www.graphicsmagick.org/) installed.

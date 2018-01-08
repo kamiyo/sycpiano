@@ -48,7 +48,7 @@ const buildServer = gulp.series(gulp.parallel('lint-server', 'clean-server'), 'c
 
 gulp.task('build-server', buildServer);
 
-gulp.task('build-prod', gulp.series('build-server', 'build'));
+gulp.task('build-prod', gulp.parallel('build-server', 'build'));
 
 gulp.task('watch', () => {
     return webpack(webpackConfig).watch({}, (err, stats) => {
