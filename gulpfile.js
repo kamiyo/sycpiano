@@ -39,19 +39,16 @@ gulp.task('lint-server', () => {
         }));
 });
 
-gulp.task('build-server', ['clean-server', 'lint-server'], () => {
+gulp.task('compile-server', () => {
     return tsProject.src()
         .pipe(tsProject()).js.pipe(gulp.dest("./server/build"));
-});
+})
 
-gulp.task('build-prod', ['build-server', 'build']);
+const buildServer = gulp.series(gulp.parallel('lint-server', 'clean-server'), 'compile-server');
 
-gulp.task('run-dev', ['watch-dev', 'watch'], () => {
-    return nodemon({
-        script: './app.js',
-        watch: ['web/build', 'server/build/api-router.js'],
-    });
-});
+gulp.task('build-server', buildServer);
+
+gulp.task('build-prod', gulp.series('build-server', 'build'));
 
 gulp.task('watch', () => {
     return webpack(webpackConfig).watch({}, (err, stats) => {
@@ -65,6 +62,19 @@ gulp.task('watch', () => {
     });
 });
 
-gulp.task('watch-dev', ['build-server'], () => {
-    return gulp.watch('server/src/**/*', ['build-server']);
-});
+gulp.task('watch-server', () => {
+    return gulp.watch('server/src/**/*', buildServer);
+})
+
+gulp.task('build-and-watch-server', gulp.series('build-server', 'watch-server'));
+
+gulp.task('start-watches', gulp.parallel('build-and-watch-server', 'watch'));
+
+gulp.task('start-nodemon', () => {
+    return nodemon({
+        script: './app.js',
+        watch: ['web/build', 'server/build/api-router.js'],
+    });
+})
+
+gulp.task('run-dev', gulp.series('start-watches', 'start-nodemon'));

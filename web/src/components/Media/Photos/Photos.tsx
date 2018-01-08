@@ -2,13 +2,14 @@ import 'less/Media/Photos/photos.less';
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { AutoSizer, List, ListRowRenderer } from 'react-virtualized';
 
 import { createFetchPhotosAction } from 'src/components/Media/Photos/actions';
 import { PhotoItemShape } from 'src/components/Media/Photos/types';
+import Playlist from 'src/components/Media/Playlist';
+import { ChildRendererProps } from 'src/components/Media/types';
 import { GlobalStateShape } from 'src/types';
 
-const ITEMS_PER_ROW = 5;
+// const ITEMS_PER_ROW = 5;
 
 interface PhotosStateToProps {
     readonly items: PhotoItemShape[];
@@ -28,38 +29,28 @@ class Photos extends React.Component<PhotosProps, {}> {
     render() {
         console.log(this.props.items);
         return (
-            <div className='photos container'>
-                <AutoSizer>
-                    {({ height, width }) => (
-                        <List
-                            height={height}
-                            width={width}
-                            rowCount={Math.ceil(this.props.items.length / ITEMS_PER_ROW)}
-                            rowHeight={300}
-                            rowRenderer={this.rowItemRenderer}
-                        />
-
-                    )}
-                </AutoSizer>
+            <div className='mediaContent photos'>
+                <Playlist
+                    className='photo-list'
+                    currentItemId=''
+                    hasToggler={false}
+                    isShow={true}
+                    items={this.props.items}
+                    onClick={null}
+                    shouldAppear={false}
+                    ChildRenderer={this.childRenderer}
+                />
             </div>
         );
     }
 
-    private rowItemRenderer: ListRowRenderer = ({ index, key, style }) => {
-        const startIndex = ITEMS_PER_ROW * index;
+    childRenderer = ({ item }: ChildRendererProps<PhotoItemShape>) => {
+        const portrait: boolean = (item.thumbnailWidth > item.thumbnailHeight) ? false : true;
         return (
-        <div
-            className='photo-row'
-            key={key}
-            style={style}
-        >
-            {[...Array(ITEMS_PER_ROW).keys()].map((_, i) => {
-                const adjIndex = startIndex + i;
-                if (adjIndex < this.props.items.length) {
-                    return <img key={adjIndex} src={`/images/gallery/${this.props.items[adjIndex].file}`} />;
-                }
-            })}
-        </div>);
+            <div className={`photo-row ${(portrait) ? 'portrait' : 'landscape'}`}>
+                <img src={`/images/gallery/thumbnails/${item.file}`} />
+            </div>
+        );
     }
 }
 

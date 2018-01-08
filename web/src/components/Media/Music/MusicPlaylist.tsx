@@ -7,6 +7,7 @@ import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
 import Playlist from 'src/components/Media/Playlist';
 
 import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
+import { ChildRendererProps } from 'src/components/Media/types';
 import { GlobalStateShape } from 'src/types';
 
 interface MusicPlaylistStateToProps {
@@ -29,7 +30,7 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
         items={props.items}
         currentItemId={props.currentTrackId}
         onClick={props.onClick}
-        ChildRenderer={(childProps) => <MusicPlaylistItem {...childProps} baseRoute={props.baseRoute} />}
+        ChildRenderer={(childProps: ChildRendererProps<MusicItem>) => <MusicPlaylistItem {...childProps} baseRoute={props.baseRoute} />}
         shouldAppear={false}
     />
 );
