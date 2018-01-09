@@ -11,15 +11,11 @@
     padding-left: 5px;
     background-color: @playlistBackground;
     .photo-row {
-        &.portrait {
+        height: 300px;
+        img {
             width: 100%;
         }
-        &.landscape {
-            height: 300px;
-        }
         margin: 10px;
-        img {
-            height: 100%;
-        }
+        overflow: hidden;
     }
 }

@@ -105,4 +105,4 @@ There is a thumbanil generation utility (and creates .json file for seeding the 
 ```
 $ node generateThumbnails
 ```
-Must have [graphicsmagick](http://www.graphicsmagick.org/) installed.
+Must have [graphicsmagick](http://www.graphicsmagick.org/) and [imagemagick](https://www.imagemagick.org/script/index.php) installed, as well as [opencv](https://github.com/opencv).
