@@ -8,6 +8,7 @@ import EventList from 'src/components/Schedule/EventList';
 
 import { DateIconSVG } from 'src/components/Schedule/DateIconSVG';
 import { LocationIconSVG } from 'src/components/Schedule/LocationIconSVG';
+import { TrebleIconSVG } from 'src/components/Schedule/TrebleIconSVG';
 
 const Schedule: React.SFC<{}> = () => (
     <div className='schedule container'>
@@ -45,6 +46,7 @@ const Schedule: React.SFC<{}> = () => (
         </div>
         <DateIconSVG />
         <LocationIconSVG />
+        <TrebleIconSVG />
     </div>
 );
 

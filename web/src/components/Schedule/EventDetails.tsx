@@ -15,6 +15,7 @@ import { EventListName } from 'src/components/Schedule/actionTypes';
 // import { ClockIcon } from 'src/components/Schedule/ClockIconSVG';
 // import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
 // import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
+// import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
 
 // // TODO make map persistent, and not reload everytime
 // interface EventMapProps {
@@ -115,7 +116,8 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
 
                 <DateIconInstance className='date-icon' date={dateTime} />
                 <LocationIconInstance className='location-icon' />
-                <ClockIcon className='clock-icon' date={dateTime} /> */}
+                <ClockIcon className='clock-icon' date={dateTime} />
+                <TrebleIconInstance className='treble-icon' />        */}
             </div>
         );
     }

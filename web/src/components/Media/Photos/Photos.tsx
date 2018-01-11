@@ -1,42 +1,58 @@
 import 'less/Media/Photos/photos.less';
 
+import classnames from 'classnames';
+import path from 'path';
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 
-import { createFetchPhotosAction } from 'src/components/Media/Photos/actions';
-import { PhotoItemShape } from 'src/components/Media/Photos/types';
+import { createFetchPhotosAction, selectPhoto } from 'src/components/Media/Photos/actions';
+import { PhotoItem } from 'src/components/Media/Photos/types';
 import Playlist from 'src/components/Media/Playlist';
 import { ChildRendererProps } from 'src/components/Media/types';
 import { GlobalStateShape } from 'src/types';
 
-// const ITEMS_PER_ROW = 5;
-
 interface PhotosStateToProps {
-    readonly items: PhotoItemShape[];
+    readonly items: PhotoItem[];
+    readonly currentItem: PhotoItem;
 }
 
 interface PhotosDispatchToProps {
-    readonly createFetchPhotosAction: () => void;
+    readonly createFetchPhotosAction: () => Promise<void>;
+    readonly selectPhotoAction: (item: PhotoItem) => void;
 }
 
 type PhotosProps = PhotosStateToProps & PhotosDispatchToProps;
 
 class Photos extends React.Component<PhotosProps, {}> {
+    idFromItem = (item: PhotoItem) => {
+        return item && path.basename(item.file, '.jpg');
+    }
+
     componentWillMount() {
         this.props.createFetchPhotosAction();
     }
 
+    selectPhoto = (item: PhotoItem) => {
+        this.props.selectPhotoAction(item);
+    }
+
+    pathFromItem = (item: PhotoItem) => {
+        return item && path.join('/images', 'gallery', item.file);
+    }
+
     render() {
-        console.log(this.props.items);
         return (
             <div className='mediaContent photos'>
+                <div className={'photo-viewer'}>
+                    <img src={this.pathFromItem(this.props.currentItem)} />
+                </div>
                 <Playlist
                     className='photo-list'
-                    currentItemId=''
+                    currentItemId={this.idFromItem(this.props.currentItem)}
                     hasToggler={false}
                     isShow={true}
                     items={this.props.items}
-                    onClick={null}
+                    onClick={this.selectPhoto}
                     shouldAppear={false}
                     ChildRenderer={this.childRenderer}
                 />
@@ -44,11 +60,13 @@ class Photos extends React.Component<PhotosProps, {}> {
         );
     }
 
-    childRenderer = ({ item }: ChildRendererProps<PhotoItemShape>) => {
-        const portrait: boolean = (item.thumbnailWidth > item.thumbnailHeight) ? false : true;
+    childRenderer = ({ item, currentItemId, onClick }: ChildRendererProps<PhotoItem>) => {
+        const isActive = (currentItemId === this.idFromItem(item));
         return (
-            <div className={`photo-row ${(portrait) ? 'portrait' : 'landscape'}`}>
-                <img src={`/images/gallery/thumbnails/${item.file}`} />
+            <div className={classnames('highlight', { active: isActive })}>
+                <div className={`photo-row`} onClick={() => onClick(item)}>
+                    <img src={`/images/gallery/thumbnails/${item.file}`} />
+                </div>
             </div>
         );
     }
@@ -56,11 +74,13 @@ class Photos extends React.Component<PhotosProps, {}> {
 
 const mapStateToProps = (state: GlobalStateShape) => ({
     items: state.photo_list.items,
+    currentItem: state.photo_viewer.currentItem,
 });
 
-const mapDispatchToProps: PhotosDispatchToProps = {
-    createFetchPhotosAction,
-};
+const mapDispatchToProps = (dispatch: Dispatch<GlobalStateShape>): PhotosDispatchToProps => ({
+    createFetchPhotosAction: () => dispatch(createFetchPhotosAction()),
+    selectPhotoAction: (item: PhotoItem) => dispatch(selectPhoto(item)),
+});
 
 export default connect<PhotosStateToProps, PhotosDispatchToProps>(
     mapStateToProps,

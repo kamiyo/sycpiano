@@ -1,10 +1,14 @@
 
 export interface PhotoListReducerShape {
-    items: PhotoItemShape[];
+    items: PhotoItem[];
     isFetching: boolean;
 }
 
-export interface PhotoItemShape {
+export interface PhotoViewerReducerShape {
+    currentItem: PhotoItem;
+}
+
+export interface PhotoItem {
     file: string;
     width: number;
     height: number;

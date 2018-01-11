@@ -3,10 +3,10 @@ import { ThunkAction } from 'redux-thunk';
 
 import PHOTO_ACTIONS from 'src/components/Media/Photos/actionTypeKeys';
 import * as PhotoActions from 'src/components/Media/Photos/actionTypes';
-import { PhotoListReducerShape } from 'src/components/Media/Photos/types';
+import { PhotoItem, PhotoListReducerShape } from 'src/components/Media/Photos/types';
 import { GlobalStateShape } from 'src/types';
 
-const fetchPhotosSuccess = (items: string[]): PhotoActions.FetchPhotosSuccess => ({
+const fetchPhotosSuccess = (items: PhotoItem[]): PhotoActions.FetchPhotosSuccess => ({
     type: PHOTO_ACTIONS.FETCH_PHOTOS_SUCCESS,
     items,
 });
@@ -26,17 +26,24 @@ const shouldFetchPhotos = (state: PhotoListReducerShape) => {
     return true;
 };
 
-export const createFetchPhotosAction = (): ThunkAction<void, GlobalStateShape, void> =>
+export const selectPhoto = (item: PhotoItem): PhotoActions.SelectPhoto => ({
+    type: PHOTO_ACTIONS.SELECT_PHOTO,
+    item,
+});
+
+export const createFetchPhotosAction = (): ThunkAction<Promise<void>, GlobalStateShape, void> =>
     async (dispatch, getState) => {
         if (shouldFetchPhotos(getState().photo_list)) {
             try {
                 dispatch(fetchPhotosRequest());
                 const response = await axios.get('/api/photos');
-                console.log(response.data);
                 dispatch(fetchPhotosSuccess(response.data));
+                dispatch(selectPhoto(response.data[0]));
             } catch (e) {
                 console.log('fetch photos error: ', e);
                 dispatch(fetchPhotosError());
             }
+        } else {
+            dispatch(selectPhoto(getState().photo_list.items[0]));
         }
     };
