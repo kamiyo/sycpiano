@@ -23,10 +23,10 @@ const Highlight: React.SFC<HighlightProps> = ({ activeName, link }) => (
 interface NavBarLinkProps {
     readonly activeName: string;
     readonly link: string;
-    readonly showSub: boolean;
+    readonly showSub: string;
     readonly subNavLinks: string[];
     readonly to: string;
-    readonly toggleSub: (show?: boolean) => void;
+    readonly toggleSub: (show?: string) => void;
 }
 
 const NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
@@ -34,7 +34,7 @@ const NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
         {
             (props.subNavLinks) ?
                 <a
-                    onClick={() => props.toggleSub()}
+                    onClick={() => props.toggleSub(props.link)}
                     className={`${props.activeName} no-highlight`}
                 >
                     <Highlight activeName={props.activeName} link={props.link} />
@@ -42,7 +42,7 @@ const NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                 <NavLink
                     exact={true}
                     to={props.to}
-                    onClick={() => props.toggleSub(false)}
+                    onClick={() => props.toggleSub('')}
                     className={props.activeName}
                 >
                     <Highlight activeName={props.activeName} link={props.link} />
@@ -52,15 +52,15 @@ const NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
             <Transition
                 mountOnEnter={true}
                 unmountOnExit={true}
-                in={props.subNavLinks && props.showSub}
-                onEnter={(el) => el.style.opacity = '1'}
+                in={props.subNavLinks && props.showSub === props.link}
+                onEnter={(el) => TweenLite.fromTo(el, 0.25, { opacity: 0 }, { opacity: 1 })}
                 onExit={(el) => TweenLite.fromTo(el, 0.25, { opacity: 1 }, { opacity: 0 })}
                 timeout={250}
             >
                 <SubNav
                     basePath={props.to}
                     links={props.subNavLinks}
-                    onClick={() => props.toggleSub(false)}
+                    onClick={() => props.toggleSub('')}
                 />
             </Transition>
         }

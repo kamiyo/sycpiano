@@ -1,52 +1,86 @@
 import * as React from 'react';
 
-import moment from 'moment-timezone';
+import path from 'path';
+
 import { Link } from 'react-router-dom';
 
-import { MusicItem } from 'src/components/Media/Music/types';
+import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
+import { formatTime } from 'src/utils';
 
 interface MusicPlaylistItemProps {
     readonly item: MusicItem;
-    readonly isActive: boolean;
+    readonly currentItemId: number | string;
     readonly baseRoute: string;
-    readonly onClick: (item: MusicItem, autoPlay: boolean) => void;
+    readonly onClick: (item: MusicFileItem, autoPlay: boolean) => void;
 }
 
-const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement> > = ({ item, isActive, baseRoute, onClick }) => (
-    <li
-        className={`musicPlaylistItem${isActive ? ' active' : ''}`}
-    >
-        <Link
-            to={`${baseRoute}/${item.id}`}
-            onClick={() => onClick(item, true)}
-        >
-            <div className='itemContent'>
-                <div className='section audioInfo'>
-                    <h4 className='text-top'>
-                        {`${item.composer} - ${item.title}`}
-                    </h4>
-                    <h4 className='text-bottom'>
-                        {durationToDisplay(item.duration)}
-                    </h4>
+const fileFromPath = (name: string) => path.basename(name, '.mp3');
+
+const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement>> = ({ item, currentItemId, baseRoute, onClick }) => {
+    if (!item.musicFiles) {
+        return null;
+    } else if (item.musicFiles.length === 1) {
+        const musicFile = item.musicFiles[0];
+        return (
+            <li
+                className={'musicPlaylistItem'}
+            >
+                <div className={`highlight${(currentItemId === musicFile.id) ? ' active' : ''}`}>
+                    <Link
+                        to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.filePath)}`)}
+                        onClick={() => onClick(musicFile, true)}
+                    >
+                        <div className='section audioInfo'>
+                            <h4 className='text-top'>
+                                {`${item.composer}: ${item.piece}`}
+                            </h4>
+                            <h4 className='text-bottom'>
+                                {formatTime(musicFile.durationSeconds)}
+                            </h4>
+                        </div>
+                    </Link>
                 </div>
-            </div>
-        </Link>
-    </li>
-);
+            </li>
+        );
+    } else {
+        return (
+            <li
+                className={'musicPlaylistCollection'}
+            >
+                <div className={'collectionTitle'}>
+                    <div className='section audioInfo'>
+                        <h4>{`${item.composer}: ${item.piece}`}</h4>
+                    </div>
+                </div>
+                <ul>
+                    {item.musicFiles.map((musicFile, index) => (
+                        <li
+                            key={index}
+                            className={'musicPlaylistItem'}
+                        >
+                            <div className={`highlight${(currentItemId === musicFile.id) ? ' active' : ''}`}>
+                                <Link
+                                    to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.filePath)}`)}
+                                    onClick={() => onClick(musicFile, true)}
+                                >
+                                    <div className='itemContent'>
+                                        <div className='section audioInfo'>
+                                            <h4 className='text-top'>
+                                                {musicFile.name}
+                                            </h4>
+                                            <h4 className='text-bottom'>
+                                                {formatTime(musicFile.durationSeconds)}
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </li>
+        );
+    }
+};
 
 export default MusicPlaylistItem;
-
-// Helper functions
-
-function durationToDisplay(durationString: string) {
-    const duration = moment.duration(durationString);
-    const s = duration.seconds();
-    const m = duration.minutes();
-    const h = duration.hours();
-
-    const sString = `${s < 10 ? '0' : ''}${s}`;
-    const mString = `${m < 10 ? '0' : ''}${m}`;
-    const hString = h > 0 ? `${h}:` : '';
-
-    return `${hString}${mString}:${sString}`;
-}

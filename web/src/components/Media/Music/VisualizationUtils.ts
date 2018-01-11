@@ -1,11 +1,12 @@
 /* tslint:disable:no-var-requires */
 const mathCore: any = require('mathjs/core');
-const jBinary: any = require('jbinary');
-const jDataView: any = require('jdataview');
 const math = mathCore.create();
 math.import(require('mathjs/lib/type/matrix'));
 math.import(require('mathjs/lib/function/arithmetic/multiply'));
 /* tslint:enable:no-var-requires */
+
+import jBinary from 'jbinary';
+import jDataView from 'jdataview';
 
 type DrawCircleMaskShape = (
     context: CanvasRenderingContext2D,
@@ -23,6 +24,10 @@ export const drawCircleMask: DrawCircleMaskShape = (context, radius, center, dim
     context.clearRect(0, 0, dimensions[0], dimensions[1]);
     context.restore();
 };
+
+interface Binary extends jBinary {
+    read(type: any, offset?: number): any;
+}
 
 export class WaveformLoader {
     headerStructure = {
@@ -52,7 +57,7 @@ export class WaveformLoader {
         this.waveform = undefined;
         this.loaded = new Promise((resolve) => {
             jBinary.loadData(filename).then((data: any) => {
-                const j = new jBinary(new jDataView(data, 0, data.byteLength, true));
+                const j: Binary = new jBinary(new jDataView(data, 0, data.byteLength, true), {});
                 const header = j.read(this.headerStructure);
                 const type = header.flags ? 'int8' : 'int16';
                 const body = j.read({
@@ -102,7 +107,7 @@ class FIRLoader {
     loadFIRFile = () => (
         new Promise((resolve) => {
             jBinary.loadData('/binary/fir.dat').then((data: any) => {
-                const j = new jBinary(new jDataView(data, 0, data.byteLength, true));
+                const j: Binary = new jBinary(new jDataView(data, 0, data.byteLength, true), {});
                 const header = j.read(this.headerStructure);
                 this.numCrossings = header.numCrossings;
                 this.samplesPerCrossing = header.samplesPerCrossing;
@@ -150,7 +155,7 @@ class ConstantQ {
     loadMatrix = (filename: string) => (
         new Promise((resolve) => {
             jBinary.loadData(filename).then((data: any) => {
-                const j = new jBinary(new jDataView(data, 0, data.byteLength, true));
+                const j: Binary = new jBinary(new jDataView(data, 0, data.byteLength, true), {});
                 const header = j.read(this.headerStructure);
                 const body = j.read({
                     values: ['array', 'float32', header.innerPtrSize],

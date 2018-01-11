@@ -1,29 +1,58 @@
 // gulpfile.js
 
-const nodemon = require('nodemon');
+const nodemon = require('gulp-nodemon');
 const gulp = require('gulp');
 const gutil = require('gulp-util');
+const ts = require('gulp-typescript');
+const tslint = require('gulp-tslint');
+const linter = require('tslint');
 const webpack = require('webpack');
+const del = require('del');
 const webpackStream = require('webpack-stream');
 const webpackConfig = (process.env.NODE_ENV === 'production') ? require('./webpack.prod.config.js') : require('./webpack.dev.config.js');
 
-gulp.task('build', () => {
-    // src is overwritten by webpack entry points
+const tsProject = ts.createProject('server/tsconfig.json');
+
+const buildApp = () => (
     gulp.src('./web/src/main.tsx')
         .pipe(webpackStream(webpackConfig), webpack)
-        .pipe(gulp.dest('./web/build'));
-});
+        .pipe(gulp.dest('./web/build'))
+);
 
-gulp.task('run', ['watch'], () => {
-    nodemon({
-        script: './app.js',
-        ignore: ['*'],
-        watch: ['foo/'],
-        ext: 'noop'
-    });
-});
+gulp.task('build-app', buildApp);
 
-gulp.task('watch', () => {
+const cleanServer = () => (
+    del([
+        'server/build/**/*.js',
+    ])
+);
+
+const lintServer = () => {
+    const program = linter.Linter.createProgram("server/tsconfig.json");
+    return gulp.src('server/src/**/*.ts')
+        .pipe(tslint({
+            formatter: 'stylish',
+            program,
+        }))
+        .pipe(tslint.report({
+            emitError: false,
+        }));
+};
+
+const compileServer = () => (
+    tsProject.src()
+        .pipe(tsProject())
+        .js
+        .pipe(gulp.dest("./server/build"))
+)
+
+const buildServer = gulp.series(gulp.parallel(lintServer, cleanServer), compileServer);
+
+gulp.task('build-server', buildServer);
+
+gulp.task('build-prod', gulp.parallel('build-server', 'build-app'));
+
+const webpackWatch = (done) => {
     webpack(webpackConfig).watch({}, (err, stats) => {
         if (err)
             throw new gutil.PluginError('webpack', err);
@@ -33,6 +62,29 @@ gulp.task('watch', () => {
             colors: true
         }));
     });
-});
+    done();
+}
 
-gulp.task('dev', ['watch', 'server']);
+const watchServer = (done) => {
+    gulp.watch('server/src/**/*', buildServer);
+    done();
+}
+
+const startNodemon = (done) => {
+    nodemon({
+        script: './app.js',
+        watch: ['web/build', 'server/build/api-router.js'],
+    });
+    done();
+};
+
+gulp.task('run-dev', gulp.series(
+    gulp.parallel(
+        gulp.series(
+            buildServer,
+            watchServer,
+        ),
+        webpackWatch,
+    ),
+    startNodemon,
+));

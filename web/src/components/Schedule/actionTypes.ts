@@ -1,10 +1,18 @@
 import SCHEDULE_ACTIONS from 'src/components/Schedule/actionTypeKeys';
-import { EventItemShape } from 'src/components/Schedule/types';
+import { DayItemShape, EventItemShape } from 'src/components/Schedule/types';
+
+export type EventListName = 'upcoming' | 'archive';
+
+export interface SwitchList {
+    readonly type: typeof SCHEDULE_ACTIONS.SWITCH_LIST;
+    readonly name: EventListName;
+}
 
 export interface FetchEventsSuccess {
     readonly type: typeof SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS;
     readonly listItems: EventItemShape[];
-    readonly currentItem: EventItemShape;
+    readonly currentItem: DayItemShape;
+    readonly hasMore: boolean;
 }
 
 export interface FetchEventsRequest {
@@ -21,8 +29,8 @@ export interface FetchLatLngRequest {
 
 export interface FetchLatLngSuccess {
     readonly type: typeof SCHEDULE_ACTIONS.FETCH_LAT_LNG_SUCCESS;
-    readonly lat: () => number;
-    readonly lng: () => number;
+    readonly lat: number;
+    readonly lng: number;
 }
 
 export interface FetchLatLngError {
@@ -31,24 +39,16 @@ export interface FetchLatLngError {
 
 export interface SelectEvent {
     readonly type: typeof SCHEDULE_ACTIONS.SELECT_EVENT;
-    readonly eventItem: EventItemShape;
-}
-
-export interface ScrollStart {
-    readonly type: typeof SCHEDULE_ACTIONS.SCROLL_START;
-}
-
-export interface ScrollFinish {
-    readonly type: typeof SCHEDULE_ACTIONS.SCROLL_FINISH;
+    readonly eventItem: DayItemShape;
 }
 
 export interface OtherAction {
     readonly type: typeof SCHEDULE_ACTIONS.OTHER_ACTION;
 }
 
-type ScheduleActionsTypes =
+type ScheduleActionsTypes = SwitchList |
     FetchEventsError | FetchEventsRequest | FetchEventsSuccess |
     FetchLatLngError | FetchLatLngRequest | FetchLatLngSuccess |
-    SelectEvent | ScrollStart | ScrollFinish | OtherAction;
+    SelectEvent | OtherAction;
 
 export default ScheduleActionsTypes;

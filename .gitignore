@@ -15,3 +15,4 @@ npm-debug.log
 scripts/cpp/Eigen
 secret.js
 web/build/
+server/build/

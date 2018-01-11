@@ -43,7 +43,7 @@ export const videoPlayerReducer = (state: VideoPlayerStateShape = {
 export const videoPlaylistReducer = (state: VideoPlaylistStateShape = {
     items: [],
     isFetching: false,
-    isShow: false,
+    isShow: true,
 }, action: ActionTypes) => {
     switch (action.type) {
         case VIDEO_ACTIONS.FETCH_PLAYLIST_REQUEST:

@@ -1,10 +1,11 @@
 import axios from 'axios';
+import path from 'path';
 
 import { ThunkAction } from 'redux-thunk';
 
 import AUDIO_ACTIONS from 'src/components/Media/Music/actionTypeKeys';
 import * as ActionTypes from 'src/components/Media/Music/actionTypes';
-import { MusicItem } from 'src/components/Media/Music/types';
+import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 export const storeRadii = (innerRadius: number, outerRadius: number): ThunkAction<void, GlobalStateShape, void> =>
@@ -50,28 +51,34 @@ const shouldFetchPlaylist = (state: GlobalStateShape) => {
     return !state.audio_playlist.isFetching && state.audio_playlist.items.length === 0;
 };
 
-const fetchPlaylist = (): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
+const fetchPlaylist = (): ThunkAction<Promise<MusicItem[]>, GlobalStateShape, void> => async (dispatch) => {
     try {
         dispatch(fetchPlaylistRequest());
         const response = await axios.get('/api/music');
-        dispatch(fetchPlaylistSuccess(response.data.items));
+        dispatch(fetchPlaylistSuccess(response.data));
+        return response.data;
     } catch (err) {
         console.log('fetch music error', err);
         dispatch(fetchPlaylistError());
     }
 };
 
-export const fetchPlaylistAction = (track: string): ThunkAction<Promise<MusicItem>, GlobalStateShape, void> =>
+export const fetchPlaylistAction = (track: string): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void> =>
     async (dispatch, getState) => {
+        let items;
         if (shouldFetchPlaylist(getState())) {
-            await dispatch(fetchPlaylist());
+            items = await dispatch(fetchPlaylist());
+        } else {
+            items = getState().audio_playlist.items;
         }
-        const items = getState().audio_playlist.items;
-        let firstTrack = items[0];
+        let firstTrack = items[0].musicFiles[0];
+
         if (track) {
-            firstTrack = getState().audio_playlist.items.find((item: MusicItem) => {
-                return track === item.id;
-            });
+            firstTrack = items.reduce((prev, music) => {
+                return prev.concat(music.musicFiles.filter((musicFile) => (
+                    path.basename(musicFile.filePath, '.mp3') === track
+                )));
+            }, [])[0];
         }
         return firstTrack;
     };

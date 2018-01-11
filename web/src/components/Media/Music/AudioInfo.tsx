@@ -12,11 +12,20 @@ interface AudioInfoProps {
 }
 
 const AudioInfo: React.SFC<AudioInfoProps> = ({ currentTrack, duration }) => {
-    const { title = '', composer = '', contributing = null } = currentTrack;
+    const {
+        piece = '',
+        composer = '',
+        contributors = '',
+        musicFiles = [],
+    } = currentTrack;
+    const {
+        name: movement,
+    } = musicFiles[0];
+    const composerTitle = composer + ': ' + piece + ((movement) ? (' - ' + movement) : '');
     return (
         <div className='audioInfoContainer no-highlight'>
-            <div className='audioInfo composer-title'>{`${composer}: ${title}`}</div>
-            <div className='audioInfo contributing'>{(contributing) ? contributing : '- - - -'}</div>
+            <div className='audioInfo composer-title'>{composerTitle}</div>
+            <div className='audioInfo contributing'>{(contributors) ? contributors : '- - - -'}</div>
             <div className='audioInfo duration'>{formatTime(duration)}</div>
         </div>
     );

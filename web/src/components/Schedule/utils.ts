@@ -1,7 +1,7 @@
 import { default as moment } from 'moment-timezone';
 
 import createListItem from 'src/components/Schedule/createListItem';
-import { EventItemShape, GCalEvent } from 'src/components/Schedule/types';
+import { CachedEvent, DayItemInputShape, EventItemShape, GCalEvent } from 'src/components/Schedule/types';
 
 /**
  * Takes an event resource as returned by the Calendar API, and extracts the
@@ -40,12 +40,15 @@ export const transformGCalEventsToListItems = (events: GCalEvent[]): EventItemSh
     return events.reduce((runningEventsArr, event) => {
         const eventDateTime = extractEventDateTime(event);
         const month = eventDateTime.format('MMMM');
+        const year = eventDateTime.year();
         const description = extractEventDescription(event);
 
         const nextEventsArr = [];
-        if (!monthsSeen.has(month)) {
-            monthsSeen.add(month);
-            nextEventsArr.push(createListItem('month', { month }));
+        const monthYearString = `${month} ${year}`;
+        if (!monthsSeen.has(monthYearString)) {
+            monthsSeen.add(monthYearString);
+            const monthMoment = moment(monthYearString, 'MMMM YYYY');
+            nextEventsArr.push(createListItem('month', { dateTime: monthMoment, month, year }));
         }
 
         nextEventsArr.push(createListItem('day', {
@@ -58,6 +61,36 @@ export const transformGCalEventsToListItems = (events: GCalEvent[]): EventItemSh
             program: description.program,
         }));
 
-        return [ ...runningEventsArr, ...nextEventsArr ];
+        return [...runningEventsArr, ...nextEventsArr];
+    }, []);
+};
+
+export const transformCachedEventsToListItems = (events: CachedEvent[], monthsSeen: Set<string>): EventItemShape[] => {
+
+    return events.reduce((runningEventsArr, event) => {
+        let eventDateTime = moment(event.dateTime);
+        if (event.timezone) { eventDateTime = eventDateTime.tz(event.timezone); }
+        const month = eventDateTime.format('MMMM');
+        const year = eventDateTime.year();
+
+        const nextEventsArr = [];
+        const monthYearString = `${month} ${year}`;
+        if (!monthsSeen.has(monthYearString)) {
+            monthsSeen.add(monthYearString);
+            const monthMoment = moment(monthYearString, 'MMMM YYYY');
+            nextEventsArr.push(createListItem('month', { dateTime: monthMoment, month, year }));
+        }
+
+        nextEventsArr.push(createListItem('day', {
+            id: event.id,
+            name: event.name,
+            dateTime: eventDateTime,
+            collaborators: event.collaborators.map((value) => value.name),
+            eventType: event.type,
+            location: event.location,
+            program: event.pieces.map((value) => value.piece),
+        } as DayItemInputShape));
+
+        return [...runningEventsArr, ...nextEventsArr];
     }, []);
 };

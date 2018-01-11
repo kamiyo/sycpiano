@@ -1,0 +1,28 @@
+{
+  "name": "admin",
+  "description": "The admin microservice of admin",
+  "website": "http://www.forestadmin.com/lumber",
+  "repository": "https://github.com/ForestAdmin/lumber",
+  "env": {
+    "FOREST_AUTH_SECRET": {
+      "description": "A random JWT signing secret to protect your admin API",
+      "value": "f4eab96b7ac067f41f2ec5db8919caee3f424cd137a30280080f00909d9971a6da9c0b2bf1c5f95cd47f4748bf0ce408"
+    },
+    "FOREST_ENV_SECRET": {
+      "description": "The Forest environment secret",
+      "value": "ae1228f3813e878ee0c0c1d4e84b47c5971e27dad7b474b92c28b1e28823b3ba"
+    },
+    "DATABASE_URL": {
+      "description": "The remote database connection URL",
+      "value": "postgres://<user>:<password>@<host>:<port>/<databaseName>"
+    },
+    "SSL_DATABASE": {
+      "description": "Specify if a SSL database connection is required.",
+      "value": "true"
+    },
+    "ENCRYPT_DATABASE": {
+      "description": "Specify if the database connection is encrypted.",
+      "value": ""
+    }
+  }
+}

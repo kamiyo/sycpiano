@@ -9,8 +9,8 @@ import NavBarLink from 'src/components/App/NavBar/NavBarLink';
 interface NavBarLinksProps {
     readonly currentBasePath: string;
     readonly links: LinkShape[];
-    readonly showSub: boolean;
-    readonly toggleSub: (show?: boolean) => void;
+    readonly showSub: string;
+    readonly toggleSub: (show?: string) => void;
 }
 
 const NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
@@ -18,8 +18,7 @@ const NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
         <ul>
             {props.links.map((link: LinkShape, i: number): JSX.Element => {
                 let activeName = '';
-                if ((props.showSub && link.path === '/media') ||
-                    (link.path === props.currentBasePath)) {
+                if (link.path === props.currentBasePath) {
                     activeName = 'active';
                 }
                 return (

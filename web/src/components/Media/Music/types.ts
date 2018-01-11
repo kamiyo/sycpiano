@@ -1,11 +1,18 @@
 export interface MusicItem {
-    readonly title: string;
-    readonly composer: string;
-    readonly contributing: string;
-    readonly url: string;
-    readonly waveform: string;
     readonly id: string;
-    readonly duration: string;
+    readonly piece: string;
+    readonly composer: string;
+    readonly contributors: string;
+    readonly musicFiles?: MusicFileItem[];
+}
+
+export interface MusicFileItem {
+    readonly id: string;
+    readonly name: string;
+    readonly filePath: string;
+    readonly waveformPath: string;
+    readonly durationSeconds: number;
+    readonly musicId: string;
 }
 
 export interface AudioVisualizerStateShape {

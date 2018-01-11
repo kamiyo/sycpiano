@@ -5,13 +5,13 @@ import { VideoItemShape } from 'src/components/Media/Videos/types';
 
 interface VideoPlaylistItemProps {
     readonly item: VideoItemShape;
-    readonly isActive: boolean;
+    readonly currentItemId: number | string;
     readonly onClick: (id: string) => void;
 }
 
-const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, isActive, onClick }) => (
+const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentItemId, onClick }) => (
     <li
-        className={`videoPlaylistItem${isActive ? ' active' : ''}`}
+        className={`videoPlaylistItem${(currentItemId === item.id) ? ' active' : ''}`}
         onClick={() => onClick(item.id)}
     >
         <div className='itemContent'>

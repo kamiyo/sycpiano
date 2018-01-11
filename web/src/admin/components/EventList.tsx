@@ -103,10 +103,12 @@ const mapStateToProps = (state: AdminStoreShape) => ({
     events: state.eventList.events,
 });
 
+const mapDispatchToProps: EventListDispatchToProps = {
+    createFetchEventsAction,
+    editEvent,
+};
+
 export default connect<EventListStateToProps, EventListDispatchToProps>(
     mapStateToProps,
-    {
-        createFetchEventsAction,
-        editEvent,
-    },
+    mapDispatchToProps,
 )(EventList);

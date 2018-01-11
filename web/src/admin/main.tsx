@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import CalendarAdmin from 'src/admin/components/CalendarAdmin';
 import { TOKEN_KEY } from 'src/admin/constants';
 
+global.Promise = require('bluebird');
+
 main();
 
 /**

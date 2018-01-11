@@ -75,7 +75,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
         this.visualization.width = this.width;
         this.centerX = this.width / 2;
         this.centerY = this.height / 2 + HEIGHT_ADJUST;
-        this.RADIUS_SCALE = this.centerY / 5.0;
+        this.RADIUS_SCALE = Math.min(this.centerY, this.centerX) / 5.0;
         this.RADIUS_BASE = this.centerY - this.RADIUS_SCALE;
         this.visualizationCtx = this.visualization.getContext('2d');
 
@@ -119,7 +119,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
 
     onAnalyze = (timestamp = 0) => {
         // don't render anything if analyzers are null, i.e. audio not set up yet
-        if (this.props.analyzers[0] === null || this.props.analyzers[1] === null) {
+        if (!this.props.analyzers[0] || !this.props.analyzers[1]) {
             this.requestId = requestAnimationFrame(this.onAnalyze);
             return;
         }
@@ -330,7 +330,11 @@ const mapStateToProps = (state: GlobalStateShape) => ({
     hoverAngle: state.audio_ui.angle,
 });
 
+const mapDispatchToProps: AudioVisualizerDispatchToProps = {
+    storeRadii,
+};
+
 export default connect<AudioVisualizerStateToProps, AudioVisualizerDispatchToProps>(
     mapStateToProps,
-    { storeRadii },
+    mapDispatchToProps,
 )(AudioVisualizer);

@@ -256,11 +256,13 @@ const mapStateToProps = (state: GlobalStateShape) => ({
     outerRadius: state.audio_visualizer.outerRadius,
 });
 
+const mapDispatchToProps: AudioUIDispatchToProps = {
+    setHoverSeekring,
+    setHoverPlaypause,
+    setMouseMove,
+};
+
 export default connect<AudioUIStateToProps, AudioUIDispatchToProps>(
     mapStateToProps,
-    {
-        setHoverSeekring,
-        setHoverPlaypause,
-        setMouseMove,
-    },
+    mapDispatchToProps,
 )(AudioUI);
