@@ -2,6 +2,7 @@ import 'less/Schedule/event-details.less';
 
 import * as React from 'react';
 import classNames from 'classnames';
+import Flexbox from 'flexbox-react';
 import { connect } from 'react-redux';
 import { Moment } from 'moment-timezone';
 
@@ -11,7 +12,7 @@ import { EventListName } from 'src/components/Schedule/actionTypes';
 import { DayItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
-import { EventDetailsContentRow } from 'src/components/Schedule/EventDetailsContent';
+import { EventDetailsItem } from 'src/components/Schedule/EventDetailsContent';
 import { ClockIconInstance } from 'src/components/Schedule/ClockIconSVG';
 import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
@@ -138,22 +139,28 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
 
                 <Collaborators collaborators={collaborators} />
 
-                <EventDetailsContentRow
-                    icon={<DateIconInstance className="date-icon" date={dateTime} />}
-                    content={<DateDetails dateTime={dateTime} />}
-                />
+                <Flexbox>
+                    <Flexbox element="div" flexGrow={1}>
+                        <EventDetailsItem
+                            icon={<DateIconInstance className="date-icon" date={dateTime} />}
+                            content={<DateDetails dateTime={dateTime} />}
+                        />
+                    </Flexbox>
 
-                <EventDetailsContentRow
-                    icon={<ClockIconInstance className="clock-icon" date={dateTime} />}
-                    content={<TimeDetails dateTime={dateTime} />}
-                />
+                    <Flexbox element="div" flexGrow={1}>
+                        <EventDetailsItem
+                            icon={<ClockIconInstance className="clock-icon" date={dateTime} />}
+                            content={<TimeDetails dateTime={dateTime} />}
+                        />
+                    </Flexbox>
+                </Flexbox>
 
-                <EventDetailsContentRow
+                <EventDetailsItem
                     icon={<LocationIconInstance className="location-icon" />}
                     content={<LocationDetails location={formattedLocation} />}
                 />
 
-                <EventDetailsContentRow
+                <EventDetailsItem
                     className="eventLocation"
                     icon={<TrebleIconInstance className="location-icon" />}
                     content={<ProgramDetails program={program} />}

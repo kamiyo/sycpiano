@@ -9,7 +9,7 @@ interface EventDetailsContentRowProps {
     className?: string;
 }
 
-export const EventDetailsContentRow = (props: EventDetailsContentRowProps) => {
+export const EventDetailsItem = (props: EventDetailsContentRowProps) => {
     const { icon, content, className } = props;
     return (
         <div className={classNames(className, "eventDetailsContentRow")}>
