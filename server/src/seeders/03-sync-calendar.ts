@@ -3,10 +3,7 @@ import * as moment from 'moment';
 import axios from 'axios';
 import * as Promise from 'bluebird';
 
-import { Op } from 'sequelize';
 import { CalendarAttributes, CalendarInstance, CalendarModel, CollaboratorModel, ModelMap, PieceModel } from 'types';
-
-const { eq } = Op;
 
 const calAPIKey = 'AIzaSyC8YGSlCPlqT-MAHN_LvM2T3K-ltaiqQMI';
 const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
@@ -104,7 +101,7 @@ export const up = async (models: ModelMap) => {
                 });
                 await itemInstance.setCollaborators(collaboratorInstances);
             } catch (e) {
-                console.log(`currentItem: ${currentItem}`)
+                console.log(`currentItem: ${currentItem}`);
                 console.log(e);
             }
         });
