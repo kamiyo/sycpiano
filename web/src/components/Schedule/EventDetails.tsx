@@ -15,6 +15,7 @@ import { EventDetailsContentRow } from 'src/components/Schedule/EventDetailsCont
 import { ClockIconInstance } from 'src/components/Schedule/ClockIconSVG';
 import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
+import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
 
 interface CollaboratorsProps { collaborators: string[]; }
 
@@ -154,7 +155,7 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
 
                 <EventDetailsContentRow
                     className="eventLocation"
-                    icon={<LocationIconInstance className="location-icon" />}
+                    icon={<TrebleIconInstance className="location-icon" />}
                     content={<ProgramDetails program={program} />}
                 />
             </div>
