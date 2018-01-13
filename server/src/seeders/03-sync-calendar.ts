@@ -81,26 +81,32 @@ export const up = async (models: ModelMap) => {
         });
 
         items.forEach(async (item) => {
-            const { program, collaborators, ...attributes } = item;
-            const itemInstance: CalendarInstance = await calendarModel.create(attributes as CalendarAttributes);
-            const pieceInstances = await Promise.map(program, async (piece: string) => {
-                const [pieceInstance] = await pieceModel.findOrCreate({
-                    where: { piece },
+            let currentItem: string;
+            try {
+                const { program, collaborators, ...attributes } = item;
+
+                const itemInstance: CalendarInstance = await calendarModel.create(attributes as CalendarAttributes);
+                const pieceInstances = await Promise.map(program, async (piece: string) => {
+                    currentItem = piece;
+                    const [pieceInstance] = await pieceModel.findOrCreate({
+                        where: { piece },
+                    });
+                    return pieceInstance;
                 });
-                return pieceInstance;
-            });
-            await itemInstance.setPieces(pieceInstances);
-            const collaboratorInstances = await Promise.map(collaborators, async (collaborator: string) => {
-                const [collaboratorInstance] = await collaboratorModel.findOrCreate({
-                    where: {
-                        name: {
-                            [eq]: collaborator,
-                        },
-                    },
+
+                await itemInstance.setPieces(pieceInstances);
+                const collaboratorInstances = await Promise.map(collaborators, async (collaborator: string) => {
+                    currentItem = collaborator;
+                    const [collaboratorInstance] = await collaboratorModel.findOrCreate({
+                        where: { name: collaborator },
+                    });
+                    return collaboratorInstance;
                 });
-                return collaboratorInstance;
-            });
-            await itemInstance.setCollaborators(collaboratorInstances);
+                await itemInstance.setCollaborators(collaboratorInstances);
+            } catch (e) {
+                console.log(`currentItem: ${currentItem}`)
+                console.log(e);
+            }
         });
     } catch (e) {
         console.log(e);
