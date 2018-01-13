@@ -31,6 +31,7 @@
     "d3-ease": "^1.0.3",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
+    "flexbox-react": "^4.4.0",
     "graceful-fs": "^4.1.11",
     "gsap": "^1.20.3",
     "gulp": "^4.0.0",

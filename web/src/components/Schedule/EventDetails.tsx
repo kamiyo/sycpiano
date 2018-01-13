@@ -1,46 +1,27 @@
 import 'less/Schedule/event-details.less';
 
 import * as React from 'react';
+import classNames from 'classnames';
+import Flexbox from 'flexbox-react';
 import { connect } from 'react-redux';
-
-import { GoogleMap/*, Marker, withGoogleMap, withScriptjs*/ } from 'react-google-maps';
+import { Moment } from 'moment-timezone';
 
 import { createFetchLatLngAction } from 'src/components/Schedule/actions';
-// import { googleMapsUrl } from 'src/services/GoogleAPI';
+import { EventListName } from 'src/components/Schedule/actionTypes';
 
 import { DayItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
-import { EventListName } from 'src/components/Schedule/actionTypes';
-// import { ClockIcon } from 'src/components/Schedule/ClockIconSVG';
-// import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
-// import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
-// import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
+import { EventDetailsItem } from 'src/components/Schedule/EventDetailsContent';
+import { ClockIconInstance } from 'src/components/Schedule/ClockIconSVG';
+import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
+import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
+import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
 
-// // TODO make map persistent, and not reload everytime
-// interface EventMapProps {
-//     lat?: number;
-//     lng?: number;
-//     setRef: (map: GoogleMap) => void;
-// }
+interface CollaboratorsProps { collaborators: string[]; }
 
-// const EventMap = withScriptjs(
-//     withGoogleMap(({ lat, lng, setRef }: EventMapProps) => {
-//         const position = { lat, lng };
-//         return (
-//             <GoogleMap
-//                 ref={(map: GoogleMap) => setRef(map)}
-//                 zoom={8}
-//                 defaultCenter={position}
-//             >
-//                 <Marker position={position} />
-//             </GoogleMap>
-//         );
-//     }),
-// );
-
-const Collaborators = ({ collaborators }: { collaborators: any[] }) => (
-    <div className='collaborators'>
+const Collaborators = ({ collaborators }: CollaboratorsProps) => (
+    <div className="collaborators">
         {collaborators.length ? <div>with</div> : null}
         {
             collaborators.length ? (
@@ -48,6 +29,57 @@ const Collaborators = ({ collaborators }: { collaborators: any[] }) => (
                     <div key={idx} className='collaborator__item'>{collab}</div>
                 ))
             ) : <div>Solo Concert</div>
+        }
+    </div>
+);
+
+interface DateTimeDetailsProps { className?: string, dateTime: Moment; }
+
+const DateDetails = (props: DateTimeDetailsProps) => (
+    <div className={classNames('dateDetails', props.className)}>
+        <div className="dayOfWeek">{props.dateTime.format('dddd')}</div>
+        <div className="dayOfMonth">{props.dateTime.format('MMMM D')}</div>
+    </div>
+);
+
+const TimeDetails = (props: DateTimeDetailsProps) => (
+    <div className={classNames('timeDetails', props.className)}>
+        {props.dateTime.format('h:mmA z')}
+    </div>
+);
+
+interface FormattedLocationShape {
+    venue: string;
+    street: string;
+    stateZipCountry: string;
+}
+
+interface LocationDetailsProps {
+    className?: string;
+    location: FormattedLocationShape;
+}
+
+const LocationDetails = (props: LocationDetailsProps) => (
+    <div className={classNames('locationDetails', props.className)}>
+        <div className="venue">{props.location.venue}</div>
+        <div className="street">{props.location.street}</div>
+        <div className="stateZipCountry">{props.location.stateZipCountry}</div>
+    </div>
+);
+
+interface ProgramDetailsProps {
+    className?: string;
+    program: Array<string>;
+}
+
+const ProgramDetails = (props: ProgramDetailsProps) => (
+    <div className={classNames('programDetails', props.className)}>
+        {
+            props.program.map((piece: string, index: number) => (
+                <div className="programDetails__piece" key={index}>
+                    {piece}
+                </div>
+            ))
         }
     </div>
 );
@@ -69,14 +101,18 @@ interface EventDetailsDispatchToProps {
 type EventDetailsProps = EventDetailsStateToProps & EventDetailsDispatchToProps;
 
 class EventDetails extends React.Component<EventDetailsProps, {}> {
-    mapComponent: GoogleMap;
+    private formatLocation(location: string) : FormattedLocationShape {
+        // Example location string:
+        // Howard L. Schrott Center for the Arts, 610 W 46th St, Indianapolis, IN 46208, USA
+        const [ venue, street, ...rest ] = location.split(', ');
+        const stateZipCountry = `${rest[1]}, ${rest[2]}`;
+
+        return { venue, street, stateZipCountry };
+    }
 
     componentWillUpdate(nextProps: EventDetailsProps) {
         if (nextProps.currentItem && nextProps.currentItem !== this.props.currentItem) {
             this.props.createFetchLatLngAction(nextProps.currentItem.location);
-        }
-        if (nextProps.currentLatLng !== this.props.currentLatLng) {
-            this.mapComponent && this.mapComponent.panTo(nextProps.currentLatLng);
         }
     }
 
@@ -87,37 +123,48 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
 
         const {
             name,
-            // dateTime,
+            dateTime,
             collaborators,
-            // location,
-            // program,
+            location,
+            program,
         } = this.props.currentItem;
 
+        const formattedLocation = this.formatLocation(location);
+
+        console.log(program);
+
         return (
-            <div className='event-details'>
-                <h1 className='event-details__name'>{name}</h1>
+            <div className="event-details">
+                <h1 className="event-details__name">{name}</h1>
 
                 <Collaborators collaborators={collaborators} />
 
-                {/* <div>{dateTime.format('dddd, MMMM D, YYYY')}</div>
-                <div>{collaborators}</div>
+                <Flexbox>
+                    <Flexbox element="div" flexGrow={1}>
+                        <EventDetailsItem
+                            icon={<DateIconInstance className="date-icon" date={dateTime} />}
+                            content={<DateDetails dateTime={dateTime} />}
+                        />
+                    </Flexbox>
 
-                <div>{location}</div>
-                <div>{program}</div>
+                    <Flexbox element="div" flexGrow={1}>
+                        <EventDetailsItem
+                            icon={<ClockIconInstance className="clock-icon" date={dateTime} />}
+                            content={<TimeDetails dateTime={dateTime} />}
+                        />
+                    </Flexbox>
+                </Flexbox>
 
-                <EventMap
-                    setRef={(map: GoogleMap) => this.mapComponent = map}
-                    containerElement={<div />}
-                    mapElement={<div className='event-map' />}
-                    googleMapURL={googleMapsUrl}
-                    loadingElement={<div />}
-                    {...this.props.currentLatLng}
+                <EventDetailsItem
+                    icon={<LocationIconInstance className="location-icon" />}
+                    content={<LocationDetails location={formattedLocation} />}
                 />
 
-                <DateIconInstance className='date-icon' date={dateTime} />
-                <LocationIconInstance className='location-icon' />
-                <ClockIcon className='clock-icon' date={dateTime} />
-                <TrebleIconInstance className='treble-icon' />        */}
+                <EventDetailsItem
+                    className="eventLocation"
+                    icon={<TrebleIconInstance className="location-icon" />}
+                    content={<ProgramDetails program={program} />}
+                />
             </div>
         );
     }
