@@ -83,7 +83,7 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
 
     render() {
         return (
-            <div className='appContainer'>
+            <div className="appContainer">
                 <LogoSVG />
                 <Front show={this.state.isFront} onClick={this.hideFront} />
                 <Transition
@@ -106,12 +106,12 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
                         appear={true}
                     >
                         <Switch location={this.props.location}>
-                            <Route path='/about' exact={true} component={About} />
-                            <Route path='/contact' exact={true} component={Contact} />
-                            <Route path='/media' component={Media} />
-                            <Route path='/press' exact={true} component={Press} />
-                            <Route path='/schedule' component={Schedule} />
-                            <Route path='/' exact={true} component={Home} />
+                            <Route path="/about" exact={true} component={About} />
+                            <Route path="/contact" exact={true} component={Contact} />
+                            <Route path="/media" component={Media} />
+                            <Route path="/press" exact={true} component={Press} />
+                            <Route path="/schedule" component={Schedule} />
+                            <Route path="/" exact={true} component={Home} />
                         </Switch>
                     </Transition>
                 </TransitionGroup>

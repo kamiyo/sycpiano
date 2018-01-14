@@ -218,8 +218,8 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
 
     render() {
         return (
-            <div className='uiContainer'>
-                <div className='currentTime no-highlight'>
+            <div className="uiContainer">
+                <div className="currentTime no-highlight">
                     {formatTime(this.props.currentPosition)}
                 </div>
                 <PauseIcon setRef={this.setPauseButtonRef} />
@@ -243,7 +243,7 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
                         onMouseUp={this.handleMouseup}
                     />
                 }
-                <canvas className='seekRing' ref={(canvas) => this.seekRing = canvas} />
+                <canvas className="seekRing" ref={(canvas) => this.seekRing = canvas} />
             </div>
         );
     }

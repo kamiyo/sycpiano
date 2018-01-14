@@ -318,8 +318,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
 
     render() {
         return (
-            <div className='visualizerContainer'>
-                <canvas className='visualization' ref={(canvas) => this.visualization = canvas} />
+            <div className="visualizerContainer">
+                <canvas className="visualization" ref={(canvas) => this.visualization = canvas} />
             </div>
         );
     }

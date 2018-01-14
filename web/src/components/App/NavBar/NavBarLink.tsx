@@ -16,7 +16,7 @@ interface HighlightProps {
 const Highlight: React.SFC<HighlightProps> = ({ activeName, link }) => (
     <div>
         <div className={`highlight ${activeName}`} />
-        <div className='hyperlink'>{link}</div>
+        <div className="hyperlink">{link}</div>
     </div>
 );
 
@@ -30,7 +30,7 @@ interface NavBarLinkProps {
 }
 
 const NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
-    <li className='navBarLink'>
+    <li className="navBarLink">
         {
             (props.subNavLinks) ?
                 <a

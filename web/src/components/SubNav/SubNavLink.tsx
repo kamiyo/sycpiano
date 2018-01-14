@@ -8,8 +8,8 @@ interface SubNavLinkProps {
 }
 
 const SubNavLink: React.SFC<SubNavLinkProps> = ({ basePath, link, onClick }) => (
-    <li className='subNavLink no-highlight'>
-        <NavLink to={`${basePath}/${link}`} activeClassName='active' onClick={() => { setTimeout(() => onClick(), 250); }}>
+    <li className="subNavLink no-highlight">
+        <NavLink to={`${basePath}/${link}`} activeClassName="active" onClick={() => { setTimeout(() => onClick(), 250); }}>
             {link}
         </NavLink>
     </li>

@@ -33,7 +33,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
     render() {
         const numRows = this.props.acclaims.length;
         return (
-            <div className='acclaims-list'>
+            <div className="acclaims-list">
                 <AutoSizer>
                     {({ height, width }) => (
                         <List

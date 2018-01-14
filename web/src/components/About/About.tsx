@@ -7,9 +7,9 @@ import * as moment from 'moment-timezone';
 import blurbs from 'src/components/About/blurbs';
 
 const About: React.SFC<{}> = () => (
-    <div className='aboutContainer container'>
-        <div className='leftContainer' />
-        <div className='rightContainer'>
+    <div className="aboutContainer container">
+        <div className="leftContainer" />
+        <div className="rightContainer">
             {blurbs.map((blurb, i) => {
                 if (i === 0) {
                     const firstLetter = blurb[0];
@@ -22,11 +22,11 @@ const About: React.SFC<{}> = () => (
                     const afterName = withoutFirstLetter.slice(nameLocation + 9);
                     return (
                         <p key={i}>
-                            <span className='firstLetter'>
+                            <span className="firstLetter">
                                 {firstLetter}
                             </span>
                             {beforeName}
-                            <span className='name'>
+                            <span className="name">
                                 {name}
                             </span>
                             {afterName}

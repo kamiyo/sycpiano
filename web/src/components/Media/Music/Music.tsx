@@ -253,8 +253,8 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     render() {
         return (
-            <div className='mediaContent music'>
-                <audio id='audio' crossOrigin='anonymous' ref={(audio) => this.audio = audio} />
+            <div className="mediaContent music">
+                <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
                 <MusicPlaylist
                     onClick={this.loadTrack}
                     currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}

@@ -11,34 +11,34 @@ import { LocationIconSVG } from 'src/components/Schedule/LocationIconSVG';
 import { TrebleIconSVG } from 'src/components/Schedule/TrebleIconSVG';
 
 const Schedule: React.SFC<{}> = () => (
-    <div className='schedule container'>
-        <div className='schedule__event-details'>
+    <div className="schedule container">
+        <div className="schedule__event-details">
             <ConnectedEventDetails />
         </div>
-        <div className='schedule__events'>
+        <div className="schedule__events">
             <Switch>
                 <Route
-                    path='/schedule'
+                    path="/schedule"
                     exact={true}
                     render={() => (
-                        <Redirect to='/schedule/upcoming' />
+                        <Redirect to="/schedule/upcoming" />
                     )}
                 />
                 <Route
-                    path='/schedule/upcoming/:date?'
+                    path="/schedule/upcoming/:date?"
                     exact={true}
                     render={(routeProps) => {
                         return (
-                            <EventList {...routeProps} type={'upcoming'} />
+                            <EventList {...routeProps} type="upcoming" />
                         );
                     }}
                 />
                 <Route
-                    path='/schedule/archive/:date?'
+                    path="/schedule/archive/:date?"
                     exact={true}
                     render={(routeProps) => {
                         return (
-                            <EventList {...routeProps} type={'archive'} />
+                            <EventList {...routeProps} type="archive" />
                         );
                     }}
                 />

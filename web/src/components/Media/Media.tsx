@@ -9,14 +9,14 @@ import Photos from 'src/components/Media/Photos/Photos';
 import Videos from 'src/components/Media/Videos/Videos';
 
 const Media: React.SFC<{}> = () => (
-    <div className='mediaContainer container'>
+    <div className="mediaContainer container">
         <Switch>
-            <Route path='/media/videos' component={Videos} exact={true} />
+            <Route path="/media/videos" component={Videos} exact={true} />
             <Route
-                path='/media/music'
+                path="/media/music"
                 render={(props) =>
                     <Route
-                        path='/media/music/:track?'
+                        path="/media/music/:track?"
                         render={(childProps) => (
                             <Music {...childProps} baseRoute={props.match.url} />
                         )}
@@ -24,7 +24,7 @@ const Media: React.SFC<{}> = () => (
                     />
                 }
             />
-            <Route path='/media/photos' component={Photos} exact={true} />
+            <Route path="/media/photos" component={Photos} exact={true} />
         </Switch>
     </div>
 );

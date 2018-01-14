@@ -23,10 +23,10 @@ const AudioInfo: React.SFC<AudioInfoProps> = ({ currentTrack, duration }) => {
     } = musicFiles[0];
     const composerTitle = composer + ': ' + piece + ((movement) ? (' - ' + movement) : '');
     return (
-        <div className='audioInfoContainer no-highlight'>
-            <div className='audioInfo composer-title'>{composerTitle}</div>
-            <div className='audioInfo contributing'>{(contributors) ? contributors : '- - - -'}</div>
-            <div className='audioInfo duration'>{formatTime(duration)}</div>
+        <div className="audioInfoContainer no-highlight">
+            <div className="audioInfo composer-title">{composerTitle}</div>
+            <div className="audioInfo contributing">{(contributors) ? contributors : '- - - -'}</div>
+            <div className="audioInfo duration">{formatTime(duration)}</div>
         </div>
     );
 };

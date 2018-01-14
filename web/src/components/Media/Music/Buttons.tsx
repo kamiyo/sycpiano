@@ -11,20 +11,20 @@ interface IconProps {
 export const PlayIcon: React.SFC<IconProps> = ({ setRef }) => (
     <div
         ref={(div) => setRef(div)}
-        className='playIcon'
+        className="playIcon"
     >
-        <PlaySVG className='solid' />
-        <PlaySVG className='blur' />
+        <PlaySVG className="solid" />
+        <PlaySVG className="blur" />
     </div>
 );
 
 export const PauseIcon: React.SFC<IconProps> = ({ setRef }) => (
     <div
         ref={(div) => setRef(div)}
-        className='pauseIcon'
+        className="pauseIcon"
     >
-        <PauseSVG className='solid' />
-        <PauseSVG className='blur' />
+        <PauseSVG className="solid" />
+        <PauseSVG className="blur" />
     </div>
 );
 
