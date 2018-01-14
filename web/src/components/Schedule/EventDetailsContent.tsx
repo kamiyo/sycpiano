@@ -9,7 +9,7 @@ interface EventDetailsContentRowProps {
     className?: string;
 }
 
-export const EventDetailsItem = (props: EventDetailsContentRowProps) => {
+export const EventDetailsItem: React.SFC<EventDetailsContentRowProps> = (props) => {
     const { icon, content, className } = props;
     return (
         <div className={classNames(className, 'eventDetailsContentRow')}>

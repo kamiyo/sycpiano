@@ -18,7 +18,7 @@ import { GlobalStateShape } from 'src/types';
 
 interface CollaboratorsProps { collaborators: string[]; }
 
-const Collaborators = ({ collaborators }: CollaboratorsProps) => (
+const Collaborators: React.SFC<CollaboratorsProps> = ({ collaborators }) => (
     <div className="collaborators">
         {collaborators.length ? <div>with</div> : null}
         {
@@ -36,14 +36,14 @@ interface DateTimeDetailsProps {
     dateTime: Moment;
 }
 
-const DateDetails = (props: DateTimeDetailsProps) => (
+const DateDetails: React.SFC<DateTimeDetailsProps> = (props) => (
     <div className={classNames('dateDetails', props.className)}>
         <div className="dayOfWeek">{props.dateTime.format('dddd')}</div>
         <div className="dayOfMonth">{props.dateTime.format('MMMM D')}</div>
     </div>
 );
 
-const TimeDetails = (props: DateTimeDetailsProps) => (
+const TimeDetails: React.SFC<DateTimeDetailsProps> = (props) => (
     <div className={classNames('timeDetails', props.className)}>
         {props.dateTime.format('h:mmA z')}
     </div>
@@ -60,7 +60,7 @@ interface LocationDetailsProps {
     location: FormattedLocationShape;
 }
 
-const LocationDetails = (props: LocationDetailsProps) => (
+const LocationDetails: React.SFC<LocationDetailsProps> = (props) => (
     <div className={classNames('locationDetails', props.className)}>
         <div className="venue">{props.location.venue}</div>
         <div className="street">{props.location.street}</div>
@@ -73,7 +73,7 @@ interface ProgramDetailsProps {
     program: string[];
 }
 
-const ProgramDetails = (props: ProgramDetailsProps) => (
+const ProgramDetails: React.SFC<ProgramDetailsProps> = (props) => (
     <div className={classNames('programDetails', props.className)}>
         {
             props.program.map((piece: string, index: number) => (
