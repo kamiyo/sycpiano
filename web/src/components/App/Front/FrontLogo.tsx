@@ -11,9 +11,9 @@ interface FrontLogoProps {
 const FrontLogo: React.SFC<FrontLogoProps & React.HTMLAttributes<HTMLElement> > = (props) => {
     const { hover, ...other } = props;
     return (
-        <div className='frontLogo' >
+        <div className="frontLogo" >
             <LogoInstance className={hover ? 'blur-hover' : 'blur'} />
-            <LogoInstance className='solid' {...other} />
+            <LogoInstance className="solid" {...other} />
         </div>
     );
 };

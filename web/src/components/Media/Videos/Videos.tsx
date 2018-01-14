@@ -38,7 +38,7 @@ class Videos extends React.Component<VideosProps, any> {
     render() {
         return (
             <div
-                className='mediaContent videos'
+                className="mediaContent videos"
                 ref={(div) => this.domElement = div}
             >
                 <PreviewOverlay />

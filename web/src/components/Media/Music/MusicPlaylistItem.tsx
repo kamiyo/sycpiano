@@ -22,19 +22,17 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
     } else if (item.musicFiles.length === 1) {
         const musicFile = item.musicFiles[0];
         return (
-            <li
-                className={'musicPlaylistItem'}
-            >
+            <li className="musicPlaylistItem">
                 <div className={`highlight${(currentItemId === musicFile.id) ? ' active' : ''}`}>
                     <Link
                         to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.filePath)}`)}
                         onClick={() => onClick(musicFile, true)}
                     >
-                        <div className='section audioInfo'>
-                            <h4 className='text-top'>
+                        <div className="section audioInfo">
+                            <h4 className="text-top">
                                 {`${item.composer}: ${item.piece}`}
                             </h4>
-                            <h4 className='text-bottom'>
+                            <h4 className="text-bottom">
                                 {formatTime(musicFile.durationSeconds)}
                             </h4>
                         </div>
@@ -44,11 +42,9 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
         );
     } else {
         return (
-            <li
-                className={'musicPlaylistCollection'}
-            >
-                <div className={'collectionTitle'}>
-                    <div className='section audioInfo'>
+            <li className="musicPlaylistCollection">
+                <div className="collectionTitle">
+                    <div className="section audioInfo">
                         <h4>{`${item.composer}: ${item.piece}`}</h4>
                     </div>
                 </div>
@@ -56,19 +52,19 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                     {item.musicFiles.map((musicFile, index) => (
                         <li
                             key={index}
-                            className={'musicPlaylistItem'}
+                            className="musicPlaylistItem"
                         >
                             <div className={`highlight${(currentItemId === musicFile.id) ? ' active' : ''}`}>
                                 <Link
                                     to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.filePath)}`)}
                                     onClick={() => onClick(musicFile, true)}
                                 >
-                                    <div className='itemContent'>
-                                        <div className='section audioInfo'>
-                                            <h4 className='text-top'>
+                                    <div className="itemContent">
+                                        <div className="section audioInfo">
+                                            <h4 className="text-top">
                                                 {musicFile.name}
                                             </h4>
-                                            <h4 className='text-bottom'>
+                                            <h4 className="text-bottom">
                                                 {formatTime(musicFile.durationSeconds)}
                                             </h4>
                                         </div>

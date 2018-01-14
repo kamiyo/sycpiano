@@ -42,12 +42,12 @@ class Photos extends React.Component<PhotosProps, {}> {
 
     render() {
         return (
-            <div className='mediaContent photos'>
-                <div className={'photo-viewer'}>
+            <div className="mediaContent photos">
+                <div className="photo-viewer">
                     <img src={this.pathFromItem(this.props.currentItem)} />
                 </div>
                 <Playlist
-                    className='photo-list'
+                    className="photo-list"
                     currentItemId={this.idFromItem(this.props.currentItem)}
                     hasToggler={false}
                     isShow={true}
@@ -64,7 +64,7 @@ class Photos extends React.Component<PhotosProps, {}> {
         const isActive = (currentItemId === this.idFromItem(item));
         return (
             <div className={classnames('highlight', { active: isActive })}>
-                <div className={`photo-row`} onClick={() => onClick(item)}>
+                <div className="photo-row" onClick={() => onClick(item)}>
                     <img src={`/images/gallery/thumbnails/${item.file}`} />
                 </div>
             </div>

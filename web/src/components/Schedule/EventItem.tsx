@@ -11,12 +11,12 @@ import { EventListName } from 'src/components/Schedule/actionTypes';
 import { DayItemShape } from 'src/components/Schedule/types';
 
 const DateContainer: React.SFC<{ readonly dateTime: Moment }> = ({ dateTime }) => (
-    <div className='event-item__date-container'>
-        <div className='event-item__date'>
-            <div className='event-item__day'>
+    <div className="event-item__date-container">
+        <div className="event-item__date">
+            <div className="event-item__day">
                 {parseInt(dateTime.format('D'), 10)}
             </div>
-            <div className='event-item__day-of-week'>
+            <div className="event-item__day-of-week">
                 {dateTime.format('ddd')}
             </div>
         </div>
@@ -31,7 +31,7 @@ interface EventNameProps {
 }
 
 const EventName: React.SFC<EventNameProps> = ({ name }) => (
-    <div className='event-item__info-name'>{name}</div>
+    <div className="event-item__info-name">{name}</div>
 );
 // const EventName: React.SFC<EventNameProps> = ({ dateTime, name, handleSelect, type }) => (
 //     <Link
@@ -103,12 +103,12 @@ class EventItem extends React.Component<EventItemProps, {}> {
             >
                 <div className={classNames('event-item', { active })}>
                     <DateContainer dateTime={event.dateTime} />
-                    <div className='event-item__info'>
+                    <div className="event-item__info">
                         <EventName name={event.name} />
-                        <div className='event-item__info-time'>
+                        <div className="event-item__info-time">
                             {time}
                         </div>
-                        <div className='event-item__info-type'>
+                        <div className="event-item__info-type">
                             {startCase(event.eventType)}
                         </div>
                     </div>

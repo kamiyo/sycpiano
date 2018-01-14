@@ -24,7 +24,7 @@ type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;
 
 const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
     <Playlist
-        className='musicPlaylist'
+        className="musicPlaylist"
         isShow={true}
         hasToggler={false}
         items={props.items}

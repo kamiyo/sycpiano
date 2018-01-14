@@ -12,7 +12,7 @@ interface EventDetailsContentRowProps {
 export const EventDetailsItem = (props: EventDetailsContentRowProps) => {
     const { icon, content, className } = props;
     return (
-        <div className={classNames(className, "eventDetailsContentRow")}>
+        <div className={classNames(className, 'eventDetailsContentRow')}>
             <div className="eventDetailsContentRow__left">
                 {icon}
             </div>

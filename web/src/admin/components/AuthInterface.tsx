@@ -14,8 +14,8 @@ export default class AuthInterface extends React.Component<{}> {
 
     render() {
         return (
-            <div className='auth-interface'>
-                <div className='auth-button-description'>You must authenticate in order to use this tool!</div>
+            <div className="auth-interface">
+                <div className="auth-button-description">You must authenticate in order to use this tool!</div>
                 <Button onClick={this.authorizeGoogleAccount} extraClasses={['auth-button']}>
                     Authenticate
                 </Button>

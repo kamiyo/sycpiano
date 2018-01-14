@@ -6,7 +6,7 @@ import ContactItem from 'src/components/Contact/ContactItem';
 import contacts from 'src/components/Contact/contacts';
 
 const Contact: React.SFC<{}> = () => (
-    <div className='contactContainer'>
+    <div className="contactContainer">
         {contacts.map((contact, i) => <ContactItem {...contact} key={i} />)}
     </div>
 );

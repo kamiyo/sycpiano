@@ -40,7 +40,7 @@ export default class NavBar extends React.Component<NavBarProps, NavBarState> {
 
     render() {
         return (
-            <div className='navBar'>
+            <div className="navBar">
                 <NavBarLogo
                     onClick={this.props.onClick}
                 />

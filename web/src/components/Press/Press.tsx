@@ -5,7 +5,7 @@ import * as React from 'react';
 import AcclaimsList from 'src/components/Press/AcclaimsList';
 
 const Press: React.SFC<{}> = () => (
-    <div className='press'>
+    <div className="press">
         <AcclaimsList />
     </div>
 );

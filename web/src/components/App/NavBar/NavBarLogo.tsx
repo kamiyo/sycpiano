@@ -9,9 +9,9 @@ interface NavBarLogoProps {
 }
 
 const NavBarLogo: React.SFC<NavBarLogoProps & React.HTMLAttributes<HTMLDivElement> > = (props) => (
-    <div className='navBarLogo' onClick={props.onClick}>
+    <div className="navBarLogo" onClick={props.onClick}>
         <LogoInstance />
-        <div className='navBarLogoText no-highlight'>
+        <div className="navBarLogoText no-highlight">
             <span>SEAN CHEN</span>
         </div>
     </div>

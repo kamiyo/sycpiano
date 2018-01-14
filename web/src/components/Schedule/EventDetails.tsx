@@ -1,22 +1,20 @@
 import 'less/Schedule/event-details.less';
 
-import * as React from 'react';
 import classNames from 'classnames';
 import Flexbox from 'flexbox-react';
-import { connect } from 'react-redux';
 import { Moment } from 'moment-timezone';
+import * as React from 'react';
+import { connect } from 'react-redux';
 
 import { createFetchLatLngAction } from 'src/components/Schedule/actions';
 import { EventListName } from 'src/components/Schedule/actionTypes';
-
-import { DayItemShape } from 'src/components/Schedule/types';
-import { GlobalStateShape } from 'src/types';
-
-import { EventDetailsItem } from 'src/components/Schedule/EventDetailsContent';
 import { ClockIconInstance } from 'src/components/Schedule/ClockIconSVG';
 import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
+import { EventDetailsItem } from 'src/components/Schedule/EventDetailsContent';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
 import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
+import { DayItemShape } from 'src/components/Schedule/types';
+import { GlobalStateShape } from 'src/types';
 
 interface CollaboratorsProps { collaborators: string[]; }
 
@@ -26,14 +24,17 @@ const Collaborators = ({ collaborators }: CollaboratorsProps) => (
         {
             collaborators.length ? (
                 collaborators.map((collab, idx) => (
-                    <div key={idx} className='collaborator__item'>{collab}</div>
+                    <div key={idx} className="collaborator__item">{collab}</div>
                 ))
             ) : <div>Solo Concert</div>
         }
     </div>
 );
 
-interface DateTimeDetailsProps { className?: string, dateTime: Moment; }
+interface DateTimeDetailsProps {
+    className?: string;
+    dateTime: Moment;
+}
 
 const DateDetails = (props: DateTimeDetailsProps) => (
     <div className={classNames('dateDetails', props.className)}>
@@ -69,7 +70,7 @@ const LocationDetails = (props: LocationDetailsProps) => (
 
 interface ProgramDetailsProps {
     className?: string;
-    program: Array<string>;
+    program: string[];
 }
 
 const ProgramDetails = (props: ProgramDetailsProps) => (
@@ -101,7 +102,7 @@ interface EventDetailsDispatchToProps {
 type EventDetailsProps = EventDetailsStateToProps & EventDetailsDispatchToProps;
 
 class EventDetails extends React.Component<EventDetailsProps, {}> {
-    private formatLocation(location: string) : FormattedLocationShape {
+    private formatLocation(location: string): FormattedLocationShape {
         // Example location string:
         // Howard L. Schrott Center for the Arts, 610 W 46th St, Indianapolis, IN 46208, USA
         const [ venue, street, ...rest ] = location.split(', ');

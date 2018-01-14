@@ -8,7 +8,7 @@ interface PlaylistTogglerProps {
 }
 
 const PlaylistToggler: React.SFC<PlaylistTogglerProps> = (props) => (
-    <div className='playlistToggler no-highlight' onClick={props.onClick}>
+    <div className="playlistToggler no-highlight" onClick={props.onClick}>
         {props.isPlaylistVisible ? '\u25B6' : '\u25C0'}
     </div>
 );

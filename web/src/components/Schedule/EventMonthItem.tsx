@@ -17,7 +17,7 @@ class EventMonthItem extends React.Component<EventMonthItemProps, {}> {
     render() {
         return (
             <div
-                className='event-month-item'
+                className="event-month-item"
                 style={this.props.style}
             >
                 {`${this.props.month} ${this.props.year}`}

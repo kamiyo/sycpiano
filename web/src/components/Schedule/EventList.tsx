@@ -181,7 +181,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
 
     render() {
         return (
-            <div className='event-list'>
+            <div className="event-list">
                 {
                     <AutoSizer>
                         {({ height, width }) => (
@@ -193,7 +193,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
                                 rowHeight={cache.rowHeight}
                                 deferredMeasurementCache={cache}
                                 rowRenderer={this.rowItemRenderer}
-                                scrollToAlignment='center'
+                                scrollToAlignment="center"
                                 noRowsRenderer={() => <div />}
                                 estimatedRowSize={200}
                                 onScroll={this.onScroll as any}
