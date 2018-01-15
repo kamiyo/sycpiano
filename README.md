@@ -55,12 +55,7 @@ postgres=# \connect sycpiano;
 ```
 create role <username> with login password '<quoted password>'
 ```
-* Create a `secret.js` file under the project root that contains this new user's username and password. Don't worry, this file is in our `.gitignore`! Make sure that object exported by `secret.js` contains the keys `username` and `password`. This file will be used when connecting to the database to create tables that do not exist. It will look something like this:
-```
-module.exports = {
-  username: <username>,
-  password: <password>
-};
+* Make a copy of the `secret.sample.ts` file under `server/src/` and rename it to `secret.ts`. Update the username and password to reflect that of the new user. Don't worry, this file is in our `.gitignore`! This file will be used when connecting to the database to create tables that do not exist.
 ```
 
 ## Migrations and Seeding
