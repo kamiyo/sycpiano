@@ -10,6 +10,16 @@ import { PhotoItem } from 'src/components/Media/Photos/types';
 import Playlist from 'src/components/Media/Playlist';
 import { ChildRendererProps } from 'src/components/Media/types';
 import { GlobalStateShape } from 'src/types';
+import { Transition } from 'react-transition-group';
+import TweenLite from 'gsap/TweenLite';
+
+const fadeOnEnter = (element: HTMLElement) => {
+    TweenLite.fromTo(element, 0.6, { opacity: 0 }, { opacity: 1 });
+};
+
+const fadeOnExit = (element: HTMLElement) => {
+    TweenLite.fromTo(element, 0.6, { opacity: 1 }, { opacity: 0 });
+};
 
 interface PhotosStateToProps {
     readonly items: PhotoItem[];
@@ -24,27 +34,40 @@ interface PhotosDispatchToProps {
 type PhotosProps = PhotosStateToProps & PhotosDispatchToProps;
 
 class Photos extends React.Component<PhotosProps, {}> {
-    idFromItem = (item: PhotoItem) => {
-        return item && path.basename(item.file, '.jpg');
-    }
+    idFromItem = (item: PhotoItem) =>
+        item && path.basename(item.file, '.jpg');
 
     componentWillMount() {
         this.props.createFetchPhotosAction();
     }
 
-    selectPhoto = (item: PhotoItem) => {
-        this.props.selectPhotoAction(item);
-    }
+    selectPhoto = (item: PhotoItem) => this.props.selectPhotoAction(item);
 
-    pathFromItem = (item: PhotoItem) => {
-        return item && path.join('/images', 'gallery', item.file);
+    pathFromItem = (item: PhotoItem) =>
+        item && path.join('/images', 'gallery', item.file);
+
+    isCurrentItem = (item: PhotoItem) =>
+        this.idFromItem(item) === this.idFromItem(this.props.currentItem);
+
+    createPhotoElement = (item: PhotoItem, index: number) => {
+        const isCurrent = this.isCurrentItem(item);
+        return <Transition
+            key={index}
+            in={isCurrent}
+            onEntering={fadeOnEnter}
+            onExiting={fadeOnExit}
+            timeout={0}
+        >
+            <img src={this.pathFromItem(item)} />
+        </Transition>;
     }
 
     render() {
         return (
             <div className="mediaContent photos">
                 <div className="photo-viewer">
-                    <img src={this.pathFromItem(this.props.currentItem)} />
+                    {this.props.items.map((item, idx) =>
+                        this.createPhotoElement(item, idx))}
                 </div>
                 <Playlist
                     className="photo-list"
