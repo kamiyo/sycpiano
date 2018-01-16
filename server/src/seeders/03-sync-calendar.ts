@@ -40,6 +40,9 @@ const extractEventDescription = (event: GCalEvent) => {
     try {
         return JSON.parse(event.description);
     } catch (e) {
+        console.log(e);
+        console.log('======Error parsing event description JSON======');
+        console.log(event.description);
         return {};
     }
 };
