@@ -53,9 +53,7 @@ const config = () => {
         database,
         port,
         dialect,
-        logging: (str: string) => {
-            console.log(str);
-        },
+        logging: () => { return; },
         define: { freezeTableName: true, underscored: true },
     };
 };
