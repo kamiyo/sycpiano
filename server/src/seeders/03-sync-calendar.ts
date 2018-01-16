@@ -93,9 +93,9 @@ export const up = async (models: ModelMap) => {
 
                 await itemInstance.setPieces(pieceInstances);
                 const collaboratorInstances = await Promise.map(collaborators, async (collaborator: string) => {
-                    currentItem = collaborator;
+                    const [ name, instrument ] = collaborator.split(', ');
                     const [collaboratorInstance] = await collaboratorModel.findOrCreate({
-                        where: { name: collaborator },
+                        where: { name, instrument },
                     });
                     return collaboratorInstance;
                 });

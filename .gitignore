@@ -13,6 +13,6 @@ coverage/
 node_modules
 npm-debug.log
 scripts/cpp/Eigen
-secret.js
+secret.ts
 web/build/
 server/build/
