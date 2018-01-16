@@ -1,17 +1,17 @@
 import 'less/Media/Photos/photos.less';
 
 import classnames from 'classnames';
+import TweenLite from 'gsap/TweenLite';
 import path from 'path';
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
+import { Transition } from 'react-transition-group';
 
 import { createFetchPhotosAction, selectPhoto } from 'src/components/Media/Photos/actions';
 import { PhotoItem } from 'src/components/Media/Photos/types';
 import Playlist from 'src/components/Media/Playlist';
 import { ChildRendererProps } from 'src/components/Media/types';
 import { GlobalStateShape } from 'src/types';
-import { Transition } from 'react-transition-group';
-import TweenLite from 'gsap/TweenLite';
 
 const fadeOnEnter = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.6, { opacity: 0 }, { opacity: 1 });

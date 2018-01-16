@@ -17,7 +17,8 @@
         "max-classes-per-file": false,
         "member-ordering": false,
         "no-unused-expression": [true, "allow-fast-null-checks"],
-        "no-var-requires": false
+        "no-var-requires": false,
+        "semicolon": [true, "always", "ignore-bound-class-methods"]
     },
     "jsRules": {
         "no-console": false,
@@ -31,7 +32,8 @@
         "max-classes-per-file": false,
         "member-ordering": false,
         "no-unused-expression": [true, "allow-fast-null-checks"],
-        "no-var-requires": false
+        "no-var-requires": false,
+        "semicolon": [true, "always", "ignore-bound-class-methods"]
     },
     "linterOptions": {
         "exclude": "**/node_modules/**/*"
