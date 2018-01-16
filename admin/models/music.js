@@ -13,8 +13,8 @@ const Music = (sequelize, dataTypes) => {
         piece: dataTypes.STRING,
         contributors: dataTypes.STRING,
     });
-    music.associate = (db) => {
-        music.hasMany(db.musicFile);
+    music.associate = (models) => {
+        music.hasMany(models.musicFile);
     };
     return music;
 };

@@ -18,9 +18,9 @@ const CalendarProgram = (sequelize, dataTypes) => {
             field: 'piece_id',
         },
     }, { tableName: 'calendar_piece' });
-    model.associate = (db) => {
-        model.belongsTo(db.calendar);
-        model.belongsTo(db.piece);
+    model.associate = (models) => {
+        model.belongsTo(models.calendar);
+        model.belongsTo(models.piece);
     };
     return model;
 };
