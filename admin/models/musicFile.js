@@ -27,8 +27,8 @@ const MusicFile = (sequelize, dataTypes) => {
             field: 'music_id',
         },
     }, { tableName: 'music_file' });
-    musicfile.associate = (db) => {
-        musicfile.belongsTo(db.music);
+    musicfile.associate = (models) => {
+        musicfile.belongsTo(models.music);
     };
     return musicfile;
 };

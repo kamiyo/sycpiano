@@ -41,5 +41,5 @@ export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) =
 };
 
 export const down = async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable('calendar piece');
+    await queryInterface.dropTable('calendar_piece');
 };
