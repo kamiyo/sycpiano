@@ -16,7 +16,7 @@ import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
 import { DayItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
-interface CollaboratorsProps { collaborators: string[]; }
+interface CollaboratorsProps { collaborators: Array<{ name: string; instrument: string }>; }
 
 const Collaborators: React.SFC<CollaboratorsProps> = ({ collaborators }) => (
     <div className="collaborators">
@@ -24,7 +24,7 @@ const Collaborators: React.SFC<CollaboratorsProps> = ({ collaborators }) => (
         {
             collaborators.length ? (
                 collaborators.map((collab, idx) => (
-                    <div key={idx} className="collaborator__item">{collab}</div>
+                    <div key={idx} className="collaborator__item">{[collab.name, collab.instrument].filter((val) => val).join(', ')}</div>
                 ))
             ) : <div>Solo Concert</div>
         }
@@ -163,7 +163,7 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
 
                 <EventDetailsItem
                     className="eventLocation"
-                    icon={<TrebleIconInstance className="location-icon" />}
+                    icon={<TrebleIconInstance className="treble-icon" />}
                     content={<ProgramDetails program={program} />}
                 />
             </div>

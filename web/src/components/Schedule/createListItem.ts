@@ -7,7 +7,10 @@ class DayItem {
     readonly type: 'day';
     readonly name: string;
     readonly program: string[];
-    readonly collaborators: string[];
+    readonly collaborators: Array<{
+        name: string;
+        instrument: string;
+    }>;
     readonly eventType: 'concerto' | 'chamber' | 'solo' | 'masterclass';
     readonly dateTime: Moment;
     readonly location: string;

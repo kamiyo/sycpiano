@@ -56,7 +56,6 @@ postgres=# \connect sycpiano;
 create role <username> with login password '<quoted password>'
 ```
 * Make a copy of the `secret.sample.ts` file under `server/src/` and rename it to `secret.ts`. Update the username and password to reflect that of the new user. Don't worry, this file is in our `.gitignore`! This file will be used when connecting to the database to create tables that do not exist.
-```
 
 ## Migrations and Seeding
 sycpiano uses umzug and sequelize for migrations.
