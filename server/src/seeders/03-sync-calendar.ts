@@ -85,17 +85,18 @@ export const up = async (models: ModelMap) => {
                 const itemInstance: CalendarInstance = await calendarModel.create(attributes as CalendarAttributes);
                 const pieceInstances = await Promise.map(program, async (piece: string) => {
                     currentItem = piece;
-                    const [pieceInstance] = await pieceModel.findOrCreate({
+                    const [ pieceInstance ] = await pieceModel.findOrCreate({
                         where: { piece },
                     });
                     return pieceInstance;
                 });
-
                 await itemInstance.setPieces(pieceInstances);
                 const collaboratorInstances = await Promise.map(collaborators, async (collaborator: string) => {
-                    const [ name, instrument ] = collaborator.split(', ');
+                    const [ name, instrument = null ] = collaborator.split(', ');
+                    currentItem = collaborator;
                     const [collaboratorInstance] = await collaboratorModel.findOrCreate({
                         where: { name, instrument },
+                        // where: { name: collaborator },
                     });
                     return collaboratorInstance;
                 });
@@ -112,5 +113,8 @@ export const up = async (models: ModelMap) => {
 };
 
 export const down = async (models: ModelMap) => {
-    return models.calendar.destroy({ where: {}, cascade: true });
+    await models.calendar.destroy({ where: {}, cascade: true });
+    await models.collaborator.destroy({ where: {}, cascade: true });
+    await models.piece.destroy({ where: {}, cascade: true });
+    return;
 };

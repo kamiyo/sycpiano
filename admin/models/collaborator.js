@@ -10,10 +10,11 @@ const Collaborator = (sequelize, dataTypes) => {
             unique: true,
         },
         name: dataTypes.STRING,
+        instrument: dataTypes.STRING,
     });
-    collaborator.associate = (db) => {
-        collaborator.hasMany(db.calendarCollaborator);
-        collaborator.belongsToMany(db.calendar, { through: db.calendarCollaborator });
+    collaborator.associate = (models) => {
+        collaborator.hasMany(models.calendarCollaborator);
+        collaborator.belongsToMany(models.calendar, { through: models.calendarCollaborator });
     };
     return collaborator;
 };

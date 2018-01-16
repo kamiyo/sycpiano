@@ -83,6 +83,7 @@ export interface MusicModel extends Model<MusicInstance, MusicAttributes> {}
 export interface CollaboratorAttributes {
     id: DataTypeUUID;
     name: string;
+    instrument: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 }

@@ -11,6 +11,7 @@ const Collaborator = (sequelize: Sequelize, dataTypes: DataTypes) => {
             unique: true,
         },
         name: dataTypes.STRING,
+        instrument: dataTypes.STRING,
     }) as CollaboratorModel;
 
     collaborator.associate = (models) => {
