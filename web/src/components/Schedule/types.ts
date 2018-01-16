@@ -28,6 +28,7 @@ export interface CachedEvent {
     readonly name: string;
     readonly collaborators: Array<{
         name: string;
+        instrument: string;
     }>;
     readonly pieces: Array<{
         piece: string;
@@ -42,7 +43,10 @@ interface DayOrMonth {
 export interface DayItemInputShape {
     readonly id: string;
     readonly name: string;
-    readonly collaborators: string[];
+    readonly collaborators: Array<{
+        name: string;
+        instrument: string;
+    }>;
     readonly eventType: EventType;
     readonly dateTime: Moment;
     readonly location: string;

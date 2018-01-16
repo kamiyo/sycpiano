@@ -85,7 +85,7 @@ export const transformCachedEventsToListItems = (events: CachedEvent[], monthsSe
             id: event.id,
             name: event.name,
             dateTime: eventDateTime,
-            collaborators: event.collaborators.map((value) => value.name),
+            collaborators: event.collaborators,
             eventType: event.type,
             location: event.location,
             program: event.pieces.map((value) => value.piece),
