@@ -1,15 +1,23 @@
 import 'less/About/about.less';
 
-import * as React from 'react';
-
+import Flexbox from 'flexbox-react';
 import * as moment from 'moment-timezone';
+import * as React from 'react';
 
 import blurbs from 'src/components/About/blurbs';
 
 const About: React.SFC<{}> = () => (
-    <div className="aboutContainer container">
-        <div className="leftContainer" />
-        <div className="rightContainer">
+    <Flexbox className="aboutContainer container">
+        <Flexbox
+            display="block"
+            className="leftContainer"
+            flex="1"
+        />
+        <Flexbox
+            display="block"
+            className="rightContainer"
+            flex="0 0 45%"
+        >
             {blurbs.map((blurb, i) => {
                 if (i === 0) {
                     const firstLetter = blurb[0];
@@ -35,8 +43,8 @@ const About: React.SFC<{}> = () => (
                 }
                 return <p key={i}>{blurb}</p>;
             })}
-        </div>
-    </div>
+        </Flexbox>
+    </Flexbox>
 );
 
 export default About;

@@ -1,10 +1,11 @@
 @import '../colors.less';
 @import '../fonts.less';
 @import '../mixins.less';
+
 @date-container-dimension: 107px;
+
 .event-item {
     padding: 30px 0 30px 30px;
-    display: flex;
     font-family: @lato1;
     align-items: center;
     color: black;
@@ -28,10 +29,6 @@ a:hover {
     }
 }
 
-.event-item__date-container {
-    flex: 0 0 100px;
-}
-
 .event-item__date {
     text-align: center;
     background-color: @light-blue;
@@ -52,7 +49,6 @@ a:hover {
 }
 
 .event-item__info {
-    flex: 1 1 auto;
     padding: 0 0 0 35px;
 }
 

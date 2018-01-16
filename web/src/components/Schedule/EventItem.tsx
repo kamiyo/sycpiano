@@ -1,5 +1,6 @@
 import 'less/Schedule/event-item.less';
 
+import Flexbox from 'flexbox-react';
 import { startCase } from 'lodash/string';
 import { Moment } from 'moment-timezone';
 import * as React from 'react';
@@ -94,6 +95,7 @@ class EventItem extends React.Component<EventItemProps, {}> {
             active,
             type,
         } = this.props;
+
         const time = event.dateTime.format('h:mm a z');
         return (
             <Link
@@ -101,18 +103,26 @@ class EventItem extends React.Component<EventItemProps, {}> {
                 onClick={handleSelect}
                 style={style}
             >
-                <div className={classNames('event-item', { active })}>
-                    <DateContainer dateTime={event.dateTime} />
-                    <div className="event-item__info">
+                <Flexbox className={classNames('event-item', { active })}>
+                    <Flexbox display="block" flex="0 0 100px">
+                        <DateContainer dateTime={event.dateTime} />
+                    </Flexbox>
+                    <Flexbox
+                        className="event-item__info"
+                        display="block"
+                        flex="1 1 auto"
+                    >
                         <EventName name={event.name} />
+
                         <div className="event-item__info-time">
                             {time}
                         </div>
+
                         <div className="event-item__info-type">
                             {startCase(event.eventType)}
                         </div>
-                    </div>
-                </div>
+                    </Flexbox>
+                </Flexbox>
             </Link>
         );
     }
