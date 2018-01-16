@@ -132,8 +132,6 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
 
         const formattedLocation = this.formatLocation(location);
 
-        console.log(program);
-
         return (
             <div className="event-details">
                 <h1 className="event-details__name">{name}</h1>
