@@ -1,6 +1,13 @@
 import SCHEDULE_ACTIONS from 'src/components/Schedule/actionTypeKeys';
 import * as ActionTypes from 'src/components/Schedule/actionTypes';
-import { CachedEvent, DayItemShape, EventItemShape, FetchEventsAPIParams, FetchEventsArguments, LatLng } from 'src/components/Schedule/types';
+import {
+    CachedEvent,
+    DayItemShape,
+    EventItemShape,
+    FetchEventsAPIParams,
+    FetchEventsArguments,
+    LatLng,
+} from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
 import axios from 'axios';

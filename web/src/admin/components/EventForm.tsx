@@ -4,6 +4,7 @@ import 'less/Admin/components/event-form.less';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-select/dist/react-select.css';
 
+import classNames from 'classnames';
 import * as React from 'react';
 
 import { default as moment, Moment } from 'moment-timezone';
@@ -142,78 +143,78 @@ class EventForm extends React.Component<EventFormProps, {}> {
 
     render() {
         return (
-            <form className='EventForm' ref={(form) => this.form = form}>
-                <div className='EventForm__title'>Event Details</div>
-                <div className='EventForm__inputs-container'>
-                    <div className='EventForm__event-info'>
+            <form className="EventForm" ref={(form) => this.form = form}>
+                <div className="EventForm__title">Event Details</div>
+                <div className="EventForm__inputs-container">
+                    <div className="EventForm__event-info">
                         <input
-                            className='EventForm__input'
-                            type='text'
-                            name='eventName'
-                            placeholder='What is this event called?'
+                            className="EventForm__input"
+                            type="text"
+                            name="eventName"
+                            placeholder="What is this event called?"
                             value={this.props.eventName}
                             onChange={this.props.onNameChange}
                         />
                         <DatePicker
-                            placeholderText='What day is this event going down?'
+                            placeholderText="What day is this event going down?"
                             selected={this.props.date}
                             onChange={this.props.onDateChange}
                         />
                         <label>
                             <input
-                                className='EventForm__checkbox'
-                                type='checkbox'
-                                name='noTime'
+                                className="EventForm__checkbox"
+                                type="checkbox"
+                                name="noTime"
                                 checked={this.props.noTime}
                                 onChange={this.props.onNoTimeChange}
                             />
                             Time TBD
                         </label>
                         <input
-                            className='EventForm__input'
-                            type='text'
-                            name='time'
-                            placeholder='What time is this event going down? (7:00PM, 19:00)'
+                            className="EventForm__input"
+                            type="text"
+                            name="time"
+                            placeholder="What time is this event going down? (7:00PM, 19:00)"
                             disabled={this.props.noTime}
                             value={this.props.time}
                             onChange={this.props.onTimeChange}
                         />
                         <input
-                            className={'EventForm__input' + (this.props.geocodeError ? ' error' : '')}
-                            type='text'
-                            name='location'
-                            placeholder='Where is this event going down?'
+                            className={classNames('EventForm__input', { error: this.props.geocodeError })}
+                            type="text"
+                            name="location"
+                            placeholder="Where is this event going down?"
                             value={this.props.location}
                             onChange={this.props.onLocationChange}
                         />
                         <Select
-                            name='type'
-                            placeholder='What type of event is this?'
+                            name="type"
+                            placeholder="What type of event is this?"
                             value={this.props.type}
                             options={eventTypes}
                             onChange={this.props.onTypeChange}
                         />
                         <textarea
-                            className='EventForm__input'
-                            name='collaborators'
+                            className="EventForm__input"
+                            name="collaborators"
                             rows={4}
-                            placeholder='Who are you collaborating with? (newline-separated)'
+                            placeholder="Who are you collaborating with? (newline-separated)"
                             value={this.props.collaborators}
                             onChange={this.props.onCollaboratorsChange}
                         />
                         <textarea
-                            className='EventForm__input'
-                            name='program'
+                            className="EventForm__input"
+                            name="program"
                             rows={6}
-                            placeholder='What tunes will be jammed here? (newline-separated)'
+                            placeholder="What tunes will be jammed here? (newline-separated)"
                             value={this.props.program}
                             onChange={this.props.onProgramChange}
                         />
                         <input
-                            className='EventForm__input'
-                            type='text'
-                            name='website'
-                            placeholder='Is there an external site to link?'
+                            className="EventForm__input"
+                            type="text"
+                            name="website"
+                            placeholder="Is there an external site to link?"
                             value={this.props.website}
                             onChange={this.props.onWebsiteChange}
                         />

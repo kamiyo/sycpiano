@@ -9,7 +9,7 @@ interface SubNavProps {
 }
 
 const SubNav: React.SFC<SubNavProps> = ({ basePath, links, onClick }) => (
-    <ul className='subNav'>
+    <ul className="subNav">
         {links.map((link, i) => (
             <SubNavLink key={i} basePath={basePath} link={link} onClick={onClick} />
         ))}

@@ -14,7 +14,7 @@ interface NavBarLinksProps {
 }
 
 const NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
-    <div className='navBarLinks no-highlight'>
+    <div className="navBarLinks no-highlight">
         <ul>
             {props.links.map((link: LinkShape, i: number): JSX.Element => {
                 let activeName = '';

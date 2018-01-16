@@ -6,7 +6,7 @@
     ],
     "rules": {
         "no-console": false,
-        "quotemark": [true, "single"],
+        "quotemark": [true, "single", "jsx-double"],
         "max-line-length": false,
         "object-literal-sort-keys": false,
         "interface-name": false,
@@ -21,7 +21,7 @@
     },
     "jsRules": {
         "no-console": false,
-        "quotemark": [true, "single"],
+        "quotemark": [true, "single", "jsx-double"],
         "max-line-length": false,
         "object-literal-sort-keys": false,
         "jsx-no-lambda": false,

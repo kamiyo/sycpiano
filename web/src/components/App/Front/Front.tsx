@@ -65,7 +65,7 @@ export default class Front extends React.Component<FrontProps, FrontState> {
     }
     render() {
         return (
-            <div className='frontContainer'>
+            <div className="frontContainer">
                 <Transition
                     in={this.props.show}
                     appear={true}

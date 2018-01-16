@@ -69,16 +69,16 @@ export default class CalendarAdmin extends React.Component<CalendarAdminProps, C
 
     render() {
         return (
-            <div className='calendar-admin'>
+            <div className="calendar-admin">
                 {
                     this.state.authInProgress ? <div>Authorizing...</div> :
                         !this.state.isAuthorized ? <AuthInterface /> :
                             <Provider store={store}>
-                                <div className='admin__calendar'>
-                                    <div className='admin__event_form'>
+                                <div className="admin__calendar">
+                                    <div className="admin__event_form">
                                         <EventForm accessToken={this.props.token} />
                                     </div>
-                                    <div className='admin__list_events'>
+                                    <div className="admin__list_events">
                                         <EventList />
                                     </div>
                                 </div>

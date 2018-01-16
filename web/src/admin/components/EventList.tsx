@@ -52,18 +52,18 @@ class ListItem extends React.Component<ListItemProps, {}> {
         const dateTime = this.parseStartDateTime(eventJSON.start);
         const description = this.parseDescription(eventJSON.description);
         return (
-            <div className='Event'>
+            <div className="Event">
                 <Button
                     extraClasses={['EditEvent__submit-button']}
                     onClick={() => { this.props.handler(this.props.eventId); }}
                 >
                     Edit Event
                 </Button>
-                <div className='EventDetails'>
-                    <div className='start_time'>{dateTime}</div>
-                    <div className='location'>{eventJSON.location}</div>
-                    <div className='summary'>{eventJSON.summary}</div>
-                    <div className='description'><pre>{description}</pre></div>
+                <div className="EventDetails">
+                    <div className="start_time">{dateTime}</div>
+                    <div className="location">{eventJSON.location}</div>
+                    <div className="summary">{eventJSON.summary}</div>
+                    <div className="description"><pre>{description}</pre></div>
                 </div>
             </div>
         );
@@ -90,7 +90,7 @@ class EventList extends React.Component<EventListStateToProps & EventListDispatc
 
     render() {
         return (
-            <div className='EventList'>
+            <div className="EventList">
                 {this.props.events.map((event, i) => {
                     return <ListItem eventJSON={event} key={i} eventId={i} handler={this.handleClick} />;
                 })}
