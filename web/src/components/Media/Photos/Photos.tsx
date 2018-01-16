@@ -51,15 +51,17 @@ class Photos extends React.Component<PhotosProps, {}> {
 
     createPhotoElement = (item: PhotoItem, index: number) => {
         const isCurrent = this.isCurrentItem(item);
-        return <Transition
-            key={index}
-            in={isCurrent}
-            onEntering={fadeOnEnter}
-            onExiting={fadeOnExit}
-            timeout={0}
-        >
-            <img src={this.pathFromItem(item)} />
-        </Transition>;
+        return (
+            <Transition
+                key={index}
+                in={isCurrent}
+                onEntering={fadeOnEnter}
+                onExiting={fadeOnExit}
+                timeout={0}
+            >
+                <img src={this.pathFromItem(item)} />
+            </Transition>
+        );
     }
 
     render() {
