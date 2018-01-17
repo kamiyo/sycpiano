@@ -5,7 +5,7 @@
 @icon-dimension: 80px;
 
 .event-details {
-    font-family: @lato1;
+    font-family: @lato2;
 }
 
 .event-details__name {
@@ -13,7 +13,7 @@
 }
 
 .collaborators {
-    padding-bottom: 5px;
+    padding: 22px 0;
     border-bottom: 1px solid #c3c3c3;
     border-top: 1px solid #c3c3c3;
 }
@@ -43,8 +43,8 @@
     display: block;
     fill: white;
     stroke: #000;
-    width: @icon-dimension;
-    height: @icon-dimension;
+    width: 40px;
+    height: 40px;
 }
 
 #location-icon-marker-part {
@@ -78,4 +78,40 @@
     width: @icon-dimension;
     height: @icon-dimension;
     fill: @light-blue;
+    margin: 20px auto;
+}
+
+.programDetails {
+    width: 450px;
+    margin: 0 auto;
+
+    .programDetails__piece {
+        font-size: 18px;
+        text-align: left;
+        margin-bottom: 5px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .dash {
+            display: inline-block;
+            margin-right: 25px;
+        }
+    }
+}
+
+.locationDetails {
+    height: 50px;
+
+    .location-icon{
+        display: inline-block;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    .venueName {
+        display: inline-block;
+        vertical-align: middle;
+    }
 }

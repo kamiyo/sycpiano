@@ -1,16 +1,11 @@
 import 'less/Schedule/event-details.less';
 
 import classNames from 'classnames';
-import Flexbox from 'flexbox-react';
-import { Moment } from 'moment-timezone';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { createFetchLatLngAction } from 'src/components/Schedule/actions';
 import { EventListName } from 'src/components/Schedule/actionTypes';
-import { ClockIconInstance } from 'src/components/Schedule/ClockIconSVG';
-import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
-import { EventDetailsItem } from 'src/components/Schedule/EventDetailsContent';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
 import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
 import { DayItemShape } from 'src/components/Schedule/types';
@@ -31,40 +26,17 @@ const Collaborators: React.SFC<CollaboratorsProps> = ({ collaborators }) => (
     </div>
 );
 
-interface DateTimeDetailsProps {
-    className?: string;
-    dateTime: Moment;
-}
-
-const DateDetails: React.SFC<DateTimeDetailsProps> = (props) => (
-    <div className={classNames('dateDetails', props.className)}>
-        <div className="dayOfWeek">{props.dateTime.format('dddd')}</div>
-        <div className="dayOfMonth">{props.dateTime.format('MMMM D')}</div>
-    </div>
-);
-
-const TimeDetails: React.SFC<DateTimeDetailsProps> = (props) => (
-    <div className={classNames('timeDetails', props.className)}>
-        {props.dateTime.format('h:mmA z')}
-    </div>
-);
-
-interface FormattedLocationShape {
-    venue: string;
-    street: string;
-    stateZipCountry: string;
-}
-
 interface LocationDetailsProps {
     className?: string;
-    location: FormattedLocationShape;
+    venueName: string;
 }
 
 const LocationDetails: React.SFC<LocationDetailsProps> = (props) => (
     <div className={classNames('locationDetails', props.className)}>
-        <div className="venue">{props.location.venue}</div>
-        <div className="street">{props.location.street}</div>
-        <div className="stateZipCountry">{props.location.stateZipCountry}</div>
+        <LocationIconInstance className="location-icon" />
+        <div className="venueName">
+            {props.venueName}
+        </div>
     </div>
 );
 
@@ -78,7 +50,8 @@ const ProgramDetails: React.SFC<ProgramDetailsProps> = (props) => (
         {
             props.program.map((piece: string, index: number) => (
                 <div className="programDetails__piece" key={index}>
-                    {piece}
+                    <span className="dash">{`${String.fromCharCode(0x2013)}`}</span>
+                    <span>{`${piece}`}</span>
                 </div>
             ))
         }
@@ -102,13 +75,15 @@ interface EventDetailsDispatchToProps {
 type EventDetailsProps = EventDetailsStateToProps & EventDetailsDispatchToProps;
 
 class EventDetails extends React.Component<EventDetailsProps, {}> {
-    private formatLocation(location: string): FormattedLocationShape {
+    private getVenueName(location: string): string {
+        if (!location) {
+            return '';
+        }
+
         // Example location string:
         // Howard L. Schrott Center for the Arts, 610 W 46th St, Indianapolis, IN 46208, USA
-        const [ venue, street, ...rest ] = location.split(', ');
-        const stateZipCountry = `${rest[1]}, ${rest[2]}`;
-
-        return { venue, street, stateZipCountry };
+        const locArray = location.split(', ');
+        return locArray.length >= 1 ? locArray[0] : '';
     }
 
     componentWillUpdate(nextProps: EventDetailsProps) {
@@ -122,48 +97,35 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
             return null;
         }
 
+        console.log('CURRENT ITEM');
+        console.log(this.props.currentItem);
+
         const {
             name,
-            dateTime,
             collaborators,
             location,
             program,
         } = this.props.currentItem;
 
-        const formattedLocation = this.formatLocation(location);
+        const venueName = this.getVenueName(location);
 
         return (
             <div className="event-details">
                 <h1 className="event-details__name">{name}</h1>
 
-                <Collaborators collaborators={collaborators} />
+                {venueName && <LocationDetails venueName={venueName} />}
 
-                <Flexbox>
-                    <Flexbox element="div" flexGrow={1}>
-                        <EventDetailsItem
-                            icon={<DateIconInstance className="date-icon" date={dateTime} />}
-                            content={<DateDetails dateTime={dateTime} />}
-                        />
-                    </Flexbox>
+                {
+                    collaborators && collaborators.length > 0 &&
+                    <Collaborators collaborators={collaborators} />
+                }
 
-                    <Flexbox element="div" flexGrow={1}>
-                        <EventDetailsItem
-                            icon={<ClockIconInstance className="clock-icon" date={dateTime} />}
-                            content={<TimeDetails dateTime={dateTime} />}
-                        />
-                    </Flexbox>
-                </Flexbox>
-
-                <EventDetailsItem
-                    icon={<LocationIconInstance className="location-icon" />}
-                    content={<LocationDetails location={formattedLocation} />}
-                />
-
-                <EventDetailsItem
-                    className="eventLocation"
-                    icon={<TrebleIconInstance className="treble-icon" />}
-                    content={<ProgramDetails program={program} />}
-                />
+                {
+                    program && program.length > 0 && <div>
+                        <TrebleIconInstance className="treble-icon" />
+                        <ProgramDetails program={program} />
+                    </div>
+                }
             </div>
         );
     }
