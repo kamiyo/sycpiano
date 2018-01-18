@@ -43,10 +43,15 @@ const compileServer = () => (
     tsProject.src()
         .pipe(tsProject())
         .js
-        .pipe(gulp.dest("./server/build"))
+        .pipe(gulp.dest('./server/build'))
 )
 
-const buildServer = gulp.series(gulp.parallel(lintServer, cleanServer), compileServer);
+const copyModelsToAdmin = () => (
+    gulp.src(['server/build/models/*.js', '!server/build/models/index.js'])
+        .pipe(gulp.dest('admin/models/'))
+)
+
+const buildServer = gulp.series(gulp.parallel(lintServer, cleanServer), compileServer, copyModelsToAdmin);
 
 gulp.task('build-server', buildServer);
 

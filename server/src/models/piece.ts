@@ -10,6 +10,7 @@ const Piece = (sequelize: Sequelize, dataTypes: DataTypes) => {
             type: dataTypes.UUID,
             unique: true,
         },
+        composer: dataTypes.STRING,
         piece: dataTypes.STRING,
     }) as PieceModel;
 

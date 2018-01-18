@@ -9,6 +9,7 @@ const Piece = (sequelize, dataTypes) => {
             type: dataTypes.UUID,
             unique: true,
         },
+        composer: dataTypes.STRING,
         piece: dataTypes.STRING,
     });
     piece.associate = (models) => {
