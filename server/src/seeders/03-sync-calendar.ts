@@ -47,6 +47,38 @@ const extractEventDescription = (event: GCalEvent) => {
     }
 };
 
+const programToPieceModel = (program: string) => {
+    const out = {
+        composer: '',
+        piece: '',
+    };
+    // check if TBD
+    if (!program.length || program.toLowerCase() === 'tbd') {
+        return out;
+    }
+
+    // check if has semicolon (separating composer from piece)
+    let index = program.indexOf(':');
+    if (index !== -1) {
+        const [ composer, piece = '' ] = program.split(':');
+        out.composer = composer;
+        out.piece = piece;
+        return out;
+    }
+
+    index = program.indexOf(' ');
+    if (index !== -1) {
+        const composer = program.substr(0, index);
+        const piece = program.substring(index + 1);
+        out.composer = composer;
+        out.piece = piece;
+        return out;
+    }
+
+    out.composer = program;
+    return out;
+};
+
 export const up = async (models: ModelMap) => {
     try {
         const response = await getCalendarEvents();
@@ -86,10 +118,12 @@ export const up = async (models: ModelMap) => {
                 const { program, collaborators, ...attributes } = item;
 
                 const itemInstance: CalendarInstance = await calendarModel.create(attributes as CalendarAttributes);
-                const pieceInstances = await Promise.map(program, async (piece: string) => {
-                    currentItem = piece;
+                const pieceInstances = await Promise.map(program, async (composerPiece: string) => {
+                    currentItem = composerPiece;
+                    const { composer, piece } = programToPieceModel(composerPiece);
+                    console.log(composer, piece);
                     const [ pieceInstance ] = await pieceModel.findOrCreate({
-                        where: { piece },
+                        where: { composer, piece },
                     });
                     return pieceInstance;
                 });
