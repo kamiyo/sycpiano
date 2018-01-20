@@ -15,6 +15,7 @@ import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
 import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
 import { DayItemShape } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
+import { formatLocation, FormattedLocationShape } from 'src/utils';
 
 interface CollaboratorsProps { collaborators: Array<{ name: string; instrument: string }>; }
 
@@ -48,12 +49,6 @@ const TimeDetails: React.SFC<DateTimeDetailsProps> = (props) => (
         {props.dateTime.format('h:mmA z')}
     </div>
 );
-
-interface FormattedLocationShape {
-    venue: string;
-    street: string;
-    stateZipCountry: string;
-}
 
 interface LocationDetailsProps {
     className?: string;
@@ -102,15 +97,6 @@ interface EventDetailsDispatchToProps {
 type EventDetailsProps = EventDetailsStateToProps & EventDetailsDispatchToProps;
 
 class EventDetails extends React.Component<EventDetailsProps, {}> {
-    private formatLocation(location: string): FormattedLocationShape {
-        // Example location string:
-        // Howard L. Schrott Center for the Arts, 610 W 46th St, Indianapolis, IN 46208, USA
-        const [ venue, street, ...rest ] = location.split(', ');
-        const stateZipCountry = `${rest[1]}, ${rest[2]}`;
-
-        return { venue, street, stateZipCountry };
-    }
-
     componentWillUpdate(nextProps: EventDetailsProps) {
         if (nextProps.currentItem && nextProps.currentItem !== this.props.currentItem) {
             this.props.createFetchLatLngAction(nextProps.currentItem.location);
@@ -130,7 +116,7 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
             program,
         } = this.props.currentItem;
 
-        const formattedLocation = this.formatLocation(location);
+        const formattedLocation = formatLocation(location);
 
         return (
             <div className="event-details">

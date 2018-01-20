@@ -18,7 +18,8 @@
         "member-ordering": false,
         "no-unused-expression": [true, "allow-fast-null-checks"],
         "no-var-requires": false,
-        "semicolon": [true, "always", "ignore-bound-class-methods"]
+        "semicolon": [true, "always", "ignore-bound-class-methods"],
+        "arrow-parens": false
     },
     "jsRules": {
         "no-console": false,
@@ -33,7 +34,8 @@
         "member-ordering": false,
         "no-unused-expression": [true, "allow-fast-null-checks"],
         "no-var-requires": false,
-        "semicolon": [true, "always", "ignore-bound-class-methods"]
+        "semicolon": [true, "always", "ignore-bound-class-methods"],
+        "arrow-parens": false
     },
     "linterOptions": {
         "exclude": "**/node_modules/**/*"

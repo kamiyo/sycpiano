@@ -1,34 +1,130 @@
 @import '../mixins.less';
+@import '../fonts.less';
+@import '../variables.less';
 
 .homeContainer {
     height: 100%;
     width: 100%;
-    // @media (min-width: 1281px) {
-    //     background: url(/images/syc_chair_bg_1920.jpg) no-repeat;
-    //     background-size: 100%;
-    //     background-position: 0px -200px
-    // }
-    // @media (max-width: 1280) {
-    //     background: url(/images/syc_chair_bg_1920_opt.jpg) no-repeat;
-    //     background-size: 100%;
-    //     background-position: 0px -200px
-    // }
-
-    img {
-        position: fixed;
-        width: 100%;
-        top: -200px;
-        z-index: 5;
+    @media (min-width: 1281px) {
+        background: url(/images/syc_chair_bg_clean_1920.jpg) no-repeat;
+        background-size: 100%;
+        background-position: 0px -200px
+    }
+    @media (max-width: 1280) {
+        background: url(/images/syc_chair_bg_clean_1920.jpg) no-repeat;
+        background-size: 100%;
+        background-position: 0px -200px
     }
 
-    .background-blur {
-        background-color: #525245;
-        opacity: 1;
-        filter: blur(50px);
-        position: fixed;
+    .seanchen {
+        position: absolute;
         width: 100%;
-        top: -200px;
-        z-index: 4;
+        text-align: center;
+        top: 35%;
+        color: white;
+        text-shadow: 2px 0px 4px #525245;
+        z-index: 100;
+
+        .fullname {
+            font-family: @lato2;
+            font-size: 100px;
+            text-transform: uppercase;
+        }
+
+        .skills {
+            font-family: @lato2;
+            font-size: 30px;
+            color: #BDB48E + #222;
+            text-shadow: 2px 2px 6px #525245;
+        }
+
+        .handle {
+            margin-top: 15px;
+            font-family: @lato2i;
+            font-size: 30px;
+            color: white;
+            text-shadow: 2px 2px 4px #525245;
+        }
     }
 
+    .background-cover {
+        background-color: black;
+        top: 0;
+        left: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0.3;
+    }
+
+    .homeQuote {
+        font-family: @lato2i;
+        font-size: 40px;
+        position: absolute;
+        color: white;
+        bottom: 50px;
+        right: 50px;
+        text-shadow: 2px 2px 4px #525245;
+        opacity: 0;
+
+        .doubleQuote {
+            font-size: 95px;
+            position: absolute;
+            
+            &.open {
+                top: -13px;
+                left: -35px;
+            }
+
+            &.close {
+                bottom: -10px;
+                right: 86px;
+            }
+        }
+
+        .quoteAuthor {
+            float: right;
+        }
+    }
+
+    .nextEvent {
+        position: absolute;
+        top: @navbarHeight;
+        .hdpi({
+            top: @navbarHeightHDPI;
+        });
+        margin-top: 50px;
+        left: 0;
+        color: black;
+        font-family: @lato2i;
+        background-color: rgba(248, 248, 248, .8);
+        padding: 10px;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+
+        .nextEvent_label {
+            font-size: 35px;
+        }
+
+        .nextEvent_date {
+            font-size: 25px;
+
+            span {
+                display: inline-block;
+            }
+
+            .separator {
+                margin: 0 12px;
+            }
+        }
+
+        .nextEvent_name {
+            font-size: 40px;
+            font-family: @lato2;
+        }
+
+        .nextEvent_location {
+            font-size: 17px;
+        }
+    }
 }
