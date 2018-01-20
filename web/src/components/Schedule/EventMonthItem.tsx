@@ -16,11 +16,11 @@ class EventMonthItem extends React.Component<EventMonthItemProps, {}> {
 
     render() {
         return (
-            <div
-                className="event-month-item"
-                style={this.props.style}
-            >
-                {`${this.props.month} ${this.props.year}`}
+            <div className="event-month-item-container" style={this.props.style}>
+                <div className="event-month-item">
+                    {`${this.props.month} ${this.props.year}`}
+                </div>
+                <div className="event-month-item-border" />
             </div>
         );
     }

@@ -97,9 +97,6 @@ class EventDetails extends React.Component<EventDetailsProps, {}> {
             return null;
         }
 
-        console.log('CURRENT ITEM');
-        console.log(this.props.currentItem);
-
         const {
             name,
             collaborators,

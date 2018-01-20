@@ -7,18 +7,23 @@
 .event-item {
     padding: 30px 0 30px 30px;
     font-family: @lato1;
-    align-items: center;
+    align-items: top;
     color: black;
     transition: 0.2s all;
-    &.active {
-        background-color: @light-blue;
-        color: #FFFFFF;
-        .event-item__date {
-            background-color: white;
-            color: @light-blue;
-            font-weight: bold;
-        }
-    }
+
+    width: 80%;
+    max-width: 1240px;
+    margin: 0 auto;
+
+    // &.active {
+    //     background-color: @light-blue;
+    //     color: #FFFFFF;
+    //     .event-item__date {
+    //         background-color: white;
+    //         color: @light-blue;
+    //         font-weight: bold;
+    //     }
+    // }
 }
 
 a:hover {
@@ -57,9 +62,9 @@ a:hover {
     margin-bottom: 8px;
 }
 
-.event-item__info-type {
+.event-item__info-other {
     font-size: 20px;
-    font-weight: bold;
+    // font-weight: bold;
 }
 
 .event-item__info-time {
@@ -75,4 +80,22 @@ a:hover {
 .event-item__info-collaborators {
     list-style: none;
     padding: 0;
+}
+
+.buy-tickets {
+    margin-top: 25px;
+    font-size: 20px;
+    // background-color: #DC9E82;
+    color: #F15A22;
+    width: 150px;
+    padding: 10px;
+    text-align: center;
+    border: 2px solid #F15A22;
+    border-radius: 4px;
+
+    &:hover {
+        // background-color: #4E86A4;
+        background-color: #F15A22;
+        color: #fff;
+    }
 }
