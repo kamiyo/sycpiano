@@ -109,6 +109,8 @@ class EventItem extends React.Component<EventItemProps, {}> {
 
         const time = event.dateTime.format('h:mm a z');
 
+        const socialMediaSites = ['facebook', 'twitter', 'youtube', 'instagram'];
+
         return (
             <Link
                 to={`/schedule/${type}/${event.dateTime.format('YYYY-MM-DD')}`}
@@ -152,6 +154,20 @@ class EventItem extends React.Component<EventItemProps, {}> {
                         </div>
 
                         <div className="buy-tickets"><strong>Buy Tickets</strong></div>
+                        <div className="social-media">
+                            <Flexbox className="social-media-container" justifyContent="flex-start">
+                                {socialMediaSites.map((site, i) => (
+                                    <Flexbox
+                                        display="block"
+                                        flex="1 0 auto"
+                                        className="social-media-item-container"
+                                        key={i}
+                                    >
+                                        <img src={`/images/soc-logos/${site}-color.svg`} />
+                                    </Flexbox>
+                                ))}
+                            </Flexbox>
+                        </div>
                     </Flexbox>
                 </Flexbox>
             </Link>
