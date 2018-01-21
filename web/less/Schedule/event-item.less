@@ -14,24 +14,6 @@
     width: 80%;
     max-width: 1240px;
     margin: 0 auto;
-
-    // &.active {
-    //     background-color: @light-blue;
-    //     color: #FFFFFF;
-    //     .event-item__date {
-    //         background-color: white;
-    //         color: @light-blue;
-    //         font-weight: bold;
-    //     }
-    // }
-}
-
-a:hover {
-    .event-item {
-         &:not(.active) {
-            color: @light-blue;
-        }
-    }
 }
 
 .event-item__date {
@@ -60,11 +42,11 @@ a:hover {
 .event-item__info-name {
     font-size: 35px;
     margin-bottom: 8px;
+    font-family: @lato2;
 }
 
 .event-item__info-other {
     font-size: 20px;
-    // font-weight: bold;
 }
 
 .event-item__info-time {
@@ -75,32 +57,35 @@ a:hover {
 .event-item__info-program {
     list-style: none;
     padding: 0;
+    font-size: 20px;
+    font-family: @lato2;
 }
 
 .event-item__info-collaborators {
     list-style: none;
     padding: 0;
+    font-family: @lato2;
 }
 
 .buy-tickets {
     margin-top: 25px;
     font-size: 20px;
-    // background-color: #DC9E82;
-    // color: #F15A22;
-    color: #57003a;
     width: 150px;
     padding: 10px;
     text-align: center;
-    // border: 2px solid #F15A22;
-    border: 2px solid #57003a;
     border-radius: 4px;
-    transition: background-color 0.2s;
+    font-family: @lato2;
+
+    background-color: #57003a;
+    color: #ccc;
+    transition: all 0.25s;
 
     &:hover {
-        // background-color: #4E86A4;
-        // background-color: #F15A22;
-        background-color: #57003a;
+        // box-shadow: 0px 2px 5px 0 rgba(1, 1, 1, 0.40);
+        // transform: translate3d(0, -1px, 1px) scale(1.01);
+        background-color: tint(#57003a, 25%);
         color: #fff;
+        cursor: pointer;
     }
 }
 
@@ -118,7 +103,6 @@ a:hover {
         .transition(all 0.2s);
         &:hover {
             .scale(1.2);
-            cursor: pointer;
         }
     }
 }

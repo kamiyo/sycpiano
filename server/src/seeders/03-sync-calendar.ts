@@ -118,7 +118,7 @@ export const up = async (models: ModelMap) => {
                 const { program, collaborators, ...attributes } = item;
 
                 const itemInstance: CalendarInstance = await calendarModel.create(attributes as CalendarAttributes);
-                const pieceInstances = await Promise.map(program, async (composerPiece: string) => {
+                const pieceInstances = await Promise.mapSeries(program, async (composerPiece: string) => {
                     currentItem = composerPiece;
                     const { composer, piece } = programToPieceModel(composerPiece);
                     console.log(composer, piece);
@@ -128,7 +128,7 @@ export const up = async (models: ModelMap) => {
                     return pieceInstance;
                 });
                 await itemInstance.setPieces(pieceInstances);
-                const collaboratorInstances = await Promise.map(collaborators, async (collaborator: string) => {
+                const collaboratorInstances = await Promise.mapSeries(collaborators, async (collaborator: string) => {
                     currentItem = collaborator;
                     const [ name, instrument = null ] = collaborator.split(', ');
                     const [collaboratorInstance] = await collaboratorModel.findOrCreate({

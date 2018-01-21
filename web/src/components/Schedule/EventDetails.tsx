@@ -8,7 +8,7 @@ import { createFetchLatLngAction } from 'src/components/Schedule/actions';
 import { EventListName } from 'src/components/Schedule/actionTypes';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
 import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
-import { DayItemShape, Pieces, Piece } from 'src/components/Schedule/types';
+import { DayItemShape, Piece, Pieces } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
 interface CollaboratorsProps { collaborators: Array<{ name: string; instrument: string }>; }

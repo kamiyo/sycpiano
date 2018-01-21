@@ -1,10 +1,9 @@
 import 'less/Schedule/event-item.less';
 
 import Flexbox from 'flexbox-react';
-import { startCase } from 'lodash/string';
+import { startCase } from 'lodash-es/string';
 import { Moment } from 'moment-timezone';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 
 import * as classNames from 'classnames';
 
@@ -102,14 +101,11 @@ class EventItem extends React.Component<EventItemProps, {}> {
         const {
             event,
             style,
-            handleSelect,
             active,
-            type,
         } = this.props;
 
         const time = event.dateTime.format('h:mm a z');
 
-        // const socialMediaSites = ['facebook', 'twitter', 'youtube', 'instagram'];
         // permalink creation: {`/schedule/${type}/${event.dateTime.format('YYYY-MM-DD')}`
         return (
             <div style={style}>
@@ -132,7 +128,7 @@ class EventItem extends React.Component<EventItemProps, {}> {
                             <strong>{this.getVenueName(event.location)}</strong>
                         </div>
 
-                        <div className="event-item__info-other" style={{marginTop: '15px'}}>
+                        <div className="event-item__info-collaborators" style={{marginTop: '15px'}}>
                             {
                                 event.collaborators.map((collaborator, i) => (
                                     collaborator.name && collaborator.instrument && (
@@ -145,8 +141,8 @@ class EventItem extends React.Component<EventItemProps, {}> {
                             }
                         </div>
 
-                        <div className="event-item__info-other" style={{marginTop: '15px'}}>
-                            {event.program.map(({composer, piece}, i) => <div key={i}>{composer}<i>{piece}</i></div>)}
+                        <div className="event-item__info-program" style={{marginTop: '15px'}}>
+                            {event.program.map(({composer, piece}, i) => <div key={i}>{composer}: <i>{piece}</i></div>)}
                         </div>
 
                         <div className="buy-tickets">{`tickets & info`}</div>
