@@ -42,6 +42,7 @@ export interface CachedEvent {
     readonly collaborators: Collaborators;
     readonly pieces: Pieces;
     readonly type: EventType;
+    readonly website?: string;
 }
 
 interface DayOrMonth {
@@ -56,6 +57,7 @@ export interface DayItemInputShape {
     readonly dateTime: Moment;
     readonly location: string;
     readonly program: Pieces;
+    readonly website?: string;
 }
 
 export interface MonthItemInputShape {

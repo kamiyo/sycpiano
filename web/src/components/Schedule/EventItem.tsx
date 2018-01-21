@@ -9,6 +9,7 @@ import * as classNames from 'classnames';
 
 import { EventListName } from 'src/components/Schedule/actionTypes';
 import { DayItemShape } from 'src/components/Schedule/types';
+import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
 
 const DateContainer: React.SFC<{ readonly dateTime: Moment }> = ({ dateTime }) => (
     <div className="event-item__date-container">
@@ -124,11 +125,12 @@ class EventItem extends React.Component<EventItemProps, {}> {
                             {time}
                         </div>
 
-                        <div className="event-item__info-other">
+                        <div className="event-item__info-location">
+                            <LocationIconInstance className="location-icon" />
                             <strong>{this.getVenueName(event.location)}</strong>
                         </div>
 
-                        <div className="event-item__info-collaborators" style={{marginTop: '15px'}}>
+                        <div className="event-item__info-collaborators" style={{ marginTop: '15px' }}>
                             {
                                 event.collaborators.map((collaborator, i) => (
                                     collaborator.name && collaborator.instrument && (
@@ -141,11 +143,15 @@ class EventItem extends React.Component<EventItemProps, {}> {
                             }
                         </div>
 
-                        <div className="event-item__info-program" style={{marginTop: '15px'}}>
-                            {event.program.map(({composer, piece}, i) => <div key={i}>{composer}: <i>{piece}</i></div>)}
+                        <div className="event-item__info-program" style={{ marginTop: '15px' }}>
+                            {event.program.map(({ composer, piece }, i) =>
+                                <div key={i}>
+                                    {composer}{(piece) ? ': ' : ''}<i>{piece}</i>
+                                </div>
+                            )}
                         </div>
 
-                        <div className="buy-tickets">{`tickets & info`}</div>
+                        {event.website && <a href={event.website} target="_blank" className="buy-tickets">{`tickets & info`}</a>}
                         {/* <div className="social-media">
                             <Flexbox className="social-media-container" justifyContent="flex-start">
                                 {socialMediaSites.map((site, i) => (

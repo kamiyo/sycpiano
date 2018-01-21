@@ -94,6 +94,7 @@ export const up = async (models: ModelMap) => {
                 collaborators,
                 type,
                 program,
+                website,
             } = extractEventDescription(event);
 
             const id = event.id;
@@ -106,37 +107,36 @@ export const up = async (models: ModelMap) => {
                 dateTime,
                 timezone,
                 location,
+                website,
                 type: type.value,
                 program,
                 collaborators,
             };
         });
 
-        items.forEach(async (item) => {
+        await Promise.each(items, async (item) => {
             let currentItem: string;
             try {
                 const { program, collaborators, ...attributes } = item;
 
                 const itemInstance: CalendarInstance = await calendarModel.create(attributes as CalendarAttributes);
-                const pieceInstances = await Promise.mapSeries(program, async (composerPiece: string) => {
+                await Promise.each(program, async (composerPiece: string, index: number) => {
                     currentItem = composerPiece;
                     const { composer, piece } = programToPieceModel(composerPiece);
                     console.log(composer, piece);
                     const [ pieceInstance ] = await pieceModel.findOrCreate({
                         where: { composer, piece },
                     });
-                    return pieceInstance;
+                    await itemInstance.addPiece(pieceInstance, { through: { order: index }});
                 });
-                await itemInstance.setPieces(pieceInstances);
-                const collaboratorInstances = await Promise.mapSeries(collaborators, async (collaborator: string) => {
+                await Promise.each(collaborators, async (collaborator: string, index: number) => {
                     currentItem = collaborator;
                     const [ name, instrument = null ] = collaborator.split(', ');
                     const [collaboratorInstance] = await collaboratorModel.findOrCreate({
                         where: { name, instrument },
                     });
-                    return collaboratorInstance;
+                    await itemInstance.addCollaborator(collaboratorInstance, { through: { order: index }}) ;
                 });
-                await itemInstance.setCollaborators(collaboratorInstances);
             } catch (e) {
                 console.log(`currentItem: ${currentItem}`);
                 console.log(e);

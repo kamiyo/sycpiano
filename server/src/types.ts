@@ -1,7 +1,7 @@
 import { DataTypeInteger, DataTypeString, DataTypeUUID, default as Sequelize } from 'sequelize';
 
 export interface Model<TI, TA> extends Sequelize.Model<TI, TA> {
-    name: string;
+    readonly name: string;
     associate?(db: {[key: string]: Sequelize.Model<TI, TA>}): void;
 }
 
@@ -10,20 +10,20 @@ export interface ModelMap {
 }
 
 export interface DB {
-    sequelize: Sequelize.Sequelize;
+    readonly sequelize: Sequelize.Sequelize;
     importModels: (seq: Sequelize.Sequelize) => ModelMap;
-    models: ModelMap;
+    readonly models: ModelMap;
 }
 
 export interface CalendarAttributes {
-    id?: string;
-    name: string;
-    dateTime: Date | string;
-    timezone: string;
-    location: string;
-    type: string;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+    readonly id?: string;
+    readonly name: string;
+    readonly dateTime: Date | string;
+    readonly timezone: string;
+    readonly location: string;
+    readonly type: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
 }
 
 export interface CalendarInstance extends Sequelize.Instance<CalendarAttributes>, CalendarAttributes {
@@ -41,12 +41,12 @@ export interface CalendarInstance extends Sequelize.Instance<CalendarAttributes>
 export interface CalendarModel extends Model<CalendarInstance, CalendarAttributes> {}
 
 export interface AcclaimAttributes {
-    id?: DataTypeUUID;
-    quote: string;
-    short: string;
-    author: string;
-    shortAuthor: string;
-    date: string;
+    readonly id?: DataTypeUUID;
+    readonly quote: string;
+    readonly short: string;
+    readonly author: string;
+    readonly shortAuthor: string;
+    readonly date: string;
 }
 
 export interface AcclaimInstance extends Sequelize.Instance<AcclaimAttributes>, AcclaimAttributes {}
@@ -54,14 +54,14 @@ export interface AcclaimInstance extends Sequelize.Instance<AcclaimAttributes>, 
 export interface AcclaimModel extends Model<AcclaimAttributes, AcclaimInstance> {}
 
 export interface MusicFileAttributes {
-    id?: DataTypeUUID;
-    name: string;
-    filePath: string;
-    pathToWaveform: string;
-    durationSeconds: number;
-    musicId?: DataTypeUUID;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+    readonly id?: DataTypeUUID;
+    readonly name: string;
+    readonly filePath: string;
+    readonly pathToWaveform: string;
+    readonly durationSeconds: number;
+    readonly musicId?: DataTypeUUID;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
 }
 
 export interface MusicFileInstance extends Sequelize.Instance<MusicFileAttributes>, MusicFileAttributes {}
@@ -69,11 +69,11 @@ export interface MusicFileInstance extends Sequelize.Instance<MusicFileAttribute
 export interface MusicFileModel extends Model<MusicFileInstance, MusicFileAttributes> {}
 
 export interface MusicAttributes {
-    id: DataTypeUUID;
-    composer: string;
-    piece: string;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+    readonly id: DataTypeUUID;
+    readonly composer: string;
+    readonly piece: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
 }
 
 export interface MusicInstance extends Sequelize.Instance<MusicAttributes>, MusicAttributes {}
@@ -81,11 +81,11 @@ export interface MusicInstance extends Sequelize.Instance<MusicAttributes>, Musi
 export interface MusicModel extends Model<MusicInstance, MusicAttributes> {}
 
 export interface CollaboratorAttributes {
-    id: DataTypeUUID;
-    name: string;
-    instrument: string;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+    readonly id: DataTypeUUID;
+    readonly name: string;
+    readonly instrument: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
 }
 
 export interface CollaboratorInstance extends Sequelize.Instance<CollaboratorAttributes>, CollaboratorAttributes {}
@@ -93,10 +93,10 @@ export interface CollaboratorInstance extends Sequelize.Instance<CollaboratorAtt
 export interface CollaboratorModel extends Model<CollaboratorInstance, CollaboratorAttributes> {}
 
 export interface PieceAttributes {
-    id: DataTypeUUID;
-    piece: string;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+    readonly id: DataTypeUUID;
+    readonly piece: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
 }
 
 export interface PieceInstance extends Sequelize.Instance<PieceAttributes>, PieceAttributes {}
@@ -104,11 +104,12 @@ export interface PieceInstance extends Sequelize.Instance<PieceAttributes>, Piec
 export interface PieceModel extends Model<PieceInstance, PieceAttributes> {}
 
 export interface CalendarPieceAttributes {
-    id: DataTypeUUID;
-    calendarId: DataTypeString;
-    programId: DataTypeUUID;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+    readonly id?: DataTypeUUID;
+    readonly calendarId?: DataTypeString;
+    readonly programId?: DataTypeUUID;
+    readonly order?: number;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
 }
 
 export interface CalendarPieceInstance extends Sequelize.Instance<CalendarPieceAttributes>, CalendarPieceAttributes {}
@@ -116,11 +117,12 @@ export interface CalendarPieceInstance extends Sequelize.Instance<CalendarPieceA
 export interface CalendarPieceModel extends Model<CalendarPieceInstance, CalendarPieceAttributes> {}
 
 export interface CalendarCollaboratorAttributes {
-    id: DataTypeUUID;
-    calendarId: DataTypeString;
-    collaboratorId: DataTypeUUID;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+    readonly id?: DataTypeUUID;
+    readonly calendarId?: DataTypeString;
+    readonly collaboratorId?: DataTypeUUID;
+    readonly order?: number;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
 }
 
 export interface CalendarCollaboratorInstance extends Sequelize.Instance<CalendarCollaboratorAttributes>, CalendarCollaboratorAttributes {}
@@ -128,14 +130,14 @@ export interface CalendarCollaboratorInstance extends Sequelize.Instance<Calenda
 export interface CalendarCollaboratorModel extends Model<CalendarCollaboratorInstance, CalendarCollaboratorAttributes> {}
 
 export interface PhotoAttributes {
-    id?: DataTypeUUID;
-    file: DataTypeString;
-    width: DataTypeInteger;
-    height: DataTypeInteger;
-    thumbnailWidth: DataTypeInteger;
-    thumbnailHeight: DataTypeInteger;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+    readonly id?: DataTypeUUID;
+    readonly file: DataTypeString;
+    readonly width: DataTypeInteger;
+    readonly height: DataTypeInteger;
+    readonly thumbnailWidth: DataTypeInteger;
+    readonly thumbnailHeight: DataTypeInteger;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
 }
 
 export interface PhotoInstance extends Sequelize.Instance<PhotoAttributes>, PhotoAttributes {}

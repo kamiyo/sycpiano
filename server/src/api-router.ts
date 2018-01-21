@@ -36,8 +36,12 @@ function getEventsBefore(before: string, limit: number) {
                     exclude: ['id', 'createdAt', 'updatedAt'],
                 },
                 through: {
-                    attributes: [],
+                    attributes: ['order'],
                 },
+                include: [{
+                    model: models.calendarCollaborator,
+                    attributes: ['order'],
+                }],
             },
             {
                 model: models.piece,
@@ -45,8 +49,12 @@ function getEventsBefore(before: string, limit: number) {
                     exclude: ['id', 'createdAt', 'updatedAt'],
                 },
                 through: {
-                    attributes: [],
+                    attributes: ['order'],
                 },
+                include: [{
+                    model: models.calendarPiece,
+                    attributes: ['order'],
+                }],
             },
         ],
         where: {
@@ -55,7 +63,11 @@ function getEventsBefore(before: string, limit: number) {
             },
         },
         limit,
-        order: [['dateTime', 'DESC']],
+        order: [
+            ['dateTime', 'DESC'],
+            [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
+            [models.piece, models.calendarPiece, 'order', 'ASC'],
+        ],
     });
 }
 
@@ -74,6 +86,10 @@ function getEventsAfter(after: string, limit: number) {
                 through: {
                     attributes: [],
                 },
+                include: [{
+                    model: models.calendarCollaborator,
+                    attributes: ['order'],
+                }],
             },
             {
                 model: models.piece,
@@ -83,6 +99,10 @@ function getEventsAfter(after: string, limit: number) {
                 through: {
                     attributes: [],
                 },
+                include: [{
+                    model: models.calendarPiece,
+                    attributes: ['order'],
+                }],
             },
         ],
         where: {
@@ -91,7 +111,11 @@ function getEventsAfter(after: string, limit: number) {
             },
         },
         limit,
-        order: [['dateTime', 'ASC']],
+        order: [
+            ['dateTime', 'ASC'],
+            [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
+            [models.piece, models.calendarPiece, 'order', 'ASC'],
+        ],
     });
 }
 
@@ -108,8 +132,12 @@ function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC') {
                     exclude: ['id', 'createdAt', 'updatedAt'],
                 },
                 through: {
-                    attributes: [],
+                    attributes: ['order'],
                 },
+                include: [{
+                    model: models.calendarCollaborator,
+                    attributes: ['order'],
+                }],
             },
             {
                 model: models.piece,
@@ -117,8 +145,12 @@ function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC') {
                     exclude: ['id', 'createdAt', 'updatedAt'],
                 },
                 through: {
-                    attributes: [],
+                    attributes: ['order'],
                 },
+                include: [{
+                    model: models.calendarPiece,
+                    attributes: ['order'],
+                }],
             },
         ],
         where: {
@@ -127,7 +159,11 @@ function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC') {
                 [lt]: end,
             },
         },
-        order: [['dateTime', order]],
+        order: [
+            ['dateTime', order],
+            [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
+            [models.piece, models.calendarPiece, 'order', 'ASC'],
+        ],
     });
 }
 

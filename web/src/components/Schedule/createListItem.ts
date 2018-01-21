@@ -11,6 +11,7 @@ class DayItem {
     readonly eventType: 'concerto' | 'chamber' | 'solo' | 'masterclass';
     readonly dateTime: Moment;
     readonly location: string;
+    readonly website: string;
 
     constructor(properties: DayItemInputShape) {
         this.id = properties.id;
@@ -21,6 +22,7 @@ class DayItem {
         this.eventType = properties.eventType;
         this.dateTime = properties.dateTime;
         this.location = properties.location;
+        this.website = properties.website;
     }
 }
 

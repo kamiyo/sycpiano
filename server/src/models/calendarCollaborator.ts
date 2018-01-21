@@ -18,6 +18,7 @@ const CalendarCollaborator = (sequelize: Sequelize, dataTypes: DataTypes) => {
             type: dataTypes.UUID,
             field: 'collaborator_id',
         },
+        order: dataTypes.INTEGER,
     },  { tableName: 'calendar_collaborator' }) as CalendarCollaboratorModel;
 
     model.associate = (models) => {
