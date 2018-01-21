@@ -12,9 +12,11 @@ import { TrebleIconSVG } from 'src/components/Schedule/TrebleIconSVG';
 
 const Schedule: React.SFC<{}> = () => (
     <div className="schedule container">
-        <div className="schedule__event-details">
-            <ConnectedEventDetails />
-        </div>
+        {/*
+            <div className="schedule__event-details">
+                <ConnectedEventDetails />
+            </div>
+        */}
         <div className="schedule__events">
             <Switch>
                 <Route
