@@ -8,7 +8,7 @@ import { createFetchLatLngAction } from 'src/components/Schedule/actions';
 import { EventListName } from 'src/components/Schedule/actionTypes';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
 import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
-import { DayItemShape } from 'src/components/Schedule/types';
+import { DayItemShape, Pieces, Piece } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
 interface CollaboratorsProps { collaborators: Array<{ name: string; instrument: string }>; }
@@ -42,13 +42,13 @@ const LocationDetails: React.SFC<LocationDetailsProps> = (props) => (
 
 interface ProgramDetailsProps {
     className?: string;
-    program: string[];
+    program: Pieces;
 }
 
 const ProgramDetails: React.SFC<ProgramDetailsProps> = (props) => (
     <div className={classNames('programDetails', props.className)}>
         {
-            props.program.map((piece: string, index: number) => (
+            props.program.map((piece: Piece, index: number) => (
                 <div className="programDetails__piece" key={index}>
                     <span className="dash">{`${String.fromCharCode(0x2013)}`}</span>
                     <span>{`${piece}`}</span>

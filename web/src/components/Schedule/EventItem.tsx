@@ -109,14 +109,10 @@ class EventItem extends React.Component<EventItemProps, {}> {
 
         const time = event.dateTime.format('h:mm a z');
 
-        const socialMediaSites = ['facebook', 'twitter', 'youtube', 'instagram'];
-
+        // const socialMediaSites = ['facebook', 'twitter', 'youtube', 'instagram'];
+        // permalink creation: {`/schedule/${type}/${event.dateTime.format('YYYY-MM-DD')}`
         return (
-            <Link
-                to={`/schedule/${type}/${event.dateTime.format('YYYY-MM-DD')}`}
-                onClick={handleSelect}
-                style={style}
-            >
+            <div style={style}>
                 <Flexbox className={classNames('event-item', { active })}>
                     <Flexbox display="block" flex="0 0 100px">
                         <DateContainer dateTime={event.dateTime} />
@@ -150,11 +146,11 @@ class EventItem extends React.Component<EventItemProps, {}> {
                         </div>
 
                         <div className="event-item__info-other" style={{marginTop: '15px'}}>
-                            {event.program.map((piece, i) => <div key={i}><i>{piece}</i></div>)}
+                            {event.program.map(({composer, piece}, i) => <div key={i}>{composer}<i>{piece}</i></div>)}
                         </div>
 
-                        <div className="buy-tickets"><strong>Buy Tickets</strong></div>
-                        <div className="social-media">
+                        <div className="buy-tickets">{`tickets & info`}</div>
+                        {/* <div className="social-media">
                             <Flexbox className="social-media-container" justifyContent="flex-start">
                                 {socialMediaSites.map((site, i) => (
                                     <Flexbox
@@ -167,10 +163,10 @@ class EventItem extends React.Component<EventItemProps, {}> {
                                     </Flexbox>
                                 ))}
                             </Flexbox>
-                        </div>
+                        </div> */}
                     </Flexbox>
                 </Flexbox>
-            </Link>
+            </div>
         );
     }
 }

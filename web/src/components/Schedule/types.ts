@@ -20,19 +20,27 @@ export interface GCalEvent {
     readonly [key: string]: any; // other params
 }
 
+export interface Collaborator {
+    name: string;
+    instrument: string;
+}
+
+export interface Piece {
+    composer: string;
+    piece: string;
+}
+
+export type Collaborators = Collaborator[];
+export type Pieces = Piece[];
+
 export interface CachedEvent {
     readonly id: string;
     readonly location: string;
     readonly dateTime: string;
     readonly timezone: string;
     readonly name: string;
-    readonly collaborators: Array<{
-        name: string;
-        instrument: string;
-    }>;
-    readonly pieces: Array<{
-        piece: string;
-    }>;
+    readonly collaborators: Collaborators;
+    readonly pieces: Pieces;
     readonly type: EventType;
 }
 
@@ -43,14 +51,11 @@ interface DayOrMonth {
 export interface DayItemInputShape {
     readonly id: string;
     readonly name: string;
-    readonly collaborators: Array<{
-        name: string;
-        instrument: string;
-    }>;
+    readonly collaborators: Collaborators;
     readonly eventType: EventType;
     readonly dateTime: Moment;
     readonly location: string;
-    readonly program: string[];
+    readonly program: Pieces;
 }
 
 export interface MonthItemInputShape {

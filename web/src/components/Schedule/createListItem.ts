@@ -1,16 +1,13 @@
 import { Moment } from 'moment-timezone';
 
-import { DayItemInputShape, EventItemInputShape, MonthItemInputShape } from 'src/components/Schedule/types';
+import { Collaborators, DayItemInputShape, EventItemInputShape, MonthItemInputShape, Pieces } from 'src/components/Schedule/types';
 
 class DayItem {
     readonly id: string;
     readonly type: 'day';
     readonly name: string;
-    readonly program: string[];
-    readonly collaborators: Array<{
-        name: string;
-        instrument: string;
-    }>;
+    readonly program: Pieces;
+    readonly collaborators: Collaborators;
     readonly eventType: 'concerto' | 'chamber' | 'solo' | 'masterclass';
     readonly dateTime: Moment;
     readonly location: string;

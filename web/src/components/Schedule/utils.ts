@@ -88,7 +88,7 @@ export const transformCachedEventsToListItems = (events: CachedEvent[], monthsSe
             collaborators: event.collaborators,
             eventType: event.type,
             location: event.location,
-            program: event.pieces.map((value) => value.piece),
+            program: event.pieces,
         } as DayItemInputShape));
 
         return [...runningEventsArr, ...nextEventsArr];
