@@ -25,6 +25,8 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.17.1",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-emotion": "^8.0.12",
     "classnames": "^2.2.5",
     "collections": "^5.1.1",
     "css-loader": "^0.28.7",
@@ -100,8 +102,6 @@
     "@types/umzug": "^2.1.0",
     "@types/urijs": "^1.15.34",
     "@types/youtube": "0.0.31",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-emotion": "^8.0.12",
     "bluebird": "^3.5.1",
     "clean-webpack-plugin": "^0.1.17",
     "cross-env": "^5.1.3",
