@@ -1,11 +1,55 @@
-import 'less/Contact/contact-item.less';
-
 import * as React from 'react';
+import styled, { css } from 'react-emotion';
 
-import ContactItemShape from 'src/components/Contact/types';
+import { ContactInfo } from 'src/components/Contact/ContactInfo';
+import { ContactSocialMedia } from 'src/components/Contact/ContactSocialMedia';
+import { ContactItemShape } from 'src/components/Contact/types';
 
-const ContactItem: React.SFC<ContactItemShape> = ({
-    cssClass,
+import { pushed } from 'src/styles/mixins';
+import {
+    joelHarrisonContactPhotoUrl,
+    seanChenContactPhotoUrl,
+} from 'src/styles/variables';
+
+const imageInsetShadowColor = '#222';
+const alternateBackgroundColor = '#eee';
+
+const contactNameToPhotoStylesMap: { [key: string]: string } = {
+    'Sean Chen': css({
+        background: `url(${seanChenContactPhotoUrl}) no-repeat`,
+        backgroundSize: 'cover',
+        backgroundPosition: '0 28%',
+    }),
+    'Joel Harrison': css({
+        background: `url(${joelHarrisonContactPhotoUrl}) no-repeat`,
+        backgroundSize: '125%',
+        backgroundPosition: 'center 40%',
+    }),
+};
+
+const ContactItemContainer = styled('div')`
+    ${pushed};
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: white;
+
+    &:nth-child(2n) {
+        background-color: ${alternateBackgroundColor}
+    }
+`;
+
+const ContactImage = styled('div')`
+    flex: 0 0 55%;
+    box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
+`;
+
+const StyledContactInfo = styled(ContactInfo)`flex: 0 0 31%;`;
+
+const StyledContactSocialMedia = styled(ContactSocialMedia)`flex: 1 0 auto;`;
+
+let ContactItem: React.SFC<ContactItemShape> = ({
+    className,
     name,
     title,
     organization,
@@ -13,49 +57,26 @@ const ContactItem: React.SFC<ContactItemShape> = ({
     email,
     social,
 }) => (
-    <div className="contactItem">
-        <div className={`contactImage ${cssClass}`} />
+    <ContactItemContainer className={className}>
+        <ContactImage className={contactNameToPhotoStylesMap[name]} />
 
-        <div className="contactInfo">
-            <div className="personalInfo">
-                <div className="name">{name}</div>
+        <StyledContactInfo
+            name={name}
+            title={title}
+            organization={organization}
+            phone={phone}
+            email={email}
+        />
 
-                <div className="subInfo">
-                    <div className="title">{title}</div>
-                    {
-                        organization &&
-                        <div className="organization">
-                            {organization}
-                        </div>
-                    }
-                </div>
-            </div>
-
-            <div className="divider" />
-            <div className="personalContact">
-                {phone && <div className="phone"><div>{phone}</div></div>}
-
-                <div className="email">
-                    <a href={`mailto:${email}`}>{email}</a>
-                </div>
-            </div>
-        </div>
-
-        <div className="contactSocial">
-            {
-                Object.keys(social).map((site, i) => (
-                    <div className="socialLinkContainer" key={i}>
-                        <a className="socialLink" href={social[site]} target="_blank">
-                            <img
-                                className={site}
-                                src={`/images/soc-logos/${site}-color.svg`}
-                            />
-                        </a>
-                    </div>
-                ))
-            }
-        </div>
-    </div>
+        <StyledContactSocialMedia social={social} />
+    </ContactItemContainer>
 );
 
-export default ContactItem;
+ContactItem = styled(ContactItem)`
+    height: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+`;
+
+export { ContactItem };

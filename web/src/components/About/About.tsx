@@ -8,11 +8,7 @@ import { lato1, lato2, lato3 } from 'src/styles/fonts';
 import { sycWithPianoBW } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
 
-interface AboutComponentProps {
-    className?: string;
-}
-
-const FirstLetter = styled('div')`
+const FirstLetter = styled('span')`
     display: block;
     float: left;
     font-family: ${lato1};
@@ -27,7 +23,7 @@ const Paragraph = styled('p')`
     line-height: 2.2em;
 `;
 
-const AboutText: React.SFC<AboutComponentProps> = (props) => (
+const AboutText: React.SFC<{ className?: string }> = (props) => (
     <div className={props.className}>
         {blurbs.map((blurb, i) => {
             if (i === 0) {
@@ -63,7 +59,7 @@ const LeftContainer: React.SFC<{}> = styled('div')`
 `;
 
 const RightContainer = styled(AboutText)`
-    ${pushed()};
+    ${pushed};
     box-sizing: border-box;
     flex: 0 0 45%;
     height: auto;
@@ -73,17 +69,18 @@ const RightContainer = styled(AboutText)`
     overflow-y: scroll;
 `;
 
-let About: React.SFC<AboutComponentProps> = (props) => (
-    <div className={props.className}>
-        <LeftContainer />
-        <RightContainer />
-    </div>
-);
-
-About = styled(About)`
+const AboutContainer = styled('div')`
     height: 100%;
     background-color: white;
     display: flex;
+    position: absolute;
 `;
+
+const About: React.SFC<{}> = () => (
+    <AboutContainer>
+        <LeftContainer />
+        <RightContainer />
+    </AboutContainer>
+);
 
 export default About;

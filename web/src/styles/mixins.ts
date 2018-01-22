@@ -8,7 +8,18 @@ const pushedHelper = (marginTop: string) => ({
     marginTop,
 });
 
-export const pushed = () => css({
+export const pushed = css({
     ...pushedHelper(navBarHeight.nonHdpi),
     [hiDPI(2)]: pushedHelper(navBarHeight.hdpi),
 });
+
+export const link = (color: string, hoverDelta = '#444') => css`
+    color: @color;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color: 0.5s;
+
+    &:hover {
+        color: ${color} - ${hoverDelta};
+    }
+`;
