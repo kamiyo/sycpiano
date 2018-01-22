@@ -8,8 +8,9 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 
 import { EventListName } from 'src/components/Schedule/actionTypes';
-import { DayItemShape } from 'src/components/Schedule/types';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
+import { DayItemShape } from 'src/components/Schedule/types';
+import { getGoogleMapsSearchUrl } from 'src/components/Schedule/utils';
 
 const DateContainer: React.SFC<{ readonly dateTime: Moment }> = ({ dateTime }) => (
     <div className="event-item__date-container">
@@ -125,10 +126,10 @@ class EventItem extends React.Component<EventItemProps, {}> {
                             {time}
                         </div>
 
-                        <div className="event-item__info-location">
+                        <a href={getGoogleMapsSearchUrl(event.location)} className="event-item__info-location">
                             <LocationIconInstance className="location-icon" />
-                            <strong>{this.getVenueName(event.location)}</strong>
-                        </div>
+                            <strong style={{ color: 'black' }}>{this.getVenueName(event.location)}</strong>
+                        </a>
 
                         <div className="event-item__info-collaborators" style={{ marginTop: '15px' }}>
                             {

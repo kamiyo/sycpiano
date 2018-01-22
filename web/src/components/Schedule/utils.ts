@@ -3,6 +3,8 @@ import { default as moment } from 'moment-timezone';
 import createListItem from 'src/components/Schedule/createListItem';
 import { CachedEvent, DayItemInputShape, EventItemShape, GCalEvent } from 'src/components/Schedule/types';
 
+const GOOGLE_MAPS_SEARCH_URL = 'https://www.google.com/maps/search/?api=1';
+
 /**
  * Takes an event resource as returned by the Calendar API, and extracts the
  * event's start dateTime into a moment object.
@@ -95,3 +97,7 @@ export const transformCachedEventsToListItems = (events: CachedEvent[], monthsSe
         return [...runningEventsArr, ...nextEventsArr];
     }, []);
 };
+
+export const getGoogleMapsSearchUrl = (query: string) => `
+    ${GOOGLE_MAPS_SEARCH_URL}&query=${encodeURIComponent(query)}
+`;
