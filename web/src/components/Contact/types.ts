@@ -1,13 +1,23 @@
-interface ContactItemShape {
-    readonly name: string;
-    readonly cssClass: string;
-    readonly organization?: string;
-    readonly phone?: string;
-    readonly title: string;
-    readonly email: string;
-    readonly social: {
-        readonly [key: string]: string;
-    };
+export interface PersonalInfoShape {
+    className?: string;
+    organization?: string;
+    name: string;
+    title: string;
 }
 
-export default ContactItemShape;
+export interface PersonalContactShape {
+    className?: string;
+    phone?: string;
+    email: string;
+}
+
+export interface ContactSocialMediaShape {
+    className?: string;
+    social: { [key: string]: string };
+}
+
+export type ContactItemShape = (
+    PersonalInfoShape
+        & PersonalContactShape
+        & ContactSocialMediaShape
+);

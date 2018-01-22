@@ -1,14 +1,31 @@
-import 'less/Contact/contact.less';
-
 import * as React from 'react';
+import styled from 'react-emotion';
 
-import ContactItem from 'src/components/Contact/ContactItem';
+import { ContactItem } from 'src/components/Contact/ContactItem';
 import contacts from 'src/components/Contact/contacts';
 
+import { pushed } from 'src/styles/mixins';
+
+const ContactContainer = styled('div')`
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+`;
+
+const FlexContactItem = styled(ContactItem)`
+    flex: 1 0 auto;
+    ${pushed};
+`;
+
 const Contact: React.SFC<{}> = () => (
-    <div className="contactContainer">
-        {contacts.map((contact, i) => <ContactItem {...contact} key={i} />)}
-    </div>
+    <ContactContainer>
+        {contacts.map((contact, i) => (
+            <FlexContactItem {...contact} key={i} />
+        ))}
+    </ContactContainer>
 );
 
 export default Contact;

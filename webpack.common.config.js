@@ -7,6 +7,14 @@ const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const happyThreadPool = HappyPack.ThreadPool({ size: 6 });
 
+const sourcePaths = [
+    path.resolve(__dirname, 'web/src'),
+    path.resolve(__dirname, 'web/src/components'),
+    path.resolve(__dirname, 'web/src/admin'),
+    path.resolve(__dirname, 'web/src/admin/components'),
+    path.resolve(__dirname, 'web/src/styles'),
+];
+
 const config = {
     cache: true,
     entry: {
@@ -20,16 +28,9 @@ const config = {
     module: {
         loaders: [{
             test: /\.(t|j)sx?$/,
-            include: [
-                path.resolve(__dirname, 'web/src'),
-                path.resolve(__dirname, 'web/src/components'),
-                path.resolve(__dirname, 'web/src/admin'),
-                path.resolve(__dirname, 'web/src/admin/components'),
-                path.resolve(__dirname, 'web/src/styles'),
-            ],
+            include: sourcePaths,
             loader: 'happypack/loader?id=ts'
-        },
-        {
+        }, {
             loader: 'happypack/loader?id=style',
             test: /\.(css|less)$/,
             include: [
@@ -57,12 +58,15 @@ const config = {
             threadPool: happyThreadPool,
             loaders: [
                 {
+                    loader: 'babel-loader',
+                },
+                {
                     loader: 'ts-loader',
                     options: {
                         happyPackMode: true,
                         transpileOnly: true
                     }
-                }
+                },
             ]
         }),
         new HappyPack({
