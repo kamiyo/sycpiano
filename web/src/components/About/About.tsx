@@ -52,6 +52,7 @@ const AboutText: React.SFC<{ className?: string }> = (props) => (
 );
 
 const LeftContainer: React.SFC<{}> = styled('div')`
+    ${pushed};
     flex: 1;
     background: url(${sycWithPianoBW}) no-repeat fixed;
     background-size: 56%;

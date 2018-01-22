@@ -41,7 +41,7 @@ export default class NavBar extends React.Component<NavBarProps, NavBarState> {
 
     render() {
         const clazz = classNames('navBar', {
-            homeTheme: this.props.currentBasePath === '/'
+            homeTheme: this.props.currentBasePath === '/',
         });
 
         return (
