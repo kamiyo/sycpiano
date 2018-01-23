@@ -1,7 +1,9 @@
 import { injectGlobal } from 'emotion';
 
 import { logoBlue } from 'src/styles/colors';
+import { link } from 'src/styles/mixins';
 
+/* tslint:disable:no-unused-expression */
 injectGlobal`
 * {
     box-sizing: border-box;
@@ -23,26 +25,8 @@ body {
     height: 100%;
 }
 
-#router {
-    display: none;
-}
-
-.appContainer {
-    height: 100%;
-    width: 100%;
-}
-
-.container {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
 a {
-    .link(${logoBlue});
-}
-
-.no-highlight {
-    .user-select(none);
+    ${link(logoBlue)}
 }
 `;
+/* tslint:enable:no-unused-expression */

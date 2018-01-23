@@ -23,3 +23,13 @@ export const link = (color: string, hoverDelta = '#444') => css`
         color: ${color} - ${hoverDelta};
     }
 `;
+
+export const container = css`
+    position: absolute;
+    top: 0;
+    left: 0;
+`;
+
+export const noHighlight = css`
+    user-select: none;
+`;

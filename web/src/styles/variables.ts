@@ -3,5 +3,6 @@ export const navBarHeight = {
     hdpi: '50px',
 };
 
-export const seanChenContactPhotoUrl = '/images/gallery/syc_headshot1.jpg';
-export const joelHarrisonContactPhotoUrl = '/images/joel.jpg';
+export const playlistWidth = 550;
+export const playlistTogglerWidth = 20;
+export const playlistPadding = 10;

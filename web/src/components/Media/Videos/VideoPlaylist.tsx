@@ -27,7 +27,7 @@ type VideoPlaylistProps = VideoPlaylistStateToProps & VideoPlaylistDispatchToPro
 const VideoPlaylist: React.SFC<VideoPlaylistProps> = (props) => {
     return (
         <Playlist
-            className="videoPlaylist"
+            extraStyles=""
             isShow={props.isShow}
             hasToggler={true}
             togglePlaylist={props.togglePlaylistAction}

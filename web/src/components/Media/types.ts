@@ -7,7 +7,7 @@ export interface ChildRendererProps<T> {
 
 export interface PlaylistProps<T> {
     readonly ChildRenderer: (childrenProps: ChildRendererProps<T>) => JSX.Element;
-    readonly className: string;
+    readonly extraStyles: string;
     readonly currentItemId: number | string;
     readonly hasToggler: boolean;
     readonly isShow: boolean;

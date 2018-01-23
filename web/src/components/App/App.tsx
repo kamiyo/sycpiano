@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import styled, { css } from 'react-emotion';
+import styled from 'react-emotion';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
