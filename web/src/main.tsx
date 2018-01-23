@@ -6,6 +6,8 @@ global.Promise = Promise;
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route } from 'react-router-dom';
 
+import 'src/styles/global';
+
 import createSycStore from 'src/store';
 
 import App from 'src/components/App/App';

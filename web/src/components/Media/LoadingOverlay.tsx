@@ -4,6 +4,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Transition } from 'react-transition-group';
 
+import styled, { css } from 'react-emotion';
+
 import TweenLite from 'gsap/TweenLite';
 
 import { GlobalStateShape } from 'src/types';
@@ -11,6 +13,29 @@ import { GlobalStateShape } from 'src/types';
 interface LoadingOverlayProps {
     readonly isPlayerReady: boolean;
 }
+
+const LoadingOverlayDiv = styled('div')`
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(60, 60, 60, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`
+const BackgroundCircle = styled('circle')`
+    fill: #202020;
+`
+
+const LoadingGif = styled('image')`
+    width: 120px;
+    height: 120px;
+    flex: 1;
+    clip-path: url(#treble-mask);
+`
 
 const LoadingOverlay: React.SFC<LoadingOverlayProps> = (props) => (
     <Transition
