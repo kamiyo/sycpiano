@@ -1,14 +1,9 @@
-const managers = [
-    // {
-    //     name: '',
-    //     cssClass: 'placeHolder',
-    //     title: '',
-    //     email: '',
-    //     social: {},
-    // },
+import { ContactItemShape } from 'src/components/Contact/types';
+
+const managers: ContactItemShape[] = [
     {
         name: 'Sean Chen',
-        cssClass: 'seanChen',
+        className: 'seanChen',
         title: 'Concert Pianist',
         email: 'seanchen@seanchenpiano.com',
         social: {
@@ -21,7 +16,7 @@ const managers = [
     },
     {
         name: 'Joel Harrison',
-        cssClass: 'joelHarrison',
+        className: 'joelHarrison',
         title: 'Artistic Director, President/CEO',
         organization: 'American Pianists Association',
         phone: '317.940.9947',

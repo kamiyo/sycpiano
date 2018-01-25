@@ -3,3 +3,4 @@ export const logoBlue = '#0a4260';
 export const magenta = '#57003a';
 export const offWhite = '#fafafa';
 export const textGrey = '#ccc';
+export const contactPageLinkColor = '#4e94ba';

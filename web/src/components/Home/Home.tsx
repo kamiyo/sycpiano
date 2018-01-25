@@ -2,16 +2,17 @@ import 'less/Home/home.less';
 
 import * as React from 'react';
 
-class Home extends React.Component<{}, {}> {
-    render() {
-        return (
-            <div className="homeContainer container">
-                <img
-                    src="/images/syc_chair_bg_1920.jpg"
-                />
+const Home: React.SFC<{}> = () => {
+    return (
+        <div className="homeContainer container">
+            <div className="background-cover" />
+            <div className="seanchen">
+                <div className="fullname">Sean Chen</div>
+                <div className="skills">pianist / composer / arranger</div>
+                <div className="handle">@seanchenpiano</div>
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
 export default Home;

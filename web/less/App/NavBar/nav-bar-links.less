@@ -2,8 +2,10 @@
 @import "../../mixins.less";
 @import "../../colors.less";
 @import "../../variables.less";
+
 @navbar-margin-top: 18px;
 @navbar-margin-top-hdpi: 12px;
+
 .navBarLinks {
     ul {
         padding: 0;
@@ -12,52 +14,56 @@
 }
 
 .navBarLink {
-    .hdpi( {
+    .hdpi({
         font-size: 16px;
-    }
-    );
+    });
     position: relative;
-    font-family: @lato1;
+    font-family: @lato2;
     font-size: 22px;
     letter-spacing: 0em;
     display: inline-block;
     margin-right: 2px;
     vertical-align: top;
     text-align: center;
+
     &:last-child {
         margin-right: 0;
     }
+
     a {
-        color: #000;
+        color: rgba(0, 0, 0, 0.7);
         text-decoration: none;
         cursor: pointer;
+        .transition(all 0.7s);
+
         .hyperlink, .highlight {
-            .hdpi( {
+            .hdpi({
                 height: @navbarHeightHDPI;
                 margin-top: 0;
-            }
-            );
+            });
             margin-top: @navbar-margin-top;
             height: @navbarHeight - @navbar-margin-top;
             padding: 20px 10px 0 10px;
-            .transition(all 0.2s);
         }
+
         .mediaLink {
             padding: 20px 20px 0 20px;
         }
+
         &:hover {
             color: @logo-blue + #444;
         }
-        &.active div {
+
+        &.active {
             color: @logo-blue;
         }
+
         .highlight {
-            .hdpi( {
+            .hdpi({
                 margin-top: @navbar-margin-top-hdpi;
-            }
-            );
+            });
             width: 100%;
-            top: 0;
+            bottom: 0;
             padding: 0;
             margin-top: @navbar-margin-top;
             position: absolute;
@@ -65,7 +71,7 @@
             height: 5px;
             z-index: -1;
             background-color: @light-blue;
-            transform: translate3d(0, 0, 0);
+
             &.active {
                 opacity: 1.0;
             }

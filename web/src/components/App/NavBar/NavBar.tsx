@@ -1,6 +1,7 @@
 import 'less/App/NavBar/nav-bar-layout.less';
 import 'less/App/NavBar/nav-bar.less';
 
+import * as classNames from 'classnames';
 import * as React from 'react';
 
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
@@ -39,8 +40,12 @@ export default class NavBar extends React.Component<NavBarProps, NavBarState> {
     }
 
     render() {
+        const clazz = classNames('navBar', {
+            homeTheme: this.props.currentBasePath === '/',
+        });
+
         return (
-            <div className="navBar">
+            <div className={clazz}>
                 <NavBarLogo
                     onClick={this.props.onClick}
                 />
