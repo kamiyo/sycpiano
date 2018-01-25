@@ -27,7 +27,7 @@ const detailSectionMargin = (extra?: number) => css`margin-bottom: ${20 + (extra
 
 let EventItemBody: React.SFC<EventItemBody> = (props) => (
     <div className={props.className}>
-        <FlexEventDate dateTime={props.dateTime} />
+        <div><FlexEventDate dateTime={props.dateTime} /></div>
 
         <FlexEventInfoContainer>
             <EventName className={detailSectionMargin()} name={props.name} />

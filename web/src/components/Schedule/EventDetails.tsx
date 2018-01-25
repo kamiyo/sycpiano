@@ -79,7 +79,7 @@ let EventLocation: React.SFC<EventLocationProps> = (props) => {
         <a href={getGoogleMapsSearchUrl(props.location)} className={props.className}>
             <LocationIconInstance className={locationIconStyle} />
 
-            <strong className={css({ color: 'black' })}>
+            <strong className={css`color: black; margin-left: 10px;`}>
                 {getVenueName(props.location)}
             </strong>
         </a>
@@ -146,7 +146,7 @@ interface EventWebsiteButtonProps {
 
 let EventWebsiteButton: React.SFC<EventWebsiteButtonProps> = (props) => (
     <a href={props.website} target="_blank" className={props.className}>
-        {`tickets & info`}
+        {`Tickets & Info`}
     </a>
 );
 
