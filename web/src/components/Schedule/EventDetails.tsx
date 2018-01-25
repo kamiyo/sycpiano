@@ -67,7 +67,7 @@ const getVenueName = (location: string): string => {
     // Howard L. Schrott Center for the Arts, 610 W 46th St, Indianapolis, IN 46208, USA
     const locArray = location.split(', ');
     return locArray.length >= 1 ? locArray[0] : '';
-}
+};
 
 let EventLocation: React.SFC<EventLocationProps> = (props) => {
     const locationIconStyle = css({

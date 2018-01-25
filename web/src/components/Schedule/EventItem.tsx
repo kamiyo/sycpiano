@@ -1,5 +1,3 @@
-import 'less/Schedule/event-item.less';
-
 import React from 'react';
 
 import { EventListName } from 'src/components/Schedule/actionTypes';

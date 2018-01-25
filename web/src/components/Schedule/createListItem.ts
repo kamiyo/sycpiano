@@ -31,6 +31,7 @@ class MonthItem {
     readonly month: string;
     readonly year: number;
     readonly dateTime: Moment;
+
     constructor(properties: MonthItemInputShape) {
         this.type = 'month';
         this.month = properties.month;
