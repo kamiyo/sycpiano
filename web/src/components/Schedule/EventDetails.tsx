@@ -1,175 +1,180 @@
-import 'less/Schedule/event-details.less';
-
-import classNames from 'classnames';
-import Flexbox from 'flexbox-react';
+import { startCase } from 'lodash-es/string';
 import { Moment } from 'moment-timezone';
-import * as React from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import styled, { css } from 'react-emotion';
 
-import { createFetchLatLngAction } from 'src/components/Schedule/actions';
-import { EventListName } from 'src/components/Schedule/actionTypes';
-import { ClockIconInstance } from 'src/components/Schedule/ClockIconSVG';
-import { DateIconInstance } from 'src/components/Schedule/DateIconSVG';
-import { EventDetailsItem } from 'src/components/Schedule/EventDetailsContent';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
-import { TrebleIconInstance } from 'src/components/Schedule/TrebleIconSVG';
-import { DayItemShape } from 'src/components/Schedule/types';
-import { GlobalStateShape } from 'src/types';
-import { formatLocation, FormattedLocationShape } from 'src/utils';
+import { Collaborator, Piece } from 'src/components/Schedule/types';
+import { getGoogleMapsSearchUrl } from 'src/components/Schedule/utils';
 
-interface CollaboratorsProps { collaborators: Array<{ name: string; instrument: string }>; }
+import { lightBlue, magenta, textGrey } from 'src/styles/colors';
+import { lato2 } from 'src/styles/fonts';
 
-const Collaborators: React.SFC<CollaboratorsProps> = ({ collaborators }) => (
-    <div className="collaborators">
-        {collaborators.length ? <div>with</div> : null}
-        {
-            collaborators.length ? (
-                collaborators.map((collab, idx) => (
-                    <div key={idx} className="collaborator__item">{[collab.name, collab.instrument].filter((val) => val).join(', ')}</div>
-                ))
-            ) : <div>Solo Concert</div>
-        }
+const eventDateDimension = '107px';
+const locationIconDimension = '30px';
+
+interface EventDateTimeProps { dateTime: Moment; className?: string; }
+
+let EventDate: React.SFC<EventDateTimeProps> = (props) => (
+    <div className={props.className}>
+        <div className={css({ fontSize: '35px' })}>
+            {parseInt(props.dateTime.format('D'), 10)}
+        </div>
+        <div className={css({ fontSize: '20px' })}>
+            {props.dateTime.format('ddd')}
+        </div>
     </div>
 );
 
-interface DateTimeDetailsProps {
+EventDate = styled(EventDate)`
+    text-align: center;
+    background-color: ${lightBlue};
+    color: white;
+    height: ${eventDateDimension};
+    width: ${eventDateDimension};
+    line-height: 43px;
+    border-radius: 50%;
+    padding: 12px;
+`;
+
+interface EventNameProps { name: string; className?: string; }
+
+let EventName: React.SFC<EventNameProps> = (props) => (
+    <div className={props.className}>{props.name}</div>
+);
+
+EventName = styled(EventName)`
+    font-size: 35px;
+    font-family: ${lato2};
+`;
+
+let EventTime: React.SFC<EventDateTimeProps> = (props) => (
+    <div className={props.className}>
+        {props.dateTime.format('h:mm a z')}
+    </div>
+);
+
+EventTime = styled(EventTime)`font-size: 20px;`;
+
+interface EventLocationProps { location: string; className?: string; }
+
+const getVenueName = (location: string): string => {
+    if (!location) {
+        return '';
+    }
+
+    // Example location string:
+    // Howard L. Schrott Center for the Arts, 610 W 46th St, Indianapolis, IN 46208, USA
+    const locArray = location.split(', ');
+    return locArray.length >= 1 ? locArray[0] : '';
+};
+
+let EventLocation: React.SFC<EventLocationProps> = (props) => {
+    const locationIconStyle = css({
+        height: locationIconDimension,
+        width: locationIconDimension,
+    });
+
+    return (
+        <a href={getGoogleMapsSearchUrl(props.location)} className={props.className}>
+            <LocationIconInstance className={locationIconStyle} />
+
+            <strong className={css`color: black; margin-left: 10px;`}>
+                {getVenueName(props.location)}
+            </strong>
+        </a>
+    );
+};
+
+EventLocation = styled(EventLocation)`
+    font-size: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`;
+
+interface EventCollaboratorsProps {
+    collaborators: Collaborator[];
     className?: string;
-    dateTime: Moment;
 }
 
-const DateDetails: React.SFC<DateTimeDetailsProps> = (props) => (
-    <div className={classNames('dateDetails', props.className)}>
-        <div className="dayOfWeek">{props.dateTime.format('dddd')}</div>
-        <div className="dayOfMonth">{props.dateTime.format('MMMM D')}</div>
-    </div>
-);
-
-const TimeDetails: React.SFC<DateTimeDetailsProps> = (props) => (
-    <div className={classNames('timeDetails', props.className)}>
-        {props.dateTime.format('h:mmA z')}
-    </div>
-);
-
-interface LocationDetailsProps {
-    className?: string;
-    location: FormattedLocationShape;
-}
-
-const LocationDetails: React.SFC<LocationDetailsProps> = (props) => (
-    <div className={classNames('locationDetails', props.className)}>
-        <div className="venue">{props.location.venue}</div>
-        <div className="street">{props.location.street}</div>
-        <div className="stateZipCountry">{props.location.stateZipCountry}</div>
-    </div>
-);
-
-interface ProgramDetailsProps {
-    className?: string;
-    program: string[];
-}
-
-const ProgramDetails: React.SFC<ProgramDetailsProps> = (props) => (
-    <div className={classNames('programDetails', props.className)}>
-        {
-            props.program.map((piece: string, index: number) => (
-                <div className="programDetails__piece" key={index}>
-                    {piece}
+let EventCollaborators: React.SFC<EventCollaboratorsProps> = (props) => (
+    <div className={props.className}>
+        {props.collaborators.map((collaborator: Collaborator, i: number) => (
+            collaborator.name && collaborator.instrument && (
+                <div key={i}>
+                    <span><strong>{collaborator.name}</strong></span>{' - '}
+                    <span>{startCase(collaborator.instrument)}</span>
                 </div>
-            ))
-        }
+            )
+        ))}
     </div>
 );
 
-interface EventDetailsStateToProps {
-    readonly currentItem: DayItemShape;
-    readonly currentLatLng: {
-        readonly lat: number;
-        readonly lng: number;
-    };
-    readonly isFetchingLatLng: boolean;
-    readonly type: EventListName;
+EventCollaborators = styled(EventCollaborators)`
+    list-style: none;
+    padding: 0;
+    font-family: ${lato2};
+`;
+
+interface EventProgramProps {
+    program: Piece[];
+    className?: string;
 }
 
-interface EventDetailsDispatchToProps {
-    readonly createFetchLatLngAction: (location: string) => any;
-}
-
-type EventDetailsProps = EventDetailsStateToProps & EventDetailsDispatchToProps;
-
-class EventDetails extends React.Component<EventDetailsProps, {}> {
-    componentWillUpdate(nextProps: EventDetailsProps) {
-        if (nextProps.currentItem && nextProps.currentItem !== this.props.currentItem) {
-            this.props.createFetchLatLngAction(nextProps.currentItem.location);
-        }
-    }
-
-    render() {
-        if (!this.props.currentItem) {
-            return null;
-        }
-
-        const {
-            name,
-            dateTime,
-            collaborators,
-            location,
-            program,
-        } = this.props.currentItem;
-
-        const formattedLocation = formatLocation(location);
-
-        return (
-            <div className="event-details">
-                <h1 className="event-details__name">{name}</h1>
-
-                <Collaborators collaborators={collaborators} />
-
-                <Flexbox>
-                    <Flexbox element="div" flexGrow={1}>
-                        <EventDetailsItem
-                            icon={<DateIconInstance className="date-icon" date={dateTime} />}
-                            content={<DateDetails dateTime={dateTime} />}
-                        />
-                    </Flexbox>
-
-                    <Flexbox element="div" flexGrow={1}>
-                        <EventDetailsItem
-                            icon={<ClockIconInstance className="clock-icon" date={dateTime} />}
-                            content={<TimeDetails dateTime={dateTime} />}
-                        />
-                    </Flexbox>
-                </Flexbox>
-
-                <EventDetailsItem
-                    icon={<LocationIconInstance className="location-icon" />}
-                    content={<LocationDetails location={formattedLocation} />}
-                />
-
-                <EventDetailsItem
-                    className="eventLocation"
-                    icon={<TrebleIconInstance className="treble-icon" />}
-                    content={<ProgramDetails program={program} />}
-                />
+let EventProgram: React.SFC<EventProgramProps> = (props) => (
+    <div className={props.className}>
+        {props.program.map(({ composer, piece }: Piece, i: number) => (
+            <div key={i}>
+                {composer}{piece ? ': ' : ''}<i>{piece}</i>
             </div>
-        );
-    }
+        ))}
+    </div>
+);
+
+EventProgram = styled(EventProgram)`
+    list-style: none;
+    padding: 0;
+    font-size: 20px;
+    font-family: ${lato2};
+`;
+
+interface EventWebsiteButtonProps {
+    website: string;
+    className?: string;
 }
 
-const mapStateToProps = (state: GlobalStateShape) => {
-    const name = state.schedule_eventItems.activeName;
-    return {
-        currentItem: state.schedule_eventItems[name].currentItem,
-        currentLatLng: state.schedule_eventItems[name].currentLatLng,
-        isFetchingLatLng: state.schedule_eventItems[name].isFetchingLatLng,
-        type: name,
-    };
-};
+let EventWebsiteButton: React.SFC<EventWebsiteButtonProps> = (props) => (
+    <a href={props.website} target="_blank" className={props.className}>
+        {`Tickets & Info`}
+    </a>
+);
 
-const mapDispatchToProps: EventDetailsDispatchToProps = {
-    createFetchLatLngAction,
-};
+EventWebsiteButton = styled(EventWebsiteButton)`
+    display: block;
+    font-size: 20px;
+    width: 150px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 4px;
+    font-family: ${lato2};
+    background-color: ${magenta};
+    color: ${textGrey};
+    transition: all 0.25s;
 
-export default connect<EventDetailsStateToProps, EventDetailsDispatchToProps>(
-    mapStateToProps,
-    mapDispatchToProps,
-)(EventDetails);
+    &:hover {
+        background-color: tint(${magenta}, 25%);
+        color: white;
+        cursor: pointer;
+    }
+`;
+
+export {
+    EventCollaborators,
+    EventDate,
+    EventLocation,
+    EventName,
+    EventProgram,
+    EventTime,
+    EventWebsiteButton,
+};

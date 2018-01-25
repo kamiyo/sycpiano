@@ -1,19 +1,17 @@
 import { Moment } from 'moment-timezone';
 
-import { DayItemInputShape, EventItemInputShape, MonthItemInputShape } from 'src/components/Schedule/types';
+import { Collaborators, DayItemInputShape, EventItemInputShape, MonthItemInputShape, Pieces } from 'src/components/Schedule/types';
 
 class DayItem {
     readonly id: string;
     readonly type: 'day';
     readonly name: string;
-    readonly program: string[];
-    readonly collaborators: Array<{
-        name: string;
-        instrument: string;
-    }>;
+    readonly program: Pieces;
+    readonly collaborators: Collaborators;
     readonly eventType: 'concerto' | 'chamber' | 'solo' | 'masterclass';
     readonly dateTime: Moment;
     readonly location: string;
+    readonly website: string;
 
     constructor(properties: DayItemInputShape) {
         this.id = properties.id;
@@ -24,6 +22,7 @@ class DayItem {
         this.eventType = properties.eventType;
         this.dateTime = properties.dateTime;
         this.location = properties.location;
+        this.website = properties.website;
     }
 }
 
@@ -32,6 +31,7 @@ class MonthItem {
     readonly month: string;
     readonly year: number;
     readonly dateTime: Moment;
+
     constructor(properties: MonthItemInputShape) {
         this.type = 'month';
         this.month = properties.month;

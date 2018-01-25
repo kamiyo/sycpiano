@@ -17,6 +17,7 @@ const Calendar = (sequelize, dataTypes) => {
         timezone: dataTypes.STRING,
         location: dataTypes.STRING,
         type: dataTypes.STRING,
+        website: dataTypes.STRING,
     });
     calendar.associate = (models) => {
         calendar.hasMany(models.calendarPiece);

@@ -1,6 +1,5 @@
-import 'less/Schedule/event-list.less';
-
-import * as React from 'react';
+import React from 'react';
+import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
@@ -85,22 +84,24 @@ class EventList extends React.Component<EventListProps, EventListState> {
         if (this.updateReason === 'typeChange') {
             nextProps.switchList(nextProps.type);
             return;
-        } else if (this.updateReason === 'activeChange') {
+        }
+
+        if (this.updateReason === 'activeChange') {
             const date = nextProps.match.params.date;
             let params;
             if (nextProps.eventItems.length === 0) {
                 if (date) {
                     params = { date: moment(date, 'YYYY-MM-DD'), scrollTo: true };
-                } else {
-                    if (nextProps.activeName === 'upcoming') {
-                        params = { after: moment(), scrollTo: true };
-                    } else if (nextProps.activeName === 'archive') {
-                        params = { before: moment(), scrollTo: true };
-                    }
+                } else if (nextProps.activeName === 'upcoming') {
+                    params = { after: moment(), scrollTo: true };
+                } else if (nextProps.activeName === 'archive') {
+                    params = { before: moment(), scrollTo: true };
                 }
-            } else if (date && nextProps.eventItems.find((value) => {
-                return value.dateTime.isSame(moment(date), 'day');
-            })) {
+            } else if (
+                date &&
+                nextProps.eventItems.find(
+                    (value) => value.dateTime.isSame(moment(date), 'day'))
+            ) {
                 params = { date: moment(date, 'YYYY-MM-DD'), scrollTo: true };
             } else {
                 return;
@@ -181,7 +182,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
 
     render() {
         return (
-            <div className="event-list">
+            <div className={css`width: 100%; height: 100%;`}>
                 {
                     <AutoSizer>
                         {({ height, width }) => (
