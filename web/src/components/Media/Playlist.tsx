@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styled from 'react-emotion';
+import { css, cx } from 'react-emotion';
 import { Transition } from 'react-transition-group';
 
 import TweenLite from 'gsap/TweenLite';
@@ -9,7 +9,7 @@ import { PlaylistProps } from 'src/components/Media/types';
 import { playlistBackground } from 'src/styles/colors';
 import { lato1 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { playlistTogglerWidth, playlistWidth } from 'src/styles/variables';
+import { playlistContainerWidth, playlistWidth } from 'src/styles/variables';
 
 const slideLeft = (element: HTMLElement, amount: number, delay = 0) => {
     TweenLite.fromTo(element, 0.4, { x: amount }, { x: 0, ease: 'Power3.easeOut', delay });
@@ -20,20 +20,19 @@ const slideRight = (element: HTMLElement, amount: number, delay = 0) => {
 };
 
 // need to add in css from parent
-const PlaylistAndToggler = styled<{ extraStyles: string; }, 'div'>('div')`
+const playlistContainerStyle = css`
     position: fixed;
     height: inherit;
     right: 0;
-    width: ${playlistWidth};
-    transform: translateX(${playlistWidth - playlistTogglerWidth}px);
+    width: ${playlistContainerWidth}px;
+    transform: translateX(${playlistWidth}px);
     font-family: ${lato1};
     z-index: 50;
     display: flex;
     ${noHighlight}
-    ${props => props.extraStyles}
 `;
 
-const StyledPlaylist = styled('ul')`
+const playlistStyle = css`
     padding: 0;
     margin: 0;
     width: 100%;
@@ -67,14 +66,25 @@ class Playlist<T> extends React.Component<PlaylistProps<T>, {}> {
                 }}
                 timeout={400}
             >
-                <PlaylistAndToggler extraStyles={props.extraStyles}>
+                <div
+                    className={cx(
+                        playlistContainerStyle,
+                        props.extraStyles && props.extraStyles.div,
+                    )}
+                >
                     {props.hasToggler && <PlaylistToggler
                         isPlaylistVisible={props.isShow}
                         onClick={() => {
                             props.togglePlaylist();
                         }}
                     />}
-                    <StyledPlaylist innerRef={(ul) => this.ulRef = ul}>
+                    <ul
+                        ref={(ul) => this.ulRef = ul}
+                        className={cx(
+                            playlistStyle,
+                            props.extraStyles && props.extraStyles.ul,
+                        )}
+                    >
                         {props.items.map((item: any) => (
                             <props.ChildRenderer
                                 key={item.id}
@@ -83,8 +93,8 @@ class Playlist<T> extends React.Component<PlaylistProps<T>, {}> {
                                 onClick={props.onClick}
                             />
                         ))}
-                    </StyledPlaylist>
-                </PlaylistAndToggler>
+                    </ul>
+                </div>
             </Transition>
         );
     }

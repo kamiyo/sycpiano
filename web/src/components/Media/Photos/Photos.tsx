@@ -45,7 +45,7 @@ const StyledPhotos = styled('div')`
 
 const StyledPhotoViewer = styled('div')`
     position: absolute;
-    width: calc(100% - ${playlistWidth});
+    width: calc(100% - ${playlistWidth}px);
     height: 100%;
     display: flex;
     justify-content: center;
@@ -60,11 +60,11 @@ const StyledPhotoViewer = styled('div')`
 `;
 
 const photoListStyle = css`
-    ul {
-        background-color: black;
-    }
-
     padding-left: 5px;
+    background-color: black;
+`;
+
+const photoULStyle = css`
     background-color: black;
 `;
 
@@ -135,7 +135,10 @@ class Photos extends React.Component<PhotosProps, {}> {
                         this.createPhotoElement(item, idx))}
                 </StyledPhotoViewer>
                 <Playlist
-                    extraStyles={photoListStyle}
+                    extraStyles={{
+                        div: photoListStyle,
+                        ul: photoULStyle,
+                    }}
                     currentItemId={this.idFromItem(this.props.currentItem)}
                     hasToggler={false}
                     isShow={true}

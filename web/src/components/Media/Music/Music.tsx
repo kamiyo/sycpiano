@@ -1,7 +1,5 @@
-import 'less/Media/media-content.less';
-import 'less/Media/Music/music.less';
-
 import * as React from 'react';
+import { css } from 'react-emotion';
 import { connect, Dispatch } from 'react-redux';
 import { match } from 'react-router';
 
@@ -17,6 +15,8 @@ import MusicPlaylist from 'src/components/Media/Music/MusicPlaylist';
 
 import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
+
+import { pushed } from 'src/styles/mixins';
 
 interface MusicState {
     readonly isPlaying: boolean;
@@ -41,6 +41,12 @@ interface MusicOwnProps {
 }
 
 type MusicProps = MusicOwnProps & MusicStateToProps & MusicDispatchToProps;
+
+const musicStyle = css`
+    ${pushed}
+    width: 100%;
+    background-color: black;
+`;
 
 class Music extends React.Component<MusicProps, MusicState> {
     autoPlay = false;
@@ -253,7 +259,7 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     render() {
         return (
-            <div className="mediaContent music">
+            <div className={musicStyle}>
                 <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
                 <MusicPlaylist
                     onClick={this.loadTrack}

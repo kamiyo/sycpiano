@@ -1,5 +1,3 @@
-
-
 export const lato0 = 'LatoHairline, sans-serif';
 export const lato1 = 'LatoThin, sans-serif';
 export const lato2 = 'LatoLight, sans-serif';

@@ -3,9 +3,9 @@ import * as React from 'react';
 import styled, { css } from 'react-emotion';
 
 import { VideoItemShape } from 'src/components/Media/Videos/types';
-import { playlistBackground, lightBlue } from 'src/styles/colors';
+import { lightBlue, playlistBackground } from 'src/styles/colors';
+import { lato1, lato2 } from 'src/styles/fonts';
 import { playlistWidth } from 'src/styles/variables';
-import { lato2 } from 'src/styles/fonts';
 
 interface VideoPlaylistItemProps {
     readonly item: VideoItemShape;
@@ -13,7 +13,7 @@ interface VideoPlaylistItemProps {
     readonly onClick: (id: string) => void;
 }
 
-const aspectRatio = 4/3;
+const aspectRatio = 4 / 3;
 const thumbnailWidth = Math.floor(playlistWidth * 0.2);
 const itemHeight = thumbnailWidth / aspectRatio;
 
@@ -25,26 +25,18 @@ const section = css`
 `;
 
 const ImageContainer = styled('div')`
+    ${section}
     height: 100%;
-    width: ${thumbnailWidth};
+    width: ${thumbnailWidth}px;
     position: relative;
 
     img {
         width: 100%;
         filter: saturate(50%) brightness(60%);
     }
-    ${section}
 `;
 
-const Duration = styled('span')`
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    color: #fff;
-    padding-right: 3px;
-`;
-
-const StyledVideoItem = styled('li')`
+const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li')`
     background-color: ${playlistBackground};
     list-style: none;
     cursor: pointer;
@@ -56,48 +48,84 @@ const StyledVideoItem = styled('li')`
 
     transition: all 0.15s;
 
-    &:hover, &.active {
+    &:hover {
         background-color: rgba(255, 255, 255, 1);
 
-        .imageContainer img {
+        ${ImageContainer as any} img {
             filter: brightness(60%);
         }
     }
 
-    &.active {
-        border-left-color: ${lightBlue};
+    ${props => props.active ?
+        `border-left-color: ${lightBlue};
+        background-color: rgba(255, 255, 255, 1);
 
-        .imageContainer .duration {
-            color: #4E86A4 + #555;
-            font-family: ${lato2};
-        }
-    }
+        ${ImageContainer} img {
+            filter: brightness(60%);
+        }`
+    : ''}
 
 `;
 
+const Duration = styled<{ active: boolean; children: string; }, 'span'>('span')`
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    color: ${props => (props.active) ? '#4E86A4 + #555' : '#fff'};
+    font-family: ${props => (props.active) ? lato2 : lato1};
+    padding-right: 3px;
+`;
+
+const VideoInfo = styled('div')`
+    ${section}
+    width: calc(80% - 20px);
+    height: 100%;
+    padding: 0 20px;
+    position: relative;
+`;
+
+const h4style = css`
+    margin: 0;
+    color: black;
+    font-size: 15px;
+    position: absolute;
+`;
+
+const TextTop = styled('h4')`
+    ${h4style}
+    padding-top: 5px;
+    top: 0;
+`;
+
+const TextBottom = styled('h4')`
+    ${h4style}
+    padding-bottom: 5px;
+    bottom: 0;
+`;
+
 const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentItemId, onClick }) => (
-    <li
-        className={`videoPlaylistItem${(currentItemId === item.id) ? ' active' : ''}`}
+    <StyledVideoItem
+        active={currentItemId === item.id}
         onClick={() => onClick(item.id)}
     >
         <div className="itemContent">
             <ImageContainer>
                 <img src={item.snippet.thumbnails.high.url} />
-                <Duration>
+                <Duration active={currentItemId === item.id}>
                     {videoDurationToDisplay(item.contentDetails.duration)}
                 </Duration>
             </ImageContainer>
-            <div className="section videoInfo">
-                <h4 className="text-top">
+            <VideoInfo>
+                <TextTop>
                     {item.snippet.title}
-                </h4>
-                <h4 className="text-bottom">
+                </TextTop>
+                <TextBottom>
                     {item.statistics.viewCount} views
                         | published on {publishedDateToDisplay(item.snippet.publishedAt)}
-                </h4>
-            </div>
+                </TextBottom>
+            </VideoInfo>
         </div>
-    </li>
+    </StyledVideoItem>
 );
 
 export default VideoPlaylistItem;

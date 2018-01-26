@@ -3,6 +3,7 @@ export const navBarHeight = {
     hdpi: '50px',
 };
 
-export const playlistWidth = 550;
+export const playlistContainerWidth = 550;
 export const playlistTogglerWidth = 20;
+export const playlistWidth = playlistContainerWidth - playlistTogglerWidth;
 export const playlistPadding = 10;

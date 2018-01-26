@@ -14,13 +14,13 @@ export const pushed = css({
 });
 
 export const link = (color: string, hoverDelta = '#444') => css`
-    color: @color;
+    color: ${color};
     text-decoration: none;
     cursor: pointer;
     transition: color: 0.5s;
 
     &:hover {
-        color: ${color} - ${hoverDelta};
+        color: calc(${color} - ${hoverDelta});
     }
 `;
 
