@@ -1,5 +1,5 @@
 import SCHEDULE_ACTIONS from 'src/components/Schedule/actionTypeKeys';
-import { DayItemShape, EventItemShape } from 'src/components/Schedule/types';
+import { DayItem, EventItemType } from 'src/components/Schedule/types';
 
 export type EventListName = 'upcoming' | 'archive';
 
@@ -10,8 +10,8 @@ export interface SwitchList {
 
 export interface FetchEventsSuccess {
     readonly type: typeof SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS;
-    readonly listItems: EventItemShape[];
-    readonly currentItem: DayItemShape;
+    readonly listItems: EventItemType[];
+    readonly currentItem: DayItem;
     readonly hasMore: boolean;
 }
 
@@ -39,7 +39,7 @@ export interface FetchLatLngError {
 
 export interface SelectEvent {
     readonly type: typeof SCHEDULE_ACTIONS.SELECT_EVENT;
-    readonly eventItem: DayItemShape;
+    readonly eventItem: DayItem;
 }
 
 export interface OtherAction {

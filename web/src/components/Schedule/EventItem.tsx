@@ -2,10 +2,10 @@ import React from 'react';
 
 import { EventListName } from 'src/components/Schedule/actionTypes';
 import { EventItemBody } from 'src/components/Schedule/EventItemBody';
-import { DayItemShape } from 'src/components/Schedule/types';
+import { DayItem } from 'src/components/Schedule/types';
 
 interface EventItemProps {
-    readonly event: DayItemShape;
+    readonly event: DayItem;
     readonly style: React.CSSProperties;
     readonly handleSelect: () => void;
     readonly measure: () => void;

@@ -7,19 +7,6 @@ import { EventListName } from 'src/components/Schedule/actionTypes';
 
 export type EventType = 'concerto' | 'chamber' | 'solo' | 'masterclass';
 
-export interface GCalEvent {
-    readonly description: any;
-    readonly id: string;
-    readonly location: string;
-    readonly start: {
-        readonly dateTime?: Moment;
-        readonly date?: Moment;
-        readonly timeZone?: string;
-    };
-    readonly summary: string;
-    readonly [key: string]: any; // other params
-}
-
 export interface Collaborator {
     name: string;
     instrument: string;
@@ -45,11 +32,8 @@ export interface CachedEvent {
     readonly website?: string;
 }
 
-interface DayOrMonth {
-    type: 'day' | 'month';
-}
-
-export interface DayItemInputShape {
+export interface DayItem {
+    readonly type: 'day';
     readonly id: string;
     readonly name: string;
     readonly collaborators: Collaborators;
@@ -60,19 +44,14 @@ export interface DayItemInputShape {
     readonly website?: string;
 }
 
-export interface MonthItemInputShape {
+export interface MonthItem {
+    readonly type: 'month';
     readonly dateTime: Moment;
     readonly month: string;
     readonly year: number;
 }
 
-export type EventItemInputShape = DayItemInputShape | MonthItemInputShape;
-
-export type DayItemShape = DayOrMonth & DayItemInputShape;
-
-export type MonthItemShape = DayOrMonth & MonthItemInputShape;
-
-export type EventItemShape = DayItemShape | MonthItemShape;
+export type EventItemType = DayItem | MonthItem;
 
 export interface ScheduleStateShape {
     activeName: EventListName;
@@ -81,12 +60,9 @@ export interface ScheduleStateShape {
 }
 
 export interface EventItemsStateShape {
-    readonly items: SortedArraySet<EventItemShape>;
-    readonly currentItem: DayItemShape;
-    readonly currentLatLng: {
-        readonly lat: number;
-        readonly lng: number;
-    };
+    readonly items: SortedArraySet<EventItemType>;
+    readonly currentItem: DayItem;
+    readonly currentLatLng: LatLngLiteral;
     readonly hasEventBeenSelected: boolean;
     readonly isFetchingList: boolean;
     readonly isFetchingLatLng: boolean;

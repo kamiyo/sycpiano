@@ -1,21 +1,25 @@
 import SCHEDULE_ACTIONS from 'src/components/Schedule/actionTypeKeys';
 import ActionType from 'src/components/Schedule/actionTypes';
-import { EventItemShape, EventItemsStateShape, ScheduleStateShape } from 'src/components/Schedule/types';
+import {
+    EventItemsStateShape,
+    EventItemType,
+    ScheduleStateShape,
+} from 'src/components/Schedule/types';
 
 import { SortedArraySet } from 'collections/sorted-array-set';
 import { default as moment, Moment } from 'moment';
 
-function equals(a: EventItemShape, b: EventItemShape) {
+function equals(a: EventItemType, b: EventItemType) {
     return a.dateTime.isSame(b.dateTime, 'minute');
 }
 
-function ascendCompare(a: EventItemShape, b: EventItemShape) {
+function ascendCompare(a: EventItemType, b: EventItemType) {
     if (a.dateTime.isSame(b.dateTime, 'minute')) { return 0; }
     if (a.dateTime.isBefore(b.dateTime, 'minute')) { return -1; }
     if (a.dateTime.isAfter(b.dateTime, 'minute')) { return 1; }
 }
 
-function descendCompare(a: EventItemShape, b: EventItemShape) {
+function descendCompare(a: EventItemType, b: EventItemType) {
     const aTime = (a.type === 'month') ? moment(a.dateTime).endOf('month') : a.dateTime;
     const bTime = (b.type === 'month') ? moment(b.dateTime).endOf('month') : b.dateTime;
     if (aTime.isSame(bTime, 'minute')) { return 0; }
@@ -41,8 +45,14 @@ const initialState: EventItemsStateShape = {
 
 export const scheduleReducer = (state: ScheduleStateShape = {
     activeName: 'upcoming',
-    upcoming: { ...initialState, items: new SortedArraySet<EventItemShape>([], equals, ascendCompare) },
-    archive: { ...initialState, items: new SortedArraySet<EventItemShape>([], equals, descendCompare) },
+    upcoming: {
+        ...initialState,
+        items: new SortedArraySet<EventItemType>([], equals, ascendCompare),
+    },
+    archive: {
+        ...initialState,
+        items: new SortedArraySet<EventItemType>([], equals, descendCompare),
+    },
 }, action: ActionType) => {
     if (action.type === SCHEDULE_ACTIONS.SWITCH_LIST) {
         return {
@@ -66,7 +76,10 @@ export const scheduleReducer = (state: ScheduleStateShape = {
     }
 };
 
-const eventItemsReducer = (state: EventItemsStateShape = initialState, action: ActionType) => {
+const eventItemsReducer = (
+    state: EventItemsStateShape = initialState,
+    action: ActionType,
+) => {
     switch (action.type) {
         case SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS:
             state.items.addEach(action.listItems);
