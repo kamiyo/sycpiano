@@ -10,7 +10,7 @@ import {
     EventTime,
     EventWebsiteButton,
 } from 'src/components/Schedule/EventDetails';
-import { DayItemShape } from 'src/components/Schedule/types';
+import { DayItem } from 'src/components/Schedule/types';
 
 import { lato1 } from 'src/styles/fonts';
 
@@ -21,7 +21,7 @@ const FlexEventInfoContainer = styled('div')`
     padding: 0 0 0 35px;
 `;
 
-type EventItemBody = DayItemShape & { className?: string };
+type EventItemBody = DayItem & { className?: string };
 
 const detailSectionMargin = (extra?: number) => css`margin-bottom: ${20 + (extra || 0)}px`;
 

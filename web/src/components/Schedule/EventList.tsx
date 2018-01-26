@@ -13,23 +13,28 @@ import { createFetchEventsAction, selectEvent, switchList } from 'src/components
 import { EventListName } from 'src/components/Schedule/actionTypes';
 import EventItem from 'src/components/Schedule/EventItem';
 import EventMonthItem from 'src/components/Schedule/EventMonthItem';
-import { DayItemShape, EventItemShape, FetchEventsArguments, ListWithGrid, MonthItemShape } from 'src/components/Schedule/types';
+import {
+    DayItem,
+    EventItemType,
+    FetchEventsArguments,
+    ListWithGrid,
+} from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
 interface EventListStateToProps {
-    readonly eventItems: EventItemShape[];
+    readonly eventItems: EventItemType[];
     readonly hasEventBeenSelected: boolean;
     readonly minDate: Moment;
     readonly maxDate: Moment;
-    readonly currentItem: DayItemShape;
+    readonly currentItem: DayItem;
     readonly isFetchingList: boolean;
     readonly activeName: EventListName;
 }
 
 interface EventListDispatchToProps {
-    readonly selectEvent: (item: EventItemShape) => void;
+    readonly selectEvent: (item: EventItemType) => void;
     readonly createFetchEventsAction: (args: FetchEventsArguments) => void;
     readonly switchList: (name: EventListName) => void;
 }
@@ -207,24 +212,28 @@ class EventList extends React.Component<EventListProps, EventListState> {
         );
     }
 
-    private getScrollIndex = (currentItem: DayItemShape) => (
+    private getScrollIndex = (currentItem: DayItem) => (
         Math.max(0, this.props.eventItems.findIndex(
             (item) => (
                 item && item.type === 'day' &&
                 // in case we change parameter format, compare using moment
-                (item as DayItemShape).dateTime.isSame(currentItem.dateTime, 'day')
+                (item as DayItem).dateTime.isSame(currentItem.dateTime, 'day')
             ),
         ))
     )
 
-    private renderEventItem = (index: number, style: React.CSSProperties, measure: () => void) => {
+    private renderEventItem = (
+        index: number,
+        style: React.CSSProperties,
+        measure: () => void,
+    ) => {
         const item = this.props.eventItems[index];
         if (item.type === 'month') {
             return (
                 <EventMonthItem
                     measure={measure}
-                    month={(item as MonthItemShape).month}
-                    year={(item as MonthItemShape).year}
+                    month={item.month}
+                    year={item.year}
                     style={style}
                 />
             );
@@ -232,11 +241,11 @@ class EventList extends React.Component<EventListProps, EventListState> {
         return (
             <EventItem
                 measure={measure}
-                event={item as DayItemShape}
+                event={item as DayItem}
                 style={style}
                 handleSelect={() => this.props.selectEvent(item)}
                 type={this.props.type}
-                active={(item as DayItemShape).id === this.props.currentItem.id}
+                active={item.id === this.props.currentItem.id}
             />
         );
     }

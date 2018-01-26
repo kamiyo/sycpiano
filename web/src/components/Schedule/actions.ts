@@ -2,8 +2,8 @@ import SCHEDULE_ACTIONS from 'src/components/Schedule/actionTypeKeys';
 import * as ActionTypes from 'src/components/Schedule/actionTypes';
 import {
     CachedEvent,
-    DayItemShape,
-    EventItemShape,
+    DayItem,
+    EventItemType,
     FetchEventsAPIParams,
     FetchEventsArguments,
     LatLng,
@@ -34,7 +34,12 @@ const fetchEventsError = (): ActionTypes.FetchEventsError => ({
     type: SCHEDULE_ACTIONS.FETCH_EVENTS_ERROR,
 });
 
-type FetchEventsSuccess = (listItems: EventItemShape[], currentItem: DayItemShape, hasMore: boolean) => ActionTypes.FetchEventsSuccess;
+type FetchEventsSuccess = (
+    listItems: EventItemType[],
+    currentItem: DayItem,
+    hasMore: boolean,
+) => ActionTypes.FetchEventsSuccess;
+
 const fetchEventsSuccess: FetchEventsSuccess = (listItems, currentItem, hasMore) => ({
     type: SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS,
     listItems,
@@ -70,7 +75,7 @@ const fetchEvents = ({ after, before, date, scrollTo }: FetchEventsArguments): T
         const state = getState().schedule_eventItems;
         const listItems = transformCachedEventsToListItems(data, state[state.activeName].setOfMonths);
 
-        let currentItem: DayItemShape;
+        let currentItem: DayItem;
         const desiredDate = date || after || before;
         // find closest event to desired date.
         if (scrollTo) {
@@ -79,7 +84,7 @@ const fetchEvents = ({ after, before, date, scrollTo }: FetchEventsArguments): T
                     return item.type === 'day' && item;
                 }
                 return Math.abs(item.dateTime.diff(desiredDate, 'day', true)) < Math.abs(acc.dateTime.diff(desiredDate, 'day', true)) ? item : acc;
-            }, undefined) as DayItemShape;
+            }, undefined) as DayItem;
         }
         const hasMore = !!listItems.length;
         dispatch(fetchEventsSuccess(listItems, currentItem, hasMore));
@@ -133,7 +138,7 @@ export const createFetchLatLngAction = (location: string): ThunkAction<void, Glo
     }
 };
 
-export const selectEvent = (eventItem: DayItemShape): ActionTypes.SelectEvent => ({
+export const selectEvent = (eventItem: DayItem): ActionTypes.SelectEvent => ({
     type: SCHEDULE_ACTIONS.SELECT_EVENT,
     eventItem,
 });
