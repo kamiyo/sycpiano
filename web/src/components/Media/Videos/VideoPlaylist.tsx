@@ -1,5 +1,3 @@
-import 'less/Media/Videos/video-playlist.less';
-
 import * as React from 'react';
 import { connect } from 'react-redux';
 
