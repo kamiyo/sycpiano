@@ -14,6 +14,7 @@ import { ChildRendererProps } from 'src/components/Media/types';
 import { GlobalStateShape } from 'src/types';
 
 const fadeOnEnter = (element: HTMLElement) => {
+    console.log(`${(element as HTMLImageElement).src} entering`);
     TweenLite.fromTo(element, 0.6, { opacity: 0 }, { opacity: 1 });
 };
 
@@ -57,7 +58,8 @@ class Photos extends React.Component<PhotosProps, {}> {
                 in={isCurrent}
                 onEntering={fadeOnEnter}
                 onExiting={fadeOnExit}
-                timeout={0}
+                appear={true}
+                timeout={600}
             >
                 <img src={this.pathFromItem(item)} />
             </Transition>
