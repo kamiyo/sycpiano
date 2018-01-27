@@ -5,7 +5,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HappyPack = require('happypack');
 const path = require('path');
 const webpack = require('webpack');
-const CommonChunksPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
+const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const happyThreadPool = HappyPack.ThreadPool({ size: 6 });
 
 const sourcePaths = [
@@ -52,7 +52,6 @@ const config = {
     },
     plugins: [
         new webpack.EnvironmentPlugin(['NODE_ENV']),
-        new CommonChunksPlugin(),
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
         new CleanWebpackPlugin([path.resolve(__dirname, 'web/build')]),
         new HappyPack({

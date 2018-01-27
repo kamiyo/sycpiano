@@ -6,8 +6,8 @@ export const development = {
     host: '127.0.0.1',
     database: 'sycpiano',
     port: 5432,    // default
-    username: require('secret').username,
-    password: require('secret').password,
+    username: require('../secret').default.username,
+    password: require('../secret').default.password,
     dialect: 'postgres',
     logging: (str: string) => {
         console.log(str);
