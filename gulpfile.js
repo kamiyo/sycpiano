@@ -9,7 +9,10 @@ const linter = require('tslint');
 const webpack = require('webpack');
 const del = require('del');
 const webpackStream = require('webpack-stream');
-const webpackConfig = (process.env.NODE_ENV === 'production') ? require('./webpack.prod.config.js') : require('./webpack.dev.config.js');
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+const webpackConfig = isProduction ? require('./webpack.prod.config.js') : require('./webpack.dev.config.js');
 
 const tsProject = ts.createProject('server/tsconfig.json');
 
@@ -51,7 +54,12 @@ const copyModelsToAdmin = () => (
         .pipe(gulp.dest('admin/models/'))
 )
 
-const buildServer = gulp.series(gulp.parallel(lintServer, cleanServer), compileServer, copyModelsToAdmin);
+const buildServer = gulp.series(
+    // We don't need linting in production.
+    isProduction ? cleanServer : gulp.parallel(lintServer, cleanServer),
+    compileServer,
+    copyModelsToAdmin
+);
 
 gulp.task('build-server', buildServer);
 
