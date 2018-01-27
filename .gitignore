@@ -16,3 +16,4 @@ scripts/cpp/Eigen
 secret.ts
 web/build/
 server/build/
+yarn-error.log
