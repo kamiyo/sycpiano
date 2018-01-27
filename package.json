@@ -34,7 +34,6 @@
     "dotenv": "^4.0.0",
     "emotion": "^8.0.12",
     "express": "^4.16.2",
-    "flexbox-react": "https://github.com/ayc92/flexbox-react.git#react16",
     "graceful-fs": "^4.1.11",
     "gsap": "^1.20.3",
     "gulp": "^4.0.0",
