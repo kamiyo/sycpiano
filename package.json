@@ -14,7 +14,7 @@
     "start-dev": "cross-env NODE_ENV=development gulp run-dev",
     "start-prod": "./bin/start.sh",
     "test": "jest --config='__tests__/' --coverage",
-    "test-watch": "jest --config='__tests__/' --coverage --watchAll",
+    "test-watch": "jest --config='__tests__/' --coverage --watchAll"
   },
   "author": "",
   "repository": {
