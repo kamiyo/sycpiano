@@ -1,5 +1,3 @@
-import secret from '../secret';
-
 /*tslint:disable:no-var-requires*/
 require('dotenv').config();
 /*tslint:disable:no-var-requires*/
@@ -8,8 +6,8 @@ export const development = {
     host: '127.0.0.1',
     database: 'sycpiano',
     port: 5432,    // default
-    username: secret.username,
-    password: secret.password,
+    username: require('secret').username,
+    password: require('secret').password,
     dialect: 'postgres',
     logging: (str: string) => {
         console.log(str);
