@@ -37,6 +37,7 @@
     "gsap": "^1.20.3",
     "gulp": "^4.0.0",
     "gulp-nodemon": "^2.2.1",
+    "gulp-tslint": "^8.1.2",
     "gulp-typescript": "^3.2.3",
     "gulp-util": "^3.0.8",
     "happypack": "^4.0.0",
@@ -68,6 +69,9 @@
     "redux-thunk": "^2.2.0",
     "sequelize": "^4.28.6",
     "style-loader": "^0.19.1",
+    "ts-loader": "^3.3.1",
+    "tslint": "^5.9.1",
+    "tslint-react": "^3.4.0",
     "urijs": "^1.19.0",
     "url-loader": "^0.6.2",
     "webpack": "^3.10.0",
@@ -109,19 +113,14 @@
     "fork-ts-checker-webpack-plugin": "^0.2.9",
     "glob": "^7.1.2",
     "gm": "^1.23.0",
-    "gulp-tslint": "^8.1.2",
     "jest": "^22.0.3",
     "lodash": "^4.17.4",
     "mustache-express": "^1.2.5",
     "react-test-renderer": "^16.2.0",
     "redux-devtools": "^3.4.1",
     "smartcrop-gm": "^1.0.2",
-    "ts-loader": "^3.2.0",
-    "tslint": "^5.8.0",
-    "tslint-react": "^3.2.0",
     "typescript": "^2.6.2",
     "uglifyjs-webpack-plugin": "^1.1.4",
-    "umzug": "^2.1.0",
-    "webpack-bundle-analyzer": "^2.9.1"
+    "umzug": "^2.1.0"
   }
 }

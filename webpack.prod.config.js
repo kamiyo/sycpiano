@@ -4,7 +4,6 @@
 const merge = require('webpack-merge');
 const common = require('./webpack.common.config.js');
 const UgilfyJSPlugin = require('uglifyjs-webpack-plugin');
-const BundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const config = merge(common, {
     devtool: 'source-map',
