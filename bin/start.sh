@@ -1,3 +1,3 @@
-npm run build-prod;
+yarn run build-prod;
 node server/build/migrate up;
-npm start;
+yarn start;
