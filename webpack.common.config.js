@@ -53,6 +53,10 @@ const config = {
     plugins: [
         new webpack.EnvironmentPlugin(['NODE_ENV']),
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
+        new CommonsChunkPlugin({
+            name: 'sycpiano.common',
+            filename: 'sycpiano.common.js'
+        }),
         new CleanWebpackPlugin([path.resolve(__dirname, 'web/build')]),
         new HappyPack({
             id: 'ts',
