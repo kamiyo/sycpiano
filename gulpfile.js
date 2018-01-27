@@ -14,7 +14,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const webpackConfig = isProduction ? require('./webpack.prod.config.js') : require('./webpack.dev.config.js');
 
-const tsProject = ts.createProject('server/tsconfig.json');
+const tsProject = ts.createProject('./server/tsconfig.json');
 
 const buildApp = () => (
     gulp.src('./web/src/main.tsx')
@@ -26,13 +26,13 @@ gulp.task('build-app', buildApp);
 
 const cleanServer = () => (
     del([
-        'server/build/**/*.js',
+        './server/build/**/*.js',
     ])
 );
 
 const lintServer = () => {
-    const program = linter.Linter.createProgram("server/tsconfig.json");
-    return gulp.src('server/src/**/*.ts')
+    const program = linter.Linter.createProgram("./server/tsconfig.json");
+    return gulp.src('./server/src/**/*.ts')
         .pipe(tslint({
             formatter: 'stylish',
             program,
@@ -50,8 +50,8 @@ const compileServer = () => (
 )
 
 const copyModelsToAdmin = () => (
-    gulp.src(['server/build/models/*.js', '!server/build/models/index.js'])
-        .pipe(gulp.dest('admin/models/'))
+    gulp.src(['./server/build/models/*.js', '!./server/build/models/index.js'])
+        .pipe(gulp.dest('./admin/models/'))
 )
 
 const buildServer = gulp.series(
@@ -79,14 +79,14 @@ const webpackWatch = (done) => {
 }
 
 const watchServer = (done) => {
-    gulp.watch('server/src/**/*', buildServer);
+    gulp.watch('./server/src/**/*', buildServer);
     done();
 }
 
 const startNodemon = (done) => {
     nodemon({
         script: './app.js',
-        watch: ['web/build', 'server/build/api-router.js'],
+        watch: ['./web/build', './server/build/api-router.js'],
     });
     done();
 };
