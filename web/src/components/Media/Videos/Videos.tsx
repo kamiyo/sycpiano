@@ -1,7 +1,5 @@
-import 'less/Media/media-content.less';
-import 'less/Media/Videos/videos.less';
-
 import * as React from 'react';
+import styled from 'react-emotion';
 import { connect } from 'react-redux';
 
 import LoadingOverlay from 'src/components/Media/LoadingOverlay';
@@ -10,6 +8,8 @@ import VideoPlaylist from 'src/components/Media/Videos/VideoPlaylist';
 
 import { createFetchPlaylistAction, initializeYoutubeElement, resetPlayer } from 'src/components/Media/Videos/actions';
 import { GlobalStateShape } from 'src/types';
+
+import { pushed } from 'src/styles/mixins';
 
 interface VideosStateToProps {
     readonly videoId: string;
@@ -22,6 +22,16 @@ interface VideosDispatchToProps {
 }
 
 type VideosProps = VideosStateToProps & VideosDispatchToProps;
+
+const StyledVideos = styled('div')`
+    ${pushed}
+    width: 100%;
+    background-color: black;
+    iframe {
+        width: 100%;
+        height: 100%;
+    }
+`;
 
 class Videos extends React.Component<VideosProps, any> {
     domElement: HTMLElement;
@@ -37,14 +47,11 @@ class Videos extends React.Component<VideosProps, any> {
 
     render() {
         return (
-            <div
-                className="mediaContent videos"
-                ref={(div) => this.domElement = div}
-            >
+            <StyledVideos innerRef={(div) => this.domElement = div}>
                 <PreviewOverlay />
                 <LoadingOverlay />
                 <VideoPlaylist />
-            </div>
+            </StyledVideos>
         );
     }
 }

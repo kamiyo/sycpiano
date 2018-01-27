@@ -1,17 +1,20 @@
-import 'less/Media/Photos/photos.less';
-
-import classnames from 'classnames';
-import TweenLite from 'gsap/TweenLite';
-import path from 'path';
 import * as React from 'react';
+import styled, { css } from 'react-emotion';
 import { connect, Dispatch } from 'react-redux';
 import { Transition } from 'react-transition-group';
+
+import TweenLite from 'gsap/TweenLite';
+import path from 'path';
 
 import { createFetchPhotosAction, selectPhoto } from 'src/components/Media/Photos/actions';
 import { PhotoItem } from 'src/components/Media/Photos/types';
 import Playlist from 'src/components/Media/Playlist';
 import { ChildRendererProps } from 'src/components/Media/types';
 import { GlobalStateShape } from 'src/types';
+
+import { lightBlue } from 'src/styles/colors';
+import { pushed } from 'src/styles/mixins';
+import { playlistWidth } from 'src/styles/variables';
 
 const fadeOnEnter = (element: HTMLElement) => {
     console.log(`${(element as HTMLImageElement).src} entering`);
@@ -33,6 +36,64 @@ interface PhotosDispatchToProps {
 }
 
 type PhotosProps = PhotosStateToProps & PhotosDispatchToProps;
+
+const StyledPhotos = styled('div')`
+    ${pushed}
+    width: 100%;
+    background-color: black;
+`;
+
+const StyledPhotoViewer = styled('div')`
+    position: absolute;
+    width: calc(100% - ${playlistWidth}px);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+        position: absolute;
+        max-width: 100%;
+        max-height: 100%;
+        opacity: 0;
+    }
+`;
+
+const photoListStyle = css`
+    padding-left: 5px;
+    background-color: black;
+`;
+
+const photoULStyle = css`
+    background-color: black;
+`;
+
+const Highlight = styled<{ active: boolean; }, 'div'>('div')`
+    padding-left: 15px;
+    transition: border 0.15s;
+    ${
+        props => (props.active)
+            ? css`border-left: 7px solid ${lightBlue};`
+            : css`border-left: 7px solid transparent;`
+    }
+`;
+
+const PhotoRow = styled('div')`
+    height: 300px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    border-radius: 10px;
+    img {
+        width: 100%;
+    }
+    &:hover {
+        cursor: pointer;
+        border: 1px solid ${lightBlue};
+    }
+    cursor: default;
+    margin: 10px;
+    overflow: hidden;
+`;
 
 class Photos extends React.Component<PhotosProps, {}> {
     idFromItem = (item: PhotoItem) =>
@@ -68,13 +129,16 @@ class Photos extends React.Component<PhotosProps, {}> {
 
     render() {
         return (
-            <div className="mediaContent photos">
-                <div className="photo-viewer">
+            <StyledPhotos>
+                <StyledPhotoViewer>
                     {this.props.items.map((item, idx) =>
                         this.createPhotoElement(item, idx))}
-                </div>
+                </StyledPhotoViewer>
                 <Playlist
-                    className="photo-list"
+                    extraStyles={{
+                        div: photoListStyle,
+                        ul: photoULStyle,
+                    }}
                     currentItemId={this.idFromItem(this.props.currentItem)}
                     hasToggler={false}
                     isShow={true}
@@ -83,18 +147,18 @@ class Photos extends React.Component<PhotosProps, {}> {
                     shouldAppear={false}
                     ChildRenderer={this.childRenderer}
                 />
-            </div>
+            </StyledPhotos>
         );
     }
 
     childRenderer = ({ item, currentItemId, onClick }: ChildRendererProps<PhotoItem>) => {
         const isActive = (currentItemId === this.idFromItem(item));
         return (
-            <div className={classnames('highlight', { active: isActive })}>
-                <div className="photo-row" onClick={() => onClick(item)}>
+            <Highlight active={isActive}>
+                <PhotoRow onClick={() => onClick(item)}>
                     <img src={`/images/gallery/thumbnails/${item.file}`} />
-                </div>
-            </div>
+                </PhotoRow>
+            </Highlight>
         );
     }
 }

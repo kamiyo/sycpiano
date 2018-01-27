@@ -1,12 +1,13 @@
-import 'less/Media/Music/audio-visualizer.less';
-
 import * as React from 'react';
+import styled from 'react-emotion';
 import { connect } from 'react-redux';
 
 import { storeRadii } from 'src/components/Media/Music/actions';
 import { constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
 import { polarToCartesian } from 'src/utils';
+
+import { playlistWidth } from 'src/styles/variables';
 
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;
@@ -37,6 +38,18 @@ interface AudioVisualizerOwnProps {
 }
 
 type AudioVisualizerProps = AudioVisualizerStateToProps & AudioVisualizerDispatchToProps & AudioVisualizerOwnProps;
+
+const VisualizerContainer = styled('div')`
+    position: absolute;
+    width: calc(100% - ${playlistWidth}px);
+    height: 100%;
+`;
+
+const VisualizerCanvas = styled('canvas')`
+    position: absolute;
+    width: 100%;
+    height: 100%;
+`;
 
 class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
     lastPlayheadPosition = 0;
@@ -318,9 +331,9 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
 
     render() {
         return (
-            <div className="visualizerContainer">
-                <canvas className="visualization" ref={(canvas) => this.visualization = canvas} />
-            </div>
+            <VisualizerContainer>
+                <VisualizerCanvas innerRef={(canvas) => this.visualization = canvas} />
+            </VisualizerContainer>
         );
     }
 }

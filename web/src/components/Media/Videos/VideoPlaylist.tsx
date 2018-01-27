@@ -1,5 +1,3 @@
-import 'less/Media/Videos/video-playlist.less';
-
 import * as React from 'react';
 import { connect } from 'react-redux';
 
@@ -27,7 +25,6 @@ type VideoPlaylistProps = VideoPlaylistStateToProps & VideoPlaylistDispatchToPro
 const VideoPlaylist: React.SFC<VideoPlaylistProps> = (props) => {
     return (
         <Playlist
-            className="videoPlaylist"
             isShow={props.isShow}
             hasToggler={true}
             togglePlaylist={props.togglePlaylistAction}

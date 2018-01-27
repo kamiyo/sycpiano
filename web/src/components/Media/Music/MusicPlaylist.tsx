@@ -1,6 +1,5 @@
-import 'less/Media/Music/music-playlist.less';
-
 import * as React from 'react';
+import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
@@ -9,6 +8,9 @@ import Playlist from 'src/components/Media/Playlist';
 import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
 import { ChildRendererProps } from 'src/components/Media/types';
 import { GlobalStateShape } from 'src/types';
+
+import { playlistBackground } from 'src/styles/colors';
+import { playlistWidth } from 'src/styles/variables';
 
 interface MusicPlaylistStateToProps {
     readonly items: MusicItem[];
@@ -22,9 +24,20 @@ interface MusicPlaylistOwnProps {
 
 type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;
 
+const musicPlaylistStyle = css`
+    width: ${playlistWidth}px;
+`;
+
+const musicULStyle = css`
+    ul {
+        background-color: ${playlistBackground};
+        padding-top: 5px;
+    }
+`;
+
 const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
     <Playlist
-        className="musicPlaylist"
+        extraStyles={{ div: musicPlaylistStyle, ul: musicULStyle }}
         isShow={true}
         hasToggler={false}
         items={props.items}

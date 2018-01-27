@@ -1,7 +1,6 @@
-import 'less/App/app.less';
-
 import * as React from 'react';
 
+import styled from 'react-emotion';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -39,6 +38,11 @@ const slideUpOnExit = (element: HTMLElement) => {
 interface AppState {
     readonly isFront: boolean;
 }
+
+const RootContainer = styled('div')`
+    height: 100%;
+    width: 100%;
+`;
 
 export default class App extends React.Component<RouteComponentProps<void>, AppState> {
     state = {
@@ -83,7 +87,7 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
 
     render() {
         return (
-            <div className="appContainer">
+            <RootContainer>
                 <LogoSVG />
                 <Front show={this.state.isFront} onClick={this.hideFront} />
                 <Transition
@@ -115,7 +119,7 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
                         </Switch>
                     </Transition>
                 </TransitionGroup>
-            </div>
+            </RootContainer>
         );
     }
 }

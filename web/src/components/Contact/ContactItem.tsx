@@ -5,11 +5,11 @@ import { ContactInfo } from 'src/components/Contact/ContactInfo';
 import { ContactSocialMedia } from 'src/components/Contact/ContactSocialMedia';
 import { ContactItemShape } from 'src/components/Contact/types';
 
-import { pushed } from 'src/styles/mixins';
 import {
     joelHarrisonContactPhotoUrl,
     seanChenContactPhotoUrl,
-} from 'src/styles/variables';
+} from 'src/styles/imageUrls';
+import { pushed } from 'src/styles/mixins';
 
 const imageInsetShadowColor = '#222';
 const alternateBackgroundColor = '#eee';

@@ -1,6 +1,5 @@
-import 'less/Media/Music/audio-ui.less';
-
 import * as React from 'react';
+import styled from 'react-emotion';
 import { connect } from 'react-redux';
 
 import TweenLite from 'gsap/TweenLite';
@@ -8,6 +7,10 @@ import { setHoverPlaypause, setHoverSeekring, setMouseMove } from 'src/component
 import { PauseButton, PauseIcon, PlayButton, PlayIcon } from 'src/components/Media/Music/Buttons';
 import { GlobalStateShape } from 'src/types';
 import { cartesianToPolar, formatTime } from 'src/utils';
+
+import { lato2 } from 'src/styles/fonts';
+import { noHighlight } from 'src/styles/mixins';
+import { playlistWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
     readonly innerRadius: number;
@@ -34,10 +37,33 @@ interface AudioUIOwnProps {
 
 type AudioUIProps = AudioUIOwnProps & AudioUIStateToProps & AudioUIDispatchToProps;
 
-interface ClientRectExtended extends ClientRect {
-    readonly x: number;
-    readonly y: number;
-}
+const UIContainer = styled('div')`
+    position: absolute;
+    width: calc(100% - ${playlistWidth}px);
+    height: 100%;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const StyledSeekRing = styled('canvas')`
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+`;
+
+const StyledCurrentTime = styled('div')`
+    ${noHighlight}
+    position: absolute;
+    color: white;
+    transform: translateY(-100px);
+    font-family: ${lato2};
+    font-size: 50px;
+    z-index: 3;
+    pointer-events: none;
+`;
 
 class AudioUI extends React.Component<AudioUIProps, {}> {
     playButton: HTMLDivElement;
@@ -102,10 +128,10 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
     getMousePositionInCanvas = (event: MouseEvent | React.MouseEvent<HTMLDivElement>) => {
         const mouseX = event.clientX;
         const mouseY = event.clientY;
-        const boundingRect = this.seekRing.getBoundingClientRect() as ClientRectExtended;
+        const boundingRect = this.seekRing.getBoundingClientRect();
         return {
-            x: mouseX - boundingRect.x,
-            y: mouseY - boundingRect.y,
+            x: mouseX - boundingRect.left,
+            y: mouseY - boundingRect.top,
         };
     }
 
@@ -218,10 +244,10 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
 
     render() {
         return (
-            <div className="uiContainer">
-                <div className="currentTime no-highlight">
+            <UIContainer>
+                <StyledCurrentTime>
                     {formatTime(this.props.currentPosition)}
-                </div>
+                </StyledCurrentTime>
                 <PauseIcon setRef={this.setPauseButtonRef} />
                 <PlayIcon setRef={this.setPlayButtonRef} />
                 {(this.props.isPlaying) ?
@@ -243,8 +269,8 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
                         onMouseUp={this.handleMouseup}
                     />
                 }
-                <canvas className="seekRing" ref={(canvas) => this.seekRing = canvas} />
-            </div>
+                <StyledSeekRing innerRef={(canvas) => this.seekRing = canvas} />
+            </UIContainer>
         );
     }
 }
