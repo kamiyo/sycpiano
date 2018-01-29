@@ -10,7 +10,7 @@ const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 // Heroku's free plan is strict about memory usage, so we'll use one on prod.
 const threadPoolSize = process.env.NODE_ENV === 'production' ? 1 : 6;
 
-const happyThreadPool = HappyPack.ThreadPool({ size: 6 });
+const happyThreadPool = HappyPack.ThreadPool({ size: threadPoolSize });
 
 const sourcePaths = [
     path.resolve(__dirname, 'web/src'),
