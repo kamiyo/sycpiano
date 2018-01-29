@@ -4,20 +4,21 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import EventList from 'src/components/Schedule/EventList';
 
-import { pushed } from 'src/styles/mixins';
+import { container, pushed } from 'src/styles/mixins';
 
 import { DateIconSVG } from 'src/components/Schedule/DateIconSVG';
 import { LocationIconSVG } from 'src/components/Schedule/LocationIconSVG';
 import { TrebleIconSVG } from 'src/components/Schedule/TrebleIconSVG';
 
 const scheduleStyles = css`
-    ${pushed};
+    ${pushed}
+    ${container}
     width: 100%;
     box-sizing: border-box;
 `;
 
 const Schedule: React.SFC<{}> = () => (
-    <div className={`${scheduleStyles} container`}>
+    <div className={scheduleStyles}>
         <div className={css`height: 100%;`}>
             <Switch>
                 <Route
