@@ -11,6 +11,7 @@
 *.sublime-workspace
 coverage/
 node_modules
+nohup.out
 npm-debug.log
 scripts/cpp/Eigen
 secret.ts
