@@ -9,7 +9,7 @@ require('dotenv').config();
 const isProduction = process.env.NODE_ENV === 'production';
 
 const port = isProduction ? process.env.PORT : 8000;
-const listenAddr = isProduction ? '159.89.149.127' : '127.0.0.0';
+const listenAddr = isProduction ? '0.0.0.0' : '127.0.0.0';
 
 const app = express();
 
