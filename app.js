@@ -9,6 +9,7 @@ require('dotenv').config();
 const isProduction = process.env.NODE_ENV === 'production';
 
 const port = isProduction ? process.env.PORT : 8000;
+const listenAddr = isProduction ? '0.0.0.0' : '127.0.0.0';
 
 const app = express();
 
@@ -30,5 +31,4 @@ app.use(/\/api/, ApiRouter);
 // Generally we catch any route first, and then let our front-end routing do the work.
 app.get(/^((?!\/admin).)*$/, (req, res) => res.render('index'));
 
-app.listen(port, '127.0.0.1', () => console.log(`App listening on port ${port}.`));
-
+app.listen(port, listenAddr, () => console.log(`App listening on port ${port}.`));
