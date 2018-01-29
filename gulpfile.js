@@ -63,7 +63,12 @@ const buildServer = gulp.series(
 
 gulp.task('build-server', buildServer);
 
-gulp.task('build-prod', gulp.parallel('build-server', 'build-app'));
+gulp.task(
+    'build-prod',
+    // We don't have enough memory in production to do build-server and build-app in parallel.
+    (isProduction ? gulp.series : gulp.parallel)
+        .call(this, 'build-server', 'build-app')
+);
 
 const webpackWatch = (done) => {
     webpack(webpackConfig).watch({}, (err, stats) => {
