@@ -12,7 +12,7 @@
     "build-prod": "gulp build-prod",
     "start": "node app.js",
     "start-dev": "cross-env NODE_ENV=development gulp run-dev",
-    "start-prod": "./bin/start.sh",
+    "start-prod": "sh bin/start.sh",
     "test": "jest --config='__tests__/' --coverage",
     "test-watch": "jest --config='__tests__/' --coverage --watchAll"
   },
