@@ -222,7 +222,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
         ))
     )
 
-    private renderEventItem = (
+    public renderEventItem = (
         index: number,
         style: React.CSSProperties,
         measure: () => void,
