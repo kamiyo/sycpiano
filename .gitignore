@@ -18,3 +18,4 @@ secret.ts
 web/build/
 server/build/
 yarn-error.log
+sslcert/
