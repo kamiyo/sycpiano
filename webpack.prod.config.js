@@ -6,7 +6,6 @@ const common = require('./webpack.common.config.js');
 const UgilfyJSPlugin = require('uglifyjs-webpack-plugin');
 
 const config = merge(common, {
-    devtool: 'source-map',
     plugins: [
         new UgilfyJSPlugin({
             test: /\.(t|j)sx?$/i,
