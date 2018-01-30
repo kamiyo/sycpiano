@@ -9,9 +9,14 @@ require('dotenv').config();
 const isProduction = process.env.NODE_ENV === 'production';
 
 const port = isProduction ? process.env.PORT : 8000;
-const listenAddr = isProduction ? '0.0.0.0' : '127.0.0.0';
+const listenAddr = isProduction ? '0.0.0.0' : '127.0.0.1';
 
 const app = express();
+
+// .well-known/acme-challenge is the path Certbot uses to verify this webserver.
+// Since we're placing this directory at the project root,
+// we'll need to add the project root as a static path.
+app.use(express.static(__dirname));
 
 app.use(express.static(path.join(__dirname, '/web/assets')));
 app.use(express.static(path.join(__dirname, '/web/build')));
@@ -26,6 +31,9 @@ app.get(/\/admin/, (req, res) => res.render('calendar-admin'));
 
 // Non-admin routes.
 app.use(/\/api/, ApiRouter);
+
+// Health-check endpoint.
+app.get('/health-check', (req, res) => res.sendStatus(200));
 
 // A catch-all for everything except /admin.
 // Generally we catch any route first, and then let our front-end routing do the work.
