@@ -1,14 +1,77 @@
 import * as express from 'express';
 import * as moment from 'moment-timezone';
 
+import axios from 'axios';
+import * as Promise from 'bluebird';
+
 import db from './models/index';
 const models = db.models;
 
 const apiRouter = express.Router();
 
 import Sequelize from 'sequelize';
+import { CalendarAttributes, CalendarInstance, CalendarModel, CollaboratorInstance, CollaboratorModel, GCalEvent, PieceInstance, PieceModel, TokenModel } from 'types';
 // import { ModelMap } from 'types';
 const { gt, lt } = Sequelize.Op;
+
+const calAPIKey = 'AIzaSyC8YGSlCPlqT-MAHN_LvM2T3K-ltaiqQMI';
+const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
+const uriEncCalId = encodeURIComponent(calendarId);
+
+function getCalendarEvents(nextPageToken: string = null, syncToken: string = null) {
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
+    return axios.get(url, {
+        params: {
+            singleEvents: true,
+            key: calAPIKey,
+            pageToken: nextPageToken,
+            syncToken,
+        },
+    });
+}
+
+const extractEventDescription = (event: GCalEvent) => {
+    try {
+        return JSON.parse(event.description);
+    } catch (e) {
+        console.log(e);
+        console.log('======Error parsing event description JSON======');
+        console.log(event.description);
+        return {};
+    }
+};
+
+const programToPieceModel = (program: string) => {
+    const out = {
+        composer: '',
+        piece: '',
+    };
+    // check if TBD
+    if (!program.length || program.toLowerCase() === 'tbd') {
+        return out;
+    }
+
+    // check if has semicolon (separating composer from piece)
+    let index = program.indexOf(':');
+    if (index !== -1) {
+        const [ composer, piece = '' ] = program.split(':');
+        out.composer = composer;
+        out.piece = piece;
+        return out;
+    }
+
+    index = program.indexOf(' ');
+    if (index !== -1) {
+        const composer = program.substr(0, index);
+        const piece = program.substring(index + 1);
+        out.composer = composer;
+        out.piece = piece;
+        return out;
+    }
+
+    out.composer = program;
+    return out;
+};
 
 apiRouter.get('/acclaims', (req, res) => {
     // TODO: add order-by http://docs.sequelizejs.com/en/v3/docs/querying/
@@ -173,7 +236,9 @@ const ALL = 0;
 const PAST = -1;
 const BEFORE = -2;
 
-apiRouter.get('/calendar', async (req, res) => {
+const calendarRouter = express.Router({ mergeParams: true });
+
+calendarRouter.get('/', async (req, res) => {
     const model = models.calendar;
 
     const limit = req.query.limit;
@@ -229,6 +294,124 @@ apiRouter.get('/calendar', async (req, res) => {
 
     res.json(response);
 });
+
+calendarRouter.post('/watch', async (req, res) => {
+    console.log('watch');
+    console.log(req.headers);
+
+    const tokenModel: TokenModel = models.token;
+    const syncToken = await tokenModel.findById('calendar_sync');
+
+    try {
+        let responseItems: any[] = [];
+        let nextPageToken: string;
+        let newSyncToken: string;
+        do {
+            const response = await getCalendarEvents(nextPageToken, syncToken.token);
+            responseItems = responseItems.concat(response.data.items);
+            nextPageToken = response.data.nextPageToken;
+            newSyncToken = response.data.nextSyncToken;
+        } while (!!nextPageToken && !newSyncToken);
+        const calendarModel: CalendarModel = models.calendar;
+        const pieceModel: PieceModel = models.piece;
+        const collaboratorModel: CollaboratorModel = models.collaborator;
+
+        console.log(responseItems);
+
+        await Promise.each(responseItems, async (event) => {
+            // delete
+            if (!event.description && event.status === 'cancelled') {
+                await calendarModel.destroy({
+                    where: {
+                        id: event.id,
+                    },
+                });
+                return;
+            }
+
+            const dateTime = event.start.dateTime ? event.start.dateTime : event.start.date;
+            const timezone = event.start.dateTime ? event.start.timeZone : '';
+            const {
+                collaborators,
+                type: {
+                    value: type,
+                },
+                program,
+                website,
+            } = extractEventDescription(event);
+
+            const id = event.id;
+            const name = event.summary;
+            const location = event.location;
+
+            const attributes: CalendarAttributes = {
+                name,
+                dateTime,
+                timezone,
+                location,
+                website,
+                type,
+            };
+
+            let currentItem: string;
+            try {
+                let itemInstance: CalendarInstance = await calendarModel.findById(id);
+                if (itemInstance) {
+                    await itemInstance.update(attributes);
+
+                    const pieceInstances = itemInstance.getPieces();
+                    await Promise.each(pieceInstances, async (pieceInstance: PieceInstance) => {
+                        itemInstance.removePiece(pieceInstance);
+                        const pieceAssociations = await pieceInstance.countCalendars();
+                        if (pieceAssociations === 0) {
+                            await pieceInstance.destroy();
+                        }
+                    });
+                    const collaboratorInstances = itemInstance.getCollaborators();
+                    await Promise.each(collaboratorInstances, async (collaboratorInstance: CollaboratorInstance) => {
+                        itemInstance.removeCollaborator(collaboratorInstance);
+                        const collaboratorAssociations = await collaboratorInstance.countCalendars();
+                        if (collaboratorAssociations === 0) {
+                            await collaboratorInstance.destroy();
+                        }
+                    });
+                } else {
+                    itemInstance = await calendarModel.create({ id, ...attributes } as CalendarAttributes);
+                }
+
+                await Promise.each(program, async (composerPiece: string, index: number) => {
+                    currentItem = composerPiece;
+                    const { composer, piece } = programToPieceModel(composerPiece);
+                    console.log(composer, piece);
+                    const [pieceInstance] = await pieceModel.findOrCreate({
+                        where: { composer, piece },
+                    });
+                    await itemInstance.addPiece(pieceInstance, { through: { order: index } });
+                });
+                await Promise.each(collaborators, async (collaborator: string, index: number) => {
+                    currentItem = collaborator;
+                    const [pieceName, instrument = null] = collaborator.split(', ');
+                    const [collaboratorInstance] = await collaboratorModel.findOrCreate({
+                        where: { name: pieceName, instrument },
+                    });
+                    await itemInstance.addCollaborator(collaboratorInstance, { through: { order: index } });
+                });
+            } catch (e) {
+                console.log(`currentItem: ${currentItem}`);
+                console.log(e);
+            }
+        });
+
+        await syncToken.update({ token: newSyncToken });
+    } catch (e) {
+        console.log(e);
+        return;
+    }
+
+    res.status(201).end();
+});
+
+apiRouter.use(/\/calendar/, calendarRouter);
 
 apiRouter.get('/music', async (_, res) => {
     const model = models.music;

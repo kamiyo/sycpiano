@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import axios from 'axios';
 import * as Promise from 'bluebird';
 
-import { CalendarAttributes, CalendarInstance, CalendarModel, CollaboratorModel, ModelMap, PieceModel } from 'types';
+import { CalendarAttributes, CalendarInstance, CalendarModel, CollaboratorModel, ModelMap, PieceModel, TokenModel } from 'types';
 
 const calAPIKey = 'AIzaSyC8YGSlCPlqT-MAHN_LvM2T3K-ltaiqQMI';
 const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
@@ -11,14 +11,14 @@ const uriEncCalId = encodeURIComponent(calendarId);
 
 type Moment = moment.Moment;
 
-function getCalendarEvents(timeMin = moment(0)) {
+function getCalendarEvents(nextPageToken: string = null, syncToken: string = null) {
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
     return axios.get(url, {
         params: {
-            orderBy: 'startTime',
             singleEvents: true,
-            timeMin: timeMin.format(),
             key: calAPIKey,
+            pageToken: nextPageToken,
+            syncToken,
         },
     });
 }
@@ -81,13 +81,23 @@ const programToPieceModel = (program: string) => {
 
 export const up = async (models: ModelMap) => {
     try {
-        const response = await getCalendarEvents();
+        let responseItems: any[] = [];
+        let nextPageToken: string;
+        let syncToken: string;
+        do {
+            const response = await getCalendarEvents(nextPageToken, syncToken);
+            responseItems = responseItems.concat(response.data.items);
+            nextPageToken = response.data.nextPageToken;
+            syncToken = response.data.nextSyncToken;
+        } while (!!nextPageToken && !syncToken);
+        console.log(syncToken);
         const calendarModel: CalendarModel = models.calendar;
         const pieceModel: PieceModel = models.piece;
         const collaboratorModel: CollaboratorModel = models.collaborator;
+        const tokenModel: TokenModel = models.token;
         const items: Array<{
             [key: string]: any,
-        }> = response.data.items.map((event: GCalEvent) => {
+        }> = responseItems.map((event: GCalEvent) => {
             const dateTime = event.start.dateTime ? event.start.dateTime : event.start.date;
             const timezone = event.start.dateTime ? event.start.timeZone : '';
             const {
@@ -142,6 +152,8 @@ export const up = async (models: ModelMap) => {
                 console.log(e);
             }
         });
+
+        await tokenModel.create({ id: 'calendar_sync', token: syncToken, expires: null });
     } catch (e) {
         console.log(e);
         return;
@@ -152,5 +164,6 @@ export const down = async (models: ModelMap) => {
     await models.calendar.destroy({ where: {}, cascade: true });
     await models.collaborator.destroy({ where: {}, cascade: true });
     await models.piece.destroy({ where: {}, cascade: true });
+    await models.token.destroy({ where: {}, cascade: true });
     return;
 };
