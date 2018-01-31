@@ -1,13 +1,13 @@
 import { JWT } from 'google-auth-library';
 
 /*tslint:disable:no-var-requires*/
-const authInfo = require('../../sycpiano-7657a76435d9.json');
+const authInfo = require('../../gapi-key.json');
 /*tslint:enable:no-var-requires*/
 
 import db from '../models/index';
 const models = db.models;
 
-import { TokenModel } from 'types';
+import { TokenModel } from '../types';
 
 export const getToken = async () => {
     const tokenModel: TokenModel = models.token;
@@ -34,7 +34,7 @@ const authorize = async () => {
         null,
         authInfo.private_key,
         ['https://www.googleapis.com/auth/calendar'],
-        null
+        null,
     );
 
     try {
@@ -44,5 +44,3 @@ const authorize = async () => {
         console.log(e);
     }
 };
-
-getToken();

@@ -10,6 +10,6 @@ const Token = (sequelize, dataTypes) => sequelize.define('token', {
     expires: {
         type: dataTypes.DATE,
         allowNull: true,
-    }
+    },
 });
 exports.default = Token;

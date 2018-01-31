@@ -12,7 +12,7 @@ const Token = (sequelize: Sequelize, dataTypes: DataTypes) => (
         expires: {
             type: dataTypes.DATE,
             allowNull: true,
-        }
+        },
     }) as TokenModel
 );
 

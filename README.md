@@ -58,10 +58,12 @@ create role <username> with login password '<quoted password>'
 * Make a copy of the `secret.sample.ts` file under `server/src/` and rename it to `secret.ts`. Update the username and password to reflect that of the new user. Don't worry, this file is in our `.gitignore`! This file will be used when connecting to the database to create tables that do not exist.
 
 ## Migrations and Seeding
+Before seeding the calendar, make sure to obtain a service account key file (json) from google developer console. Save the key under `server/gapi-key.json`. This file is also in our `.gitignore`.
+
 sycpiano uses umzug and sequelize for migrations.
 ```
-$ node server/build/migrate [up|down]
-$ node server/build/seed [up|down]
+$ node server/build/migrate [up|down|prev|next]
+$ node server/build/seed [up|down|prev|next]
 ```
 
 Run `yarn run start-dev` or at least `yarn run build-server` so that the server/build folder actually has .js files!

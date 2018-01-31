@@ -34,7 +34,7 @@
         "allowSyntheticDefaultImports": true,
         "skipLibCheck": true,
         "outDir": "build",
-        "baseUrl": "../"
+        "baseUrl": "../",
     },
     "exclude": [
         "**/node_modules/*"

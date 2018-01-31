@@ -1,8 +1,9 @@
 import * as express from 'express';
 import * as moment from 'moment-timezone';
 
-import axios from 'axios';
 import * as Promise from 'bluebird';
+
+import { extractEventDescription, getCalendarEvents, programToPieceModel } from './gapi/calendar';
 
 import db from './models/index';
 const models = db.models;
@@ -10,68 +11,17 @@ const models = db.models;
 const apiRouter = express.Router();
 
 import Sequelize from 'sequelize';
-import { CalendarAttributes, CalendarInstance, CalendarModel, CollaboratorInstance, CollaboratorModel, GCalEvent, PieceInstance, PieceModel, TokenModel } from 'types';
-// import { ModelMap } from 'types';
+import {
+    CalendarAttributes,
+    CalendarInstance,
+    CalendarModel,
+    CollaboratorInstance,
+    CollaboratorModel,
+    PieceInstance,
+    PieceModel,
+    TokenModel,
+} from 'types';
 const { gt, lt } = Sequelize.Op;
-
-const calAPIKey = 'AIzaSyC8YGSlCPlqT-MAHN_LvM2T3K-ltaiqQMI';
-const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
-const uriEncCalId = encodeURIComponent(calendarId);
-
-function getCalendarEvents(nextPageToken: string = null, syncToken: string = null) {
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
-    return axios.get(url, {
-        params: {
-            singleEvents: true,
-            key: calAPIKey,
-            pageToken: nextPageToken,
-            syncToken,
-        },
-    });
-}
-
-const extractEventDescription = (event: GCalEvent) => {
-    try {
-        return JSON.parse(event.description);
-    } catch (e) {
-        console.log(e);
-        console.log('======Error parsing event description JSON======');
-        console.log(event.description);
-        return {};
-    }
-};
-
-const programToPieceModel = (program: string) => {
-    const out = {
-        composer: '',
-        piece: '',
-    };
-    // check if TBD
-    if (!program.length || program.toLowerCase() === 'tbd') {
-        return out;
-    }
-
-    // check if has semicolon (separating composer from piece)
-    let index = program.indexOf(':');
-    if (index !== -1) {
-        const [ composer, piece = '' ] = program.split(':');
-        out.composer = composer;
-        out.piece = piece;
-        return out;
-    }
-
-    index = program.indexOf(' ');
-    if (index !== -1) {
-        const composer = program.substr(0, index);
-        const piece = program.substring(index + 1);
-        out.composer = composer;
-        out.piece = piece;
-        return out;
-    }
-
-    out.composer = program;
-    return out;
-};
 
 apiRouter.get('/acclaims', (req, res) => {
     // TODO: add order-by http://docs.sequelizejs.com/en/v3/docs/querying/
