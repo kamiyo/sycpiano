@@ -17,5 +17,6 @@ scripts/cpp/Eigen
 secret.ts
 web/build/
 server/build/
+server/gapi-key.json
 yarn-error.log
 sslcert/

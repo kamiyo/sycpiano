@@ -1,4 +1,20 @@
+import * as moment from 'moment';
 import { DataTypeInteger, DataTypeString, DataTypeUUID, default as Sequelize } from 'sequelize';
+
+type Moment = moment.Moment;
+
+export interface GCalEvent {
+    readonly description: any;
+    readonly id: string;
+    readonly location: string;
+    readonly start: {
+        readonly dateTime?: Moment;
+        readonly date?: Moment;
+        readonly timeZone?: string;
+    };
+    readonly summary: string;
+    readonly [key: string]: any; // other params
+}
 
 export interface Model<TI, TA> extends Sequelize.Model<TI, TA> {
     readonly name: string;
@@ -22,6 +38,7 @@ export interface CalendarAttributes {
     readonly timezone: string;
     readonly location: string;
     readonly type: string;
+    readonly website: string;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
 }
@@ -31,11 +48,17 @@ export interface CalendarInstance extends Sequelize.Instance<CalendarAttributes>
     setPieces: Sequelize.BelongsToManySetAssociationsMixin<PieceInstance, PieceAttributes['id'], CalendarPieceAttributes>;
     addPiece: Sequelize.BelongsToManyAddAssociationMixin<PieceInstance, PieceAttributes['id'], CalendarPieceAttributes>;
     addPieces: Sequelize.BelongsToManyAddAssociationsMixin<PieceInstance, PieceAttributes['id'], CalendarPieceAttributes>;
+    removePiece: Sequelize.BelongsToManyRemoveAssociationMixin<PieceInstance, PieceAttributes['id']>;
+    removePieces: Sequelize.BelongsToManyRemoveAssociationsMixin<PieceInstance, PieceAttributes['id']>;
+    countPieces: Sequelize.BelongsToManyCountAssociationsMixin;
 
     getCollaborators: Sequelize.BelongsToManyGetAssociationsMixin<CollaboratorInstance>;
     setCollaborators: Sequelize.BelongsToManySetAssociationsMixin<CollaboratorInstance, CollaboratorAttributes['id'], CalendarCollaboratorAttributes>;
     addCollaborator: Sequelize.BelongsToManyAddAssociationMixin<CollaboratorInstance, CollaboratorAttributes['id'], CalendarCollaboratorAttributes>;
     addCollaborators: Sequelize.BelongsToManyAddAssociationsMixin<CollaboratorInstance, CollaboratorAttributes['id'], CalendarCollaboratorAttributes>;
+    removeCollaborator: Sequelize.BelongsToManyRemoveAssociationMixin<CollaboratorInstance, CollaboratorAttributes['id']>;
+    removeCollaborators: Sequelize.BelongsToManyRemoveAssociationsMixin<CollaboratorInstance, CollaboratorAttributes['id']>;
+    countCollaborators: Sequelize.BelongsToManyCountAssociationsMixin;
 }
 
 export interface CalendarModel extends Model<CalendarInstance, CalendarAttributes> {}
@@ -88,18 +111,23 @@ export interface CollaboratorAttributes {
     readonly updatedAt?: Date | string;
 }
 
-export interface CollaboratorInstance extends Sequelize.Instance<CollaboratorAttributes>, CollaboratorAttributes {}
+export interface CollaboratorInstance extends Sequelize.Instance<CollaboratorAttributes>, CollaboratorAttributes {
+    countCalendars: Sequelize.BelongsToManyCountAssociationsMixin;
+}
 
 export interface CollaboratorModel extends Model<CollaboratorInstance, CollaboratorAttributes> {}
 
 export interface PieceAttributes {
     readonly id: DataTypeUUID;
+    readonly composer: string;
     readonly piece: string;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
 }
 
-export interface PieceInstance extends Sequelize.Instance<PieceAttributes>, PieceAttributes {}
+export interface PieceInstance extends Sequelize.Instance<PieceAttributes>, PieceAttributes {
+    countCalendars: Sequelize.BelongsToManyCountAssociationsMixin;
+}
 
 export interface PieceModel extends Model<PieceInstance, PieceAttributes> {}
 
@@ -143,3 +171,15 @@ export interface PhotoAttributes {
 export interface PhotoInstance extends Sequelize.Instance<PhotoAttributes>, PhotoAttributes {}
 
 export interface PhotoModel extends Model<PhotoInstance, PhotoAttributes> {}
+
+export interface TokenAttributes {
+    readonly id: string;
+    readonly token: string;
+    readonly expires: Date | string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+}
+
+export interface TokenInstance extends Sequelize.Instance<TokenAttributes>, TokenAttributes {}
+
+export interface TokenModel extends Model<TokenInstance, TokenAttributes> {}

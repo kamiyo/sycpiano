@@ -1,98 +1,44 @@
-import * as moment from 'moment';
-
-import axios from 'axios';
 import * as Promise from 'bluebird';
 
-import { CalendarAttributes, CalendarInstance, CalendarModel, CollaboratorModel, ModelMap, PieceModel } from 'types';
+import { extractEventDescription, getCalendarEvents, programToPieceModel } from '../gapi/calendar';
 
-const calAPIKey = 'AIzaSyC8YGSlCPlqT-MAHN_LvM2T3K-ltaiqQMI';
-const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
-const uriEncCalId = encodeURIComponent(calendarId);
-
-type Moment = moment.Moment;
-
-function getCalendarEvents(timeMin = moment(0)) {
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
-    return axios.get(url, {
-        params: {
-            orderBy: 'startTime',
-            singleEvents: true,
-            timeMin: timeMin.format(),
-            key: calAPIKey,
-        },
-    });
-}
-
-interface GCalEvent {
-    readonly description: any;
-    readonly id: string;
-    readonly location: string;
-    readonly start: {
-        readonly dateTime?: Moment;
-        readonly date?: Moment;
-        readonly timeZone?: string;
-    };
-    readonly summary: string;
-    readonly [key: string]: any; // other params
-}
-
-const extractEventDescription = (event: GCalEvent) => {
-    try {
-        return JSON.parse(event.description);
-    } catch (e) {
-        console.log(e);
-        console.log('======Error parsing event description JSON======');
-        console.log(event.description);
-        return {};
-    }
-};
-
-const programToPieceModel = (program: string) => {
-    const out = {
-        composer: '',
-        piece: '',
-    };
-    // check if TBD
-    if (!program.length || program.toLowerCase() === 'tbd') {
-        return out;
-    }
-
-    // check if has semicolon (separating composer from piece)
-    let index = program.indexOf(':');
-    if (index !== -1) {
-        const [ composer, piece = '' ] = program.split(':');
-        out.composer = composer;
-        out.piece = piece;
-        return out;
-    }
-
-    index = program.indexOf(' ');
-    if (index !== -1) {
-        const composer = program.substr(0, index);
-        const piece = program.substring(index + 1);
-        out.composer = composer;
-        out.piece = piece;
-        return out;
-    }
-
-    out.composer = program;
-    return out;
-};
+import {
+    CalendarAttributes,
+    CalendarInstance,
+    CalendarModel,
+    CollaboratorModel,
+    GCalEvent,
+    ModelMap,
+    PieceModel,
+    TokenModel,
+} from 'types';
 
 export const up = async (models: ModelMap) => {
     try {
-        const response = await getCalendarEvents();
+        let responseItems: GCalEvent[] = [];
+        let nextPageToken: string;
+        let syncToken: string;
+        do {
+            const response = await getCalendarEvents(nextPageToken, syncToken);
+            responseItems = responseItems.concat(response.data.items);
+            nextPageToken = response.data.nextPageToken;
+            syncToken = response.data.nextSyncToken;
+        } while (!!nextPageToken && !syncToken);
+        console.log(syncToken);
         const calendarModel: CalendarModel = models.calendar;
         const pieceModel: PieceModel = models.piece;
         const collaboratorModel: CollaboratorModel = models.collaborator;
+        const tokenModel: TokenModel = models.token;
         const items: Array<{
             [key: string]: any,
-        }> = response.data.items.map((event: GCalEvent) => {
+        }> = responseItems.map((event) => {
             const dateTime = event.start.dateTime ? event.start.dateTime : event.start.date;
             const timezone = event.start.dateTime ? event.start.timeZone : '';
             const {
                 collaborators,
-                type,
+                type: {
+                    value: type,
+                },
                 program,
                 website,
             } = extractEventDescription(event);
@@ -108,7 +54,7 @@ export const up = async (models: ModelMap) => {
                 timezone,
                 location,
                 website,
-                type: type.value,
+                type,
                 program,
                 collaborators,
             };
@@ -142,6 +88,8 @@ export const up = async (models: ModelMap) => {
                 console.log(e);
             }
         });
+
+        await tokenModel.create({ id: 'calendar_sync', token: syncToken, expires: null });
     } catch (e) {
         console.log(e);
         return;
@@ -152,5 +100,6 @@ export const down = async (models: ModelMap) => {
     await models.calendar.destroy({ where: {}, cascade: true });
     await models.collaborator.destroy({ where: {}, cascade: true });
     await models.piece.destroy({ where: {}, cascade: true });
+    await models.token.destroy({ where: {}, cascade: true });
     return;
 };
