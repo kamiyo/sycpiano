@@ -12,6 +12,8 @@ const threadPoolSize = process.env.NODE_ENV === 'production' ? 1 : 6;
 
 const happyThreadPool = HappyPack.ThreadPool({ size: threadPoolSize });
 
+const staticPrefix = '/static';
+
 const sourcePaths = [
     path.resolve(__dirname, 'web/src'),
     path.resolve(__dirname, 'web/src/components'),
@@ -57,6 +59,12 @@ const config = {
     plugins: [
         new webpack.EnvironmentPlugin(['NODE_ENV']),
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
+        new webpack.DefinePlugin({
+            BINARY_PATH: JSON.stringify(staticPrefix + '/binary'),
+            IMAGES_PATH: JSON.stringify(staticPrefix + '/images'),
+            MUSIC_PATH: JSON.stringify(staticPrefix + '/music'),
+            VIDEOS_PATH: JSON.stringify(staticPrefix + '/videos'),
+        }),
         new CommonsChunkPlugin({
             name: 'sycpiano.common',
             filename: 'sycpiano.common.js'

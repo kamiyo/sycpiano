@@ -9,8 +9,8 @@ export interface MusicItem {
 export interface MusicFileItem {
     readonly id: string;
     readonly name: string;
-    readonly filePath: string;
-    readonly waveformPath: string;
+    readonly audioFile: string;
+    readonly waveformFile: string;
     readonly durationSeconds: number;
     readonly musicId: string;
 }

@@ -79,8 +79,8 @@ export interface AcclaimModel extends Model<AcclaimAttributes, AcclaimInstance> 
 export interface MusicFileAttributes {
     readonly id?: DataTypeUUID;
     readonly name: string;
-    readonly filePath: string;
-    readonly pathToWaveform: string;
+    readonly audioFile: string;
+    readonly waveformFile: string;
     readonly durationSeconds: number;
     readonly musicId?: DataTypeUUID;
     readonly createdAt?: Date | string;

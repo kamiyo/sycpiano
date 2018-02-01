@@ -106,7 +106,7 @@ class Photos extends React.Component<PhotosProps, {}> {
     selectPhoto = (item: PhotoItem) => this.props.selectPhotoAction(item);
 
     pathFromItem = (item: PhotoItem) =>
-        item && path.join('/images', 'gallery', item.file);
+        item && path.join('static/images', 'gallery', item.file);
 
     isCurrentItem = (item: PhotoItem) =>
         this.idFromItem(item) === this.idFromItem(this.props.currentItem);
@@ -156,7 +156,7 @@ class Photos extends React.Component<PhotosProps, {}> {
         return (
             <Highlight active={isActive}>
                 <PhotoRow onClick={() => onClick(item)}>
-                    <img src={`/images/gallery/thumbnails/${item.file}`} />
+                    <img src={`/static/images/gallery/thumbnails/${item.file}`} />
                 </PhotoRow>
             </Highlight>
         );

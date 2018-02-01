@@ -76,7 +76,7 @@ export const fetchPlaylistAction = (track: string): ThunkAction<Promise<MusicFil
         if (track) {
             firstTrack = items.reduce((prev, music) => {
                 return prev.concat(music.musicFiles.filter((musicFile) => (
-                    path.basename(musicFile.filePath, '.mp3') === track
+                    path.basename(musicFile.audioFile, '.mp3') === track
                 )));
             }, [])[0];
         }
