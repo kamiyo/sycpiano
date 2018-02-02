@@ -20,13 +20,8 @@ const app = express();
 // sets x-frame-options header to disallow our content to be rendered in iframes.
 app.use(helmet());
 
-// .well-known/acme-challenge is the path Certbot uses to verify this webserver.
-// Since we're placing this directory at the project root,
-// we'll need to add the project root as a static path.
-app.use(express.static(__dirname));
-
-app.use(express.static(path.join(__dirname, '/web/assets')));
-app.use(express.static(path.join(__dirname, '/web/build')));
+app.use('/static', express.static(path.join(__dirname, '/web/assets')));
+app.use('/static', express.static(path.join(__dirname, '/web/build')));
 
 app.use(morgan('common'));
 app.engine('html', mustacheExpress());

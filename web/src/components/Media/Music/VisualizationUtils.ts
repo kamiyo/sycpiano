@@ -106,7 +106,7 @@ class FIRLoader {
 
     loadFIRFile = () => (
         new Promise((resolve) => {
-            jBinary.loadData('/binary/fir.dat').then((data: any) => {
+            jBinary.loadData(`${BINARY_PATH}/fir.dat`).then((data: any) => {
                 const j: Binary = new jBinary(new jDataView(data, 0, data.byteLength, true), {});
                 const header = j.read(this.headerStructure);
                 this.numCrossings = header.numCrossings;
@@ -148,7 +148,7 @@ class ConstantQ {
 
     constructor(sampleRate: number) {
         this.matrix = undefined;
-        this.loaded = this.loadMatrix(`/binary/CQ_${sampleRate}.dat`);
+        this.loaded = this.loadMatrix(`${BINARY_PATH}/CQ_${sampleRate}.dat`);
         this.sampleRate = sampleRate;
     }
 

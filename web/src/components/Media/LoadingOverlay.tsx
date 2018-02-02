@@ -52,7 +52,7 @@ const LoadingOverlay: React.SFC<LoadingOverlayProps> = (props) => (
                     </clipPath>
                 </defs>
                 <BackgroundCircle cx="60" cy="60" r="60" />
-                <LoadingGif x="0" y="0" height="120" width="120" xlinkHref="/images/loading-unmask.gif" />
+                <LoadingGif x="0" y="0" height="120" width="120" xlinkHref="/static/images/loading-unmask.gif" />
             </svg>
         </LoadingOverlayDiv>
     </Transition>

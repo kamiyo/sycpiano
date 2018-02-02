@@ -5,8 +5,8 @@
         "contributors": "New West Symphony",
         "musicFiles": [
             {
-                "filePath": "/music/spellbound.mp3",
-                "waveformPath": "/music/waveforms/spellbound.dat",
+                "audioFile": "spellbound.mp3",
+                "waveformFile": "spellbound.dat",
                 "durationSeconds": 802
             }
         ]
@@ -16,8 +16,8 @@
         "composer": "Sean Chen",
         "musicFiles": [
             {
-                "filePath": "/music/improv.mp3",
-                "waveformPath": "/music/waveforms/improv.dat",
+                "audioFile": "improv.mp3",
+                "waveformFile": "improv.dat",
                 "durationSeconds": 378
             }
         ]
@@ -28,20 +28,20 @@
         "musicFiles": [
             {
                 "name": "I. Allegro molto",
-                "filePath": "/music/bartok_etude_1.mp3",
-                "waveformPath": "/music/waveforms/bartok_etude_1.dat",
+                "audioFile": "bartok_etude_1.mp3",
+                "waveformFile": "bartok_etude_1.dat",
                 "durationSeconds": 140
             },
             {
                 "name": "II. Andante sostenuto",
-                "filePath": "/music/bartok_etude_2.mp3",
-                "waveformPath": "/music/waveforms/bartok_etude_2.dat",
+                "audioFile": "bartok_etude_2.mp3",
+                "waveformFile": "bartok_etude_2.dat",
                 "durationSeconds": 218
             },
             {
                 "name": "III. Rubato - Tempo giusto",
-                "filePath": "/music/bartok_etude_3.mp3",
-                "waveformPath": "/music/waveforms/bartok_etude_3.dat",
+                "audioFile": "bartok_etude_3.mp3",
+                "waveformFile": "bartok_etude_3.dat",
                 "durationSeconds": 157
             }
         ]

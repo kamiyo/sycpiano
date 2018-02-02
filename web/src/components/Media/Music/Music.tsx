@@ -67,8 +67,8 @@ class Music extends React.Component<MusicProps, MusicState> {
             musicFiles: [{
                 id: '',
                 name: '',
-                filePath: '',
-                waveformPath: '',
+                audioFile: '',
+                waveformFile: '',
                 durationSeconds: -1,
                 musicId: '',
             }],
@@ -160,8 +160,8 @@ class Music extends React.Component<MusicProps, MusicState> {
             },
             duration: -1,
         });
-        waveformLoader.loadWaveformFile(track.waveformPath);
-        this.audio.src = track.filePath;
+        waveformLoader.loadWaveformFile(`${MUSIC_PATH}/waveforms/${track.waveformFile}`);
+        this.audio.src = `${MUSIC_PATH}/${track.audioFile}`;
         await waveformLoader.loaded;
         TweenLite.fromTo(this.audio, 0.3, { volume: 0 }, {
             volume: 1,

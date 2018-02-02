@@ -105,7 +105,7 @@ const StyledCollectionTitleContainer = styled('div')`
     border-bottom: ${listBottomBorder};
 `;
 
-const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement>> = ({ item, currentItemId, baseRoute, onClick }) => {
+const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement>> = ({ item, currentItemId, onClick, baseRoute }) => {
     if (!item.musicFiles) {
         return null;
     } else if (item.musicFiles.length === 1) {
@@ -114,7 +114,7 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
             <StyledMusicItem>
                 <Highlight active={currentItemId === musicFile.id}>
                     <Link
-                        to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.filePath)}`)}
+                        to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
                         onClick={() => onClick(musicFile, true)}
                     >
                         <StyledInfo>
@@ -144,7 +144,7 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                         >
                             <Highlight active={currentItemId === musicFile.id}>
                                 <Link
-                                    to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.filePath)}`)}
+                                    to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
                                     onClick={() => onClick(musicFile, true)}
                                 >
                                     <div>

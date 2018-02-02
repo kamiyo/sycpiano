@@ -11,13 +11,13 @@ const MusicFile = (sequelize: Sequelize, dataTypes: DataTypes) => {
             unique: true,
         },
         name: dataTypes.STRING,
-        filePath: {
+        audioFile: {
             type: dataTypes.STRING,
-            field: 'file_path',
+            field: 'audio_file',
         },
-        waveformPath: {
+        waveformFile: {
             type: dataTypes.STRING,
-            field: 'waveform_path',
+            field: 'waveform_file',
         },
         durationSeconds: {
             type: dataTypes.INTEGER,
