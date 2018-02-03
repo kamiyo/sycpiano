@@ -11,11 +11,12 @@ const HomeContainer = styled('div')`
     ${container}
     height: 100%;
     width: 100%;
-    background: url(${homeBackground}) no-repeat;
-    background-size: 100%;
-    background-position: 0px -200px;
-    position: absolute;
+
 `;
+// background: url(${homeBackground}) no-repeat;
+//     background-size: 100%;
+//     background-position: 0px -180px;
+//     position: absolute;
 
 const Content = styled('div')`
     position: absolute;
@@ -48,14 +49,12 @@ const Handle = styled('div')`
     text-shadow: 2px 2px 4px ${textShadowColor};
 `;
 
-const BackgroundCover = styled('div')`
-    background-color: black;
+const BackgroundCover = styled('img')`
     top: 0;
-    left: 0;
+    left: 50%;
     position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0.2;
+    filter: saturate(0.8);
+    transform: translateX(-50%);
 `;
 
 /*
@@ -134,7 +133,7 @@ const EventLocation = styled('div')`
 const Home: React.SFC<{}> = () => {
     return (
         <HomeContainer>
-            <BackgroundCover />
+            <BackgroundCover src={homeBackground} />
             <Content>
                 <Name>Sean Chen</Name>
                 <Skills>pianist / composer / arranger</Skills>

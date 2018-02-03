@@ -1,10 +1,12 @@
 import { css } from 'emotion';
 import { hiDPI } from 'polished';
 
+import color from 'color';
+
 import { navBarHeight } from 'src/styles/variables';
 
-const pushedHelper = (marginTop: string) => ({
-    height: `calc(100% - ${marginTop})`,
+const pushedHelper = (marginTop: number) => ({
+    height: `calc(100% - ${marginTop}px)`,
     marginTop,
 });
 
@@ -13,14 +15,14 @@ export const pushed = css({
     [hiDPI(2)]: pushedHelper(navBarHeight.hdpi),
 });
 
-export const link = (color: string, hoverDelta = '#444') => css`
-    color: ${color};
+export const link = (colorString: string, hoverDelta = 0.2) => css`
+    color: ${colorString};
     text-decoration: none;
     cursor: pointer;
-    transition: color: 0.5s;
+    transition: color 0.5s;
 
     &:hover {
-        color: calc(${color} - ${hoverDelta});
+        color: ${color(colorString).darken(hoverDelta).string()};
     }
 `;
 

@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import styled from 'react-emotion';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
@@ -8,7 +7,6 @@ import { Transition, TransitionGroup } from 'react-transition-group';
 import 'gsap/CSSPlugin';
 import TweenLite from 'gsap/TweenLite';
 
-import Front from 'src/components/App/Front/Front';
 import NavBar from 'src/components/App/NavBar/NavBar';
 import { LogoSVG } from 'src/components/LogoSVG';
 
@@ -27,30 +25,15 @@ const fadeOnExit = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.25, { opacity: 1 }, { opacity: 0 });
 };
 
-const slideDownOnEnter = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.5, { y: -90 }, { y: 0, delay: 0.55, ease: 'Power3.easeOut' });
-};
-
-const slideUpOnExit = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.5, { y: 0 }, { y: -90, delay: 0.55, ease: 'Power3.easeOut' });
-};
-
-interface AppState {
-    readonly isFront: boolean;
-}
-
-const RootContainer = styled('div')`
+const RootContainer = styled('div') `
     height: 100%;
     width: 100%;
 `;
 
-export default class App extends React.Component<RouteComponentProps<void>, AppState> {
-    state = {
-        isFront: false,
-    };
+export default class App extends React.Component<RouteComponentProps<void>, {}> {
 
-    isSubPath = (path: string) => {
-        return path === '/photos' || path === '/videos' || path === '/music';
+    isSubPath = (testPath: string) => {
+        return testPath === '/photos' || testPath === '/videos' || testPath === '/music';
     }
 
     getRouteBase = () => {
@@ -62,45 +45,13 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
         // }
     }
 
-    showFront = () => {
-        this.setState({ isFront: true });
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
-        window.addEventListener('keydown', this.checkDownArrow);
-    }
-
-    hideFront = () => {
-        this.setState({ isFront: false });
-        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront));
-        window.removeEventListener('keydown', this.checkDownArrow);
-    }
-
-    checkDownArrow = (event: KeyboardEvent) => {
-        if (event.keyCode === 40) {
-            this.hideFront();
-        }
-    }
-
-    componentDidMount() {
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
-        window.addEventListener('keydown', this.checkDownArrow);
-    }
-
     render() {
         return (
             <RootContainer>
                 <LogoSVG />
-                <Front show={this.state.isFront} onClick={this.hideFront} />
-                <Transition
-                    in={!this.state.isFront}
-                    onEnter={slideDownOnEnter}
-                    onExit={slideUpOnExit}
-                    timeout={250}
-                >
-                    <NavBar
-                        onClick={this.showFront}
-                        currentBasePath={this.getRouteBase()}
-                    />
-                </Transition>
+                <NavBar
+                    currentBasePath={this.getRouteBase()}
+                />
                 <TransitionGroup>
                     <Transition
                         key={this.getRouteBase()}
