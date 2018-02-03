@@ -1,26 +1,23 @@
-import 'less/App/NavBar/nav-bar-links.less';
-
 import * as React from 'react';
+import styled from 'react-emotion';
 
 import { LinkShape } from 'src/components/App/NavBar/types';
 
 import NavBarLink from 'src/components/App/NavBar/NavBarLink';
+import { noHighlight } from 'src/styles/mixins';
 
 interface NavBarLinksProps {
+    readonly className?: string;
     readonly currentBasePath: string;
     readonly links: LinkShape[];
     readonly showSub: string;
     readonly toggleSub: (show?: string) => void;
 }
 
-const NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
-    <div className="navBarLinks no-highlight">
+let NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
+    <div className={props.className}>
         <ul>
             {props.links.map((link: LinkShape, i: number): JSX.Element => {
-                let activeName = '';
-                if (link.path === props.currentBasePath) {
-                    activeName = 'active';
-                }
                 return (
                     <NavBarLink
                         key={i}
@@ -29,12 +26,22 @@ const NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
                         subNavLinks={link.subPaths}
                         showSub={props.showSub}
                         toggleSub={props.toggleSub}
-                        activeName={activeName}
+                        active={link.path === props.currentBasePath}
+                        isHome={props.currentBasePath === '/'}
                     />
                 );
             })}
         </ul>
     </div>
 );
+
+NavBarLinks = styled(NavBarLinks)`
+    ${noHighlight}
+    text-transform: uppercase;
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+`;
 
 export default NavBarLinks;
