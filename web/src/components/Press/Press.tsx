@@ -1,13 +1,22 @@
-import 'less/Press/press.less';
-
-import * as React from 'react';
+import React from 'react';
+import styled, { css } from 'react-emotion';
 
 import AcclaimsList from 'src/components/Press/AcclaimsList';
 
-const Press: React.SFC<{}> = () => (
-    <div className="press">
-        <AcclaimsList />
+import { pushed } from 'src/styles/mixins';
+
+let Press: React.SFC<{className?: string}> = (props) => (
+    <div className={props.className}>
+        <AcclaimsList className={css`${pushed};`}/>
     </div>
 );
+
+Press = styled(Press)`
+    box-sizing: border-box;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+`;
 
 export default Press;

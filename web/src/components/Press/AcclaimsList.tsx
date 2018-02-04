@@ -1,6 +1,4 @@
-import 'less/Press/acclaims-list.less';
-
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
@@ -23,7 +21,11 @@ interface AcclaimsListDispatchToProps {
     readonly createFetchAcclaimsAction: () => void;
 }
 
-type AcclaimsListProps = AcclaimsListStateToProps & AcclaimsListDispatchToProps;
+type AcclaimsListProps = (
+    AcclaimsListStateToProps
+    & AcclaimsListDispatchToProps
+    & { className?: string; }
+);
 
 class AcclaimsList extends React.Component<AcclaimsListProps> {
     componentWillMount() {
@@ -33,7 +35,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
     render() {
         const numRows = this.props.acclaims.length;
         return (
-            <div className="acclaims-list">
+            <div className={this.props.className}>
                 <AutoSizer>
                     {({ height, width }) => (
                         <List
