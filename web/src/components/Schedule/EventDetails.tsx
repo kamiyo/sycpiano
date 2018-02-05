@@ -1,6 +1,7 @@
 import color from 'color';
 import { startCase } from 'lodash-es/string';
 import { Moment } from 'moment-timezone';
+import { mix } from 'polished';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 
@@ -164,7 +165,7 @@ EventWebsiteButton = styled(EventWebsiteButton)`
     transition: all 0.25s;
 
     &:hover {
-        background-color: ${color(magenta).mix(color('#FFF'), 0.25).string()};
+        background-color: ${mix(0.75, magenta, '#FFF')};
         color: white;
         cursor: pointer;
     }

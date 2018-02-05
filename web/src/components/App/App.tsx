@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styled from 'react-emotion';
+import styled, { css } from 'react-emotion';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -30,7 +30,19 @@ const RootContainer = styled('div') `
     width: 100%;
 `;
 
-export default class App extends React.Component<RouteComponentProps<void>, {}> {
+export default class App extends React.Component<RouteComponentProps<void>, { homeBgLoaded: boolean; }> {
+    constructor(props: RouteComponentProps<void>) {
+        super(props);
+        if (this.getRouteBase() === '/') {
+            this.state = {
+                homeBgLoaded: false,
+            };
+        } else {
+            this.state = {
+                homeBgLoaded: true,
+            };
+        }
+    }
 
     isSubPath = (testPath: string) => {
         return testPath === '/photos' || testPath === '/videos' || testPath === '/music';
@@ -45,13 +57,25 @@ export default class App extends React.Component<RouteComponentProps<void>, {}> 
         // }
     }
 
+    bgLoaded = () => {
+        this.setState({ homeBgLoaded: true });
+    }
+
     render() {
         return (
             <RootContainer>
                 <LogoSVG />
-                <NavBar
-                    currentBasePath={this.getRouteBase()}
-                />
+                <Transition
+                    in={this.state.homeBgLoaded}
+                    onEntering={fadeOnEnter}
+                    timeout={250}
+                    appear={true}
+                >
+                    <NavBar
+                        className={css`opacity: 0;`}
+                        currentBasePath={this.getRouteBase()}
+                    />
+                </Transition>
                 <TransitionGroup>
                     <Transition
                         key={this.getRouteBase()}
@@ -66,7 +90,13 @@ export default class App extends React.Component<RouteComponentProps<void>, {}> 
                             <Route path="/media" component={Media} />
                             <Route path="/press" exact={true} component={Press} />
                             <Route path="/schedule" component={Schedule} />
-                            <Route path="/" exact={true} component={Home} />
+                            <Route
+                                path="/"
+                                exact={true}
+                                render={(childProps) => (
+                                    <Home {...childProps} bgLoaded={this.bgLoaded} />
+                                )}
+                            />
                         </Switch>
                     </Transition>
                 </TransitionGroup>

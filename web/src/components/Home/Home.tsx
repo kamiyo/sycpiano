@@ -1,60 +1,103 @@
 import * as React from 'react';
 import styled from 'react-emotion';
+import { Transition } from 'react-transition-group';
+
+import TweenLite from 'gsap/TweenLite';
+import { hiDPI } from 'polished';
 
 import { lato2, lato2i } from 'src/styles/fonts';
 import { homeBackground } from 'src/styles/imageUrls';
-import { container /*, pushed*/ } from 'src/styles/mixins';
+import { container } from 'src/styles/mixins';
+import { navBarHeight } from 'src/styles/variables';
 
-const textShadowColor = 'rgba(0, 0, 0, 0.3)';
+const textShadowColor = 'rgba(0, 0, 0, 0.75)';
 
-const HomeContainer = styled('div')`
+const HomeContainer = styled('div') `
     ${container}
     height: 100%;
     width: 100%;
-
 `;
 // background: url(${homeBackground}) no-repeat;
 //     background-size: 100%;
 //     background-position: 0px -180px;
 //     position: absolute;
 
-const Content = styled('div')`
+const Content = styled('div') `
     position: absolute;
     width: 100%;
     text-align: center;
-    top: 35%;
+    top: 50%;
+    transform: translateY(-50%);
     color: white;
-    text-shadow: 2px 0px 4px ${textShadowColor};
+    text-shadow: 0px 0px 8px ${textShadowColor};
     z-index: 100;
 `;
 
-const Name = styled('div')`
+const Name = styled('div') `
     font-family: ${lato2};
     font-size: 100px;
     text-transform: uppercase;
 `;
 
-const Skills = styled('div')`
+const Skills = styled('div') `
     font-family: ${lato2};
     font-size: 30px;
     color: #EFE6B0;
-    text-shadow: 2px 2px 6px ${textShadowColor};
+    text-shadow: 0 0 6px ${textShadowColor};
 `;
 
-const Handle = styled('div')`
+const Handle = styled('div') `
     margin-top: 15px;
     font-family: ${lato2i};
     font-size: 30px;
     color: white;
-    text-shadow: 2px 2px 4px ${textShadowColor};
+    text-shadow: 0 0 6px ${textShadowColor};
 `;
 
-const BackgroundCover = styled('img')`
+const BackgroundContainer = styled('div') `
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+`;
+
+const Background = styled('img') `
     top: 0;
     left: 50%;
+    width: 100%;
     position: absolute;
     filter: saturate(0.8);
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(-16%);
+    z-index: 0;
+`;
+
+const BackgroundCover = styled('div') `
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-image: linear-gradient(66deg,rgba(0,0,0,0) 70%,rgba(0, 0, 0, 0.2) 75%);
+`;
+
+const NavBarGradient = styled('div') `
+    height: ${navBarHeight.nonHdpi}px;
+    padding: 0 30px 0 0;
+
+    ${hiDPI(2)} {
+        height: ${navBarHeight.hdpi}px;
+        padding-left: 15px;
+    }
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    background-image: linear-gradient(122deg,rgba(3, 3, 3, 0.4) 5%,rgba(255, 255, 255, 0.11) 20%,rgba(255, 255, 255, 0.62) 22%,rgba(255, 255, 255, 0.6) 50%,rgba(53, 53, 53, 0.27) 70%);
 `;
 
 /*
@@ -130,17 +173,48 @@ const EventLocation = styled('div')`
 `;
 */
 
-const Home: React.SFC<{}> = () => {
-    return (
-        <HomeContainer>
-            <BackgroundCover src={homeBackground} />
-            <Content>
-                <Name>Sean Chen</Name>
-                <Skills>pianist / composer / arranger</Skills>
-                <Handle>@seanchenpiano</Handle>
-            </Content>
-        </HomeContainer>
-    );
-};
+class Home extends React.Component<{ bgLoaded: () => void }, { bgLoaded: boolean; }> {
+    private imgRef: HTMLImageElement;
+    private bgRef: HTMLDivElement;
+    state = {
+        bgLoaded: false,
+    };
+
+    componentWillMount() {
+        const img = new Image();
+        img.onload = () => {
+            this.imgRef.src = img.src;
+            this.setState({ bgLoaded: true });
+        };
+        img.src = homeBackground;
+    }
+
+    render() {
+        return (
+            <HomeContainer>
+                <Transition
+                    in={this.state.bgLoaded}
+                    onEnter={() => {
+                        this.props.bgLoaded();
+                        TweenLite.fromTo(this.bgRef, 0.3, { opacity: 0 }, { opacity: 1 });
+                    }}
+                    timeout={300}
+                    appear={true}
+                >
+                    <BackgroundContainer innerRef={(div) => this.bgRef = div}>
+                        <Background innerRef={(img) => this.imgRef = img} />
+                        <BackgroundCover />
+                        <NavBarGradient />
+                    </BackgroundContainer>
+                </Transition>
+                <Content>
+                    <Name>Sean Chen</Name>
+                    <Skills>pianist / composer / arranger</Skills>
+                    <Handle>@seanchenpiano</Handle>
+                </Content>
+            </HomeContainer>
+        );
+    }
+}
 
 export default Home;

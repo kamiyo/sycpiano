@@ -1,7 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import styled, { css } from 'react-emotion';
 
 import AcclaimsList from 'src/components/Press/AcclaimsList';
+import { container } from 'src/styles/mixins';
 
 import { pushed } from 'src/styles/mixins';
 
@@ -12,6 +13,7 @@ let Press: React.SFC<{className?: string}> = (props) => (
 );
 
 Press = styled(Press)`
+    ${container}
     box-sizing: border-box;
     position: absolute;
     height: 100%;

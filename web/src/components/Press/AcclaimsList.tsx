@@ -1,4 +1,5 @@
-import React from 'react';
+import * as React from 'react';
+import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
@@ -10,6 +11,7 @@ import { AcclaimItemShape } from 'src/components/Press/types';
 import { GlobalStateShape } from 'src/types';
 
 import AcclaimsListItem from 'src/components/Press/AcclaimsListItem';
+import { pushed } from 'src/styles/mixins';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
 
@@ -26,6 +28,10 @@ type AcclaimsListProps = (
     & AcclaimsListDispatchToProps
     & { className?: string; }
 );
+
+const listStyle = css`
+    ${pushed}
+`;
 
 class AcclaimsList extends React.Component<AcclaimsListProps> {
     componentWillMount() {

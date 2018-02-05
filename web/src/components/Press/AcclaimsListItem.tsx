@@ -1,6 +1,5 @@
-import classNames from 'classnames';
-import React from 'react';
-import styled, { css } from 'react-emotion';
+import * as React from 'react';
+import styled, { css, cx } from 'react-emotion';
 
 import { AcclaimItemShape } from 'src/components/Press/types';
 import { lato1, lato2 } from 'src/styles/fonts';
@@ -50,7 +49,7 @@ interface AcclaimsListItemProps {
 
 const AcclaimsListItem: React.SFC<AcclaimsListItemProps> = (props) => (
     <div
-        className={classNames(props.className, css`padding: 20px 0;`)}
+        className={cx(props.className, css`padding: 20px 0; &:first-child { padding-top: 40px; }`)}
         style={props.style}
     >
         <AcclaimContainer>

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
 
-import color from 'color';
-import { hiDPI } from 'polished';
+import { hiDPI, mix } from 'polished';
 import { Link } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 
@@ -31,8 +30,7 @@ const highlightStyles = css`
     padding: 20px 10px 0 10px;
 `;
 
-// oh hi
-const Mark = styled<{ active: boolean; isHome: boolean; }, 'div'>('div')`
+const highlightDefaultStyle = css`
     ${highlightStyles}
     ${hiDPI(2)} {
         margin-top: ${navBarMarginTop.hdpi}px;
@@ -47,8 +45,25 @@ const Mark = styled<{ active: boolean; isHome: boolean; }, 'div'>('div')`
     height: 5px;
     z-index: -1;
     background-color: ${lightBlue};
-    ${(props) => props.active && `opacity: 1.0;`}
-    ${(props) => props.isHome && `background-color: white;`}
+    transition: all 0.2s;
+`;
+
+const highlightActiveStyle = css`
+    opacity: 1.0;
+`;
+
+const highlightHomeStyle = css`
+    ${hiDPI(2)} {
+        background-color: white;
+    }
+    background-color: white;
+`;
+
+const highlightHomeActivestyle = css`
+    ${hiDPI(2)} {
+        height: 2px;
+    }
+    height: 5px;
 `;
 
 const HyperlinkText = styled('div')`
@@ -57,7 +72,14 @@ const HyperlinkText = styled('div')`
 
 const Highlight: React.SFC<HighlightProps> = ({ active, isHome, link }) => (
     <>
-        <Mark active={active} isHome={isHome} />
+        <div
+            className={cx(
+                highlightDefaultStyle,
+                { [highlightActiveStyle]: active },
+                { [highlightHomeStyle]: isHome },
+                { [highlightHomeActivestyle]: active && isHome },
+            )}
+        />
         <HyperlinkText>{link}</HyperlinkText>
     </>
 );
@@ -81,7 +103,7 @@ const linkStyle = css`
     transition: all 0.5s;
 
     &:hover {
-        color: ${color(logoBlue).mix(color('#444')).string()};
+        color: ${mix(0.5, logoBlue, '#444')};
     }
 `;
 
@@ -90,15 +112,18 @@ const linkActiveStyle = css`
 `;
 
 const linkHomeStyle = css`
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(200, 200, 200, 1);
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
 
     &:hover {
         color: rgba(255, 255, 255, 1);
+        text-shadow: 0 0 1px rgba(255, 255, 255, 1);
     }
 `;
 
 const linkHomeActiveStyle = css`
     color: rgba(255, 255, 255, 1);
+    text-shadow: 0 0 1px rgba(255, 255, 255, 1);
 `;
 
 let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
@@ -142,6 +167,7 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                     basePath={props.to}
                     links={props.subNavLinks}
                     onClick={() => props.toggleSub('')}
+                    isHome={props.isHome}
                 />
             </Transition>
         }
@@ -157,7 +183,7 @@ NavBarLink = styled(NavBarLink)`
     font-family: ${lato2};
     letter-spacing: 0em;
     display: inline-block;
-    margin-right: 2px;
+    padding: 0 1px 0 1px;
     vertical-align: top;
     text-align: center;
 

@@ -4,8 +4,8 @@ import 'less/Admin/components/event-form.less';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-select/dist/react-select.css';
 
-import classNames from 'classnames';
 import * as React from 'react';
+import { cx } from 'react-emotion';
 
 import { default as moment, Moment } from 'moment-timezone';
 import DatePicker from 'react-datepicker';
@@ -180,7 +180,7 @@ class EventForm extends React.Component<EventFormProps, {}> {
                             onChange={this.props.onTimeChange}
                         />
                         <input
-                            className={classNames('EventForm__input', { error: this.props.geocodeError })}
+                            className={cx('EventForm__input', { error: this.props.geocodeError })}
                             type="text"
                             name="location"
                             placeholder="Where is this event going down?"
