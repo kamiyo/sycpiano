@@ -1,4 +1,3 @@
-import color from 'color';
 import { startCase } from 'lodash-es/string';
 import { Moment } from 'moment-timezone';
 import { mix } from 'polished';

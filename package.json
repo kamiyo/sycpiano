@@ -24,10 +24,6 @@
   "license": "ISC",
   "dependencies": {
     "@types/bluebird-global": "^3.5.3",
-<<<<<<< HEAD
-=======
-    "@types/classnames": "^2.2.3",
->>>>>>> 955740a5fdd097bea33232b11df7b9786953eb16
     "@types/color": "^3.0.0",
     "@types/d3-ease": "^1.0.7",
     "@types/events": "^1.1.0",

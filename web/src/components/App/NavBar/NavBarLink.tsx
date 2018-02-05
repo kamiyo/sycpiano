@@ -45,7 +45,6 @@ const highlightDefaultStyle = css`
     height: 5px;
     z-index: -1;
     background-color: ${lightBlue};
-    transition: all 0.2s;
 `;
 
 const highlightActiveStyle = css`
