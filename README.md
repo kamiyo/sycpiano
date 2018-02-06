@@ -62,8 +62,8 @@ Before seeding the calendar, make sure to obtain a service account key file (jso
 
 sycpiano uses umzug and sequelize for migrations.
 ```
-$ node server/build/migrate [up|down|prev|next]
-$ node server/build/seed [up|down|prev|next]
+$ node server/build/migrate [up|down|prev|next] [(if up or down) migration-file]
+$ node server/build/seed [up|down|prev|next] [(if up or down) seeder-file]
 ```
 
 Run `yarn run start-dev` or at least `yarn run build-server` so that the server/build folder actually has .js files!
