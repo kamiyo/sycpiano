@@ -39,7 +39,7 @@ const AboutText: React.SFC<{ className?: string }> = (props) => (
                     <Paragraph key={i}>
                         <FirstLetter>{firstLetter}</FirstLetter>
                         {beforeName}
-                        <span className={css`font-family: ${lato3}`}>
+                        <span className={css` font-family: ${lato3}; `}>
                             {name}
                         </span>
                         {afterName}
@@ -56,7 +56,7 @@ const LeftContainer: React.SFC<{}> = styled('div')`
     flex: 1;
     background: url(${sycWithPianoBW}) no-repeat fixed;
     background-size: 56%;
-    background-position: 0px -100px;
+    background-position: 0 -100px;
 `;
 
 const RightContainer = styled(AboutText)`

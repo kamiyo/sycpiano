@@ -21,10 +21,12 @@ interface HighlightProps {
 }
 
 const highlightStyles = css`
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         height: ${navBarHeight.hdpi}px;
         margin-top: 0;
     }
+
     margin-top: ${navBarMarginTop.nonHdpi}px;
     height: ${navBarHeight.nonHdpi - navBarMarginTop.nonHdpi}px;
     padding: 20px 10px 0 10px;
@@ -32,10 +34,13 @@ const highlightStyles = css`
 
 const highlightDefaultStyle = css`
     ${highlightStyles}
+
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         margin-top: ${navBarMarginTop.hdpi}px;
         height: 5px;
     }
+
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -48,20 +53,24 @@ const highlightDefaultStyle = css`
 `;
 
 const highlightActiveStyle = css`
-    opacity: 1.0;
+    opacity: 1;
 `;
 
 const highlightHomeStyle = css`
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         background-color: white;
     }
+
     background-color: white;
 `;
 
 const highlightHomeActivestyle = css`
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         height: 2px;
     }
+
     height: 5px;
 `;
 
@@ -174,13 +183,15 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
 );
 
 NavBarLink = styled(NavBarLink)`
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         font-size: 16px;
     }
+
     font-size: 22px;
     position: relative;
     font-family: ${lato2};
-    letter-spacing: 0em;
+    letter-spacing: 0;
     display: inline-block;
     padding: 0 1px 0 1px;
     vertical-align: top;

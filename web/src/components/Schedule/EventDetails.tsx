@@ -55,7 +55,7 @@ let EventTime: React.SFC<EventDateTimeProps> = (props) => (
     </div>
 );
 
-EventTime = styled(EventTime)`font-size: 20px;`;
+EventTime = styled(EventTime)` font-size: 20px; `;
 
 interface EventLocationProps { location: string; className?: string; }
 
@@ -80,7 +80,10 @@ let EventLocation: React.SFC<EventLocationProps> = (props) => {
         <a href={getGoogleMapsSearchUrl(props.location)} className={props.className} target="_blank">
             <LocationIconInstance className={locationIconStyle} />
 
-            <strong className={css`color: black; margin-left: 10px;`}>
+            <strong className={css`
+                color: black;
+                margin-left: 10px;
+            `}>
                 {getVenueName(props.location)}
             </strong>
         </a>

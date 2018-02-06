@@ -10,8 +10,6 @@ const playlistTogglerHeight = playlistTogglerWidth * 2;
 const StyledToggler = styled('div')`
     flex-basis: ${playlistTogglerWidth}px;
     align-self: center;
-    @height: ${playlistTogglerHeight}px;
-
     border-top-left-radius: ${playlistTogglerHeight}px;
     border-bottom-left-radius: ${playlistTogglerHeight}px;
     line-height: ${playlistTogglerHeight + 1}px;
@@ -20,10 +18,12 @@ const StyledToggler = styled('div')`
     background-color: ${playlistBackground};
     color: #000;
     transition: all 0.15s;
+
     &:hover {
         background-color: rgba(255, 255, 255, 1);
         cursor: pointer;
     }
+
     z-index: 50;
     ${noHighlight}
 `;

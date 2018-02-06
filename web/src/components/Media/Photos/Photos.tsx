@@ -71,11 +71,7 @@ const photoULStyle = css`
 const Highlight = styled<{ active: boolean; }, 'div'>('div')`
     padding-left: 15px;
     transition: border 0.15s;
-    ${
-        props => (props.active)
-            ? css`border-left: 7px solid ${lightBlue};`
-            : css`border-left: 7px solid transparent;`
-    }
+    border-left: 7px solid ${props => props.active ? lightBlue : 'transparent'};
 `;
 
 const PhotoRow = styled('div')`
@@ -83,13 +79,16 @@ const PhotoRow = styled('div')`
     border: 1px solid transparent;
     transition: all 0.2s;
     border-radius: 10px;
+
     img {
         width: 100%;
     }
+
     &:hover {
         cursor: pointer;
         border: 1px solid ${lightBlue};
     }
+
     cursor: default;
     margin: 10px;
     overflow: hidden;

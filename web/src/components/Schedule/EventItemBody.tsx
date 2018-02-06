@@ -14,7 +14,7 @@ import { DayItem } from 'src/components/Schedule/types';
 
 import { lato1 } from 'src/styles/fonts';
 
-const FlexEventDate = styled(EventDate)`flex: 0 0 100px`;
+const FlexEventDate = styled(EventDate)` flex: 0 0 100px; `;
 
 const FlexEventInfoContainer = styled('div')`
     flex: 1 1 auto;
@@ -23,7 +23,7 @@ const FlexEventInfoContainer = styled('div')`
 
 type EventItemBody = DayItem & { className?: string };
 
-const detailSectionMargin = (extra?: number) => css`margin-bottom: ${20 + (extra || 0)}px`;
+const detailSectionMargin = (extra?: number) => css` margin-bottom: ${20 + (extra || 0)}px; `;
 
 let EventItemBody: React.SFC<EventItemBody> = (props) => (
     <div className={props.className}>

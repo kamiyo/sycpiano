@@ -31,6 +31,7 @@ const navBarStyle = css`
     height: ${navBarHeight.nonHdpi}px;
     padding: 0 30px 0 0;
 
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         height: ${navBarHeight.hdpi}px;
         padding-left: 15px;
@@ -44,7 +45,6 @@ const navBarStyle = css`
     left: 0;
     right: 0;
     z-index: 5000;
-
     background-color: white;
     transition: background-color 0.5s;
     box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.3);

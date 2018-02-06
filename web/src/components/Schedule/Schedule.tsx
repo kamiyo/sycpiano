@@ -19,7 +19,7 @@ const scheduleStyles = css`
 
 const Schedule: React.SFC<{}> = () => (
     <div className={scheduleStyles}>
-        <div className={css`height: 100%;`}>
+        <div className={css` height: 100%; `}>
             <Switch>
                 <Route
                     path="/schedule"

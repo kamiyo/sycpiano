@@ -17,10 +17,6 @@ const HomeContainer = styled('div') `
     height: 100%;
     width: 100%;
 `;
-// background: url(${homeBackground}) no-repeat;
-//     background-size: 100%;
-//     background-position: 0px -180px;
-//     position: absolute;
 
 const Content = styled('div') `
     position: absolute;
@@ -29,7 +25,7 @@ const Content = styled('div') `
     top: 50%;
     transform: translateY(-50%);
     color: white;
-    text-shadow: 0px 0px 8px ${textShadowColor};
+    text-shadow: 0 0 8px ${textShadowColor};
     z-index: 100;
 `;
 
@@ -42,7 +38,7 @@ const Name = styled('div') `
 const Skills = styled('div') `
     font-family: ${lato2};
     font-size: 30px;
-    color: #EFE6B0;
+    color: #efe6b0;
     text-shadow: 0 0 6px ${textShadowColor};
 `;
 
@@ -80,13 +76,19 @@ const BackgroundCover = styled('div') `
     top: 0;
     left: 0;
     z-index: 1;
-    background-image: linear-gradient(66deg,rgba(0,0,0,0) 70%,rgba(0, 0, 0, 0.2) 75%);
+    background-image:
+        linear-gradient(
+            66deg,
+            rgba(0, 0, 0, 0) 70%,
+            rgba(0, 0, 0, 0.2) 75%
+        );
 `;
 
 const NavBarGradient = styled('div') `
     height: ${navBarHeight.nonHdpi}px;
     padding: 0 30px 0 0;
 
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         height: ${navBarHeight.hdpi}px;
         padding-left: 15px;
@@ -97,7 +99,15 @@ const NavBarGradient = styled('div') `
     left: 0;
     right: 0;
     z-index: 2;
-    background-image: linear-gradient(122deg,rgba(3, 3, 3, 0.4) 5%,rgba(255, 255, 255, 0.11) 20%,rgba(255, 255, 255, 0.62) 22%,rgba(255, 255, 255, 0.6) 50%,rgba(53, 53, 53, 0.27) 70%);
+    background-image:
+        linear-gradient(
+            122deg,
+            rgba(3, 3, 3, 0.4) 5%,
+            rgba(255, 255, 255, 0.11) 20%,
+            rgba(255, 255, 255, 0.62) 22%,
+            rgba(255, 255, 255, 0.6) 50%,
+            rgba(53, 53, 53, 0.27) 70%
+        );
 `;
 
 /*

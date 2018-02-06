@@ -45,26 +45,27 @@ const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li')`
     padding: ${padding}px 0 ${padding}px 15px;
     border-left: 7px solid transparent;
     border-bottom: 1px solid rgba(120, 120, 120, 0.3);
-
     transition: all 0.15s;
 
     &:hover {
         background-color: rgba(255, 255, 255, 1);
 
+        /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after */
         ${ImageContainer as any} img {
             filter: brightness(60%);
         }
     }
 
-    ${props => props.active ?
+    /* stylelint-disable comment-empty-line-before */
+    ${props => props.active &&
         `border-left-color: ${lightBlue};
         background-color: rgba(255, 255, 255, 1);
 
         ${ImageContainer} img {
             filter: brightness(60%);
         }`
-    : ''}
-
+    }
+    /* stylelint-enable comment-empty-line-before */
 `;
 
 const Duration = styled<{ active: boolean; children: string; }, 'span'>('span')`

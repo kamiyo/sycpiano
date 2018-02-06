@@ -49,7 +49,13 @@ interface AcclaimsListItemProps {
 
 const AcclaimsListItem: React.SFC<AcclaimsListItemProps> = (props) => (
     <div
-        className={cx(props.className, css`padding: 20px 0; &:first-child { padding-top: 40px; }`)}
+        className={cx(props.className, css`
+            padding: 20px 0;
+
+            &:first-child {
+                padding-top: 40px;
+            }
+        `)}
         style={props.style}
     >
         <AcclaimContainer>

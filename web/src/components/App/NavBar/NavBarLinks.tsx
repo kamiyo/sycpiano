@@ -38,6 +38,7 @@ let NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
 NavBarLinks = styled(NavBarLinks)`
     ${noHighlight}
     text-transform: uppercase;
+
     ul {
         padding: 0;
         margin: 0;

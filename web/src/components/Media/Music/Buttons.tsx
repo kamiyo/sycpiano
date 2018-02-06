@@ -21,6 +21,7 @@ const StyledIcon = styled('div')`
     opacity: 0;
     ${sharedStyle}
     pointer-events: none;
+
     svg {
         pointer-events: none;
     }
@@ -28,7 +29,7 @@ const StyledIcon = styled('div')`
 
 const solidStyle = css`
     position: absolute;
-    fill: #999999;
+    fill: #999;
     height: 200px;
     width: 200px;
     z-index: 1;
@@ -37,7 +38,7 @@ const solidStyle = css`
 
 const blurStyle = css`
     position: absolute;
-    fill: #EEEEEE;
+    fill: #eee;
     z-index: 1;
     height: 200px;
     width: 200px;
@@ -101,7 +102,7 @@ const solidButtonStyle = css`
 
 const solidButtonHover = css`
     cursor: pointer;
-    fill: #EEEEEE;
+    fill: #eee;
 `;
 
 const blurButtonStyle = css`

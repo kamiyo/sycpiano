@@ -28,20 +28,21 @@ const StyledPreviewOverlay = styled('div')`
     background: url(${bg1}) no-repeat;
 
     &:hover {
-        cursor:pointer;
+        cursor: pointer;
     }
 
     svg {
         position: absolute;
         left: 50%;
         top: 50%;
-        transform: translate( -50%, -50%);
+        transform: translate(-50%, -50%);
     }
 `;
 
 const ytIconStyle = css`
     transition: all 0.2s;
 
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after */
     ${StyledPreviewOverlay as any}:hover & {
         fill: #cc181e;
         fill-opacity: 1;
