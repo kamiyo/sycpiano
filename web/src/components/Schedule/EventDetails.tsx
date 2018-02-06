@@ -1,6 +1,7 @@
 import { startCase } from 'lodash-es/string';
 import { Moment } from 'moment-timezone';
-import React from 'react';
+import { mix } from 'polished';
+import * as React from 'react';
 import styled, { css } from 'react-emotion';
 
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
@@ -163,7 +164,7 @@ EventWebsiteButton = styled(EventWebsiteButton)`
     transition: all 0.25s;
 
     &:hover {
-        background-color: tint(${magenta}, 25%);
+        background-color: ${mix(0.75, magenta, '#FFF')};
         color: white;
         cursor: pointer;
     }

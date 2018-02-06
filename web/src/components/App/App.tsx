@@ -1,6 +1,5 @@
 import * as React from 'react';
-
-import styled from 'react-emotion';
+import styled, { css } from 'react-emotion';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -8,7 +7,6 @@ import { Transition, TransitionGroup } from 'react-transition-group';
 import 'gsap/CSSPlugin';
 import TweenLite from 'gsap/TweenLite';
 
-import Front from 'src/components/App/Front/Front';
 import NavBar from 'src/components/App/NavBar/NavBar';
 import { LogoSVG } from 'src/components/LogoSVG';
 
@@ -27,30 +25,27 @@ const fadeOnExit = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.25, { opacity: 1 }, { opacity: 0 });
 };
 
-const slideDownOnEnter = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.5, { y: -90 }, { y: 0, delay: 0.55, ease: 'Power3.easeOut' });
-};
-
-const slideUpOnExit = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.5, { y: 0 }, { y: -90, delay: 0.55, ease: 'Power3.easeOut' });
-};
-
-interface AppState {
-    readonly isFront: boolean;
-}
-
-const RootContainer = styled('div')`
+const RootContainer = styled('div') `
     height: 100%;
     width: 100%;
 `;
 
-export default class App extends React.Component<RouteComponentProps<void>, AppState> {
-    state = {
-        isFront: false,
-    };
+export default class App extends React.Component<RouteComponentProps<void>, { homeBgLoaded: boolean; }> {
+    constructor(props: RouteComponentProps<void>) {
+        super(props);
+        if (this.getRouteBase() === '/') {
+            this.state = {
+                homeBgLoaded: false,
+            };
+        } else {
+            this.state = {
+                homeBgLoaded: true,
+            };
+        }
+    }
 
-    isSubPath = (path: string) => {
-        return path === '/photos' || path === '/videos' || path === '/music';
+    isSubPath = (testPath: string) => {
+        return testPath === '/photos' || testPath === '/videos' || testPath === '/music';
     }
 
     getRouteBase = () => {
@@ -62,42 +57,22 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
         // }
     }
 
-    showFront = () => {
-        this.setState({ isFront: true });
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
-        window.addEventListener('keydown', this.checkDownArrow);
-    }
-
-    hideFront = () => {
-        this.setState({ isFront: false });
-        ['wheel', 'touchmove'].forEach((event) => window.removeEventListener(event, this.hideFront));
-        window.removeEventListener('keydown', this.checkDownArrow);
-    }
-
-    checkDownArrow = (event: KeyboardEvent) => {
-        if (event.keyCode === 40) {
-            this.hideFront();
-        }
-    }
-
-    componentDidMount() {
-        ['wheel', 'touchmove'].forEach((event) => window.addEventListener(event, this.hideFront));
-        window.addEventListener('keydown', this.checkDownArrow);
+    bgLoaded = () => {
+        this.setState({ homeBgLoaded: true });
     }
 
     render() {
         return (
             <RootContainer>
                 <LogoSVG />
-                <Front show={this.state.isFront} onClick={this.hideFront} />
                 <Transition
-                    in={!this.state.isFront}
-                    onEnter={slideDownOnEnter}
-                    onExit={slideUpOnExit}
+                    in={this.state.homeBgLoaded}
+                    onEntering={fadeOnEnter}
                     timeout={250}
+                    appear={true}
                 >
                     <NavBar
-                        onClick={this.showFront}
+                        className={css`opacity: 0;`}
                         currentBasePath={this.getRouteBase()}
                     />
                 </Transition>
@@ -115,7 +90,13 @@ export default class App extends React.Component<RouteComponentProps<void>, AppS
                             <Route path="/media" component={Media} />
                             <Route path="/press" exact={true} component={Press} />
                             <Route path="/schedule" component={Schedule} />
-                            <Route path="/" exact={true} component={Home} />
+                            <Route
+                                path="/"
+                                exact={true}
+                                render={(childProps) => (
+                                    <Home {...childProps} bgLoaded={this.bgLoaded} />
+                                )}
+                            />
                         </Switch>
                     </Transition>
                 </TransitionGroup>

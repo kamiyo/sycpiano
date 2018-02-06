@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom';
 
 import CalendarAdmin from 'src/admin/components/CalendarAdmin';
 import { TOKEN_KEY } from 'src/admin/constants';

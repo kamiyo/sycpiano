@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { EventListName } from 'src/components/Schedule/actionTypes';
 import { EventItemBody } from 'src/components/Schedule/EventItemBody';

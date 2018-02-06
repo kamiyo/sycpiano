@@ -27,18 +27,6 @@ const contactNameToPhotoStylesMap: { [key: string]: string } = {
     }),
 };
 
-const ContactItemContainer = styled('div')`
-    ${pushed};
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background-color: white;
-
-    &:nth-child(2n) {
-        background-color: ${alternateBackgroundColor}
-    }
-`;
-
 const ContactImage = styled('div')`
     flex: 0 0 55%;
     box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
@@ -57,7 +45,7 @@ let ContactItem: React.SFC<ContactItemShape> = ({
     email,
     social,
 }) => (
-    <ContactItemContainer className={className}>
+    <div className={className}>
         <ContactImage className={contactNameToPhotoStylesMap[name]} />
 
         <StyledContactInfo
@@ -69,14 +57,19 @@ let ContactItem: React.SFC<ContactItemShape> = ({
         />
 
         <StyledContactSocialMedia social={social} />
-    </ContactItemContainer>
+    </div>
 );
 
 ContactItem = styled(ContactItem)`
-    height: 100%;
-    background-color: white;
+    ${pushed};
     display: flex;
     flex-direction: column;
+    background-color: white;
+    flex: 0 1 600px;
+
+    &:nth-child(2n) {
+        background-color: ${alternateBackgroundColor}
+    }
 `;
 
 export { ContactItem };
