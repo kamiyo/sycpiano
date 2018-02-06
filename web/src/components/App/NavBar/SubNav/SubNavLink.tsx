@@ -21,7 +21,7 @@ const subNavLinkStyle = css`
     padding: 10px;
     background-color: white;
     text-align: center;
-    box-shadow: 0px 6px 11px -5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 11px -5px rgba(0, 0, 0, 0.3);
     transition: all 0.25s;
 
     &:hover {
@@ -38,7 +38,7 @@ const subNavHomeStyle = css`
     &:hover {
         color: rgba(255, 255, 255, 1);
         background-color: rgba(53, 53, 53, 0.27);
-        box-shadow: 0px 6px 11px -5px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 6px 11px -5px rgba(0, 0, 0, 0.5);
     }
 `;
 
@@ -50,7 +50,10 @@ const SubNavLink: React.SFC<SubNavLinkProps> = ({ basePath, link, onClick, isHom
                 subNavLinkStyle,
                 { [subNavHomeStyle]: isHome },
             )}
-            activeClassName={css`background-color: ${logoBlue}; color: white;`}
+            activeClassName={css`
+                background-color: ${logoBlue};
+                color: white;
+            `}
             onClick={() => { setTimeout(() => onClick(), 250); }}
         >
             {link}

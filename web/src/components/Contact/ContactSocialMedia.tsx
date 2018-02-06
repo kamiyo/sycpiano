@@ -3,7 +3,7 @@ import styled, { css } from 'react-emotion';
 
 import { ContactSocialMediaShape } from 'src/components/Contact/types';
 
-const SocialMediaLinkContainer = styled('div')`padding-top: 20px;`;
+const SocialMediaLinkContainer = styled('div')` padding-top: 20px; `;
 
 const socialMediaButtonStyles = css`
     transform: scale(1.5);

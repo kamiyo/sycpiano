@@ -19,47 +19,47 @@ const loadFont = (fileName: string, fontFamily: string) => (
 
 /* tslint:disable:no-unused-expression */
 injectGlobal`
-* {
-    box-sizing: border-box;
-    outline: none;
-}
+    * {
+        box-sizing: border-box;
+        outline: none;
+    }
 
-html {
-    height: 100%;
-    overflow: hidden;
-}
+    html {
+        height: 100%;
+        overflow: hidden;
+    }
 
-body {
-    margin: 0px;
-    height: 100%;
-    background-color: #FFF;
-}
+    body {
+        margin: 0;
+        height: 100%;
+        background-color: #fff;
+    }
 
-#hero-container {
-    height: 100%;
-}
+    #hero-container {
+        height: 100%;
+    }
 
-a {
-    ${link(logoBlue)}
-}
+    a {
+        ${link(logoBlue)}
+    }
 
-${loadFont('lato-hairline', 'LatoHairline')}
-${loadFont('lato-thin', 'LatoThin')}
-${loadFont('lato-light', 'LatoLight')}
-${loadFont('lato-black', 'LatoBlack')}
-${loadFont('lato-medium', 'LatoMedium')}
-${loadFont('lato-bold', 'LatoBold')}
-${loadFont('lato-semibold', 'LatoSemibold')}
-${loadFont('lato-regular', 'LatoRegular')}
-${loadFont('lato-heavy', 'LatoHeavy')}
-${loadFont('lato-hairlineitalic', 'LatoHairlineItalic')}
-${loadFont('lato-thinitalic', 'LatoThinItalic')}
-${loadFont('lato-lightitalic', 'LatoLightItalic')}
-${loadFont('lato-blackitalic', 'LatoBlackItalic')}
-${loadFont('lato-mediumitalic', 'LatoMediumItalic')}
-${loadFont('lato-bolditalic', 'LatoBoldItalic')}
-${loadFont('lato-semibolditalic', 'LatoSemiboldItalic')}
-${loadFont('lato-italic', 'LatoItalic')}
-${loadFont('lato-heavyitalic', 'LatoHeavyItalic')}
+    ${loadFont('lato-hairline', 'LatoHairline')}
+    ${loadFont('lato-thin', 'LatoThin')}
+    ${loadFont('lato-light', 'LatoLight')}
+    ${loadFont('lato-black', 'LatoBlack')}
+    ${loadFont('lato-medium', 'LatoMedium')}
+    ${loadFont('lato-bold', 'LatoBold')}
+    ${loadFont('lato-semibold', 'LatoSemibold')}
+    ${loadFont('lato-regular', 'LatoRegular')}
+    ${loadFont('lato-heavy', 'LatoHeavy')}
+    ${loadFont('lato-hairlineitalic', 'LatoHairlineItalic')}
+    ${loadFont('lato-thinitalic', 'LatoThinItalic')}
+    ${loadFont('lato-lightitalic', 'LatoLightItalic')}
+    ${loadFont('lato-blackitalic', 'LatoBlackItalic')}
+    ${loadFont('lato-mediumitalic', 'LatoMediumItalic')}
+    ${loadFont('lato-bolditalic', 'LatoBoldItalic')}
+    ${loadFont('lato-semibolditalic', 'LatoSemiboldItalic')}
+    ${loadFont('lato-italic', 'LatoItalic')}
+    ${loadFont('lato-heavyitalic', 'LatoHeavyItalic')}
 `;
 /* tslint:enable:no-unused-expression */

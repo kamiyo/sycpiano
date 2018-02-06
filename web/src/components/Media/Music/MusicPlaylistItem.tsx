@@ -27,7 +27,8 @@ const baseItemStyle = css`
     cursor: pointer;
     width: 100%;
     border-bottom: ${listBottomBorder};
-    $:hover {
+
+    &:hover {
         background-color: white;
     }
 `;
@@ -53,6 +54,7 @@ const Highlight = styled<{ active: boolean; }, 'div'>('div')`
     ${(props) => props.active && `border-left-color: ${lightBlue};`}
     transition: all 0.15s;
 
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${StyledCollectionItem} & {
         border-left: none;
         ${(props) => props.active && `border-left: 7px solid ${lightBlue};`}
@@ -86,7 +88,7 @@ const TextLeft = styled('h4')`
 const TextRight = styled('h4')`
     ${h4style}
     font-size: 12px;
-    float: right
+    float: right;
 `;
 
 const StyledCollectionContainer = styled('li')`

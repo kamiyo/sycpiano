@@ -32,9 +32,9 @@ const ContactImage = styled('div')`
     box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
 `;
 
-const StyledContactInfo = styled(ContactInfo)`flex: 0 0 31%;`;
+const StyledContactInfo = styled(ContactInfo)` flex: 0 0 31%; `;
 
-const StyledContactSocialMedia = styled(ContactSocialMedia)`flex: 1 0 auto;`;
+const StyledContactSocialMedia = styled(ContactSocialMedia)` flex: 1 0 auto; `;
 
 let ContactItem: React.SFC<ContactItemShape> = ({
     className,
@@ -68,7 +68,7 @@ ContactItem = styled(ContactItem)`
     flex: 0 1 600px;
 
     &:nth-child(2n) {
-        background-color: ${alternateBackgroundColor}
+        background-color: ${alternateBackgroundColor};
     }
 `;
 

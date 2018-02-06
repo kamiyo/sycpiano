@@ -27,6 +27,7 @@ const StyledVideos = styled('div')`
     ${pushed}
     width: 100%;
     background-color: black;
+
     iframe {
         width: 100%;
         height: 100%;

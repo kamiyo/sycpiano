@@ -26,7 +26,7 @@ const AudioInfoContainer = styled('div')`
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
-    font-family ${lato1};
+    font-family: ${lato1};
     letter-spacing: 2px;
     color: white;
     padding-bottom: 50px;

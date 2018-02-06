@@ -19,10 +19,12 @@ const LogoText = styled('div')`
     display: inline-block;
     margin-left: 20px;
     vertical-align: middle;
+    line-height: ${navBarHeight.nonHdpi}px;
+
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         line-height: ${navBarHeight.hdpi}px;
     }
-    line-height: ${navBarHeight.nonHdpi}px;
 
     span {
         vertical-align: -3px;
@@ -30,9 +32,11 @@ const LogoText = styled('div')`
 `;
 
 const logoStyle = css`
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         font-size: 35px;
     }
+
     font-family: ${lato2};
     font-size: 40px;
     letter-spacing: 0.05em;
@@ -46,10 +50,12 @@ const logoStyle = css`
     align-items: center;
 
     svg {
+        /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
         ${hiDPI(2)} {
             width: 90px;
             height: 90px;
         }
+
         width: 150px;
         height: 150px;
         float: left;
