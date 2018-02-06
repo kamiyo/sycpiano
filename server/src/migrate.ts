@@ -75,8 +75,8 @@ const cmdStatus = async () => {
     return { executed, pending };
 };
 
-const cmdMigrate = () => (
-    umzug.up()
+const cmdMigrate = (migration: string = null) => (
+    umzug.up(migration)
 );
 
 const cmdMigrateNext = async () => {
@@ -89,9 +89,12 @@ const cmdMigrateNext = async () => {
 
 };
 
-const cmdReset = () => (
-    umzug.down({ to: 0 })
-);
+const cmdReset = (migration: string = null) => {
+    if (migration) {
+        return umzug.down(migration);
+    }
+    return umzug.down({ to: 0 });
+};
 
 const cmdResetPrev = async () => {
     const { executed } = await cmdStatus();
@@ -124,6 +127,7 @@ const cmdHardReset = () => (
 
 const main = async () => {
     const cmd = process.argv[2].trim();
+    const migration = process.argv[3] && process.argv[3].trim();
     let executedCmd: Promise<any>;
 
     console.log(`${cmd.toUpperCase()} BEGIN`);
@@ -134,7 +138,7 @@ const main = async () => {
 
         case 'up':
         case 'migrate':
-            executedCmd = cmdMigrate();
+            executedCmd = cmdMigrate(migration);
             break;
 
         case 'next':
@@ -144,7 +148,7 @@ const main = async () => {
 
         case 'down':
         case 'reset':
-            executedCmd = cmdReset();
+            executedCmd = cmdReset(migration);
             break;
 
         case 'prev':
