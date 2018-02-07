@@ -5,7 +5,7 @@ import * as Promise from 'bluebird';
 
 import { extractEventDescription, getCalendarEvents, programToPieceModel } from './gapi/calendar';
 
-import db from './models/index';
+import db from './models';
 const models = db.models;
 
 const apiRouter = express.Router();

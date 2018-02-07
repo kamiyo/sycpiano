@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const path = require('path');
 const mustacheExpress = require('mustache-express');
 const ApiRouter = require('./server/build/api-router.js').ApiRouter;
+const AdminRouter = require('./server/build/admin.js').AdminRouter;
 
 require('dotenv').config();
 
@@ -29,7 +30,8 @@ app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '/web/partials'));
 
 // Matches the /admin route.
-app.get(/\/admin/, (req, res) => res.render('calendar-admin'));
+// app.get(/\/admin/, (req, res) => res.render('calendar-admin'));
+app.use(/\/admin/, AdminRouter);
 
 // Non-admin routes.
 app.use(/\/api/, ApiRouter);

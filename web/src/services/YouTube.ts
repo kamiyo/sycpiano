@@ -56,7 +56,6 @@ class YouTube {
                     onReady: () => resolve(),
                 },
                 playerVars: {
-                    autoplay: 0,
                     rel: 0,
                 },
                 videoId: undefined,
