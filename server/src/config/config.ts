@@ -1,6 +1,5 @@
-/*tslint:disable:no-var-requires*/
-require('dotenv').config();
-/*tslint:disable:no-var-requires*/
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 export const development = {
     host: '127.0.0.1',

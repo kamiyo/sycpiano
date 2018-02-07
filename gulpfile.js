@@ -91,7 +91,7 @@ const watchServer = (done) => {
 const startNodemon = (done) => {
     nodemon({
         script: './app.js',
-        watch: ['web/build', 'server/build/api-router.js'],
+        watch: ['web/build', 'server/build/api-router.js', './app.js'],
     });
     done();
 };

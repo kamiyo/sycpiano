@@ -17,7 +17,6 @@ import { pushed } from 'src/styles/mixins';
 import { playlistWidth } from 'src/styles/variables';
 
 const fadeOnEnter = (element: HTMLElement) => {
-    console.log(`${(element as HTMLImageElement).src} entering`);
     TweenLite.fromTo(element, 0.6, { opacity: 0 }, { opacity: 1 });
 };
 

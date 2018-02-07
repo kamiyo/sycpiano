@@ -25,6 +25,8 @@ DB_PASS=<password>
 DB_PORT=<database port>
 DB_DIALECT=<sql dialect>
 PORT=<http production port number>
+FOREST_ENV_SECRET=<secret for using forest admin>
+FOREST_AUTH_SECRET=<secret for auth forest admin>
 ```
 If deploying on heroku, make sure `DB_URL` is set, which contains the above info.
 
@@ -71,21 +73,9 @@ Run `yarn run start-dev` or at least `yarn run build-server` so that the server/
 Remember, before running `yarn run start-dev`, make sure the postgres server is running.
 
 ## Admin
-sycpiano uses the Lumber framework for accessing the database.
-Right now, it is dev only. Make sure you have the .env file (or ask kamiyo).
-```
-$ cd admin
-$ yarn install
-```
-To run:
-```
-$ cd admin
-$ node bin/www
-```
-and follow the command line instructions.
-Make sure if you change any of the models in the server to also paste the built .js files into the model folder of admin.
+sycpiano uses the Forest admin for managing the database.
 
-TODO: deploy admin
+TODO add instructions for logging onto forestjs.
 
 ## Utilities
 
