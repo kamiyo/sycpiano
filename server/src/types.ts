@@ -39,6 +39,8 @@ export interface CalendarAttributes {
     readonly location: string;
     readonly type: string;
     readonly website: string;
+    readonly collaborators?: CollaboratorInstance[];
+    readonly pieces?: PieceInstance[];
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
 }

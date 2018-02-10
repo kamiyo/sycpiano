@@ -17,8 +17,6 @@ const staticPrefix = '/static';
 const sourcePaths = [
     path.resolve(__dirname, 'web/src'),
     path.resolve(__dirname, 'web/src/components'),
-    path.resolve(__dirname, 'web/src/admin'),
-    path.resolve(__dirname, 'web/src/admin/components'),
     path.resolve(__dirname, 'web/src/styles'),
 ];
 
@@ -26,7 +24,6 @@ const config = {
     cache: true,
     entry: {
         sycpiano: path.resolve(__dirname, 'web/src/main.tsx'),
-        calendarAdmin: path.resolve(__dirname, 'web/src/admin/main.tsx'),
     },
     output: {
         path: path.resolve(__dirname, 'web/build'),
@@ -42,10 +39,6 @@ const config = {
             test: /\.(css|less)$/,
             include: [
                 path.resolve(__dirname, 'web/less'),
-                // need following for admin page
-                path.resolve(__dirname, 'node_modules/react-datepicker/dist'),
-                path.resolve(__dirname, 'node_modules/react-dates/lib/css'),
-                path.resolve(__dirname, 'node_modules/react-select/dist')
             ],
         }, {
             loader: 'happypack/loader?id=url',
