@@ -49,16 +49,10 @@ const compileServer = () => (
         .pipe(gulp.dest('./server/build'))
 )
 
-const copyModelsToAdmin = () => (
-    gulp.src(['server/build/models/*.js', '!server/build/models/index.js'])
-        .pipe(gulp.dest('admin/models/'))
-)
-
 const buildServer = gulp.series(
     // We don't need linting in production.
     isProduction ? cleanServer : gulp.parallel(lintServer, cleanServer),
-    compileServer,
-    copyModelsToAdmin
+    compileServer
 );
 
 gulp.task('build-server', buildServer);

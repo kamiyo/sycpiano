@@ -6,9 +6,7 @@ const morgan = require('morgan');
 const path = require('path');
 const mustacheExpress = require('mustache-express');
 const ApiRouter = require('./server/build/api-router.js').ApiRouter;
-const AdminRouter = require('./server/build/admin.js').AdminRouter;
-
-require('dotenv').config();
+const AdminRest = require('./server/build/rest.js').AdminRest;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -30,8 +28,9 @@ app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '/web/partials'));
 
 // Matches the /admin route.
-// app.get(/\/admin/, (req, res) => res.render('calendar-admin'));
-app.use(/\/admin/, AdminRouter);
+app.get(/\/admin/, (req, res) => res.redirect('https://app.forestadmin.com'));
+
+app.use(/\/rest/, AdminRest);
 
 // Non-admin routes.
 app.use(/\/api/, ApiRouter);

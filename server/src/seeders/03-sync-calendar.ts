@@ -1,14 +1,16 @@
 import * as Promise from 'bluebird';
 
-import { extractEventDescription, getCalendarEvents, programToPieceModel } from '../gapi/calendar';
+import { extractEventDescription, getCalendarEvents } from '../gapi/calendar';
 
 import {
     CalendarAttributes,
     CalendarInstance,
     CalendarModel,
+    CollaboratorAttributes,
     CollaboratorModel,
     GCalEvent,
     ModelMap,
+    PieceAttributes,
     PieceModel,
     TokenModel,
 } from 'types';
@@ -36,10 +38,8 @@ export const up = async (models: ModelMap) => {
             const timezone = event.start.dateTime ? event.start.timeZone : '';
             const {
                 collaborators,
-                type: {
-                    value: type,
-                },
-                program,
+                pieces,
+                type,
                 website,
             } = extractEventDescription(event);
 
@@ -55,29 +55,27 @@ export const up = async (models: ModelMap) => {
                 location,
                 website,
                 type,
-                program,
+                pieces,
                 collaborators,
             };
         });
 
         await Promise.each(items, async (item) => {
-            let currentItem: string;
+            let currentItem: any;
             try {
-                const { program, collaborators, ...attributes } = item;
+                const { pieces, collaborators, ...attributes } = item;
 
                 const itemInstance: CalendarInstance = await calendarModel.create(attributes as CalendarAttributes);
-                await Promise.each(program, async (composerPiece: string, index: number) => {
-                    currentItem = composerPiece;
-                    const { composer, piece } = programToPieceModel(composerPiece);
-                    console.log(composer, piece);
+                currentItem = itemInstance;
+                await Promise.each(pieces, async ({ composer, piece }: PieceAttributes, index: number) => {
+                    currentItem = { composer, piece };
                     const [ pieceInstance ] = await pieceModel.findOrCreate({
                         where: { composer, piece },
                     });
                     await itemInstance.addPiece(pieceInstance, { through: { order: index }});
                 });
-                await Promise.each(collaborators, async (collaborator: string, index: number) => {
-                    currentItem = collaborator;
-                    const [ name, instrument = null ] = collaborator.split(', ');
+                await Promise.each(collaborators, async ({ name, instrument }: CollaboratorAttributes, index: number) => {
+                    currentItem = { name, instrument };
                     const [collaboratorInstance] = await collaboratorModel.findOrCreate({
                         where: { name, instrument },
                     });

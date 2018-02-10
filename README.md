@@ -75,7 +75,9 @@ Remember, before running `yarn run start-dev`, make sure the postgres server is 
 ## Admin
 sycpiano uses the Forest admin for managing the database.
 
-TODO add instructions for logging onto forestjs.
+Going to `/admin` will forward you to the forest admin website.
+
+Use `/admin/sync` to upload/update calendar to Google calendar.
 
 ## Utilities
 
