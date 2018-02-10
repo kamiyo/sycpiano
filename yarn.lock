@@ -3031,6 +3031,7 @@ foreach@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/foreach/-/foreach-2.0.5.tgz#0bee005018aeb260d0a3af3ae658dd0136ec1b99"
 
+<<<<<<< Updated upstream
 forest-express-sequelize@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/forest-express-sequelize/-/forest-express-sequelize-2.3.1.tgz#232f61d9c63c319645145502bc8211c80b57f2d4"
@@ -3038,6 +3039,17 @@ forest-express-sequelize@^2.3.1:
     bluebird "2.9.25"
     eslint "4.1.1"
     forest-express "2.3.0"
+=======
+<<<<<<< Updated upstream
+=======
+forest-express-sequelize@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/forest-express-sequelize/-/forest-express-sequelize-2.4.2.tgz#3a7872526e0c3b9b68c0b654ecd1880010ef6d45"
+  dependencies:
+    bluebird "2.9.25"
+    eslint "4.1.1"
+    forest-express "2.4.0"
+>>>>>>> Stashed changes
     http-errors "1.6.1"
     lodash "3.9.3"
     moment "2.18.1"
@@ -3045,9 +3057,15 @@ forest-express-sequelize@^2.3.1:
     semver "5.4.1"
     sequelize-fixtures "0.6.0"
 
+<<<<<<< Updated upstream
 forest-express@2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-2.3.0.tgz#236d1fea66a4ce7b954ca33587c464539542ad26"
+=======
+forest-express@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-2.4.0.tgz#a52fc9049d740e4c1171b1d5c031b39cb05f52e6"
+>>>>>>> Stashed changes
   dependencies:
     bcryptjs "2.4.3"
     bluebird "3.3.4"
@@ -3066,6 +3084,10 @@ forest-express@2.3.0:
     uuid "3.0.1"
     winston "2.2.0"
 
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 forever-agent@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"

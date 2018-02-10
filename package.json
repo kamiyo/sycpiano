@@ -64,7 +64,7 @@
     "dotenv": "^4.0.0",
     "emotion": "^8.0.12",
     "express": "^4.16.2",
-    "forest-express-sequelize": "^2.3.1",
+    "forest-express-sequelize": "^2.4.2",
     "google-auth-library": "^1.2.0",
     "graceful-fs": "^4.1.11",
     "gsap": "^1.20.3",

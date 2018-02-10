@@ -194,9 +194,9 @@ adminRest.post('/forest/calendar', async (req, _, next) => {
 
         const description = JSON.stringify({
             collaborators: [],
-            program: [],
+            pieces: [],
             type,
-            website: encodeURI(website),
+            website: encodeURI(website) || '',
         });
 
         const createResponse = await createCalendarEvent({
