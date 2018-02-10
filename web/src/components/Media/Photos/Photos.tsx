@@ -120,7 +120,7 @@ class Photos extends React.Component<PhotosProps, {}> {
                 appear={true}
                 timeout={600}
             >
-                <img src={this.pathFromItem(item)} />
+                <img alt="Sean Chen Pianist Photo" src={this.pathFromItem(item)} />
             </Transition>
         );
     }

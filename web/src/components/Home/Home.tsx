@@ -212,7 +212,7 @@ class Home extends React.Component<{ bgLoaded: () => void }, { bgLoaded: boolean
                     appear={true}
                 >
                     <BackgroundContainer innerRef={(div) => this.bgRef = div}>
-                        <Background innerRef={(img) => this.imgRef = img} />
+                        <Background alt="Sean Chen Pianist Photo" innerRef={(img) => this.imgRef = img} />
                         <BackgroundCover />
                         <NavBarGradient />
                     </BackgroundContainer>

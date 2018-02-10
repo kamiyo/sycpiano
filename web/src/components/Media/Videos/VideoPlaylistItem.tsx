@@ -111,7 +111,7 @@ const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentIte
     >
         <div className="itemContent">
             <ImageContainer>
-                <img src={item.snippet.thumbnails.high.url} />
+                <img alt="Sean Chen Piano Video" src={item.snippet.thumbnails.high.url} />
                 <Duration active={currentItemId === item.id}>
                     {videoDurationToDisplay(item.contentDetails.duration)}
                 </Duration>
