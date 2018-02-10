@@ -6,6 +6,7 @@ import { Transition } from 'react-transition-group';
 import TweenLite from 'gsap/TweenLite';
 import { playVideo } from 'src/components/Media/Videos/actions';
 import { bg1 } from 'src/styles/imageUrls';
+import { pushed } from 'src/styles/mixins';
 import { GlobalStateShape } from 'src/types';
 
 interface PreviewOverlayStateToProps {
@@ -19,6 +20,7 @@ interface PreviewOverlayDispatchToProps {
 type PreviewOverlayProps = PreviewOverlayStateToProps & PreviewOverlayDispatchToProps;
 
 const StyledPreviewOverlay = styled('div')`
+    ${pushed}
     width: 100%;
     height: 100%;
     z-index: 10;
