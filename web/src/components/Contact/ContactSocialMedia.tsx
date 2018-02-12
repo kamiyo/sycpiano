@@ -41,7 +41,7 @@ let ContactSocialMedia = (props: ContactSocialMediaShape) => (
         {
             Object.keys(props.social).map((site, i) => (
                 <SocialMediaLinkContainer key={i}>
-                    <StyledSocialMediaLink site={site} />
+                    <StyledSocialMediaLink site={props.social[site]} />
                 </SocialMediaLinkContainer>
             ))
         }
