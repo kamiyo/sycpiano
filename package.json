@@ -11,9 +11,8 @@
     "build-server": "gulp build-server",
     "build-prod": "gulp build-prod",
     "start": "node app.js",
-    "start-bg": "pm2 start app.js",
     "start-dev": "cross-env NODE_ENV=development gulp run-dev",
-    "start-prod": "sh bin/start.sh",
+    "start-prod": "pm2 start bin/start.sh --name=sycpiano",
     "test": "jest --config='__tests__/' --coverage",
     "test-watch": "jest --config='__tests__/' --coverage --watchAll"
   },
