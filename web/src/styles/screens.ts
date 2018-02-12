@@ -1,9 +1,5 @@
-import { css } from 'emotion';
-
 const xs = '480px';
 const xl = '1600px';
-
-interface Rules { [key: string]: string; }
 
 type DimensionName = keyof MediaQueryBounds;
 

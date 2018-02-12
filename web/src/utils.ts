@@ -48,3 +48,8 @@ export const formatLocation = (location: string): FormattedLocationShape => {
 
     return { venue, street, stateZipCountry };
 };
+
+export const getAudioContext: any = () => {
+    const AudioContextFill = (window as any).AudioContext || (window as any).webkitAudioContext;
+    return new AudioContextFill();
+};

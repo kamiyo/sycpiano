@@ -8,6 +8,8 @@ math.import(require('mathjs/lib/function/arithmetic/multiply'));
 import jBinary from 'jbinary';
 import jDataView from 'jdataview';
 
+import { getAudioContext } from 'src/utils';
+
 type DrawCircleMaskShape = (
     context: CanvasRenderingContext2D,
     radius: number,
@@ -194,4 +196,4 @@ class ConstantQ {
     }
 }
 
-export const constantQ = new ConstantQ((new AudioContext()).sampleRate);
+export const constantQ = new ConstantQ(getAudioContext().sampleRate);

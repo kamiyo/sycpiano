@@ -4,14 +4,14 @@ import { connect, Dispatch } from 'react-redux';
 import { match } from 'react-router';
 
 import TweenLite from 'gsap/TweenLite';
-import { constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 
 import { fetchPlaylistAction } from 'src/components/Media/Music/actions';
-
 import AudioInfo from 'src/components/Media/Music/AudioInfo';
 import AudioUI from 'src/components/Media/Music/AudioUI';
 import AudioVisualizer from 'src/components/Media/Music/AudioVisualizer';
 import MusicPlaylist from 'src/components/Media/Music/MusicPlaylist';
+import { constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
+import { getAudioContext } from 'src/utils';
 
 import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
@@ -95,7 +95,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         this.audio.addEventListener('pause', this.onPause);
         this.audio.addEventListener('ended', this.onEnded);
 
-        const audioCtx = new AudioContext();
+        const audioCtx = getAudioContext();
         const audioSrc = audioCtx.createMediaElementSource(this.audio);
 
         this.analyzerL = audioCtx.createAnalyser();
