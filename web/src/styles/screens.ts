@@ -1,5 +1,6 @@
 import { css } from 'emotion';
 
+const xs = '480px';
 const xl = '1600px';
 
 interface Rules { [key: string]: string; }
@@ -27,7 +28,8 @@ const mediaQuery = (mediaQueryBounds: MediaQueryBounds): string => {
 
     return widthQueries.reduce((accumulator, curr, idx) => (
         `${accumulator}${idx > 0 ? ` and ${curr}` : curr}`
-    ), '');
+    ), '@media ');
 };
 
-export const screenXL = (rules: Rules) => css({ [mediaQuery({ minWidth: xl })]: rules });
+export const screenXS = mediaQuery({ maxWidth: xs });
+export const screenXL = mediaQuery({ minWidth: xl });

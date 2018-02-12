@@ -13,12 +13,12 @@ import { screenXL } from 'src/styles/screens';
 
 const dividerColor = '#888';
 
-const NameContainer = styled('div')`
-    flex: 0 0 auto;
-    font-size: 33px;
-    ${screenXL({ fontSize: '37px' })}
-    font-weight: bold;
-`;
+const NameContainer = styled('div')({
+    flex: '0 0 auto',
+    fontSize: '33px',
+    fontWeight: 'bold',
+    [screenXL]: { fontSize: '37px' },
+});
 
 const SubInfo = styled('div')`
     flex: 1 0 auto;
@@ -48,12 +48,12 @@ const PersonalInfo: React.SFC<PersonalInfoShape> = (props) => (
     </div>
 );
 
-const StyledPersonalInfo = styled(PersonalInfo)`
-    flex: 0 0 125px;
-    ${screenXL({ flex: '0 0 150px' })}
-    display: flex;
-    flex-direction: column;
-`;
+const StyledPersonalInfo = styled(PersonalInfo)({
+    flex: '0 0 125px',
+    [screenXL]: { flex: '0 0 150px' },
+    display: 'flex',
+    flexDirection: 'column',
+});
 
 const Divider = styled('div')`
     border-top: 1px solid ${dividerColor};

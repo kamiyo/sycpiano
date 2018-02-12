@@ -3,11 +3,16 @@ import styled, { css, cx } from 'react-emotion';
 
 import { AcclaimItemShape } from 'src/components/Press/types';
 import { lato1, lato2 } from 'src/styles/fonts';
+import { screenXS } from 'src/styles/screens';
 
-const AcclaimContainer = styled('div')`
-    margin: 0 auto;
-    max-width: 600px;
-`;
+const AcclaimContainer = styled('div')({
+    margin: '0 auto',
+    maxWidth: '600px',
+    [screenXS]: {
+        fontSize: '20px',
+        padding: '0 15px',
+    },
+});
 
 interface QuoteProps {
     short: string;
