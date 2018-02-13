@@ -60,12 +60,16 @@ const ImageContainer = styled<ImageContainerProps, 'div'>('div')`
     background: url(${sycWithPianoBW}) no-repeat fixed;
     background-size: 56%;
     background-position: 0 -100px;
+
+    /* disabling as per: https://github.com/styled-components/stylelint-processor-styled-components/issues/130 */
+    /* stylelint-disable */
     ${screenXS} {
         flex: 0 0 360px;
         background-size: 106%;
         background-position: 0 27px;
         opacity: ${props => `${1 - props.currScrollTop / 250}`};
     }
+    /* stylelint-enable */
 `;
 
 const TextContainer = styled(AboutText)`
@@ -77,6 +81,7 @@ const TextContainer = styled(AboutText)`
     background-color: ${offWhite};
     color: black;
     overflow-y: scroll;
+    /* stylelint-disable */
     ${screenXS} {
         margin-top: 0;
         flex: 1;
@@ -84,6 +89,7 @@ const TextContainer = styled(AboutText)`
         padding: 20px 30px;
         text-align: justify;
     }
+    /* stylelint-enable */
 `;
 
 const AboutContainer = styled('div')`
@@ -91,10 +97,12 @@ const AboutContainer = styled('div')`
     background-color: white;
     position: absolute;
     display: flex;
+    /* stylelint-disable */
     ${screenXS} {
         flex-direction: column;
         overflow-y: scroll;
     }
+    /* stylelint-enable */
 `;
 
 class About extends React.Component {
