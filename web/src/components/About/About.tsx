@@ -7,6 +7,7 @@ import { offWhite } from 'src/styles/colors';
 import { lato1, lato2, lato3 } from 'src/styles/fonts';
 import { sycWithPianoBW } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
+import { screenXS } from 'src/styles/screens';
 
 const FirstLetter = styled('span')`
     display: block;
@@ -51,15 +52,23 @@ const AboutText: React.SFC<{ className?: string }> = (props) => (
     </div>
 );
 
-const LeftContainer: React.SFC<{}> = styled('div')`
+interface ImageContainerProps { currScrollTop: number; }
+
+const ImageContainer = styled<ImageContainerProps, 'div'>('div')`
     ${pushed};
     flex: 1;
     background: url(${sycWithPianoBW}) no-repeat fixed;
     background-size: 56%;
     background-position: 0 -100px;
+    ${screenXS} {
+        flex: 0 0 360px;
+        background-size: 106%;
+        background-position: 0 27px;
+        opacity: ${props => `${1 - props.currScrollTop / 250}`};
+    }
 `;
 
-const RightContainer = styled(AboutText)`
+const TextContainer = styled(AboutText)`
     ${pushed};
     box-sizing: border-box;
     flex: 0 0 45%;
@@ -68,20 +77,41 @@ const RightContainer = styled(AboutText)`
     background-color: ${offWhite};
     color: black;
     overflow-y: scroll;
+    ${screenXS} {
+        margin-top: 0;
+        flex: 1;
+        overflow-y: visible;
+        padding: 20px 30px;
+        text-align: justify;
+    }
 `;
 
 const AboutContainer = styled('div')`
     height: 100%;
     background-color: white;
-    display: flex;
     position: absolute;
+    display: flex;
+    ${screenXS} {
+        flex-direction: column;
+        overflow-y: scroll;
+    }
 `;
 
-const About: React.SFC<{}> = () => (
-    <AboutContainer>
-        <LeftContainer />
-        <RightContainer />
-    </AboutContainer>
-);
+class About extends React.Component {
+    state = { currScrollTop: 0 };
+
+    setScrollTop = (event: React.SyntheticEvent<HTMLElement>) => {
+        this.setState({ currScrollTop: (event.target as HTMLElement).scrollTop });
+    };
+
+    render() {
+        return (
+            <AboutContainer onScroll={this.setScrollTop}>
+                <ImageContainer currScrollTop={this.state.currScrollTop} />
+                <TextContainer />
+            </AboutContainer>
+        );
+    }
+}
 
 export default About;
