@@ -1,4 +1,4 @@
-import { startCase } from 'lodash-es/string';
+import startCase from 'lodash-es/startCase';
 import { Moment } from 'moment-timezone';
 import { mix } from 'polished';
 import * as React from 'react';
