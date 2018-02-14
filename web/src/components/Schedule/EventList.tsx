@@ -53,6 +53,12 @@ interface EventListState {
     scrollUpdater: boolean;
 }
 
+interface OnScrollProps {
+    scrollTop: number;
+    scrollHeight: number;
+    clientHeight: number;
+}
+
 class EventList extends React.Component<EventListProps, EventListState> {
     private List: ListWithGrid;
     private updateReason: 'listChange' | 'selectItem' | 'typeChange' | 'activeChange' | 'initialList' | 'unsetScroll';
@@ -153,24 +159,24 @@ class EventList extends React.Component<EventListProps, EventListState> {
         return false;
     }
 
-    onScroll = ({ clientHeight, scrollTop, scrollHeight }: { scrollTop: number; scrollHeight: number; clientHeight: number }) => {
+    onScroll = ({ clientHeight, scrollTop, scrollHeight }: OnScrollProps) => {
         if (this.props.isFetchingList) {
             return;
         }
-        debounce(() => {
-            if (scrollTop + clientHeight > scrollHeight - 400) {
-                if (this.props.type === 'upcoming') {
-                    this.props.createFetchEventsAction({
-                        after: this.props.maxDate,
-                    });
-                } else if (this.props.type === 'archive') {
-                    this.props.createFetchEventsAction({
-                        before: this.props.minDate,
-                    });
-                }
+        if (scrollTop + clientHeight > scrollHeight - 400) {
+            if (this.props.type === 'upcoming') {
+                this.props.createFetchEventsAction({
+                    after: this.props.maxDate,
+                });
+            } else if (this.props.type === 'archive') {
+                this.props.createFetchEventsAction({
+                    before: this.props.minDate,
+                });
             }
-        }, 1000, { leading: true })();
+        }
     }
+
+    debouncedFetch = debounce(this.onScroll, 1000, { leading: true });
 
     getScrollTarget = () => {
         if (this.updateReason === 'initialList' ||
@@ -202,7 +208,9 @@ class EventList extends React.Component<EventListProps, EventListState> {
                                 scrollToAlignment="center"
                                 noRowsRenderer={() => <div />}
                                 estimatedRowSize={200}
-                                onScroll={this.onScroll as any}
+                                onScroll={({ clientHeight, scrollTop, scrollHeight }: OnScrollProps) => {
+                                    this.debouncedFetch({ clientHeight, scrollTop, scrollHeight});
+                                }}
                                 scrollToIndex={this.getScrollTarget()}
                             />
                         )}
