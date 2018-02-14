@@ -38,8 +38,9 @@ app.use(/\/api/, ApiRouter);
 // Health-check endpoint.
 app.get('/health-check', (req, res) => res.sendStatus(200));
 
-// Redirect old URL that's indexed on google to base route.
+// Redirect old URLs that are indexed on google to base route.
 app.get('/home', (req, res) => res.redirect('/'));
+app.get('/music', (req, res) => res.redirect('/media/music'));
 
 // We catch any route first, and then let our front-end routing do the work.
 app.get(/\//, (req, res) => res.render('index'));
