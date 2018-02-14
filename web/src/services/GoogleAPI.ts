@@ -49,7 +49,6 @@ class GoogleAPI {
         timeTBD: boolean,
         accessToken: string,
     ) {
-        console.log(startDatetime.format());
         const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${eventId}`;
         const eventResource = {
             summary,
