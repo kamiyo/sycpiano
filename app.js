@@ -41,8 +41,7 @@ app.get('/health-check', (req, res) => res.sendStatus(200));
 // Redirect old URL that's indexed on google to base route.
 app.get('/home', (req, res) => res.redirect('/'));
 
-// A catch-all for everything except /admin.
-// Generally we catch any route first, and then let our front-end routing do the work.
+// We catch any route first, and then let our front-end routing do the work.
 app.get(/\//, (req, res) => res.render('index'));
 
 app.listen(port, listenAddr, () => console.log(`App listening on port ${port}.`));
