@@ -72,7 +72,6 @@ const fetchEvents = ({ after, before, date, scrollTo }: FetchEventsArguments): T
 
         const calendarResponse = await axios.get('/api/calendar', { params });
         const data: CachedEvent[] = calendarResponse.data;
-        console.log(data);
         const state = getState().schedule_eventItems;
         const listItems = transformCachedEventsToListItems(data, state[state.activeName].setOfMonths);
 
