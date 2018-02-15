@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { css } from 'react-emotion';
+import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
@@ -9,6 +9,7 @@ import { List, ListRowRenderer } from 'react-virtualized/dist/es/List';
 import debounce from 'lodash-es/debounce';
 import { default as moment, Moment } from 'moment-timezone';
 
+import { LoadingInstance } from 'src/components/LoadingSVG';
 import { createFetchEventsAction, selectEvent, switchList } from 'src/components/Schedule/actions';
 import { EventListName } from 'src/components/Schedule/actionTypes';
 import EventItem from 'src/components/Schedule/EventItem';
@@ -17,8 +18,12 @@ import {
     DayItem,
     EventItemType,
     FetchEventsArguments,
+    itemIsDay,
+    itemIsMonth,
+    itemNotLoading,
     ListWithGrid,
 } from 'src/components/Schedule/types';
+import { lightBlue } from 'src/styles/colors';
 import { GlobalStateShape } from 'src/types';
 
 const cache = new CellMeasurerCache({ fixedWidth: true });
@@ -31,6 +36,7 @@ interface EventListStateToProps {
     readonly currentItem: DayItem;
     readonly isFetchingList: boolean;
     readonly activeName: EventListName;
+    readonly hasMore: boolean;
 }
 
 interface EventListDispatchToProps {
@@ -59,9 +65,18 @@ interface OnScrollProps {
     clientHeight: number;
 }
 
+const StyledLoadingInstance = styled(LoadingInstance)`
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    fill: none;
+    stroke: ${lightBlue};
+`;
+
 class EventList extends React.Component<EventListProps, EventListState> {
     private List: ListWithGrid;
-    private updateReason: 'listChange' | 'selectItem' | 'typeChange' | 'activeChange' | 'initialList' | 'unsetScroll';
+    private updateReason: 'listChange' | 'selectItem' | 'typeChange' | 'activeChange' | 'initialList' | 'unsetScroll' | 'noMore';
     state = {
         scrollUpdater: false,
     };
@@ -111,7 +126,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
             } else if (
                 date &&
                 nextProps.eventItems.find(
-                    (value) => value.dateTime.isSame(moment(date), 'day'))
+                    (value) => itemNotLoading(value) && value.dateTime.isSame(moment(date), 'day'))
             ) {
                 params = { date: moment(date, 'YYYY-MM-DD'), scrollTo: true };
             } else {
@@ -155,14 +170,18 @@ class EventList extends React.Component<EventListProps, EventListState> {
             this.updateReason = 'unsetScroll';
             return true;
         }
+        if (nextProps.hasMore === false) {
+            this.updateReason = 'noMore';
+            return true;
+        }
+        if (nextProps.isFetchingList !== this.props.isFetchingList) {
+            return true;
+        }
         this.updateReason = null;
         return false;
     }
 
     onScroll = ({ clientHeight, scrollTop, scrollHeight }: OnScrollProps) => {
-        if (this.props.isFetchingList) {
-            return;
-        }
         if (scrollTop + clientHeight > scrollHeight - 400) {
             if (this.props.type === 'upcoming') {
                 this.props.createFetchEventsAction({
@@ -176,7 +195,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
         }
     }
 
-    debouncedFetch = debounce(this.onScroll, 1000, { leading: true });
+    debouncedFetch = debounce(this.onScroll, 500, { leading: true });
 
     getScrollTarget = () => {
         if (this.updateReason === 'initialList' ||
@@ -193,7 +212,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
 
     render() {
         return (
-            <div className={css`width: 100%; height: 100%;`}>
+            <div className={css` width: 100%; height: 100%; `}>
                 {
                     <AutoSizer>
                         {({ height, width }) => (
@@ -201,7 +220,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
                                 ref={(div) => this.List = div}
                                 height={height}
                                 width={width}
-                                rowCount={this.props.eventItems.length}
+                                rowCount={this.props.eventItems.length + 1}
                                 rowHeight={cache.rowHeight}
                                 deferredMeasurementCache={cache}
                                 rowRenderer={this.rowItemRenderer}
@@ -209,7 +228,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
                                 noRowsRenderer={() => <div />}
                                 estimatedRowSize={200}
                                 onScroll={({ clientHeight, scrollTop, scrollHeight }: OnScrollProps) => {
-                                    this.debouncedFetch({ clientHeight, scrollTop, scrollHeight});
+                                    this.debouncedFetch({ clientHeight, scrollTop, scrollHeight });
                                 }}
                                 scrollToIndex={this.getScrollTarget()}
                             />
@@ -223,9 +242,9 @@ class EventList extends React.Component<EventListProps, EventListState> {
     private getScrollIndex = (currentItem: DayItem) => (
         Math.max(0, this.props.eventItems.findIndex(
             (item) => (
-                item && item.type === 'day' &&
+                item && itemIsDay(item) &&
                 // in case we change parameter format, compare using moment
-                (item as DayItem).dateTime.isSame(currentItem.dateTime, 'day')
+                item.dateTime.isSame(currentItem.dateTime, 'day')
             ),
         ))
     )
@@ -235,8 +254,18 @@ class EventList extends React.Component<EventListProps, EventListState> {
         style: React.CSSProperties,
         measure: () => void,
     ) => {
+        if (index === this.props.eventItems.length) {
+            return (
+                <div style={style} >
+                    {this.props.hasMore && this.props.isFetchingList ?
+                        <StyledLoadingInstance width={80} height={80} /> :
+                        <div className={css` height: 100px; `} />
+                    }
+                </div>
+            );
+        }
         const item = this.props.eventItems[index];
-        if (item.type === 'month') {
+        if (itemIsMonth(item)) {
             return (
                 <EventMonthItem
                     measure={measure}
@@ -245,17 +274,18 @@ class EventList extends React.Component<EventListProps, EventListState> {
                     style={style}
                 />
             );
+        } else {
+            return (
+                <EventItem
+                    measure={measure}
+                    event={item}
+                    style={style}
+                    handleSelect={() => this.props.selectEvent(item)}
+                    type={this.props.type}
+                    active={item.id === this.props.currentItem.id}
+                />
+            );
         }
-        return (
-            <EventItem
-                measure={measure}
-                event={item as DayItem}
-                style={style}
-                handleSelect={() => this.props.selectEvent(item)}
-                type={this.props.type}
-                active={item.id === this.props.currentItem.id}
-            />
-        );
     }
 
     private rowItemRenderer: ListRowRenderer = ({ index, key, parent, style }) => (
@@ -282,6 +312,7 @@ const mapStateToProps = (state: GlobalStateShape): EventListStateToProps => {
         currentItem: reducer.currentItem,
         isFetchingList: reducer.isFetchingList,
         activeName: name,
+        hasMore: reducer.hasMore,
     };
 };
 

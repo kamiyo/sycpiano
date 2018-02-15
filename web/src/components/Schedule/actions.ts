@@ -6,6 +6,7 @@ import {
     EventItemType,
     FetchEventsAPIParams,
     FetchEventsArguments,
+    itemIsDay,
     LatLng,
 } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
@@ -51,7 +52,7 @@ const fetchEventsSuccess: FetchEventsSuccess = (listItems, currentItem, hasMore)
 const shouldFetchEvents = (state: GlobalStateShape) => {
     const activeName = state.schedule_eventItems.activeName;
     const eventItemsReducer = state.schedule_eventItems[activeName];
-    // should not call api is fetching, or the last fetch was empty
+    // should not call, api is fetching, or the last fetch was empty
     return !eventItemsReducer.isFetchingList && eventItemsReducer.hasMore;
 };
 
@@ -79,9 +80,9 @@ const fetchEvents = ({ after, before, date, scrollTo }: FetchEventsArguments): T
         const desiredDate = date || after || before;
         // find closest event to desired date.
         if (scrollTo) {
-            currentItem = listItems.reduce((acc, item) => {
+            currentItem = listItems.reduce((acc: EventItemType, item: EventItemType) => {
                 if (!acc) {
-                    return item.type === 'day' && item;
+                    return itemIsDay(item) && item;
                 }
                 return Math.abs(item.dateTime.diff(desiredDate, 'day', true)) < Math.abs(acc.dateTime.diff(desiredDate, 'day', true)) ? item : acc;
             }, undefined) as DayItem;
