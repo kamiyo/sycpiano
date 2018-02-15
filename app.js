@@ -39,8 +39,14 @@ app.use(/\/api/, ApiRouter);
 app.get('/health-check', (req, res) => res.sendStatus(200));
 
 // Redirect old URLs that are indexed on google to base route.
-app.get('/home', (req, res) => res.redirect('/'));
-app.get('/music', (req, res) => res.redirect('/media/music'));
+const oldRoutesToRedirectsMap = {
+    '/home': '/',
+    '/music': '/media/music',
+};
+
+Object.keys(oldRoutesToRedirectsMap).forEach(key => (
+    app.get(key, (req, res) => res.redirect(oldRoutesToRedirectsMap[key]))
+));
 
 // We catch any route first, and then let our front-end routing do the work.
 app.get(/\//, (req, res) => res.render('index'));
