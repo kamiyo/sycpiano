@@ -14,7 +14,7 @@ interface AudioInfoProps {
     duration: number;
 }
 
-const AudioInfoContainer = styled('div')`
+const AudioInfoContainer = styled('div') `
     ${noHighlight}
     width: calc(100% - ${playlistWidth}px);
     height: 100%;
@@ -26,6 +26,7 @@ const AudioInfoContainer = styled('div')`
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
+    text-align: center;
     font-family: ${lato1};
     letter-spacing: 2px;
     color: white;
@@ -37,17 +38,22 @@ const audioInfoStyle = css`
     line-height: 1.5em;
 `;
 
-const ComposerTitle = styled('div')`
+const ComposerTitle = styled('div') `
     ${audioInfoStyle}
     font-size: 30px;
 `;
 
-const Contributing = styled('div')`
+const Movement = styled('div') `
+    ${audioInfoStyle}
+    font-size: 30px;
+`;
+
+const Contributing = styled('div') `
     ${audioInfoStyle}
     font-size: 24px;
 `;
 
-const Duration = styled('div')`
+const Duration = styled('div') `
     ${audioInfoStyle}
     font-size: 24px;
 `;
@@ -62,11 +68,12 @@ const AudioInfo: React.SFC<AudioInfoProps> = ({ currentTrack, duration }) => {
     const {
         name: movement,
     } = musicFiles[0];
-    const composerTitle = composer + ': ' + piece + ((movement) ? (' - ' + movement) : '');
+    const composerTitle = composer + ' ' + piece;
     return (
         <AudioInfoContainer>
             <ComposerTitle>{composerTitle}</ComposerTitle>
-            <Contributing>{(contributors) ? contributors : '- - - -'}</Contributing>
+            {movement && <Movement>{movement}</Movement>}
+            {contributors && <Contributing>{contributors}</Contributing>}
             <Duration>{formatTime(duration)}</Duration>
         </AudioInfoContainer>
     );

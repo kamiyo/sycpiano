@@ -56,7 +56,7 @@ const Highlight = styled<{ active: boolean; }, 'div'>('div')`
 
     /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${StyledCollectionItem} & {
-        border-left: none;
+        border-left: 7px solid transparent;
         ${(props) => props.active && `border-left: 7px solid ${lightBlue};`}
     }
 `;
