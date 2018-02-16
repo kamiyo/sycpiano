@@ -51,7 +51,27 @@ export interface MonthItem {
     readonly year: number;
 }
 
+export interface LoadingItem {
+    readonly type: 'loading';
+}
+
 export type EventItemType = DayItem | MonthItem;
+
+export const itemIsDay = (item: EventItemType | LoadingItem): item is DayItem => (
+    item.type === 'day'
+);
+
+export const itemIsMonth = (item: EventItemType | LoadingItem): item is MonthItem => (
+    item.type === 'month'
+);
+
+export const itemIsLoading = (item: EventItemType | LoadingItem): item is LoadingItem => (
+    item.type === 'loading'
+);
+
+export const itemNotLoading = (item: EventItemType | LoadingItem): item is DayItem | MonthItem => (
+    item.type !== 'loading'
+);
 
 export interface ScheduleStateShape {
     activeName: EventListName;

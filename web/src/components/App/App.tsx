@@ -8,6 +8,7 @@ import 'gsap/CSSPlugin';
 import TweenLite from 'gsap/TweenLite';
 
 import NavBar from 'src/components/App/NavBar/NavBar';
+import { LoadingSVG } from 'src/components/LoadingSVG';
 import { LogoSVG } from 'src/components/LogoSVG';
 
 import About from 'src/components/About/About';
@@ -65,6 +66,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
         return (
             <RootContainer>
                 <LogoSVG />
+                <LoadingSVG />
                 <Transition
                     in={this.state.homeBgLoaded}
                     onEntering={fadeOnEnter}

@@ -22,7 +22,6 @@ type PreviewOverlayProps = PreviewOverlayStateToProps & PreviewOverlayDispatchTo
 const StyledPreviewOverlay = styled('div')`
     ${pushed}
     width: 100%;
-    height: 100%;
     z-index: 10;
     position: absolute;
     top: 0;
@@ -34,10 +33,12 @@ const StyledPreviewOverlay = styled('div')`
     }
 
     svg {
-        position: absolute;
+        position: relative;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
+        fill: #030303;
+        stroke: none;
     }
 `;
 

@@ -17,7 +17,7 @@ const loadFont = (fileName: string, fontFamily: string) => (
     }`
 );
 
-/* tslint:disable:no-unused-expression */
+/* tslint:disable-next-line:no-unused-expression */
 injectGlobal`
     * {
         box-sizing: border-box;
@@ -62,4 +62,3 @@ injectGlobal`
     ${loadFont('lato-italic', 'LatoItalic')}
     ${loadFont('lato-heavyitalic', 'LatoHeavyItalic')}
 `;
-/* tslint:enable:no-unused-expression */

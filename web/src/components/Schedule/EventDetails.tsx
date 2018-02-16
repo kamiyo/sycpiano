@@ -2,7 +2,7 @@ import startCase from 'lodash-es/startCase';
 import { Moment } from 'moment-timezone';
 import { mix } from 'polished';
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
+import styled, { css, cx } from 'react-emotion';
 
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
 import { Collaborator, Piece } from 'src/components/Schedule/types';
@@ -77,7 +77,7 @@ let EventLocation: React.SFC<EventLocationProps> = (props) => {
     });
 
     return (
-        <a href={getGoogleMapsSearchUrl(props.location)} className={props.className} target="_blank">
+        <a href={getGoogleMapsSearchUrl(props.location)} className={cx(props.className, css` width: fit-content; `)} target="_blank">
             <LocationIconInstance className={locationIconStyle} />
 
             <strong
