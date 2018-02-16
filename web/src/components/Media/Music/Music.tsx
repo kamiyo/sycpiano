@@ -156,7 +156,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                 ...this.props.items.find((music) => {
                     return music.id === track.musicId;
                 }),
-                musicfiles: [track],
+                musicFiles: [track],
             },
             duration: -1,
         });
