@@ -20,11 +20,11 @@ const slideRight = (element: HTMLElement, amount: number, delay = 0) => {
 };
 
 // need to add in css from parent
-const playlistContainerStyle = css`
+const getPlaylistContainerStyle = (isMobile: boolean) => css`
     position: fixed;
-    height: inherit;
+    height: 100%;
     right: 0;
-    width: ${playlistContainerWidth}px;
+    width: ${isMobile ? '100%' : `${playlistContainerWidth}px`};
     transform: translateX(${playlistWidth}px);
     font-family: ${lato1};
     z-index: 50;
@@ -68,7 +68,7 @@ class Playlist<T> extends React.Component<PlaylistProps<T>, {}> {
             >
                 <div
                     className={cx(
-                        playlistContainerStyle,
+                        getPlaylistContainerStyle(props.isMobile),
                         props.extraStyles && props.extraStyles.div,
                     )}
                 >
