@@ -18,4 +18,5 @@ export interface PlaylistProps<T> {
     readonly onClick: (...args: any[]) => void;
     readonly togglePlaylist?: (isShow?: boolean) => void;
     readonly shouldAppear: boolean;
+    readonly isMobile?: boolean;
 }

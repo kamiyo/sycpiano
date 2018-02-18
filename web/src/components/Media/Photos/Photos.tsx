@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
+import ReactMedia from 'react-media';
 import { connect, Dispatch } from 'react-redux';
 import { Transition } from 'react-transition-group';
 
@@ -14,6 +15,7 @@ import { GlobalStateShape } from 'src/types';
 
 import { lightBlue } from 'src/styles/colors';
 import { pushed } from 'src/styles/mixins';
+import { xs } from 'src/styles/screens';
 import { playlistWidth } from 'src/styles/variables';
 
 const fadeOnEnter = (element: HTMLElement) => {
@@ -58,8 +60,8 @@ const StyledPhotoViewer = styled('div')`
     }
 `;
 
-const photoListStyle = css`
-    padding-left: 5px;
+const getPhotoListStyle = (isMobile: boolean) => css`
+    padding-left: ${isMobile ? 0 : 5}px;
     background-color: black;
 `;
 
@@ -73,20 +75,31 @@ const Highlight = styled<{ active: boolean; }, 'div'>('div')`
     border-left: 7px solid ${props => props.active ? lightBlue : 'transparent'};
 `;
 
-const PhotoRow = styled('div')`
-    height: 300px;
+const photoRowHover = (isMobile: boolean): string => (
+    isMobile ? css({}) : css`
+        &:hover {
+            cursor: pointer;
+            border-color: ${lightBlue};
+        }
+    `
+);
+
+const PhotoRow = styled<{ isMobile: boolean; }, 'div'>('div')`
+    height: ${props => props.isMobile ? 'auto' : '300px'};
     border: 1px solid transparent;
     transition: all 0.2s;
     border-radius: 10px;
+    line-height: ${props => props.isMobile ? 0 : 'inherit'};
 
     img {
         width: 100%;
     }
 
-    &:hover {
-        cursor: pointer;
-        border: 1px solid ${lightBlue};
-    }
+    /* tslint:disable:declaration-empty-line-before */
+
+    ${props => photoRowHover(props.isMobile)}
+
+    /* tslint:enable:declaration-empty-line-before */
 
     cursor: default;
     margin: 10px;
@@ -96,6 +109,11 @@ const PhotoRow = styled('div')`
 class Photos extends React.Component<PhotosProps, {}> {
     idFromItem = (item: PhotoItem) =>
         item && path.basename(item.file, '.jpg');
+
+    getPlaylistExtraStyles = (isMobile: boolean) => ({
+        div: getPhotoListStyle(isMobile),
+        ul: photoULStyle,
+    })
 
     componentWillMount() {
         this.props.createFetchPhotosAction();
@@ -125,38 +143,68 @@ class Photos extends React.Component<PhotosProps, {}> {
         );
     }
 
+    getChildRenderer = (isMobile: boolean): (props: ChildRendererProps<PhotoItem>) => JSX.Element => (
+        ({ item, currentItemId, onClick }) => {
+            const isActive = currentItemId === this.idFromItem(item);
+            const photoRow = (
+                <PhotoRow onClick={() => onClick(item)} isMobile={isMobile}>
+                    <img src={`/static/images/gallery/thumbnails/${item.file}`} />
+                </PhotoRow>
+            );
+            // Only wrap with Highlight component in non-mobile width/layout,
+            // since photos aren't selectable in mobile width/layout
+            // (i.e. the user doesn't need to know which photo is currently selected).
+            return isMobile ? photoRow : (
+                <Highlight active={isActive}>
+                    {photoRow}
+                </Highlight>
+            );
+        }
+    )
+
     render() {
         return (
             <StyledPhotos>
-                <StyledPhotoViewer>
-                    {this.props.items.map((item, idx) =>
-                        this.createPhotoElement(item, idx))}
-                </StyledPhotoViewer>
-                <Playlist
-                    extraStyles={{
-                        div: photoListStyle,
-                        ul: photoULStyle,
+                <ReactMedia query={`(orientation: landscape) and (min-width: ${parseInt(xs, 10) + 1}px)`}>
+                    {(matches: boolean) => {
+                        const isMobile = !matches;
+                        return isMobile ? (
+                            <Playlist
+                                extraStyles={this.getPlaylistExtraStyles(isMobile)}
+                                currentItemId={null}
+                                hasToggler={false}
+                                isShow={true}
+                                items={this.props.items}
+                                onClick={() => {
+                                    /* If there's just a photos list and no viewer,
+                                    we don't want the photos to be clickable. */
+                                }}
+                                shouldAppear={false}
+                                ChildRenderer={this.getChildRenderer(isMobile)}
+                                isMobile={isMobile}
+                            />
+                        ) : (
+                            <div>
+                                <StyledPhotoViewer>
+                                    {this.props.items.map((item, idx) =>
+                                        this.createPhotoElement(item, idx))}
+                                </StyledPhotoViewer>
+                                <Playlist
+                                    extraStyles={this.getPlaylistExtraStyles(isMobile)}
+                                    currentItemId={this.idFromItem(this.props.currentItem)}
+                                    hasToggler={false}
+                                    isShow={true}
+                                    items={this.props.items}
+                                    onClick={this.selectPhoto}
+                                    shouldAppear={false}
+                                    ChildRenderer={this.getChildRenderer(isMobile)}
+                                    isMobile={isMobile}
+                                />
+                            </div>
+                        );
                     }}
-                    currentItemId={this.idFromItem(this.props.currentItem)}
-                    hasToggler={false}
-                    isShow={true}
-                    items={this.props.items}
-                    onClick={this.selectPhoto}
-                    shouldAppear={false}
-                    ChildRenderer={this.childRenderer}
-                />
+                </ReactMedia>
             </StyledPhotos>
-        );
-    }
-
-    childRenderer = ({ item, currentItemId, onClick }: ChildRendererProps<PhotoItem>) => {
-        const isActive = (currentItemId === this.idFromItem(item));
-        return (
-            <Highlight active={isActive}>
-                <PhotoRow onClick={() => onClick(item)}>
-                    <img src={`/static/images/gallery/thumbnails/${item.file}`} />
-                </PhotoRow>
-            </Highlight>
         );
     }
 }
