@@ -1,18 +1,10 @@
 import * as React from 'react';
 import styled from 'react-emotion';
 
-import { LinkShape } from 'src/components/App/NavBar/types';
+import { LinkShape, NavBarLinksProps } from 'src/components/App/NavBar/types';
 
 import NavBarLink from 'src/components/App/NavBar/NavBarLink';
 import { noHighlight } from 'src/styles/mixins';
-
-interface NavBarLinksProps {
-    readonly className?: string;
-    readonly currentBasePath: string;
-    readonly links: LinkShape[];
-    readonly showSub: string;
-    readonly toggleSub: (show?: string) => void;
-}
 
 let NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
     <div className={props.className}>

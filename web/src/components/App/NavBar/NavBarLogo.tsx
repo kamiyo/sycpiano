@@ -1,10 +1,10 @@
+import { hiDPI } from 'polished';
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
 import { Link } from 'react-router-dom';
 
-import { LogoInstance } from 'src/components/LogoSVG';
+import { SycLogo } from 'src/components/App/NavBar/SycLogo';
 
-import { hiDPI } from 'polished';
 import { logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
@@ -48,24 +48,12 @@ const logoStyle = css`
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-
-    svg {
-        /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
-        ${hiDPI(2)} {
-            width: 90px;
-            height: 90px;
-        }
-
-        width: 150px;
-        height: 150px;
-        float: left;
-    }
 `;
 
 const NavBarLogo: React.SFC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProps> = ({ isHome }) => (
     <Link to="/" className={cx(logoStyle, { [css`fill: white;`]: isHome })}>
-        <LogoInstance />
-        { !isHome &&
+        <SycLogo />
+        {!isHome &&
             <LogoText>
                 <span>SEAN CHEN</span>
             </LogoText>

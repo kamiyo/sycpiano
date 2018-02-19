@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { css, cx } from 'react-emotion';
+import styled, { css, cx } from 'react-emotion';
+import ReactMedia from 'react-media';
 
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import NavBarLogo from 'src/components/App/NavBar/NavBarLogo';
+import { SycLogo } from 'src/components/App/NavBar/SycLogo';
 import { LinkShape } from 'src/components/App/NavBar/types';
 
 import { hiDPI } from 'polished';
-
+import { reactMediaMobileQuery, screenPortrait, screenXS } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
 const links: LinkShape[] = [
@@ -54,6 +56,16 @@ const homeNavBarStyle = css`
     background-color: transparent;
 `;
 
+const StyledNavBarLogo = styled(NavBarLogo)`
+    display: inline-flex;
+
+    ${screenPortrait}, ${screenXS} {
+        display: inline-block;
+        top: 0;
+        left: 0;
+    }
+`
+
 export default class NavBar extends React.Component<NavBarProps, NavBarState> {
     state = {
         showSub: '',
@@ -76,7 +88,11 @@ export default class NavBar extends React.Component<NavBarProps, NavBarState> {
                     { [homeNavBarStyle]: this.props.currentBasePath === '/' },
                 )}
             >
-                <NavBarLogo isHome={this.props.currentBasePath === '/'} />
+                <StyledNavBarLogo isHome={this.props.currentBasePath === '/'} />
+                <ReactMedia
+                    query={reactMediaMobileQuery}
+                    render={(): JSX.Element => <SycLogo />}
+                />
                 <NavBarLinks
                     links={links}
                     showSub={this.state.showSub}

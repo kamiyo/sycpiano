@@ -3,3 +3,11 @@ export interface LinkShape {
     readonly path: string;
     readonly subPaths?: string[];
 }
+
+export interface NavBarLinksProps {
+    readonly className?: string;
+    readonly currentBasePath: string;
+    readonly links: LinkShape[];
+    readonly showSub: string;
+    readonly toggleSub: (show?: string) => void;
+}

@@ -51,11 +51,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
 
     getRouteBase = () => {
         const matches: string[] = this.props.location.pathname.match(/^(\/[^\/]+)?(\/[^\/]+)?/);
-        // if (matches[2] && this.isSubPath(matches[2])) {
-        //     return `${matches[1]}${matches[2]}`;
-        // } else {
         return matches[1] || '/';
-        // }
     }
 
     bgLoaded = () => {
