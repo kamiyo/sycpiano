@@ -1,6 +1,8 @@
-export const xs = '480px';
-export const m = '1024px';
-export const xl = '1600px';
+const xs = '480px';
+const m = '1024px';
+const xl = '1600px';
+
+export const reactMediaMobileQuery = `(orientation: portrait) and (max-width: ${xs})`
 
 type DimensionName = keyof MediaQueryBounds;
 

@@ -15,7 +15,7 @@ import { GlobalStateShape } from 'src/types';
 
 import { lightBlue } from 'src/styles/colors';
 import { pushed } from 'src/styles/mixins';
-import { xs } from 'src/styles/screens';
+import { reactMediaMobileQuery } from 'src/styles/screens';
 import { playlistWidth } from 'src/styles/variables';
 
 const fadeOnEnter = (element: HTMLElement) => {
@@ -165,9 +165,9 @@ class Photos extends React.Component<PhotosProps, {}> {
     render() {
         return (
             <StyledPhotos>
-                <ReactMedia query={`(orientation: landscape) and (min-width: ${parseInt(xs, 10) + 1}px)`}>
+                <ReactMedia query={reactMediaMobileQuery}>
                     {(matches: boolean) => {
-                        const isMobile = !matches;
+                        const isMobile = matches;
                         return isMobile ? (
                             <Playlist
                                 extraStyles={this.getPlaylistExtraStyles(isMobile)}
