@@ -11,6 +11,7 @@ import { formatTime } from 'src/utils';
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 
 interface MusicPlaylistItemProps {
+    readonly audio: HTMLAudioElement;
     readonly item: MusicItem;
     readonly currentItemId: number | string;
     readonly baseRoute: string;
@@ -33,11 +34,11 @@ const baseItemStyle = css`
     }
 `;
 
-const StyledMusicItem = styled('li')`
+const StyledMusicItem = styled('li') `
     ${baseItemStyle}
 `;
 
-const StyledCollectionItem = styled('li')`
+const StyledCollectionItem = styled('li') `
     ${baseItemStyle}
     margin-left: 15px;
     width: auto;
@@ -48,7 +49,7 @@ const StyledCollectionItem = styled('li')`
     }
 `;
 
-const Highlight = styled<{ active: boolean; }, 'div'>('div')`
+const Highlight = styled<{ active: boolean; }, 'div'>('div') `
     padding: 10px 10px 10px 15px;
     border-left: 7px solid transparent;
     ${(props) => props.active && `border-left-color: ${lightBlue};`}
@@ -66,7 +67,7 @@ const section = css`
     display: inline-block;
 `;
 
-const StyledInfo = styled('div')`
+const StyledInfo = styled('div') `
     ${section}
     width: 100%;
     height: 100%;
@@ -80,26 +81,26 @@ const h4style = css`
     display: inline-block;
 `;
 
-const TextLeft = styled('h4')`
+const TextLeft = styled('h4') `
     ${h4style}
     float: left;
 `;
 
-const TextRight = styled('h4')`
+const TextRight = styled('h4') `
     ${h4style}
     font-size: 12px;
     float: right;
 `;
 
-const StyledCollectionContainer = styled('li')`
+const StyledCollectionContainer = styled('li') `
     border-bottom: ${listBottomBorder};
 `;
 
-const StyledCollectionList = styled('ul')`
+const StyledCollectionList = styled('ul') `
     padding: 0;
 `;
 
-const StyledCollectionTitleContainer = styled('div')`
+const StyledCollectionTitleContainer = styled('div') `
     position: relative;
     height: 100%;
     background-color: ${playlistBackground};
@@ -107,7 +108,7 @@ const StyledCollectionTitleContainer = styled('div')`
     border-bottom: ${listBottomBorder};
 `;
 
-const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement>> = ({ item, currentItemId, onClick, baseRoute }) => {
+const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement>> = ({ audio, item, currentItemId, onClick, baseRoute }) => {
     if (!item.musicFiles) {
         return null;
     } else if (item.musicFiles.length === 1) {
@@ -117,7 +118,11 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                 <Highlight active={currentItemId === musicFile.id}>
                     <Link
                         to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
-                        onClick={() => onClick(musicFile, true)}
+                        onClick={() => {
+                            onClick(musicFile, true);
+                            // mobile: play needs to be called by user interaction at least once
+                            audio.play();
+                        }}
                     >
                         <StyledInfo>
                             <TextLeft>
@@ -147,7 +152,11 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                             <Highlight active={currentItemId === musicFile.id}>
                                 <Link
                                     to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
-                                    onClick={() => onClick(musicFile, true)}
+                                    onClick={() => {
+                                        onClick(musicFile, true);
+                                        // mobile: play needs to be called by user interaction at least once
+                                        audio.play();
+                                    }}
                                 >
                                     <div>
                                         <StyledInfo>

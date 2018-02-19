@@ -20,6 +20,7 @@ interface MusicPlaylistOwnProps {
     readonly baseRoute: string;
     readonly currentTrackId: string;
     readonly onClick: (item: MusicFileItem, autoPlay: boolean) => void;
+    readonly audio: HTMLAudioElement;
 }
 
 type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;
@@ -43,7 +44,7 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
         items={props.items}
         currentItemId={props.currentTrackId}
         onClick={props.onClick}
-        ChildRenderer={(childProps: ChildRendererProps<MusicItem>) => <MusicPlaylistItem {...childProps} baseRoute={props.baseRoute} />}
+        ChildRenderer={(childProps: ChildRendererProps<MusicItem>) => <MusicPlaylistItem {...childProps} audio={props.audio} baseRoute={props.baseRoute} />}
         shouldAppear={false}
     />
 );

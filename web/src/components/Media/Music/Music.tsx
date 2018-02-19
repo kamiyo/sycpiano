@@ -262,6 +262,7 @@ class Music extends React.Component<MusicProps, MusicState> {
             <div className={musicStyle}>
                 <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
                 <MusicPlaylist
+                    audio={this.audio}
                     onClick={this.loadTrack}
                     currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
                     baseRoute={this.props.baseRoute}
