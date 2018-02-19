@@ -20,6 +20,7 @@ import { pushed } from 'src/styles/mixins';
 
 interface MusicState {
     readonly isPlaying: boolean;
+    readonly userInput: boolean;
     readonly volume: number;
     readonly playbackPosition: number;
     readonly lastUpdateTimestamp: number;
@@ -55,6 +56,7 @@ class Music extends React.Component<MusicProps, MusicState> {
     audio: HTMLAudioElement;
     state: MusicState = {
         isPlaying: false,
+        userInput: false,
         volume: 0.0,
         playbackPosition: 0.0,
         lastUpdateTimestamp: 0,
@@ -84,8 +86,13 @@ class Music extends React.Component<MusicProps, MusicState> {
         }
         this.audio.play();
     }
+
     pause = () => {
         this.audio.pause();
+    }
+
+    onFirstUserInput = () => {
+        this.setState({ userInput: true });
     }
 
     initializeAudioPlayer = async () => {
@@ -262,9 +269,12 @@ class Music extends React.Component<MusicProps, MusicState> {
             <div className={musicStyle}>
                 <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
                 <MusicPlaylist
+                    audio={this.audio}
                     onClick={this.loadTrack}
                     currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
                     baseRoute={this.props.baseRoute}
+                    userInput={this.state.userInput}
+                    onFirstUserInput={this.onFirstUserInput}
                 />
                 <AudioUI
                     seekAudio={this.seekAudio}
@@ -274,6 +284,8 @@ class Music extends React.Component<MusicProps, MusicState> {
                     pause={this.pause}
                     isPlaying={this.state.isPlaying}
                     currentPosition={this.state.playbackPosition}
+                    userInput={this.state.userInput}
+                    onFirstUserInput={this.onFirstUserInput}
                 />
                 <AudioInfo
                     duration={this.state.duration}
