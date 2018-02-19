@@ -12,10 +12,12 @@ import { lightBlue, playlistBackground } from 'src/styles/colors';
 
 interface MusicPlaylistItemProps {
     readonly audio: HTMLAudioElement;
+    readonly userInput: boolean;
     readonly item: MusicItem;
     readonly currentItemId: number | string;
     readonly baseRoute: string;
     readonly onClick: (item: MusicFileItem, autoPlay: boolean) => void;
+    readonly onFirstUserInput: () => void;
 }
 
 const fileFromPath = (name: string) => path.basename(name, '.mp3');
@@ -108,7 +110,15 @@ const StyledCollectionTitleContainer = styled('div') `
     border-bottom: ${listBottomBorder};
 `;
 
-const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement>> = ({ audio, item, currentItemId, onClick, baseRoute }) => {
+const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement>> = ({
+    audio,
+    item,
+    currentItemId,
+    onClick,
+    baseRoute,
+    userInput,
+    onFirstUserInput,
+}) => {
     if (!item.musicFiles) {
         return null;
     } else if (item.musicFiles.length === 1) {
@@ -119,9 +129,12 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                     <Link
                         to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
                         onClick={() => {
-                            onClick(musicFile, true);
                             // mobile: play needs to be called by user interaction at least once
-                            audio.play();
+                            if (!userInput) {
+                                audio.play();
+                                onFirstUserInput();
+                            }
+                            onClick(musicFile, true);
                         }}
                     >
                         <StyledInfo>
@@ -153,9 +166,12 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                                 <Link
                                     to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
                                     onClick={() => {
+                                        if (!userInput) {
+                                            audio.play();
+                                            onFirstUserInput();
+                                        }
                                         onClick(musicFile, true);
                                         // mobile: play needs to be called by user interaction at least once
-                                        audio.play();
                                     }}
                                 >
                                     <div>
