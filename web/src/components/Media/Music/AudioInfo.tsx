@@ -64,10 +64,11 @@ const AudioInfo: React.SFC<AudioInfoProps> = ({ currentTrack, duration }) => {
         composer = '',
         contributors = '',
         musicFiles = [],
-    } = currentTrack;
+    } = currentTrack || {};
+
     const {
-        name: movement,
-    } = musicFiles[0];
+        name: movement = '',
+    } = musicFiles[0] || {};
     const composerTitle = composer + ' ' + piece;
     return (
         <AudioInfoContainer>

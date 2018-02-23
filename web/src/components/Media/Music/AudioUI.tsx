@@ -118,12 +118,7 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
         this.seekRing.addEventListener('mousemove', this.handleMousemove);
         this.seekRing.addEventListener('mousedown', this.handleMousedown);
         this.seekRing.addEventListener('mouseup', this.handleMouseup);
-        this.height = this.seekRing.offsetHeight;
-        this.width = this.seekRing.offsetWidth;
-        this.seekRing.height = this.height;
-        this.seekRing.width = this.width;
-        this.centerX = this.width / 2;
-        this.centerY = this.height / 2 - 100;  // 100 for adjustment - arbitrary
+        this.onResize();
         this.visualizationCtx = this.seekRing.getContext('2d');
         this.isDragging = false;
         this.props.setMouseMove(false);
@@ -248,13 +243,14 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
     }
 
     render() {
+        const buttonLength = this.props.innerRadius * Math.sqrt(2);
         return (
             <UIContainer>
                 <StyledCurrentTime>
                     {formatTime(this.props.currentPosition)}
                 </StyledCurrentTime>
-                <PauseIcon setRef={this.setPauseButtonRef} />
-                <PlayIcon setRef={this.setPlayButtonRef} />
+                <PauseIcon setRef={this.setPauseButtonRef} width={buttonLength} height={buttonLength} />
+                <PlayIcon setRef={this.setPlayButtonRef} width={buttonLength} height={buttonLength} />
                 {(this.props.isPlaying) ?
                     <PauseButton
                         onClick={this.togglePlaying}
@@ -264,6 +260,8 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
                         onMouseOver={this.handleMouseover}
                         onMouseOut={this.handleMouseout}
                         onMouseUp={this.handleMouseup}
+                        width={buttonLength}
+                        height={buttonLength}
                     /> : <PlayButton
                         onClick={this.togglePlaying}
                         isVisible={this.props.isMouseMove || this.props.isHoverPlaypause}
@@ -272,6 +270,8 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
                         onMouseOver={this.handleMouseover}
                         onMouseOut={this.handleMouseout}
                         onMouseUp={this.handleMouseup}
+                        width={buttonLength}
+                        height={buttonLength}
                     />
                 }
                 <StyledSeekRing innerRef={(canvas) => this.seekRing = canvas} />

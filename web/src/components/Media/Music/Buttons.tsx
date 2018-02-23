@@ -5,6 +5,8 @@ import { PauseSVG, PlaySVG } from 'src/components/Media/Music/IconSVGs';
 
 interface IconProps {
     setRef: (div: HTMLDivElement) => void;
+    width: number;
+    height: number;
 }
 
 const sharedStyle = css`
@@ -17,7 +19,7 @@ const sharedStyle = css`
     justify-content: center;
 `;
 
-const StyledIcon = styled('div')`
+const StyledIcon = styled('div') `
     opacity: 0;
     ${sharedStyle}
     pointer-events: none;
@@ -30,8 +32,6 @@ const StyledIcon = styled('div')`
 const solidStyle = css`
     position: absolute;
     fill: #999;
-    height: 200px;
-    width: 200px;
     z-index: 1;
     transition: all 0.25s;
 `;
@@ -40,43 +40,41 @@ const blurStyle = css`
     position: absolute;
     fill: #eee;
     z-index: 1;
-    height: 200px;
-    width: 200px;
     filter: blur(5px);
     transition: all 0.25s;
 `;
 
-const SolidPlayIcon = styled(PlaySVG)`
+const SolidPlayIcon = styled(PlaySVG) `
     ${solidStyle}
 `;
 
-const BlurPlayIcon = styled(PlaySVG)`
+const BlurPlayIcon = styled(PlaySVG) `
     ${blurStyle}
 `;
 
-export const PlayIcon: React.SFC<IconProps> = ({ setRef }) => (
+export const PlayIcon: React.SFC<IconProps> = ({ setRef, ...props }) => (
     <StyledIcon
         innerRef={(div) => setRef(div)}
     >
-        <SolidPlayIcon />
-        <BlurPlayIcon />
+        <SolidPlayIcon {...props} />
+        <BlurPlayIcon {...props} />
     </StyledIcon>
 );
 
-const SolidPauseIcon = styled(PauseSVG)`
+const SolidPauseIcon = styled(PauseSVG) `
     ${solidStyle}
 `;
 
-const BlurPauseIcon = styled(PauseSVG)`
+const BlurPauseIcon = styled(PauseSVG) `
     ${blurStyle}
 `;
 
-export const PauseIcon: React.SFC<IconProps> = ({ setRef }) => (
+export const PauseIcon: React.SFC<IconProps> = ({ setRef, ...props }) => (
     <StyledIcon
         innerRef={(div) => setRef(div)}
     >
-        <SolidPauseIcon />
-        <BlurPauseIcon />
+        <SolidPauseIcon {...props} />
+        <BlurPauseIcon {...props} />
     </StyledIcon>
 );
 
@@ -87,9 +85,11 @@ interface ButtonProps {
     readonly onMouseOut: () => void;
     readonly onMouseMove: (event: MouseEvent) => void;
     readonly onClick: (event: MouseEvent | KeyboardEvent) => void;
+    readonly width: number;
+    readonly height: number;
 }
 
-const StyledButton = styled<{ isVisible: boolean }, 'div'>('div')`
+const StyledButton = styled<{ isVisible: boolean }, 'div'>('div') `
     ${sharedStyle}
     transition: all 0.25s;
     ${(props) => props.isVisible ? 'opacity: 1;' : 'opacity: 0;'}
@@ -113,48 +113,74 @@ const blurButtonHover = css`
     filter: blur(5px);
 `;
 
-export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement> > = ({ isVisible, isHovering, onMouseOver, onMouseOut, onMouseMove, onClick }) => (
-    <StyledButton
-        isVisible={isVisible}
-        onMouseMove={onMouseMove}
-    >
-        <PlaySVG
-            className={cx(
-                solidButtonStyle,
-                { [solidButtonHover]: isHovering },
-            )}
-            onMouseOver={onMouseOver}
-            onMouseOut={onMouseOut}
-            onClick={onClick}
-        />
-        <PlaySVG
-            className={cx(
-                blurButtonStyle,
-                { [blurButtonHover]: isHovering },
-            )}
-        />
-    </StyledButton>
-);
+export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({
+    isVisible,
+    isHovering,
+    onMouseOver,
+    onMouseOut,
+    onMouseMove,
+    onClick,
+    width,
+    height,
+}) => (
+        <StyledButton
+            isVisible={isVisible}
+            onMouseMove={onMouseMove}
+        >
+            <PlaySVG
+                className={cx(
+                    solidButtonStyle,
+                    { [solidButtonHover]: isHovering },
+                )}
+                onMouseOver={onMouseOver}
+                onMouseOut={onMouseOut}
+                onClick={onClick}
+                width={width}
+                height={height}
+            />
+            <PlaySVG
+                className={cx(
+                    blurButtonStyle,
+                    { [blurButtonHover]: isHovering },
+                )}
+                width={width}
+                height={height}
+            />
+        </StyledButton>
+    );
 
-export const PauseButton: React.SFC< ButtonProps & React.HTMLProps<HTMLDivElement> > = ({ isVisible, isHovering, onMouseOver, onMouseOut, onMouseMove, onClick }) => (
-    <StyledButton
-        isVisible={isVisible}
-        onMouseMove={onMouseMove}
-    >
-        <PauseSVG
-            className={cx(
-                solidButtonStyle,
-                { [solidButtonHover]: isHovering },
-            )}
-            onMouseOver={onMouseOver}
-            onMouseOut={onMouseOut}
-            onClick={onClick}
-        />
-        <PauseSVG
-            className={cx(
-                blurButtonStyle,
-                { [blurButtonHover]: isHovering },
-            )}
-        />
-    </StyledButton>
-);
+export const PauseButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({
+    isVisible,
+    isHovering,
+    onMouseOver,
+    onMouseOut,
+    onMouseMove,
+    onClick,
+    width,
+    height,
+}) => (
+        <StyledButton
+            isVisible={isVisible}
+            onMouseMove={onMouseMove}
+        >
+            <PauseSVG
+                className={cx(
+                    solidButtonStyle,
+                    { [solidButtonHover]: isHovering },
+                )}
+                onMouseOver={onMouseOver}
+                onMouseOut={onMouseOut}
+                onClick={onClick}
+                width={width}
+                height={height}
+            />
+            <PauseSVG
+                className={cx(
+                    blurButtonStyle,
+                    { [blurButtonHover]: isHovering },
+                )}
+                width={width}
+                height={height}
+            />
+        </StyledButton>
+    );

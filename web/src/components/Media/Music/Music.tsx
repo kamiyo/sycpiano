@@ -61,20 +61,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         playbackPosition: 0.0,
         lastUpdateTimestamp: 0,
         duration: -1,
-        currentTrack: {
-            id: '',
-            piece: '',
-            composer: '',
-            contributors: '',
-            musicFiles: [{
-                id: '',
-                name: '',
-                audioFile: '',
-                waveformFile: '',
-                durationSeconds: -1,
-                musicId: '',
-            }],
-        },
+        currentTrack: undefined,
     };
 
     analyzerL: AnalyserNode;
