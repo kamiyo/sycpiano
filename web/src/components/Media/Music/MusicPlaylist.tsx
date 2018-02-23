@@ -34,7 +34,6 @@ const musicPlaylistStyle = css`
 const musicULStyle = css`
     ul {
         background-color: ${playlistBackground};
-        padding-top: 5px;
     }
 `;
 

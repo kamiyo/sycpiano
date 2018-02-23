@@ -22,14 +22,11 @@ interface MusicPlaylistItemProps {
 
 const fileFromPath = (name: string) => path.basename(name, '.mp3');
 
-const listBottomBorder = '1px solid rgb(222, 222, 222)';
-
 const baseItemStyle = css`
     background-color: ${playlistBackground};
     list-style: none;
     cursor: pointer;
     width: 100%;
-    border-bottom: ${listBottomBorder};
 
     &:hover {
         background-color: white;
@@ -45,10 +42,6 @@ const StyledCollectionItem = styled('li') `
     margin-left: 15px;
     width: auto;
     border: none;
-
-    &:not(:first-child) {
-        border-top: ${listBottomBorder};
-    }
 `;
 
 const Highlight = styled<{ active: boolean; }, 'div'>('div') `
@@ -67,13 +60,6 @@ const Highlight = styled<{ active: boolean; }, 'div'>('div') `
 const section = css`
     vertical-align: middle;
     display: inline-block;
-`;
-
-const StyledInfo = styled('div') `
-    ${section}
-    width: 100%;
-    height: 100%;
-    position: relative;
 `;
 
 const h4style = css`
@@ -95,7 +81,7 @@ const TextRight = styled('h4') `
 `;
 
 const StyledCollectionContainer = styled('li') `
-    border-bottom: ${listBottomBorder};
+    padding: 10px 0;
 `;
 
 const StyledCollectionList = styled('ul') `
@@ -106,8 +92,25 @@ const StyledCollectionTitleContainer = styled('div') `
     position: relative;
     height: 100%;
     background-color: ${playlistBackground};
-    padding: 10px 0 10px 25px;
-    border-bottom: ${listBottomBorder};
+    padding: 10px 0 10px 22px;
+`;
+
+const StyledInfo = styled('div') `
+    ${section as any}
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding: 10px 0;
+
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
+    ${StyledCollectionItem} & {
+        padding: 0;
+    }
+
+    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
+    ${StyledCollectionTitleContainer} & {
+        padding-bottom: 0;
+    }
 `;
 
 const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement>> = ({
@@ -174,16 +177,14 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                                         // mobile: play needs to be called by user interaction at least once
                                     }}
                                 >
-                                    <div>
-                                        <StyledInfo>
-                                            <TextLeft>
-                                                {musicFile.name}
-                                            </TextLeft>
-                                            <TextRight>
-                                                {formatTime(musicFile.durationSeconds)}
-                                            </TextRight>
-                                        </StyledInfo>
-                                    </div>
+                                    <StyledInfo>
+                                        <TextLeft>
+                                            {musicFile.name}
+                                        </TextLeft>
+                                        <TextRight>
+                                            {formatTime(musicFile.durationSeconds)}
+                                        </TextRight>
+                                    </StyledInfo>
                                 </Link>
                             </Highlight>
                         </StyledCollectionItem>

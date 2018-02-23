@@ -3,14 +3,16 @@ import * as React from 'react';
 interface SVGProps {
     readonly onMouseOver?: () => void;
     readonly onMouseOut?: () => void;
+    readonly width: number;
+    readonly height: number;
 }
 
-export const PlaySVG: React.SFC<SVGProps & React.SVGAttributes<any> > = ({ onMouseOver, onMouseOut, ...props }) => (
+export const PlaySVG: React.SFC<SVGProps & React.SVGAttributes<any> > = ({ onMouseOver, onMouseOut, width, height, ...props }) => (
     <svg
         {...props}
+        width={width}
+        height={height}
         xmlns="http://www.w3.org/2000/svg"
-        width="500"
-        height="500"
         viewBox="0 0 132.29166 132.29166"
     >
         <path
@@ -21,13 +23,13 @@ export const PlaySVG: React.SFC<SVGProps & React.SVGAttributes<any> > = ({ onMou
     </svg>
 );
 
-export const PauseSVG: React.SFC<SVGProps & React.SVGAttributes<any> > = ({ onMouseOver, onMouseOut, ...props }) => (
+export const PauseSVG: React.SFC<SVGProps & React.SVGAttributes<any> > = ({ onMouseOver, onMouseOut, width, height, ...props }) => (
     <svg
+        width={width}
+        height={height}
         {...props}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 132.29166 132.29166"
-        height="500"
-        width="500"
     >
         <g
             onMouseOver={onMouseOver}

@@ -15,7 +15,6 @@ const CIRCLE_SAMPLES = 2048;
 const INV_CIRCLE_SAMPLES = 1 / CIRCLE_SAMPLES;
 const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI * INV_CIRCLE_SAMPLES;
 const GLOBAL_SCALE = 40;
-const WAVEFORM_HALF_HEIGHT = 50;
 const HEIGHT_ADJUST = -100;  // 100 for adjustment - arbitrary
 const HIGH_FREQ_SCALE = 10;
 
@@ -60,6 +59,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
     centerY: number;
     RADIUS_SCALE: number;
     RADIUS_BASE: number;
+    WAVEFORM_HALF_HEIGHT: number;
     visualizationCtx: CanvasRenderingContext2D;
 
     frequencyData: Uint8Array;
@@ -82,14 +82,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
     requestId: number;
 
     initializeVisualizer = async () => {
-        this.height = this.visualization.offsetHeight;
-        this.width = this.visualization.offsetWidth;
-        this.visualization.height = this.height;
-        this.visualization.width = this.width;
-        this.centerX = this.width / 2;
-        this.centerY = this.height / 2 + HEIGHT_ADJUST;
-        this.RADIUS_SCALE = Math.min(this.centerY, this.centerX) / 5.0;
-        this.RADIUS_BASE = this.centerY - this.RADIUS_SCALE;
+        this.onResize();
         this.visualizationCtx = this.visualization.getContext('2d');
 
         try {
@@ -224,7 +217,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
         // going through mins from start to end
         for (let j = 0; j < waveformLength; j++) {
             const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + waveform[j * 2] * this.props.volume * WAVEFORM_HALF_HEIGHT;
+            const scale = centerAxis + waveform[j * 2] * this.props.volume * this.WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.centerX, this.centerY]);
 
             if (j === 0) {
@@ -237,7 +230,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
         // looping around maxes from end to start
         for (let j = waveformLength - 1; j >= 0; j--) {
             const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
-            const scale = centerAxis + waveform[j * 2 + 1] * this.props.volume * WAVEFORM_HALF_HEIGHT;
+            const scale = centerAxis + waveform[j * 2 + 1] * this.props.volume * this.WAVEFORM_HALF_HEIGHT;
             const [x, y] = polarToCartesian(scale, angle, [this.centerX, this.centerY]);
 
             context.lineTo(x, y);
@@ -257,7 +250,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
     }
 
     drawSeekArea = (context: CanvasRenderingContext2D, radius: number, color: string, timestamp: number) => {
-        const WAVEFORM_CENTER_AXIS = radius - WAVEFORM_HALF_HEIGHT;
+        const WAVEFORM_CENTER_AXIS = radius - this.WAVEFORM_HALF_HEIGHT;
         this.drawWaveForm(context, WAVEFORM_CENTER_AXIS, color);
 
         // interpolate playbackhead position with timestamp difference if audio object hasn't updated current position
@@ -275,16 +268,16 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
         this.drawPlaybackHead(
             context,
             angle,
-            WAVEFORM_CENTER_AXIS - this.props.volume * WAVEFORM_HALF_HEIGHT,
-            WAVEFORM_CENTER_AXIS + this.props.volume * WAVEFORM_HALF_HEIGHT,
+            WAVEFORM_CENTER_AXIS - this.props.volume * this.WAVEFORM_HALF_HEIGHT,
+            WAVEFORM_CENTER_AXIS + this.props.volume * this.WAVEFORM_HALF_HEIGHT,
             '#FFF',
         );
         if (this.props.isHoverSeekring) {
             this.drawPlaybackHead(
                 context,
                 this.props.hoverAngle - HALF_PI,
-                WAVEFORM_CENTER_AXIS - this.props.volume * WAVEFORM_HALF_HEIGHT,
-                WAVEFORM_CENTER_AXIS + this.props.volume * WAVEFORM_HALF_HEIGHT,
+                WAVEFORM_CENTER_AXIS - this.props.volume * this.WAVEFORM_HALF_HEIGHT,
+                WAVEFORM_CENTER_AXIS + this.props.volume * this.WAVEFORM_HALF_HEIGHT,
                 '#888',
             );
         }
@@ -297,7 +290,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
         const color = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
         // adjust large radius to change with the average of all values
         const radius = this.RADIUS_BASE + lowFreq * this.RADIUS_SCALE;
-        this.props.storeRadii(radius - 2 * WAVEFORM_HALF_HEIGHT, radius);
+        this.props.storeRadii(radius - 2 * this.WAVEFORM_HALF_HEIGHT, radius);
 
         this.drawConstantQBins(context, values, radius, color);
         drawCircleMask(context, radius, [this.centerX, this.centerY], [this.width, this.height]);
@@ -311,8 +304,9 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
         this.visualization.width = this.width;
         this.centerX = this.width / 2;
         this.centerY = this.height / 2 + HEIGHT_ADJUST;
-        this.RADIUS_SCALE = this.centerY / 5.0;
-        this.RADIUS_BASE = this.centerY - this.RADIUS_SCALE;
+        this.RADIUS_SCALE = Math.min(this.width, this.height) / 10.0;
+        this.RADIUS_BASE = Math.min(this.centerX, this.centerY) - this.RADIUS_SCALE;
+        this.WAVEFORM_HALF_HEIGHT = Math.min(50, this.RADIUS_BASE / 4);
     }
 
     componentDidMount() {
