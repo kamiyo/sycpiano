@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { css } from 'react-emotion';
+import ReactMedia from 'react-media';
 import { connect, Dispatch } from 'react-redux';
 import { match } from 'react-router';
 
@@ -17,6 +18,7 @@ import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
+import { reactMediaMobileQuery } from 'src/styles/screens';
 
 interface MusicState {
     readonly isPlaying: boolean;
@@ -26,6 +28,7 @@ interface MusicState {
     readonly lastUpdateTimestamp: number;
     readonly duration: number;
     readonly currentTrack: MusicItem;
+    readonly isLoading: boolean;
 }
 
 interface MusicStateToProps {
@@ -45,8 +48,10 @@ type MusicProps = MusicOwnProps & MusicStateToProps & MusicDispatchToProps;
 
 const musicStyle = css`
     ${pushed}
+    position: relative;
     width: 100%;
     background-color: black;
+    overflow-y: auto;
 `;
 
 class Music extends React.Component<MusicProps, MusicState> {
@@ -62,6 +67,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         lastUpdateTimestamp: 0,
         duration: -1,
         currentTrack: undefined,
+        isLoading: false,
     };
 
     analyzerL: AnalyserNode;
@@ -108,8 +114,10 @@ class Music extends React.Component<MusicProps, MusicState> {
 
         this.audio.volume = 0;
 
+        this.setState({ isLoading: true });
         this.waitForConstantQ();
         this.waitForPlaylist();
+        this.setState({ isLoading: false });
     }
 
     waitForConstantQ = async () => {
@@ -153,10 +161,14 @@ class Music extends React.Component<MusicProps, MusicState> {
                 musicFiles: [track],
             },
             duration: -1,
+            isLoading: true,
         });
         waveformLoader.loadWaveformFile(`${MUSIC_PATH}/waveforms/${track.waveformFile}`);
         this.audio.src = `${MUSIC_PATH}/${track.audioFile}`;
         await waveformLoader.loaded;
+        this.setState({
+            isLoading: false,
+        });
         TweenLite.fromTo(this.audio, 0.3, { volume: 0 }, {
             volume: 1,
             onUpdate: () => {
@@ -253,40 +265,50 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     render() {
         return (
-            <div className={musicStyle}>
-                <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
-                <MusicPlaylist
-                    audio={this.audio}
-                    onClick={this.loadTrack}
-                    currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
-                    baseRoute={this.props.baseRoute}
-                    userInput={this.state.userInput}
-                    onFirstUserInput={this.onFirstUserInput}
-                />
-                <AudioUI
-                    seekAudio={this.seekAudio}
-                    onStartDrag={this.onStartDrag}
-                    onDrag={this.onDrag}
-                    play={this.play}
-                    pause={this.pause}
-                    isPlaying={this.state.isPlaying}
-                    currentPosition={this.state.playbackPosition}
-                    userInput={this.state.userInput}
-                    onFirstUserInput={this.onFirstUserInput}
-                />
-                <AudioInfo
-                    duration={this.state.duration}
-                    currentTrack={this.state.currentTrack}
-                />
-                <AudioVisualizer
-                    currentPosition={this.state.playbackPosition}
-                    analyzers={[this.analyzerL, this.analyzerR]}
-                    isPlaying={this.state.isPlaying}
-                    duration={this.state.duration}
-                    prevTimestamp={this.state.lastUpdateTimestamp}
-                    volume={this.state.volume}
-                />
-            </div>
+            <ReactMedia query={reactMediaMobileQuery} >
+                {(matches: boolean) =>
+                    <div className={musicStyle}>
+                        <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
+                        <MusicPlaylist
+                            audio={this.audio}
+                            onClick={this.loadTrack}
+                            currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
+                            baseRoute={this.props.baseRoute}
+                            userInput={this.state.userInput}
+                            onFirstUserInput={this.onFirstUserInput}
+                            isMobile={matches}
+                        />
+                        <AudioUI
+                            seekAudio={this.seekAudio}
+                            onStartDrag={this.onStartDrag}
+                            onDrag={this.onDrag}
+                            play={this.play}
+                            pause={this.pause}
+                            isPlaying={this.state.isPlaying}
+                            currentPosition={this.state.playbackPosition}
+                            userInput={this.state.userInput}
+                            onFirstUserInput={this.onFirstUserInput}
+                            isMobile={matches}
+                            isLoading={this.state.isLoading}
+                        />
+                        <AudioInfo
+                            duration={this.state.duration}
+                            currentPosition={this.state.playbackPosition}
+                            currentTrack={this.state.currentTrack}
+                            isMobile={matches}
+                        />
+                        <AudioVisualizer
+                            currentPosition={this.state.playbackPosition}
+                            analyzers={[this.analyzerL, this.analyzerR]}
+                            isPlaying={this.state.isPlaying}
+                            duration={this.state.duration}
+                            prevTimestamp={this.state.lastUpdateTimestamp}
+                            volume={this.state.volume}
+                            isMobile={matches}
+                        />
+                    </div>
+                }
+            </ReactMedia>
         );
     }
 }

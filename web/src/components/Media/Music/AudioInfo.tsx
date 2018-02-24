@@ -12,12 +12,14 @@ import { playlistWidth } from 'src/styles/variables';
 interface AudioInfoProps {
     currentTrack: MusicItem;
     duration: number;
+    currentPosition: number;
+    isMobile: boolean;
 }
 
-const AudioInfoContainer = styled('div') `
+const AudioInfoContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     ${noHighlight}
-    width: calc(100% - ${playlistWidth}px);
-    height: 100%;
+    width: ${(props) => props.isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
+    height: ${(props) => (props.isMobile) ? '450px' : '100%'};
     z-index: 10;
     position: absolute;
     top: 0;
@@ -30,35 +32,35 @@ const AudioInfoContainer = styled('div') `
     font-family: ${lato1};
     letter-spacing: 2px;
     color: white;
-    padding-bottom: 50px;
+    padding-bottom: ${(props) => props.isMobile ? '1rem' : '3rem'};
 `;
 
-const audioInfoStyle = css`
+const getAudioInfoStyle = (isMobile: boolean) => css`
     padding: 0 10px;
-    line-height: 1.5em;
+    line-height: ${isMobile ? '2.5rem' : '3.2rem'};
 `;
 
-const ComposerTitle = styled('div') `
-    ${audioInfoStyle}
-    font-size: 30px;
+const ComposerTitle = styled<{ isMobile: boolean; }, 'div'>('div') `
+    ${(props) => getAudioInfoStyle(props.isMobile)}
+    font-size: ${(props) => props.isMobile ? '1.4rem' : '2.2rem' };
 `;
 
-const Movement = styled('div') `
-    ${audioInfoStyle}
-    font-size: 30px;
+const Movement = styled<{ isMobile: boolean; }, 'div'>('div') `
+    ${(props) => getAudioInfoStyle(props.isMobile)}
+    font-size: ${(props) => props.isMobile ? '1.4rem' : '2.2rem' };
 `;
 
-const Contributing = styled('div') `
-    ${audioInfoStyle}
-    font-size: 24px;
+const Contributing = styled<{ isMobile: boolean; }, 'div'>('div') `
+    ${(props) => getAudioInfoStyle(props.isMobile)}
+    font-size: ${(props) => props.isMobile ? '1.3rem' : '2rem' };
 `;
 
-const Duration = styled('div') `
-    ${audioInfoStyle}
-    font-size: 24px;
+const Duration = styled<{ isMobile: boolean; }, 'div'>('div') `
+    ${(props) => getAudioInfoStyle(props.isMobile)}
+    font-size: ${(props) => props.isMobile ? '1.3rem' : '2rem' };
 `;
 
-const AudioInfo: React.SFC<AudioInfoProps> = ({ currentTrack, duration }) => {
+const AudioInfo: React.SFC<AudioInfoProps> = ({ currentTrack, currentPosition, duration, isMobile }) => {
     const {
         piece = '',
         composer = '',
@@ -71,11 +73,11 @@ const AudioInfo: React.SFC<AudioInfoProps> = ({ currentTrack, duration }) => {
     } = musicFiles[0] || {};
     const composerTitle = composer + ' ' + piece;
     return (
-        <AudioInfoContainer>
-            <ComposerTitle>{composerTitle}</ComposerTitle>
-            {movement && <Movement>{movement}</Movement>}
-            {contributors && <Contributing>{contributors}</Contributing>}
-            <Duration>{formatTime(duration)}</Duration>
+        <AudioInfoContainer isMobile={isMobile}>
+            <ComposerTitle isMobile={isMobile}>{composerTitle}</ComposerTitle>
+            {movement && <Movement isMobile={isMobile}>{movement}</Movement>}
+            {contributors && <Contributing isMobile={isMobile}>{contributors}</Contributing>}
+            <Duration isMobile={isMobile}>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</Duration>
         </AudioInfoContainer>
     );
 };

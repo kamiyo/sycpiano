@@ -1,15 +1,15 @@
 import * as React from 'react';
-import styled from 'react-emotion';
+import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
 
 import TweenLite from 'gsap/TweenLite';
+import { LoadingInstance } from 'src/components/LoadingSVG';
 import { setHoverPlaypause, setHoverSeekring, setMouseMove } from 'src/components/Media/Music/actions';
 import { PauseButton, PauseIcon, PlayButton, PlayIcon } from 'src/components/Media/Music/Buttons';
 import { GlobalStateShape } from 'src/types';
-import { cartesianToPolar, formatTime } from 'src/utils';
+import { cartesianToPolar } from 'src/utils';
 
-import { lato2 } from 'src/styles/fonts';
-import { noHighlight } from 'src/styles/mixins';
+import { lightBlue } from 'src/styles/colors';
 import { playlistWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
@@ -17,6 +17,8 @@ interface AudioUIStateToProps {
     readonly isHoverPlaypause: boolean;
     readonly isMouseMove: boolean;
     readonly outerRadius: number;
+    readonly baseRadius: number;
+    readonly verticalOffset: number;
 }
 
 interface AudioUIDispatchToProps {
@@ -35,36 +37,47 @@ interface AudioUIOwnProps {
     readonly seekAudio: (percent: number) => void;
     readonly userInput: boolean;
     readonly onFirstUserInput: () => void;
+    readonly isMobile: boolean;
+    readonly isLoading: boolean;
 }
 
 type AudioUIProps = AudioUIOwnProps & AudioUIStateToProps & AudioUIDispatchToProps;
 
-const UIContainer = styled('div')`
+const getLoadingInstanceStyle = (verticalOffset: number) =>  css`
+    position: relative;
+    left: 50%;
+    top: calc(50% + ${verticalOffset}px);
+    transform: translateX(-50%) translateY(-50%);
+    fill: none;
+    stroke: ${lightBlue};
+`;
+
+const LoadingOverlay = styled('div')`
     position: absolute;
-    width: calc(100% - ${playlistWidth}px);
+    z-index: 30;
+    width: 100%;
     height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+`;
+
+const UIContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
+    position: absolute;
+    width: ${(props) => props.isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
+    height: ${(props) => props.isMobile ? '450px' : '100%'};
+    left: 0;
+    top: 0;
     z-index: 20;
     display: flex;
     align-items: center;
     justify-content: center;
 `;
 
-const StyledSeekRing = styled('canvas')`
+const StyledSeekRing = styled('canvas') `
     position: absolute;
     width: 100%;
     height: 100%;
     z-index: 1;
-`;
-
-const StyledCurrentTime = styled('div')`
-    ${noHighlight}
-    position: absolute;
-    color: white;
-    transform: translateY(-100px);
-    font-family: ${lato2};
-    font-size: 50px;
-    z-index: 3;
-    pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
 `;
 
 class AudioUI extends React.Component<AudioUIProps, {}> {
@@ -97,10 +110,8 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
         if ((event as KeyboardEvent).key === ' ' || (event as MouseEvent).button === 0) {
             if (this.props.isPlaying) {
                 this.props.pause();
-                TweenLite.fromTo(this.pauseButton, 0.25, { opacity: 1, scale: 1 }, { opacity: 0, scale: 5, delay: 0.1 });
             } else {
                 this.props.play();
-                TweenLite.fromTo(this.playButton, 0.25, { opacity: 1, scale: 1 }, { opacity: 0, scale: 5, delay: 0.1 });
             }
         }
     }
@@ -111,7 +122,7 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
         this.seekRing.height = this.height;
         this.seekRing.width = this.width;
         this.centerX = this.width / 2;
-        this.centerY = this.height / 2 - 100;  // 100 for adjustment - arbitrary
+        this.centerY = this.height / 2 + this.props.verticalOffset;  // 100 for adjustment - arbitrary
     }
 
     initializeUI = () => {
@@ -222,10 +233,31 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
 
     handleMouseover = () => {
         this.props.setHoverPlaypause(true);
+        setTimeout(() => this.props.setHoverPlaypause(false), 1000);
     }
 
     handleMouseout = () => {
         this.props.setHoverPlaypause(false);
+    }
+
+    componentDidUpdate(prevProps: AudioUIProps) {
+        if (prevProps.isPlaying !== this.props.isPlaying) {
+            if (this.props.isPlaying) {
+                TweenLite.fromTo(
+                    this.playButton,
+                    0.25,
+                    { opacity: 1, scale: 1 },
+                    { opacity: 0, scale: 5, delay: 0.1, force3D: true, clearProps: 'transform' },
+                );
+            } else {
+                TweenLite.fromTo(
+                    this.pauseButton,
+                    0.25,
+                    { opacity: 1, scale: 1 },
+                    { opacity: 0, scale: 5, delay: 0.1, force3D: true, clearProps: 'transform' },
+                );
+            }
+        }
     }
 
     componentDidMount() {
@@ -243,18 +275,34 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
     }
 
     render() {
-        const buttonLength = this.props.innerRadius * Math.sqrt(2);
+        const buttonLength = this.props.baseRadius * Math.SQRT1_2;
         return (
-            <UIContainer>
-                <StyledCurrentTime>
-                    {formatTime(this.props.currentPosition)}
-                </StyledCurrentTime>
-                <PauseIcon setRef={this.setPauseButtonRef} width={buttonLength} height={buttonLength} />
-                <PlayIcon setRef={this.setPlayButtonRef} width={buttonLength} height={buttonLength} />
+            <UIContainer isMobile={this.props.isMobile}>
+                {this.props.isLoading &&
+                    <LoadingOverlay>
+                        <LoadingInstance
+                            width={200}
+                            height={200}
+                            className={getLoadingInstanceStyle(this.props.verticalOffset)}
+                        />
+                    </LoadingOverlay>
+                }
+                <PauseIcon
+                    setRef={this.setPauseButtonRef}
+                    width={buttonLength}
+                    height={buttonLength}
+                    verticalOffset={this.props.verticalOffset}
+                />
+                <PlayIcon
+                    setRef={this.setPlayButtonRef}
+                    width={buttonLength}
+                    height={buttonLength}
+                    verticalOffset={this.props.verticalOffset}
+                />
                 {(this.props.isPlaying) ?
                     <PauseButton
                         onClick={this.togglePlaying}
-                        isVisible={this.props.isMouseMove || this.props.isHoverPlaypause}
+                        isVisible={true}
                         isHovering={this.props.isHoverPlaypause}
                         onMouseMove={this.handleMousemove}
                         onMouseOver={this.handleMouseover}
@@ -262,9 +310,10 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
                         onMouseUp={this.handleMouseup}
                         width={buttonLength}
                         height={buttonLength}
+                        verticalOffset={this.props.verticalOffset}
                     /> : <PlayButton
                         onClick={this.togglePlaying}
-                        isVisible={this.props.isMouseMove || this.props.isHoverPlaypause}
+                        isVisible={true}
                         isHovering={this.props.isHoverPlaypause}
                         onMouseMove={this.handleMousemove}
                         onMouseOver={this.handleMouseover}
@@ -272,6 +321,7 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
                         onMouseUp={this.handleMouseup}
                         width={buttonLength}
                         height={buttonLength}
+                        verticalOffset={this.props.verticalOffset}
                     />
                 }
                 <StyledSeekRing innerRef={(canvas) => this.seekRing = canvas} />
@@ -285,6 +335,8 @@ const mapStateToProps = (state: GlobalStateShape) => ({
     isHoverPlaypause: state.audio_ui.isHoverPlaypause,
     isMouseMove: state.audio_ui.isMouseMove,
     outerRadius: state.audio_visualizer.outerRadius,
+    baseRadius: state.audio_visualizer.baseRadius,
+    verticalOffset: state.audio_visualizer.verticalOffset,
 });
 
 const mapDispatchToProps: AudioUIDispatchToProps = {

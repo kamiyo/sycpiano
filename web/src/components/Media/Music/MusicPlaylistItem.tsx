@@ -128,18 +128,18 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
         const musicFile = item.musicFiles[0];
         return (
             <StyledMusicItem>
-                <Highlight active={currentItemId === musicFile.id}>
-                    <Link
-                        to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
-                        onClick={() => {
-                            // mobile: play needs to be called by user interaction at least once
-                            if (!userInput) {
-                                audio.play();
-                                onFirstUserInput();
-                            }
-                            onClick(musicFile, true);
-                        }}
-                    >
+                <Link
+                    to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
+                    onClick={() => {
+                        // mobile: play needs to be called by user interaction at least once
+                        if (!userInput) {
+                            audio.play();
+                            onFirstUserInput();
+                        }
+                        onClick(musicFile, true);
+                    }}
+                >
+                    <Highlight active={currentItemId === musicFile.id}>
                         <StyledInfo>
                             <TextLeft>
                                 {`${item.composer}: ${item.piece}`}
@@ -148,8 +148,8 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                                 {formatTime(musicFile.durationSeconds)}
                             </TextRight>
                         </StyledInfo>
-                    </Link>
-                </Highlight>
+                    </Highlight>
+                </Link>
             </StyledMusicItem>
         );
     } else {
@@ -165,18 +165,19 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                         <StyledCollectionItem
                             key={index}
                         >
-                            <Highlight active={currentItemId === musicFile.id}>
-                                <Link
-                                    to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
-                                    onClick={() => {
-                                        if (!userInput) {
-                                            audio.play();
-                                            onFirstUserInput();
-                                        }
-                                        onClick(musicFile, true);
-                                        // mobile: play needs to be called by user interaction at least once
-                                    }}
-                                >
+                            <Link
+                                to={path.normalize(`${baseRoute}/${fileFromPath(musicFile.audioFile)}`)}
+                                onClick={() => {
+                                    if (!userInput) {
+                                        audio.play();
+                                        onFirstUserInput();
+                                    }
+                                    onClick(musicFile, true);
+                                    // mobile: play needs to be called by user interaction at least once
+                                }}
+                            >
+                                <Highlight active={currentItemId === musicFile.id}>
+
                                     <StyledInfo>
                                         <TextLeft>
                                             {musicFile.name}
@@ -185,8 +186,8 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTML
                                             {formatTime(musicFile.durationSeconds)}
                                         </TextRight>
                                     </StyledInfo>
-                                </Link>
-                            </Highlight>
+                                </Highlight>
+                            </Link>
                         </StyledCollectionItem>
                     ))}
                 </StyledCollectionList>

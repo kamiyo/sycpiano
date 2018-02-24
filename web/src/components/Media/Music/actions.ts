@@ -8,12 +8,19 @@ import * as ActionTypes from 'src/components/Media/Music/actionTypes';
 import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
-export const storeRadii = (innerRadius: number, outerRadius: number): ThunkAction<void, GlobalStateShape, void> =>
+export const storeRadii = (innerRadius: number, outerRadius: number, baseRadius: number): ThunkAction<void, GlobalStateShape, void> =>
     (dispatch) => dispatch({
         type: AUDIO_ACTIONS.STORE_RADII,
         innerRadius,
         outerRadius,
+        baseRadius,
     } as ActionTypes.StoreRadii);
+
+export const storeVerticalOffset = (offset: number): ThunkAction<void, GlobalEventHandlers, void> =>
+    (dispatch) => dispatch({
+        type: AUDIO_ACTIONS.STORE_VERTICAL_OFFSET,
+        offset,
+    } as ActionTypes.StoreVerticalOffset);
 
 export const setHoverSeekring = (isHover: boolean, angle: number): ThunkAction<void, GlobalStateShape, void> =>
     (dispatch) => dispatch({
