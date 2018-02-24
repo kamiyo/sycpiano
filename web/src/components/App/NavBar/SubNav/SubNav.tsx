@@ -9,6 +9,7 @@ interface SubNavProps {
     readonly basePath: string;
     readonly links: string[];
     readonly onClick: () => void;
+    readonly isMobile: boolean;
 }
 
 let SubNav: React.SFC<SubNavProps> = ({ className, basePath, links, onClick, isHome }) => (
@@ -19,15 +20,15 @@ let SubNav: React.SFC<SubNavProps> = ({ className, basePath, links, onClick, isH
     </ul>
 );
 
-SubNav = styled(SubNav)`
+SubNav = styled<SubNavProps, 'SubNav'>(SubNav)`
     z-index: 10;
-    position: absolute;
+    position: ${(props) => props.isMobile ? 'relative' : 'absolute'};
     list-style: none;
     padding-left: 0;
     margin-top: 0;
     display: inline-block;
     transform-origin: top;
-    transform: translateX(-50%);
+    transform: ${(props) => props.isMobile ? 'none' : 'translateX(-50%)'};
 `;
 
 export default SubNav;
