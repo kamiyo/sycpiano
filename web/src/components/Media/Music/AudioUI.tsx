@@ -302,7 +302,6 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
                 {(this.props.isPlaying) ?
                     <PauseButton
                         onClick={this.togglePlaying}
-                        isVisible={true}
                         isHovering={this.props.isHoverPlaypause}
                         onMouseMove={this.handleMousemove}
                         onMouseOver={this.handleMouseover}
@@ -313,7 +312,6 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
                         verticalOffset={this.props.verticalOffset}
                     /> : <PlayButton
                         onClick={this.togglePlaying}
-                        isVisible={true}
                         isHovering={this.props.isHoverPlaypause}
                         onMouseMove={this.handleMousemove}
                         onMouseOver={this.handleMouseover}

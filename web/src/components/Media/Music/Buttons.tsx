@@ -80,7 +80,6 @@ export const PauseIcon: React.SFC<IconProps> = ({ setRef, verticalOffset, ...pro
 );
 
 interface ButtonProps {
-    readonly isVisible: boolean;
     readonly isHovering: boolean;
     readonly onMouseOver: () => void;
     readonly onMouseOut: () => void;
@@ -91,10 +90,10 @@ interface ButtonProps {
     readonly verticalOffset: number;
 }
 
-const StyledButton = styled<{ isVisible: boolean, verticalOffset: number }, 'div'>('div') `
+const StyledButton = styled<{ verticalOffset: number }, 'div'>('div') `
     ${(props) => getSharedStyle(props.verticalOffset)}
     transition: opacity 0.25s;
-    ${(props) => props.isVisible ? 'opacity: 1;' : 'opacity: 0;'}
+    opacity: 1;
 `;
 
 const solidButtonStyle = css`
@@ -118,7 +117,6 @@ const blurButtonHover = css`
 `;
 
 export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({
-    isVisible,
     isHovering,
     onMouseOver,
     onMouseOut,
@@ -129,7 +127,6 @@ export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>
     verticalOffset,
 }) => (
         <StyledButton
-            isVisible={isVisible}
             onMouseMove={onMouseMove}
             verticalOffset={verticalOffset}
         >
@@ -156,7 +153,6 @@ export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>
     );
 
 export const PauseButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({
-    isVisible,
     isHovering,
     onMouseOver,
     onMouseOut,
@@ -167,7 +163,6 @@ export const PauseButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement
     verticalOffset,
 }) => (
         <StyledButton
-            isVisible={isVisible}
             onMouseMove={onMouseMove}
             verticalOffset={verticalOffset}
         >
