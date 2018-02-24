@@ -4,7 +4,10 @@ import styled from 'react-emotion';
 import { LinkShape, NavBarLinksProps } from 'src/components/App/NavBar/types';
 
 import NavBarLink from 'src/components/App/NavBar/NavBarLink';
+
 import { noHighlight } from 'src/styles/mixins';
+import { pushed } from 'src/styles/mixins';
+import { screenPortrait, screenXS } from 'src/styles/screens';
 
 let NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
     <div className={props.className}>
@@ -20,6 +23,8 @@ let NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
                         toggleSub={props.toggleSub}
                         active={link.path === props.currentBasePath}
                         isHome={props.currentBasePath === '/'}
+                        isMobile={props.isMobile}
+                        closeMobileMenu={props.closeMobileMenu}
                     />
                 );
             })}
@@ -34,6 +39,17 @@ NavBarLinks = styled(NavBarLinks)`
     ul {
         padding: 0;
         margin: 0;
+    }
+
+    /* stylelint-disable-next-line */
+    ${screenPortrait}, ${screenXS} {
+        ${pushed};
+        position: fixed;
+        background-color: white;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
     }
 `;
 

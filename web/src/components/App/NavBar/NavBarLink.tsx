@@ -12,6 +12,7 @@ import SubNav from 'src/components/App/NavBar/SubNav/SubNav';
 import { lightBlue, logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
+import { screenPortrait, screenXS } from 'src/styles/screens';
 import { navBarHeight, navBarMarginTop } from 'src/styles/variables';
 
 interface HighlightProps {
@@ -101,6 +102,8 @@ interface NavBarLinkProps {
     readonly subNavLinks: string[];
     readonly to: string;
     readonly toggleSub: (show?: string) => void;
+    readonly isMobile: boolean;
+    readonly closeMobileMenu?: (toExpand?: boolean) => void;
 }
 
 const linkStyle = css`
@@ -119,18 +122,18 @@ const linkActiveStyle = css`
     color: ${logoBlue};
 `;
 
-const linkHomeStyle = css`
+const linkHomeStyle = (isMobile: boolean) => css`
     color: rgba(200, 200, 200, 1);
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
 
     &:hover {
-        color: rgba(255, 255, 255, 1);
+        color: ${isMobile ? 'rgba(200, 200, 200, 1)' : 'rgba(255, 255, 255, 1)'};
         text-shadow: 0 0 1px rgba(255, 255, 255, 1);
     }
 `;
 
-const linkHomeActiveStyle = css`
-    color: rgba(255, 255, 255, 1);
+const linkHomeActiveStyle = (isMobile: boolean) => css`
+    color: ${isMobile ? 'rgba(200, 200, 200, 1)' : 'rgba(255, 255, 255, 1)'};
     text-shadow: 0 0 1px rgba(255, 255, 255, 1);
 `;
 
@@ -143,20 +146,23 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                     className={cx(
                         linkStyle,
                         { [linkActiveStyle]: props.active && !props.isHome },
-                        { [linkHomeStyle]: props.isHome },
-                        { [linkHomeActiveStyle]: props.active && props.isHome },
+                        { [linkHomeStyle(props.isMobile)]: props.isHome },
+                        { [linkHomeActiveStyle(props.isMobile)]: props.active && props.isHome },
                     )}
                 >
                     <Highlight active={props.active} isHome={props.isHome} link={props.link} />
                 </a> :
                 <Link
                     to={props.to}
-                    onClick={() => props.toggleSub('')}
+                    onClick={() => {
+                        props.toggleSub('');
+                        props.closeMobileMenu();
+                    }}
                     className={cx(
                         linkStyle,
                         { [linkActiveStyle]: props.active && !props.isHome },
-                        { [linkHomeStyle]: props.isHome },
-                        { [linkHomeActiveStyle]: props.active && props.isHome },
+                        { [linkHomeStyle(props.isMobile)]: props.isHome },
+                        { [linkHomeActiveStyle(props.isMobile)]: props.active && props.isHome },
                     )}
                 >
                     <Highlight active={props.active} isHome={props.isHome} link={props.link} />
@@ -174,8 +180,12 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                 <SubNav
                     basePath={props.to}
                     links={props.subNavLinks}
-                    onClick={() => props.toggleSub('')}
+                    onClick={() => {
+                        props.toggleSub('');
+                        props.closeMobileMenu();
+                    }}
                     isHome={props.isHome}
+                    isMobile={props.isMobile}
                 />
             </Transition>
         }
@@ -186,6 +196,11 @@ NavBarLink = styled(NavBarLink)`
     /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
         font-size: 16px;
+    }
+
+    /* stylelint-disable-next-line */
+    ${screenPortrait}, ${screenXS} {
+        width: 100%;
     }
 
     font-size: 22px;

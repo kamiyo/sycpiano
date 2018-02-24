@@ -2,27 +2,19 @@ import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
 import ReactMedia from 'react-media';
 
+import { HamburgerNav } from 'src/components/App/NavBar/HamburgerNav';
+import { links } from 'src/components/App/NavBar/links';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import NavBarLogo from 'src/components/App/NavBar/NavBarLogo';
-import { SycLogo } from 'src/components/App/NavBar/SycLogo';
-import { LinkShape } from 'src/components/App/NavBar/types';
 
 import { hiDPI } from 'polished';
 import { reactMediaMobileQuery, screenPortrait, screenXS } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
-const links: LinkShape[] = [
-    { name: 'home', path: '/' },
-    { name: 'about', path: '/about' },
-    { name: 'schedule', path: '/schedule', subPaths: ['upcoming', 'archive'] },
-    { name: 'media', path: '/media', subPaths: ['videos', 'music', 'photos'] },
-    { name: 'press', path: '/press' },
-    { name: 'contact', path: '/contact' },
-];
-
 interface NavBarProps {
     readonly currentBasePath: string;
     readonly className?: string;
+    readonly specificRouteName: string;
 }
 
 interface NavBarState {
@@ -32,6 +24,11 @@ interface NavBarState {
 const navBarStyle = css`
     height: ${navBarHeight.nonHdpi}px;
     padding: 0 30px 0 0;
+
+    /* stylelint-disable-next-line */
+    ${screenPortrait}, ${screenXS} {
+        padding-right: 15px;
+    }
 
     /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
     ${hiDPI(2)} {
@@ -58,13 +55,7 @@ const homeNavBarStyle = css`
 
 const StyledNavBarLogo = styled(NavBarLogo)`
     display: inline-flex;
-
-    ${screenPortrait}, ${screenXS} {
-        display: inline-block;
-        top: 0;
-        left: 0;
-    }
-`
+`;
 
 export default class NavBar extends React.Component<NavBarProps, NavBarState> {
     state = {
@@ -88,17 +79,24 @@ export default class NavBar extends React.Component<NavBarProps, NavBarState> {
                     { [homeNavBarStyle]: this.props.currentBasePath === '/' },
                 )}
             >
-                <StyledNavBarLogo isHome={this.props.currentBasePath === '/'} />
-                <ReactMedia
-                    query={reactMediaMobileQuery}
-                    render={(): JSX.Element => <SycLogo />}
+                <StyledNavBarLogo
+                    isHome={this.props.currentBasePath === '/'}
+                    specificRouteName={this.props.specificRouteName}
                 />
-                <NavBarLinks
-                    links={links}
-                    showSub={this.state.showSub}
-                    toggleSub={this.toggleSubNav}
-                    currentBasePath={this.props.currentBasePath}
-                />
+                <ReactMedia query={reactMediaMobileQuery}>
+                    {(matches: boolean) => {
+                        const NavComponent = matches ? HamburgerNav : NavBarLinks;
+                        return (
+                            <NavComponent
+                                links={links}
+                                showSub={this.state.showSub}
+                                toggleSub={this.toggleSubNav}
+                                currentBasePath={this.props.currentBasePath}
+                                isMobile={matches}
+                            />
+                        );
+                    }}
+                </ReactMedia>
             </div>
         );
     }

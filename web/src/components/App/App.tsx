@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import { RouteComponentProps } from 'react-router';
@@ -54,6 +55,12 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
         return matches[1] || '/';
     }
 
+    getMostSpecificRouteName = () => {
+        const matches: string[] = this.props.location.pathname.match(/^(\/[^\/]+)?(\/[^\/]+)?/);
+        const match = matches[2] || matches[1];
+        return (match ? _.toUpper(match.slice(1)) : '') || null;
+    }
+
     bgLoaded = () => {
         this.setState({ homeBgLoaded: true });
     }
@@ -72,6 +79,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                     <NavBar
                         className={css`opacity: 0;`}
                         currentBasePath={this.getRouteBase()}
+                        specificRouteName={this.getMostSpecificRouteName()}
                     />
                 </Transition>
                 <TransitionGroup>
