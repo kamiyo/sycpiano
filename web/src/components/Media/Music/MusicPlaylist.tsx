@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { css } from 'react-emotion';
+import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
 
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
@@ -23,12 +23,20 @@ interface MusicPlaylistOwnProps {
     readonly audio: HTMLAudioElement;
     readonly userInput: boolean;
     readonly onFirstUserInput: () => void;
+    readonly isMobile: boolean;
 }
 
 type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;
 
-const musicPlaylistStyle = css`
-    width: ${playlistWidth}px;
+const getMusicPlaylistStyle = (isMobile: boolean) => css`
+    width: ${isMobile ? '100%' : `${playlistWidth}px`};
+
+    /* stylelint-disable-next-line */
+    ${isMobile && `
+        top: 450px;
+        position: relative;
+        overflow: visible;
+    `};
 `;
 
 const musicULStyle = css`
@@ -37,25 +45,33 @@ const musicULStyle = css`
     }
 `;
 
+const StyledPlaylistContainer = styled<{ isMobile: boolean }, 'div'>('div') `
+    width: 100%;
+    height: ${props => props.isMobile ? 'auto' : '100%'};
+`;
+
 const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
-    <Playlist
-        extraStyles={{ div: musicPlaylistStyle, ul: musicULStyle }}
-        isShow={true}
-        hasToggler={false}
-        items={props.items}
-        currentItemId={props.currentTrackId}
-        onClick={props.onClick}
-        ChildRenderer={(childProps: ChildRendererProps<MusicItem>) =>
-            <MusicPlaylistItem
-                {...childProps}
-                audio={props.audio}
-                baseRoute={props.baseRoute}
-                userInput={props.userInput}
-                onFirstUserInput={props.onFirstUserInput}
-            />
-        }
-        shouldAppear={false}
-    />
+    <StyledPlaylistContainer isMobile={props.isMobile}>
+        <Playlist
+            extraStyles={{ div: getMusicPlaylistStyle(props.isMobile), ul: musicULStyle }}
+            isShow={true}
+            hasToggler={false}
+            items={props.items}
+            currentItemId={props.currentTrackId}
+            onClick={props.onClick}
+            ChildRenderer={(childProps: ChildRendererProps<MusicItem>) =>
+                <MusicPlaylistItem
+                    {...childProps}
+                    audio={props.audio}
+                    baseRoute={props.baseRoute}
+                    userInput={props.userInput}
+                    onFirstUserInput={props.onFirstUserInput}
+                />
+            }
+            shouldAppear={false}
+            isMobile={props.isMobile}
+        />
+    </StyledPlaylistContainer>
 );
 
 const mapStateToProps = (state: GlobalStateShape) => ({

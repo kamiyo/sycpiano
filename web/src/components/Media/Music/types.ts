@@ -18,6 +18,8 @@ export interface MusicFileItem {
 export interface AudioVisualizerStateShape {
     readonly innerRadius: number;
     readonly outerRadius: number;
+    readonly baseRadius: number;
+    readonly verticalOffset: number;
 }
 
 export interface AudioUIStateShape {

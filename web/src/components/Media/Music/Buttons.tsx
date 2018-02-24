@@ -7,21 +7,23 @@ interface IconProps {
     setRef: (div: HTMLDivElement) => void;
     width: number;
     height: number;
+    verticalOffset: number;
 }
 
-const sharedStyle = css`
-    transform: translateY(-100px);
+const getSharedStyle = (verticalOffset: number) => css`
+    transform: translateY(${verticalOffset}px);
     transform-origin: center center;
     z-index: 2;
     flex: initial;
     display: flex;
     align-items: center;
     justify-content: center;
+    -webkit-tap-highlight-color: transparent;
 `;
 
-const StyledIcon = styled('div') `
+const StyledIcon = styled<{ verticalOffset: number }, 'div'>('div') `
     opacity: 0;
-    ${sharedStyle}
+    ${(props) => getSharedStyle(props.verticalOffset)};
     pointer-events: none;
 
     svg {
@@ -33,15 +35,12 @@ const solidStyle = css`
     position: absolute;
     fill: #999;
     z-index: 1;
-    transition: all 0.25s;
 `;
 
 const blurStyle = css`
     position: absolute;
     fill: #eee;
     z-index: 1;
-    filter: blur(5px);
-    transition: all 0.25s;
 `;
 
 const SolidPlayIcon = styled(PlaySVG) `
@@ -52,9 +51,10 @@ const BlurPlayIcon = styled(PlaySVG) `
     ${blurStyle}
 `;
 
-export const PlayIcon: React.SFC<IconProps> = ({ setRef, ...props }) => (
+export const PlayIcon: React.SFC<IconProps> = ({ setRef, verticalOffset, ...props }) => (
     <StyledIcon
         innerRef={(div) => setRef(div)}
+        verticalOffset={verticalOffset}
     >
         <SolidPlayIcon {...props} />
         <BlurPlayIcon {...props} />
@@ -69,9 +69,10 @@ const BlurPauseIcon = styled(PauseSVG) `
     ${blurStyle}
 `;
 
-export const PauseIcon: React.SFC<IconProps> = ({ setRef, ...props }) => (
+export const PauseIcon: React.SFC<IconProps> = ({ setRef, verticalOffset, ...props }) => (
     <StyledIcon
         innerRef={(div) => setRef(div)}
+        verticalOffset={verticalOffset}
     >
         <SolidPauseIcon {...props} />
         <BlurPauseIcon {...props} />
@@ -79,7 +80,6 @@ export const PauseIcon: React.SFC<IconProps> = ({ setRef, ...props }) => (
 );
 
 interface ButtonProps {
-    readonly isVisible: boolean;
     readonly isHovering: boolean;
     readonly onMouseOver: () => void;
     readonly onMouseOut: () => void;
@@ -87,17 +87,19 @@ interface ButtonProps {
     readonly onClick: (event: MouseEvent | KeyboardEvent) => void;
     readonly width: number;
     readonly height: number;
+    readonly verticalOffset: number;
 }
 
-const StyledButton = styled<{ isVisible: boolean }, 'div'>('div') `
-    ${sharedStyle}
-    transition: all 0.25s;
-    ${(props) => props.isVisible ? 'opacity: 1;' : 'opacity: 0;'}
+const StyledButton = styled<{ verticalOffset: number }, 'div'>('div') `
+    ${(props) => getSharedStyle(props.verticalOffset)}
+    transition: opacity 0.25s;
+    opacity: 1;
 `;
 
 const solidButtonStyle = css`
     ${solidStyle}
     z-index: 2;
+    transition: fill 0.25s;
 `;
 
 const solidButtonHover = css`
@@ -107,6 +109,7 @@ const solidButtonHover = css`
 
 const blurButtonStyle = css`
     ${blurStyle}
+    transition: blur 0.25s;
 `;
 
 const blurButtonHover = css`
@@ -114,7 +117,6 @@ const blurButtonHover = css`
 `;
 
 export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({
-    isVisible,
     isHovering,
     onMouseOver,
     onMouseOut,
@@ -122,10 +124,11 @@ export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>
     onClick,
     width,
     height,
+    verticalOffset,
 }) => (
         <StyledButton
-            isVisible={isVisible}
             onMouseMove={onMouseMove}
+            verticalOffset={verticalOffset}
         >
             <PlaySVG
                 className={cx(
@@ -150,7 +153,6 @@ export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>
     );
 
 export const PauseButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({
-    isVisible,
     isHovering,
     onMouseOver,
     onMouseOut,
@@ -158,10 +160,11 @@ export const PauseButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement
     onClick,
     width,
     height,
+    verticalOffset,
 }) => (
         <StyledButton
-            isVisible={isVisible}
             onMouseMove={onMouseMove}
+            verticalOffset={verticalOffset}
         >
             <PauseSVG
                 className={cx(

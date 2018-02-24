@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'react-emotion';
 import { connect } from 'react-redux';
 
-import { storeRadii } from 'src/components/Media/Music/actions';
+import { storeRadii, storeVerticalOffset } from 'src/components/Media/Music/actions';
 import { constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
 import { polarToCartesian } from 'src/utils';
@@ -15,7 +15,8 @@ const CIRCLE_SAMPLES = 2048;
 const INV_CIRCLE_SAMPLES = 1 / CIRCLE_SAMPLES;
 const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI * INV_CIRCLE_SAMPLES;
 const GLOBAL_SCALE = 40;
-const HEIGHT_ADJUST = -100;  // 100 for adjustment - arbitrary
+const HEIGHT_ADJUST_MOBILE = -50;
+const HEIGHT_ADJUST_DESKTOP = -100;
 const HIGH_FREQ_SCALE = 10;
 
 interface AudioVisualizerStateToProps {
@@ -24,7 +25,8 @@ interface AudioVisualizerStateToProps {
 }
 
 interface AudioVisualizerDispatchToProps {
-    readonly storeRadii: (innerRadius: number, outerRadius: number) => void;
+    readonly storeRadii: (innerRadius: number, outerRadius: number, baseRadius: number) => void;
+    readonly storeVerticalOffset: (offset: number) => void;
 }
 
 interface AudioVisualizerOwnProps {
@@ -34,17 +36,20 @@ interface AudioVisualizerOwnProps {
     readonly isPlaying: boolean;
     readonly prevTimestamp: number;
     readonly volume: number;
+    readonly isMobile: boolean;
 }
 
 type AudioVisualizerProps = AudioVisualizerStateToProps & AudioVisualizerDispatchToProps & AudioVisualizerOwnProps;
 
-const VisualizerContainer = styled('div')`
+const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     position: absolute;
-    width: calc(100% - ${playlistWidth}px);
-    height: 100%;
+    left: 0;
+    top: 0;
+    width: ${(props) => props.isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
+    height: ${(props) => props.isMobile ? '450px' : '100%'};
 `;
 
-const VisualizerCanvas = styled('canvas')`
+const VisualizerCanvas = styled('canvas') `
     position: absolute;
     width: 100%;
     height: 100%;
@@ -60,6 +65,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
     RADIUS_SCALE: number;
     RADIUS_BASE: number;
     WAVEFORM_HALF_HEIGHT: number;
+    HEIGHT_ADJUST: number;
     visualizationCtx: CanvasRenderingContext2D;
 
     frequencyData: Uint8Array;
@@ -81,7 +87,13 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
     STEP_SIZE: number;
     requestId: number;
 
+    adjustHeight = () => {
+        this.HEIGHT_ADJUST = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
+        this.props.storeVerticalOffset(this.HEIGHT_ADJUST);
+    }
+
     initializeVisualizer = async () => {
+        this.adjustHeight();
         this.onResize();
         this.visualizationCtx = this.visualization.getContext('2d');
 
@@ -290,7 +302,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
         const color = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
         // adjust large radius to change with the average of all values
         const radius = this.RADIUS_BASE + lowFreq * this.RADIUS_SCALE;
-        this.props.storeRadii(radius - 2 * this.WAVEFORM_HALF_HEIGHT, radius);
+        this.props.storeRadii(radius - 2 * this.WAVEFORM_HALF_HEIGHT, radius, this.RADIUS_BASE);
 
         this.drawConstantQBins(context, values, radius, color);
         drawCircleMask(context, radius, [this.centerX, this.centerY], [this.width, this.height]);
@@ -303,8 +315,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
         this.visualization.height = this.height;
         this.visualization.width = this.width;
         this.centerX = this.width / 2;
-        this.centerY = this.height / 2 + HEIGHT_ADJUST;
-        this.RADIUS_SCALE = Math.min(this.width, this.height) / 10.0;
+        this.centerY = this.height / 2 + this.HEIGHT_ADJUST;
+        this.RADIUS_SCALE = Math.min(this.width, this.height) / 12;
         this.RADIUS_BASE = Math.min(this.centerX, this.centerY) - this.RADIUS_SCALE;
         this.WAVEFORM_HALF_HEIGHT = Math.min(50, this.RADIUS_BASE / 4);
     }
@@ -319,13 +331,24 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
         cancelAnimationFrame(this.requestId);
     }
 
-    shouldComponentUpdate() {
+    // dunno why it doens't work without this. onResize should be called anyways
+    componentDidUpdate(prevProps: AudioVisualizerProps) {
+        if (prevProps.isMobile !== this.props.isMobile) {
+            this.adjustHeight();
+            this.onResize();
+        }
+    }
+
+    shouldComponentUpdate(nextProps: AudioVisualizerProps) {
+        if (nextProps.isMobile !== this.props.isMobile) {
+            return true;
+        }
         return false;
     }
 
     render() {
         return (
-            <VisualizerContainer>
+            <VisualizerContainer isMobile={this.props.isMobile}>
                 <VisualizerCanvas innerRef={(canvas) => this.visualization = canvas} />
             </VisualizerContainer>
         );
@@ -339,6 +362,7 @@ const mapStateToProps = (state: GlobalStateShape) => ({
 
 const mapDispatchToProps: AudioVisualizerDispatchToProps = {
     storeRadii,
+    storeVerticalOffset,
 };
 
 export default connect<AudioVisualizerStateToProps, AudioVisualizerDispatchToProps>(
