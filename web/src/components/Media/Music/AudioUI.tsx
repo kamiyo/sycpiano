@@ -43,7 +43,7 @@ interface AudioUIOwnProps {
 
 type AudioUIProps = AudioUIOwnProps & AudioUIStateToProps & AudioUIDispatchToProps;
 
-const getLoadingInstanceStyle = (verticalOffset: number) =>  css`
+const getLoadingInstanceStyle = (verticalOffset: number) => css`
     position: relative;
     left: 50%;
     top: calc(50% + ${verticalOffset}px);
@@ -52,7 +52,7 @@ const getLoadingInstanceStyle = (verticalOffset: number) =>  css`
     stroke: ${lightBlue};
 `;
 
-const LoadingOverlay = styled('div')`
+const LoadingOverlay = styled('div') `
     position: absolute;
     z-index: 30;
     width: 100%;
@@ -244,7 +244,7 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
         if (prevProps.verticalOffset !== this.props.verticalOffset) {
             this.onResize();
         }
-        if (prevProps.isPlaying !== this.props.isPlaying) {
+        if (prevProps.isPlaying !== this.props.isPlaying && !this.isDragging) {
             if (this.props.isPlaying) {
                 TweenLite.fromTo(
                     this.playButton,
