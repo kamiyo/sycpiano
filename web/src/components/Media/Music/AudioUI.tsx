@@ -122,7 +122,7 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
         this.seekRing.height = this.height;
         this.seekRing.width = this.width;
         this.centerX = this.width / 2;
-        this.centerY = this.height / 2 + this.props.verticalOffset;  // 100 for adjustment - arbitrary
+        this.centerY = this.height / 2 + this.props.verticalOffset;
     }
 
     initializeUI = () => {
@@ -241,6 +241,9 @@ class AudioUI extends React.Component<AudioUIProps, {}> {
     }
 
     componentDidUpdate(prevProps: AudioUIProps) {
+        if (prevProps.verticalOffset !== this.props.verticalOffset) {
+            this.onResize();
+        }
         if (prevProps.isPlaying !== this.props.isPlaying) {
             if (this.props.isPlaying) {
                 TweenLite.fromTo(
