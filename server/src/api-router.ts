@@ -206,13 +206,17 @@ calendarRouter.get('/', async (req, res) => {
     let pastEvents;
     switch (type) {
         case FUTURE:
-            betweenEvents = await getEventsBetween(nowMoment.format(), date, 'ASC');
-            futureEvents = await getEventsAfter(date, 5);
+            [betweenEvents, futureEvents] = await Promise.all([
+                getEventsBetween(nowMoment.format(), date, 'ASC'),
+                getEventsAfter(date, 5),
+            ]);
             response = [...betweenEvents, ...futureEvents];
             break;
         case PAST:
-            betweenEvents = await getEventsBetween(date, nowMoment.format(), 'DESC');
-            pastEvents = await getEventsBefore(date, 5);
+            [betweenEvents, pastEvents] = await Promise.all([
+                getEventsBetween(date, nowMoment.format(), 'DESC'),
+                getEventsBefore(date, 5),
+            ]);
             response = [...betweenEvents.reverse(), ...pastEvents];
             break;
         case ALL:
@@ -233,9 +237,11 @@ calendarRouter.get('/', async (req, res) => {
 
 apiRouter.use(/\/calendar/, calendarRouter);
 
-apiRouter.get('/music', async (_, res) => {
-    const model = models.music;
-    const response = await model.findAll({
+const getMusicInstancesOfType = (type: string) => (
+    models.music.findAll({
+        where: {
+            type,
+        },
         attributes: {
             exclude: ['createdAt', 'updatedAt'],
         },
@@ -249,8 +255,18 @@ apiRouter.get('/music', async (_, res) => {
             ['composer', 'ASC'],
             [models.musicFile, 'name', 'ASC'],
         ],
-    });
-    res.json(response);
+    })
+);
+
+apiRouter.get('/music', async (_, res) => {
+    const [concerto, solo, chamber, composition] = await Promise.all([
+        getMusicInstancesOfType('concerto'),
+        getMusicInstancesOfType('solo'),
+        getMusicInstancesOfType('chamber'),
+        getMusicInstancesOfType('composition')
+    ]);
+
+    res.json({ concerto, solo, chamber, composition });
 });
 
 apiRouter.get('/photos', async (_, res) => {
