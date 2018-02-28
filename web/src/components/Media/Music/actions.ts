@@ -1,11 +1,12 @@
 import axios from 'axios';
 import path from 'path';
 
+import compact from 'lodash-es/compact';
 import { ThunkAction } from 'redux-thunk';
 
 import AUDIO_ACTIONS from 'src/components/Media/Music/actionTypeKeys';
 import * as ActionTypes from 'src/components/Media/Music/actionTypes';
-import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
+import { isMusicItem, MusicCategories, MusicFileItem, MusicItem, MusicListItem, MusicResponse } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 export const storeRadii = (innerRadius: number, outerRadius: number, baseRadius: number): ThunkAction<void, GlobalStateShape, void> =>
@@ -45,7 +46,7 @@ const fetchPlaylistRequest = (): ActionTypes.FetchPlaylistRequest => ({
     type: AUDIO_ACTIONS.FETCH_PLAYLIST_REQUEST,
 });
 
-const fetchPlaylistSuccess = (items: MusicItem[]): ActionTypes.FetchPlaylistSuccess => ({
+const fetchPlaylistSuccess = (items: MusicListItem[]): ActionTypes.FetchPlaylistSuccess => ({
     type: AUDIO_ACTIONS.FETCH_PLAYLIST_SUCCESS,
     items,
 });
@@ -58,12 +59,25 @@ const shouldFetchPlaylist = (state: GlobalStateShape) => {
     return !state.audio_playlist.isFetching && state.audio_playlist.items.length === 0;
 };
 
-const fetchPlaylist = (): ThunkAction<Promise<MusicItem[]>, GlobalStateShape, void> => async (dispatch) => {
+const musicListIfExists = (response: MusicResponse, category: MusicCategories) => (
+    response[category].length ? [
+        { type: category, id: category },
+        ...(response[category]),
+    ] : []
+);
+
+const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape, void> => async (dispatch) => {
     try {
         dispatch(fetchPlaylistRequest());
-        const response = await axios.get('/api/music');
-        dispatch(fetchPlaylistSuccess(response.data));
-        return response.data;
+        const { data: response }: { data: MusicResponse } = await axios.get('/api/music');
+        const items: MusicListItem[] = compact([
+            ...musicListIfExists(response, 'concerto'),
+            ...musicListIfExists(response, 'solo'),
+            ...musicListIfExists(response, 'chamber'),
+            ...musicListIfExists(response, 'composition'),
+        ]);
+        dispatch(fetchPlaylistSuccess(items));
+        return items;
     } catch (err) {
         console.log('fetch music error', err);
         dispatch(fetchPlaylistError());
@@ -78,11 +92,11 @@ export const fetchPlaylistAction = (track: string): ThunkAction<Promise<MusicFil
         } else {
             items = getState().audio_playlist.items;
         }
-        let firstTrack = items[0].musicFiles[0];
+        let firstTrack = (items.find((item) => isMusicItem(item)) as MusicItem).musicFiles[0];
 
         if (track) {
-            firstTrack = items.reduce((prev, music) => {
-                return prev.concat(music.musicFiles.filter((musicFile) => (
+            firstTrack = items.reduce((prev, item) => {
+                return prev.concat(isMusicItem(item) && item.musicFiles.filter((musicFile) => (
                     path.basename(musicFile.audioFile, '.mp3') === track
                 )));
             }, [])[0];

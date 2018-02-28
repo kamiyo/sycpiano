@@ -14,6 +14,23 @@ export interface MusicFileItem {
     readonly durationSeconds: number;
     readonly musicId: string;
 }
+export type MusicCategories = 'concerto' | 'solo' | 'chamber' | 'composition';
+
+export interface MusicCategoryItem {
+    readonly id: MusicCategories;
+    readonly type: MusicCategories;
+}
+
+export type MusicResponse = {
+    readonly [k in MusicCategories]: MusicItem[];
+};
+
+export type MusicListItem = MusicItem | MusicCategoryItem;
+
+export const isMusicItem = (item: MusicListItem): item is MusicItem => {
+    const test = item as MusicItem;
+    return !!(test.piece || test.composer || test.contributors || test.musicFiles);
+};
 
 export interface AudioVisualizerStateShape {
     readonly innerRadius: number;
@@ -31,5 +48,5 @@ export interface AudioUIStateShape {
 
 export interface AudioPlaylistStateShape {
     readonly isFetching: boolean;
-    readonly items: MusicItem[];
+    readonly items: MusicListItem[];
 }

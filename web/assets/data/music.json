@@ -3,6 +3,7 @@
         "piece": "Spellbound Concerto",
         "composer": "Miklos Rosza",
         "contributors": "New West Symphony",
+        "type": "concerto",
         "musicFiles": [
             {
                 "audioFile": "spellbound.mp3",
@@ -14,6 +15,7 @@
     {
         "piece": "Improvisation",
         "composer": "Sean Chen",
+        "type": "composition",
         "musicFiles": [
             {
                 "audioFile": "improv.mp3",
@@ -25,6 +27,7 @@
     {
         "piece": "3 Etudes, Op.18",
         "composer": "Bela Bartok",
+        "type": "solo",
         "musicFiles": [
             {
                 "name": "I. Allegro molto",

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
 import Playlist from 'src/components/Media/Playlist';
 
-import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
+import { MusicFileItem, MusicItem, MusicListItem } from 'src/components/Media/Music/types';
 import { ChildRendererProps } from 'src/components/Media/types';
 import { GlobalStateShape } from 'src/types';
 
@@ -13,7 +13,7 @@ import { playlistBackground } from 'src/styles/colors';
 import { playlistWidth } from 'src/styles/variables';
 
 interface MusicPlaylistStateToProps {
-    readonly items: MusicItem[];
+    readonly items: MusicListItem[];
 }
 
 interface MusicPlaylistOwnProps {
@@ -36,13 +36,13 @@ const getMusicPlaylistStyle = (isMobile: boolean) => css`
         top: 450px;
         position: relative;
         overflow: visible;
+
     `};
 `;
 
-const musicULStyle = css`
-    ul {
-        background-color: ${playlistBackground};
-    }
+const getMusicULStyle = (isMobile: boolean) => css`
+    background-color: ${playlistBackground};
+    ${isMobile && 'padding-bottom: 20px;'}
 `;
 
 const StyledPlaylistContainer = styled<{ isMobile: boolean }, 'div'>('div') `
@@ -53,7 +53,7 @@ const StyledPlaylistContainer = styled<{ isMobile: boolean }, 'div'>('div') `
 const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
     <StyledPlaylistContainer isMobile={props.isMobile}>
         <Playlist
-            extraStyles={{ div: getMusicPlaylistStyle(props.isMobile), ul: musicULStyle }}
+            extraStyles={{ div: getMusicPlaylistStyle(props.isMobile), ul: getMusicULStyle(props.isMobile) }}
             isShow={true}
             hasToggler={false}
             items={props.items}

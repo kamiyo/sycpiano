@@ -1,5 +1,5 @@
 import AUDIO_ACTIONS from 'src/components/Media/Music/actionTypeKeys';
-import { MusicItem } from 'src/components/Media/Music/types';
+import { MusicListItem } from 'src/components/Media/Music/types';
 
 export interface StoreRadii {
     readonly type: typeof AUDIO_ACTIONS.STORE_RADII;
@@ -39,7 +39,7 @@ export interface FetchPlaylistError {
 
 export interface FetchPlaylistSuccess {
     readonly type: typeof AUDIO_ACTIONS.FETCH_PLAYLIST_SUCCESS;
-    readonly items: MusicItem[];
+    readonly items: MusicListItem[];
 }
 
 export interface OtherActions {
