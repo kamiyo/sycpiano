@@ -263,7 +263,7 @@ apiRouter.get('/music', async (_, res) => {
         getMusicInstancesOfType('concerto'),
         getMusicInstancesOfType('solo'),
         getMusicInstancesOfType('chamber'),
-        getMusicInstancesOfType('composition')
+        getMusicInstancesOfType('composition'),
     ]);
 
     res.json({ concerto, solo, chamber, composition });

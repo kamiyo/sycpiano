@@ -14,7 +14,7 @@ import MusicPlaylist from 'src/components/Media/Music/MusicPlaylist';
 import { constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { getAudioContext } from 'src/utils';
 
-import { MusicFileItem, MusicItem } from 'src/components/Media/Music/types';
+import { isMusicItem, MusicFileItem, MusicItem, MusicListItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
@@ -32,7 +32,7 @@ interface MusicState {
 }
 
 interface MusicStateToProps {
-    readonly items: MusicItem[];
+    readonly items: MusicListItem[];
 }
 
 interface MusicDispatchToProps {
@@ -155,11 +155,11 @@ class Music extends React.Component<MusicProps, MusicState> {
         this.audio.pause();
         this.setState({
             currentTrack: {
-                ...this.props.items.find((music) => {
-                    return music.id === track.musicId;
+                ...this.props.items.find((item) => {
+                    return isMusicItem(item) && item.id === track.musicId;
                 }),
                 musicFiles: [track],
-            },
+            } as MusicItem,
             duration: -1,
             isLoading: true,
         });
