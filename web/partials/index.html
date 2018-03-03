@@ -10,7 +10,8 @@
   </head>
   <body>
     <div id="hero-container"></div>
-    <script src="/static/sycpiano.common.js"></script>
-    <script src="/static/sycpiano.bundle.js"></script>
+    <script defer src="/static/<%= htmlWebpackPlugin.files.chunks.manifest.entry%>"></script>
+    <script defer src="/static/<%= htmlWebpackPlugin.files.chunks.vendor.entry%>"></script>
+    <script defer src="/static/<%= htmlWebpackPlugin.files.chunks.sycpiano.entry%>"></script>
   </body>
 </html>

@@ -10,24 +10,29 @@ interface SubNavLinkProps {
     readonly basePath: string;
     readonly link: string;
     readonly onClick: () => void;
+    readonly isMobile: boolean;
 }
 
-const subNavLinkStyle = css`
+const getSubNavLinkStyle = (isMobile: boolean) => css`
     color: rgba(0, 0, 0, 0.7);
     position: relative;
     width: 100%;
-    height: 50px;
     display: block;
-    padding: 10px;
-    background-color: white;
+    padding: ${isMobile ? '20' : '10'}px;
+    background-color: ${isMobile ? 'transparent' : 'white'};
     text-align: center;
-    box-shadow: 0 6px 11px -5px rgba(0, 0, 0, 0.3);
+    box-shadow: ${isMobile ? 'none' : '0 6px 11px -5px rgba(0, 0, 0, 0.3)'};
     transition: all 0.25s;
 
-    &:hover {
-        background-color: ${lightBlue};
-        color: white;
-    }
+    /* stylelint-disable */
+    ${!isMobile && `
+        height: 50px;
+        &:hover {
+            background-color: ${lightBlue};
+            color: white;
+        }
+    `}
+    /* stylelint-enable */
 `;
 
 const subNavHomeStyle = css`
@@ -42,18 +47,20 @@ const subNavHomeStyle = css`
     }
 `;
 
-const SubNavLink: React.SFC<SubNavLinkProps> = ({ basePath, link, onClick, isHome }) => (
+const activeCSS = css`
+    background-color: ${logoBlue};
+    color: white;
+`;
+
+const SubNavLink: React.SFC<SubNavLinkProps> = ({ basePath, link, onClick, isHome, isMobile }) => (
     <li className={noHighlight}>
         <NavLink
             to={`${basePath}/${link}`}
             className={cx(
-                subNavLinkStyle,
+                getSubNavLinkStyle(isMobile),
                 { [subNavHomeStyle]: isHome },
             )}
-            activeClassName={css`
-                background-color: ${logoBlue};
-                color: white;
-            `}
+            activeClassName={activeCSS}
             onClick={() => { setTimeout(() => onClick(), 250); }}
         >
             {link}

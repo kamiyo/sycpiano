@@ -12,36 +12,32 @@ import SubNav from 'src/components/App/NavBar/SubNav/SubNav';
 import { lightBlue, logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { screenPortrait, screenXS } from 'src/styles/screens';
 import { navBarHeight, navBarMarginTop } from 'src/styles/variables';
 
 interface HighlightProps {
     readonly active: boolean;
+    readonly isMobile: boolean;
     readonly isHome: boolean;
     readonly link: string;
 }
 
-const highlightStyles = css`
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
-    ${hiDPI(2)} {
-        height: ${navBarHeight.hdpi}px;
-        margin-top: 0;
-    }
+const getHighlightStyles = (isMobile: boolean) => css`
+    /* stylelint-disable */
+    ${!isMobile && `
+        ${hiDPI(2)} {
+            height: ${navBarHeight.hdpi}px;
+            margin-top: 0;
+        }
 
-    margin-top: ${navBarMarginTop.nonHdpi}px;
-    height: ${navBarHeight.nonHdpi - navBarMarginTop.nonHdpi}px;
-    padding: 20px 10px 0 10px;
+        margin-top: ${navBarMarginTop.nonHdpi}px;
+        height: ${navBarHeight.nonHdpi - navBarMarginTop.nonHdpi}px;
+    `}
+    /* stylelint-enable */
+    padding: ${isMobile ? '1.8rem 0' : '20px 10px 0 10px'};
 `;
 
-const highlightDefaultStyle = css`
-    ${highlightStyles}
-
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
-    ${hiDPI(2)} {
-        margin-top: ${navBarMarginTop.hdpi}px;
-        height: 5px;
-    }
-
+const getHighlightDefaultStyle = (isMobile: boolean) => css`
+    ${getHighlightStyles(isMobile)}
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -75,21 +71,21 @@ const highlightHomeActivestyle = css`
     height: 5px;
 `;
 
-const HyperlinkText = styled('div')`
-    ${highlightStyles}
+const HyperlinkText = styled<{ isMobile: boolean }, 'div'>('div') `
+    ${props => getHighlightStyles(props.isMobile)}
 `;
 
-const Highlight: React.SFC<HighlightProps> = ({ active, isHome, link }) => (
+const Highlight: React.SFC<HighlightProps> = ({ active, isHome, link, isMobile }) => (
     <>
-        <div
+        {!isMobile && <div
             className={cx(
-                highlightDefaultStyle,
+                getHighlightDefaultStyle(isMobile),
                 { [highlightActiveStyle]: active },
                 { [highlightHomeStyle]: isHome },
                 { [highlightHomeActivestyle]: active && isHome },
             )}
-        />
-        <HyperlinkText>{link}</HyperlinkText>
+        />}
+        <HyperlinkText isMobile={isMobile}>{link}</HyperlinkText>
     </>
 );
 
@@ -98,7 +94,7 @@ interface NavBarLinkProps {
     readonly active: boolean;
     readonly isHome: boolean;
     readonly link: string;
-    readonly showSub: string;
+    readonly showSubs: string[];
     readonly subNavLinks: string[];
     readonly to: string;
     readonly toggleSub: (show?: string) => void;
@@ -116,18 +112,20 @@ const linkStyle = css`
     &:hover {
         color: ${mix(0.5, logoBlue, '#444')};
     }
+
+    -webkit-tap-highlight-color: transparent;
 `;
 
 const linkActiveStyle = css`
     color: ${logoBlue};
 `;
 
-const linkHomeStyle = (isMobile: boolean) => css`
-    color: rgba(200, 200, 200, 1);
+const linkHomeStyle = css`
+    color: white;
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
 
     &:hover {
-        color: ${isMobile ? 'rgba(200, 200, 200, 1)' : 'rgba(255, 255, 255, 1)'};
+        color: white;
         text-shadow: 0 0 1px rgba(255, 255, 255, 1);
     }
 `;
@@ -137,6 +135,36 @@ const linkHomeActiveStyle = (isMobile: boolean) => css`
     text-shadow: 0 0 1px rgba(255, 255, 255, 1);
 `;
 
+const getSubNavContainer = (isMobile: boolean) => css`
+    /* stylelint-disable */
+    ${isMobile ? `
+        height: 0;
+        overflow: hidden;
+    ` : `
+        opacity: 0;
+    `}
+    /* stylelint-enable */
+`;
+
+const enterAnimation = (el: HTMLElement, isAppearing: boolean, isMobile: boolean) => {
+    if (isMobile) {
+        if (isAppearing) {
+            el.style.height = 'auto';
+        } else {
+            TweenLite.set(el, { height: 'auto' });
+            TweenLite.from(el, 0.25, { height: 0 });
+        }
+    } else {
+        TweenLite.fromTo(el, 0.25, { opacity: 0 }, { opacity: 1 });
+    }
+};
+
+const exitAnimation = (el: HTMLElement, isMobile: boolean) => {
+    isMobile ?
+        TweenLite.to(el, 0.25, { height: 0 })
+        : TweenLite.fromTo(el, 0.25, { opacity: 1 }, { opacity: 0 });
+};
+
 let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
     <li className={props.className}>
         {
@@ -145,65 +173,61 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                     onClick={() => props.toggleSub(props.link)}
                     className={cx(
                         linkStyle,
-                        { [linkActiveStyle]: props.active && !props.isHome },
-                        { [linkHomeStyle(props.isMobile)]: props.isHome },
+                        { [linkActiveStyle]: props.active && !props.isHome && !props.isMobile },
+                        { [linkHomeStyle]: props.isHome },
                         { [linkHomeActiveStyle(props.isMobile)]: props.active && props.isHome },
                     )}
                 >
-                    <Highlight active={props.active} isHome={props.isHome} link={props.link} />
+                    <Highlight active={props.active} isHome={props.isHome} link={props.link} isMobile={props.isMobile} />
                 </a> :
                 <Link
                     to={props.to}
                     onClick={() => {
                         props.toggleSub('');
-                        props.closeMobileMenu();
+                        props.closeMobileMenu && props.closeMobileMenu();
                     }}
                     className={cx(
                         linkStyle,
-                        { [linkActiveStyle]: props.active && !props.isHome },
-                        { [linkHomeStyle(props.isMobile)]: props.isHome },
+                        { [linkActiveStyle]: props.active && !props.isHome && !props.isMobile },
+                        { [linkHomeStyle]: props.isHome },
                         { [linkHomeActiveStyle(props.isMobile)]: props.active && props.isHome },
                     )}
                 >
-                    <Highlight active={props.active} isHome={props.isHome} link={props.link} />
+                    <Highlight active={props.active} isHome={props.isHome} link={props.link} isMobile={props.isMobile} />
                 </Link>
         }
-        {
+        {props.subNavLinks &&
             <Transition
-                mountOnEnter={true}
-                unmountOnExit={true}
-                in={props.subNavLinks && props.showSub === props.link}
-                onEnter={(el) => TweenLite.fromTo(el, 0.25, { opacity: 0 }, { opacity: 1 })}
-                onExit={(el) => TweenLite.fromTo(el, 0.25, { opacity: 1 }, { opacity: 0 })}
+                in={props.showSubs.includes(props.link)}
+                onEnter={(el, isAppearing) => enterAnimation(el, isAppearing, props.isMobile)}
+                onExit={(el) => exitAnimation(el, props.isMobile)}
                 timeout={250}
+                appear={true}
             >
-                <SubNav
-                    basePath={props.to}
-                    links={props.subNavLinks}
-                    onClick={() => {
-                        props.toggleSub('');
-                        props.closeMobileMenu();
-                    }}
-                    isHome={props.isHome}
-                    isMobile={props.isMobile}
-                />
+                <div className={getSubNavContainer(props.isMobile)}>
+                    <SubNav
+                        basePath={props.to}
+                        links={props.subNavLinks}
+                        onClick={() => {
+                            props.toggleSub('');
+                            props.closeMobileMenu && props.closeMobileMenu();
+                        }}
+                        isHome={props.isHome}
+                        isMobile={props.isMobile}
+                    />
+                </div>
             </Transition>
         }
     </li>
 );
 
-NavBarLink = styled(NavBarLink)`
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
-    ${hiDPI(2)} {
-        font-size: 16px;
-    }
-
+NavBarLink = styled(NavBarLink) `
     /* stylelint-disable-next-line */
-    ${screenPortrait}, ${screenXS} {
-        width: 100%;
+    ${hiDPI(2)} {
+        font-size: 1.4rem;
     }
 
-    font-size: 22px;
+    font-size: 1.4rem;
     position: relative;
     font-family: ${lato2};
     letter-spacing: 0;

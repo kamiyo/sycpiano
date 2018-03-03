@@ -6,6 +6,7 @@ const HappyPack = require('happypack');
 const path = require('path');
 const webpack = require('webpack');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // Heroku's free plan is strict about memory usage, so we'll use one on prod.
 const threadPoolSize = process.env.NODE_ENV === 'production' ? 1 : 6;
@@ -27,19 +28,13 @@ const config = {
     },
     output: {
         path: path.resolve(__dirname, 'web/build'),
-        filename: '[name].bundle.js',
+        filename: '[name].[chunkhash].bundle.js',
     },
     module: {
         loaders: [{
             test: /\.(t|j)sx?$/,
             include: sourcePaths,
             loader: 'happypack/loader?id=ts'
-        }, {
-            loader: 'happypack/loader?id=style',
-            test: /\.(css|less)$/,
-            include: [
-                path.resolve(__dirname, 'web/less'),
-            ],
         }, {
             loader: 'happypack/loader?id=url',
             test: /\.(ttf|eot|woff|woff2|svg|png|jpg)$/,
@@ -59,10 +54,16 @@ const config = {
             VIDEOS_PATH: JSON.stringify(staticPrefix + '/videos'),
         }),
         new CommonsChunkPlugin({
-            name: 'sycpiano.common',
-            filename: 'sycpiano.common.js'
+            name: 'vendor',
+            minChunks: ({ resource }) => /node_modules/.test(resource),
         }),
-        new CleanWebpackPlugin([path.resolve(__dirname, 'web/build')]),
+        new CommonsChunkPlugin({
+            name: 'manifest',
+        }),
+        new HtmlWebpackPlugin({
+            template: path.resolve(__dirname, 'web/partials/index.html'),
+            inject: false,
+        }),
         new HappyPack({
             id: 'ts',
             threadPool: happyThreadPool,
@@ -82,7 +83,7 @@ const config = {
         new HappyPack({
             id: 'style',
             threadPool: happyThreadPool,
-            loaders: ['style-loader', 'css-loader', 'less-loader'],
+            loaders: ['style-loader', 'css-loader'],
         }),
         new HappyPack({
             id: 'url',
@@ -94,9 +95,9 @@ const config = {
         extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
         alias: {
             'src': path.resolve(__dirname, 'web/src'),
-            'less': path.resolve(__dirname, 'web/less'),
         }
     }
 };
 
-module.exports = config;
+exports.config = config;
+exports.happyThreadPool = happyThreadPool;
