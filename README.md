@@ -6,13 +6,15 @@ It is an [express](http://expressjs.com/) app with a PostgreSQL database, with t
 Make sure at least version 8.4.0 of Node.js is installed.
 After you've cloned the repository and have navigated to the project root, run:
 ```
-$ yarn install
+$ yarn
 ```
 After installing your node dependencies, you're ready to start dev process.
 ```
 $ yarn run start-dev
 ```
 et Voila! This command will run a gulp task that starts the server and watches for changes you make to your code, in which case it will trigger a rebuild.
+
+N.B. make sure you add %LocalAppData%\Yarn to your whitelist for antivirus and/or Windows Defender, or else installs take forever!
 
 ## Production
 TODO: MORE

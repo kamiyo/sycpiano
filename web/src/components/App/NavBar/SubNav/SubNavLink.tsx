@@ -26,7 +26,7 @@ const getSubNavLinkStyle = (isMobile: boolean) => css`
 
     /* stylelint-disable */
     ${!isMobile && `
-        height: 50px;
+        line-height: 2rem;
         &:hover {
             background-color: ${lightBlue};
             color: white;

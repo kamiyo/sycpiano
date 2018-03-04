@@ -5,7 +5,7 @@ import { Transition } from 'react-transition-group';
 
 import TweenLite from 'gsap/TweenLite';
 import { playVideo } from 'src/components/Media/Videos/actions';
-import { bg1 } from 'src/styles/imageUrls';
+import { cliburn1 } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
 import { GlobalStateShape } from 'src/types';
 
@@ -26,7 +26,8 @@ const StyledPreviewOverlay = styled('div')`
     position: absolute;
     top: 0;
     left: 0;
-    background: url(${bg1}) no-repeat;
+    background: url(${cliburn1}) no-repeat;
+    background-size: cover;
 
     &:hover {
         cursor: pointer;
@@ -45,7 +46,7 @@ const StyledPreviewOverlay = styled('div')`
 const ytIconStyle = css`
     transition: all 0.2s;
 
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after */
+    /* stylelint-disable-next-line */
     ${StyledPreviewOverlay as any}:hover & {
         fill: #cc181e;
         fill-opacity: 1;

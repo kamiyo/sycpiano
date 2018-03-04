@@ -42,6 +42,7 @@ const StyledPhotos = styled('div')`
     ${pushed}
     width: 100%;
     background-color: black;
+    position: relative;
 `;
 
 const StyledPhotoViewer = styled('div')`
@@ -184,7 +185,7 @@ class Photos extends React.Component<PhotosProps, {}> {
                                 isMobile={isMobile}
                             />
                         ) : (
-                            <div>
+                            <>
                                 <StyledPhotoViewer>
                                     {this.props.items.map((item, idx) =>
                                         this.createPhotoElement(item, idx))}
@@ -200,7 +201,7 @@ class Photos extends React.Component<PhotosProps, {}> {
                                     ChildRenderer={this.getChildRenderer(isMobile)}
                                     isMobile={isMobile}
                                 />
-                            </div>
+                            </>
                         );
                     }}
                 </ReactMedia>

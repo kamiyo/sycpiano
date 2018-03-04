@@ -54,7 +54,7 @@ const highlightActiveStyle = css`
 `;
 
 const highlightHomeStyle = css`
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
+    /* stylelint-disable-next-line */
     ${hiDPI(2)} {
         background-color: white;
     }
@@ -63,7 +63,7 @@ const highlightHomeStyle = css`
 `;
 
 const highlightHomeActivestyle = css`
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
+    /* stylelint-disable-next-line */
     ${hiDPI(2)} {
         height: 2px;
     }

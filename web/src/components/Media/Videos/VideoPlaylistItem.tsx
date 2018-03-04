@@ -21,10 +21,9 @@ const padding = 10;
 
 const section = css`
     vertical-align: middle;
-    display: inline-block;
 `;
 
-const ImageContainer = styled('div')`
+const ImageContainer = styled('div') `
     ${section}
     height: 100%;
     width: ${thumbnailWidth}px;
@@ -33,10 +32,11 @@ const ImageContainer = styled('div')`
     img {
         width: 100%;
         filter: saturate(50%) brightness(60%);
+        vertical-align: middle;
     }
 `;
 
-const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li')`
+const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li') `
     background-color: ${playlistBackground};
     list-style: none;
     cursor: pointer;
@@ -46,17 +46,18 @@ const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li')`
     border-left: 7px solid transparent;
     border-bottom: 1px solid rgba(120, 120, 120, 0.3);
     transition: all 0.15s;
+    display: flex;
 
     &:hover {
         background-color: rgba(255, 255, 255, 1);
 
-        /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after */
+        /* stylelint-disable-next-line */
         ${ImageContainer as any} img {
             filter: brightness(60%);
         }
     }
 
-    /* stylelint-disable comment-empty-line-before */
+    /* stylelint-disable */
     ${props => props.active &&
         `border-left-color: ${lightBlue};
         background-color: rgba(255, 255, 255, 1);
@@ -65,10 +66,10 @@ const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li')`
             filter: brightness(60%);
         }`
     }
-    /* stylelint-enable comment-empty-line-before */
+    /* stylelint-enable */
 `;
 
-const Duration = styled<{ active: boolean; children: string; }, 'span'>('span')`
+const Duration = styled<{ active: boolean; children: string; }, 'span'>('span') `
     position: absolute;
     right: 0;
     bottom: 0;
@@ -77,31 +78,31 @@ const Duration = styled<{ active: boolean; children: string; }, 'span'>('span')`
     padding-right: 3px;
 `;
 
-const VideoInfo = styled('div')`
+const VideoInfo = styled('div') `
     ${section}
     width: calc(80% - 20px);
-    height: 100%;
     padding: 0 20px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 `;
 
 const h4style = css`
     margin: 0;
     color: black;
-    font-size: 15px;
-    position: absolute;
 `;
 
-const TextTop = styled('h4')`
+const TextTop = styled('h4') `
     ${h4style}
     padding-top: 5px;
-    top: 0;
+    font-size: 1rem;
 `;
 
-const TextBottom = styled('h4')`
+const TextBottom = styled('h4') `
     ${h4style}
     padding-bottom: 5px;
-    bottom: 0;
+    font-size: 0.8rem;
 `;
 
 const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentItemId, onClick }) => (
@@ -109,23 +110,21 @@ const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentIte
         active={currentItemId === item.id}
         onClick={() => onClick(item.id)}
     >
-        <div className="itemContent">
-            <ImageContainer>
-                <img alt="Sean Chen Piano Video" src={item.snippet.thumbnails.high.url} />
-                <Duration active={currentItemId === item.id}>
-                    {videoDurationToDisplay(item.contentDetails.duration)}
-                </Duration>
-            </ImageContainer>
-            <VideoInfo>
-                <TextTop>
-                    {item.snippet.title}
-                </TextTop>
-                <TextBottom>
-                    {item.statistics.viewCount} views
+        <ImageContainer>
+            <img alt="Sean Chen Piano Video" src={item.snippet.thumbnails.high.url} />
+            <Duration active={currentItemId === item.id}>
+                {videoDurationToDisplay(item.contentDetails.duration)}
+            </Duration>
+        </ImageContainer>
+        <VideoInfo>
+            <TextTop>
+                {item.snippet.title}
+            </TextTop>
+            <TextBottom>
+                {item.statistics.viewCount} views
                         | published on {publishedDateToDisplay(item.snippet.publishedAt)}
-                </TextBottom>
-            </VideoInfo>
-        </div>
+            </TextBottom>
+        </VideoInfo>
     </StyledVideoItem>
 );
 

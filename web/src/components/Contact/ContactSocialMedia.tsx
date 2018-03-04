@@ -18,14 +18,15 @@ const socialMediaButtonStyles = css`
 
 interface SocialMediaLinkProps {
     className?: string;
-    site: string;
+    social: string;
+    url: string;
 }
 
 const SocialMediaLink: React.SFC<SocialMediaLinkProps> = (props) => (
-    <a className={props.className} href={props.site} target="_blank">
+    <a className={props.className} href={props.url} target="_blank">
         <img
             className={socialMediaButtonStyles}
-            src={`/static/images/soc-logos/${props.site}-color.svg`}
+            src={`/static/images/soc-logos/${props.social}-color.svg`}
         />
     </a>
 );
@@ -39,9 +40,9 @@ const StyledSocialMediaLink = styled(SocialMediaLink)`
 let ContactSocialMedia = (props: ContactSocialMediaShape) => (
     <div className={props.className}>
         {
-            Object.keys(props.social).map((site, i) => (
+            Object.keys(props.social).map((social, i) => (
                 <SocialMediaLinkContainer key={i}>
-                    <StyledSocialMediaLink site={props.social[site]} />
+                    <StyledSocialMediaLink url={props.social[social]} social={social}/>
                 </SocialMediaLinkContainer>
             ))
         }
