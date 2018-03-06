@@ -17,7 +17,7 @@ class HamburgerNav extends React.Component<NavBarLinksProps, { isExpanded: boole
 
     render() {
         return (
-            <div className={css`margin: auto 0;`}>
+            <div className={css` margin: auto 0; `}>
                 <HamburgerMenu
                     isExpanded={this.state.isExpanded}
                     onClick={() => this.setExpandedState()}
@@ -33,7 +33,7 @@ class HamburgerNav extends React.Component<NavBarLinksProps, { isExpanded: boole
                 >
                     <NavBarLinks
                         links={links}
-                        showSub={this.props.showSub}
+                        showSubs={this.props.showSubs}
                         toggleSub={this.props.toggleSub}
                         currentBasePath={this.props.currentBasePath}
                         isMobile={this.props.isMobile}

@@ -31,6 +31,7 @@ const StyledVideos = styled('div')`
     ${pushed}
     width: 100%;
     background-color: black;
+    position: relative;
 
     iframe {
         width: 100%;
@@ -41,7 +42,7 @@ const StyledVideos = styled('div')`
 const LoadingOverlayDiv = styled('div')`
     width: 100%;
     height: 100%;
-    z-index: 10;
+    z-index: 11;
     position: absolute;
     top: 0;
     left: 0;

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
-import ReactMedia from 'react-media';
 
 import { HamburgerNav } from 'src/components/App/NavBar/HamburgerNav';
 import { links } from 'src/components/App/NavBar/links';
@@ -8,17 +7,18 @@ import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import NavBarLogo from 'src/components/App/NavBar/NavBarLogo';
 
 import { hiDPI } from 'polished';
-import { reactMediaMobileQuery, screenPortrait, screenXS } from 'src/styles/screens';
+import { screenPortrait, screenXS } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
 interface NavBarProps {
     readonly currentBasePath: string;
     readonly className?: string;
     readonly specificRouteName: string;
+    readonly isMobile: boolean;
 }
 
 interface NavBarState {
-    readonly showSub: string;
+    readonly showSubs: string[];
 }
 
 const navBarStyle = css`
@@ -30,7 +30,7 @@ const navBarStyle = css`
         padding-right: 15px;
     }
 
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
+    /* stylelint-disable-next-line */
     ${hiDPI(2)} {
         height: ${navBarHeight.hdpi}px;
         padding-left: 15px;
@@ -53,24 +53,33 @@ const homeNavBarStyle = css`
     background-color: transparent;
 `;
 
-const StyledNavBarLogo = styled(NavBarLogo)`
+const StyledNavBarLogo = styled(NavBarLogo) `
     display: inline-flex;
 `;
 
 export default class NavBar extends React.Component<NavBarProps, NavBarState> {
     state = {
-        showSub: '',
+        showSubs: [''],
     };
 
     toggleSubNav = (arg = '') => {
-        if (arg === this.state.showSub) {
-            this.setState({ showSub: '' });
+        if (this.props.isMobile) {
+            if (this.state.showSubs.includes(arg)) {
+                this.setState({ showSubs: this.state.showSubs.filter((value) => arg !== value) });
+            } else {
+                this.setState({ showSubs: [...this.state.showSubs, arg] });
+            }
         } else {
-            this.setState({ showSub: arg });
+            if (arg === this.state.showSubs[0]) {
+                this.setState({ showSubs: [] });
+            } else {
+                this.setState({ showSubs: [arg] });
+            }
         }
     }
 
     render() {
+        const NavComponent = this.props.isMobile ? HamburgerNav : NavBarLinks;
         return (
             <div
                 className={cx(
@@ -83,21 +92,14 @@ export default class NavBar extends React.Component<NavBarProps, NavBarState> {
                     isHome={this.props.currentBasePath === '/'}
                     specificRouteName={this.props.specificRouteName}
                 />
-                <ReactMedia query={reactMediaMobileQuery}>
-                    {(matches: boolean) => {
-                        const NavComponent = matches ? HamburgerNav : NavBarLinks;
-                        return (
-                            <NavComponent
-                                links={links}
-                                showSub={this.state.showSub}
-                                toggleSub={this.toggleSubNav}
-                                currentBasePath={this.props.currentBasePath}
-                                isMobile={matches}
-                            />
-                        );
-                    }}
-                </ReactMedia>
-            </div>
+                <NavComponent
+                    links={links}
+                    showSubs={this.state.showSubs}
+                    toggleSub={this.toggleSubNav}
+                    currentBasePath={this.props.currentBasePath}
+                    isMobile={this.props.isMobile}
+                />
+            </div >
         );
     }
 }

@@ -30,7 +30,7 @@ interface HamburgerLayerProps {
 const HamburgerTop = styled<HamburgerLayerProps, 'span'>('span')`
     ${(props) => hamburgerLayerStyles({ backgroundColor: props.backgroundColor })};
     top: ${(props) => props.isExpanded ? hamburgerLayerOffsetMultiple : 0}px;
-    transform: ${(props) => props.isExpanded ? `rotate(${hamburgerLayerExpandRotation}deg)` : 'none'};
+    transform: ${(props) => props.isExpanded ? `rotate(-${hamburgerLayerExpandRotation}deg)` : 'none'};
 `;
 
 const HamburgerMiddle = styled<HamburgerLayerProps, 'span'>('span')`
@@ -43,7 +43,7 @@ const HamburgerMiddle = styled<HamburgerLayerProps, 'span'>('span')`
 const HamburgerBottom = styled<HamburgerLayerProps, 'span'>('span')`
     ${(props) => hamburgerLayerStyles({ backgroundColor: props.backgroundColor })};
     top: ${(props) => props.isExpanded ? hamburgerLayerOffsetMultiple : hamburgerLayerOffsetMultiple * 2}px;
-    transform: ${(props) => props.isExpanded ? `rotate(${-1 * hamburgerLayerExpandRotation}deg)` : 'none'};
+    transform: ${(props) => props.isExpanded ? `rotate(${hamburgerLayerExpandRotation}deg)` : 'none'};
 `;
 
 interface HamburgerMenuProps {
@@ -68,6 +68,7 @@ HamburgerMenu = styled(HamburgerMenu)`
     transform: rotate(0deg);
     transition: 0.5s ease-in-out;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 `;
 
 export { HamburgerMenu };

@@ -74,6 +74,11 @@ const StyledLoadingInstance = styled(LoadingInstance)`
     stroke: ${lightBlue};
 `;
 
+const fullWidthHeight = css`
+    width: 100%;
+    height: 100%;
+`;
+
 class EventList extends React.Component<EventListProps, EventListState> {
     private List: ListWithGrid;
     private updateReason: 'listChange' | 'selectItem' | 'typeChange' | 'activeChange' | 'initialList' | 'unsetScroll' | 'noMore';
@@ -212,7 +217,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
 
     render() {
         return (
-            <div className={css` width: 100%; height: 100%; `}>
+            <div className={fullWidthHeight}>
                 {
                     <AutoSizer>
                         {({ height, width }) => (

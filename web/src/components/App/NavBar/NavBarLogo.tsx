@@ -27,7 +27,7 @@ const LogoText = styled<{ isMobile: boolean }, 'div'>('div')`
     vertical-align: middle;
     line-height: ${navBarHeight.nonHdpi}px;
 
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
+    /* stylelint-disable-next-line */
     ${hiDPI(2)} {
         line-height: ${navBarHeight.hdpi}px;
     }
@@ -44,7 +44,7 @@ const LogoText = styled<{ isMobile: boolean }, 'div'>('div')`
 `;
 
 const logoStyle = css`
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
+    /* stylelint-disable-next-line */
     ${hiDPI(2)} {
         font-size: ${navBarHDPIFontSizeREM}rem;
 
@@ -60,7 +60,6 @@ const logoStyle = css`
     /* stylelint-disable-next-line */
     ${screenPortrait}, ${screenXS} {
         font-size: ${navBarFontSizeREM * 0.6}rem;
-        display: inline-block;
     }
 
     letter-spacing: 0.05em;
@@ -78,26 +77,26 @@ const NavBarLogo: React.SFC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoPro
     isHome,
     specificRouteName,
 }) => (
-    <Link to="/" className={cx(logoStyle, { [css`fill: white;`]: isHome })}>
+    <Link to="/" className={cx(logoStyle, { [css` fill: white; `]: isHome })}>
         <ReactMedia query={reactMediaMobileQuery}>
             {(matches: boolean) => matches
                 ? (
-                    <div>
+                    <>
                         <SycLogo />
                         <LogoText isMobile={matches}>
                             <span>{isHome ? 'SEAN CHEN' : specificRouteName}</span>
                         </LogoText>
-                    </div>
+                    </>
                 )
                 : (
-                    <div>
+                    <>
                         <SycLogo />
                         {!isHome &&
                             <LogoText isMobile={matches}>
                                 <span>SEAN CHEN</span>
                             </LogoText>
                         }
-                    </div>
+                    </>
                 )
             }
         </ReactMedia>

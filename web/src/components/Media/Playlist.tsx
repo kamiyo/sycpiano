@@ -21,7 +21,7 @@ const slideRight = (element: HTMLElement, amount: number, delay = 0) => {
 
 // need to add in css from parent
 const getPlaylistContainerStyle = (isMobile: boolean) => css`
-    position: fixed;
+    position: absolute;
     height: 100%;
     right: 0;
     width: ${isMobile ? '100%' : `${playlistContainerWidth}px`};

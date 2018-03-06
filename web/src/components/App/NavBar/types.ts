@@ -8,7 +8,7 @@ export interface NavBarLinksProps {
     readonly className?: string;
     readonly currentBasePath: string;
     readonly links: ReadonlyArray<LinkShape>;
-    readonly showSub: string;
+    readonly showSubs: string[];
     readonly toggleSub: (show?: string) => void;
     readonly isMobile: boolean;
     readonly closeMobileMenu?: (toExpand?: boolean) => void;

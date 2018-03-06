@@ -1,10 +1,21 @@
 {
     "env": {
         "production": {
-            "plugins": [["emotion", { "sourceMap": false }]]
+            "plugins": [
+                ["emotion", {
+                    "sourceMap": false,
+                    "hoist": true
+                }]
+            ]
         },
         "development": {
-            "plugins": [["emotion", { "sourceMap": true }]]
+            "plugins": [
+                ["emotion", {
+                    "sourceMap": true,
+                    "hoist": true,
+                    "autoLabel": true
+                }]
+            ]
         }
     }
 }

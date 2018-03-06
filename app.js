@@ -25,7 +25,7 @@ app.use('/static', express.static(path.join(__dirname, '/web/build')));
 app.use(morgan('common'));
 app.engine('html', mustacheExpress());
 app.set('view engine', 'html');
-app.set('views', path.join(__dirname, '/web/partials'));
+app.set('views', path.join(__dirname, '/web/build'));
 
 // Matches the /admin route.
 app.get(/\/admin/, (req, res) => res.redirect('https://app.forestadmin.com'));

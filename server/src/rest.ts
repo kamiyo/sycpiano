@@ -10,7 +10,7 @@ dotenv.config();
 /* tslint:disable-next-line:no-var-requires */
 const forest = require('forest-express-sequelize');
 
-import { createCalendarEvent, deleteCalendarEvent, getCalendarSingleEvent, getLatLng, getTimeZone, GoogleCalendarParams, updateCalendar } from './gapi/calendar';
+import { createCalendarEvent, deleteCalendarEvent, getCalendarSingleEvent, getLatLng, getTimeZone, updateCalendar } from './gapi/calendar';
 import db from './models';
 
 import { CalendarInstance } from 'types';
@@ -21,6 +21,8 @@ adminRest.use(express.json());
 adminRest.use(express.urlencoded({ extended: true }));
 
 adminRest.get('/sync', async (_, res) => {
+    res.write('Getting local events from db...\n');
+    const waitingNotification = setInterval(() => res.write('...still waiting for local events...\n'), 10000);
     const models = db.models;
     const events: CalendarInstance[] = await models.calendar.findAll({
         attributes: {
@@ -60,6 +62,8 @@ adminRest.get('/sync', async (_, res) => {
             [models.piece, models.calendarPiece, 'order', 'ASC'],
         ],
     });
+    clearInterval(waitingNotification);
+    res.write('Local events fetched from db.');
     const prunedEvents = events.map((cal) => {
         return {
             id: cal.id,
@@ -85,22 +89,10 @@ adminRest.get('/sync', async (_, res) => {
             }),
         };
     });
-    const responses: {
-        updated: Array<{
-            id: string,
-        }>,
-        created: Array<{
-            id: string,
-        }>,
-        error: Array<{
-            item: GoogleCalendarParams,
-            status: number,
-        }>,
-    } = {
-            updated: [],
-            created: [],
-            error: [],
-        };
+
+    let updated = 0;
+    let created = 0;
+    let errored = 0;
 
     await Promise.each(prunedEvents, async (item) => {
         try {
@@ -108,23 +100,31 @@ adminRest.get('/sync', async (_, res) => {
 
             // if error not thrown, then event exists, update it
             await updateCalendar(item);
-            responses.updated.push({ id: item.id });
+            res.write(`updated: ${item.id}\n`);
+            updated++;
         } catch (e) {
             if (e.response.status === 404) {
-                // not found, means we need to create event
                 try {
                     await createCalendarEvent(item);
-                    responses.created.push({ id: item.id });
+                    res.write(`created: ${item.id}\n`);
+                    created++;
                 } catch (e) {
-                    responses.error.push({ item, status: e.response.status });
+                    res.write(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
+                    errored++;
                 }
             } else {
-                responses.error.push({ item, status: e.response.status });
+                res.write(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
+                errored++;
             }
         }
     });
 
-    res.json(responses);
+    res.write(`updating finished.
+        created: ${created}
+        updated: ${updated}
+        errored: ${errored}
+    `);
+    res.end();
 });
 
 // adminRest.get('/test', async (_, res) => {

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
+import ReactMedia from 'react-media';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -18,6 +19,7 @@ import Home from 'src/components/Home/Home';
 import Media from 'src/components/Media/Media';
 import Press from 'src/components/Press/Press';
 import Schedule from 'src/components/Schedule/Schedule';
+import { reactMediaMobileQuery } from 'src/styles/screens';
 
 const fadeOnEnter = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.25, { opacity: 0 }, { opacity: 1, delay: 0.25 });
@@ -76,11 +78,16 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                     timeout={250}
                     appear={true}
                 >
-                    <NavBar
-                        className={css`opacity: 0;`}
-                        currentBasePath={this.getRouteBase()}
-                        specificRouteName={this.getMostSpecificRouteName()}
-                    />
+                    <ReactMedia query={reactMediaMobileQuery}>
+                        {(matches: boolean) =>
+                            <NavBar
+                                className={css` opacity: 0; `}
+                                currentBasePath={this.getRouteBase()}
+                                specificRouteName={this.getMostSpecificRouteName()}
+                                isMobile={matches}
+                            />
+                        }
+                    </ReactMedia>
                 </Transition>
                 <TransitionGroup>
                     <Transition
