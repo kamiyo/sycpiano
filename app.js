@@ -7,6 +7,7 @@ const path = require('path');
 const mustacheExpress = require('mustache-express');
 const ApiRouter = require('./server/build/api-router.js').ApiRouter;
 const AdminRest = require('./server/build/rest.js').AdminRest;
+const Resized = require('./server/build/resized.js').Resized;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -30,10 +31,14 @@ app.set('views', path.join(__dirname, '/web/build'));
 // Matches the /admin route.
 app.get(/\/admin/, (req, res) => res.redirect('https://app.forestadmin.com'));
 
+// Extends Forest api
 app.use(/\/rest/, AdminRest);
 
 // Non-admin routes.
 app.use(/\/api/, ApiRouter);
+
+// Resize images.
+app.use(/\/resized/, Resized);
 
 // Health-check endpoint.
 app.get('/health-check', (req, res) => res.sendStatus(200));

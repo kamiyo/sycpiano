@@ -101,6 +101,7 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "sequelize": "^4.35.0",
+    "sharp": "^0.20.0",
     "style-loader": "^0.20.2",
     "thread-loader": "^1.1.5",
     "ts-loader": "^4.0.0",
