@@ -1,42 +1,80 @@
+import * as Promise from 'bluebird';
 import * as express from 'express';
+import * as fs from 'fs';
 import * as path from 'path';
 
+/* tslint:disable-next-line */
+const mkdirp = require('mkdirp');
 import * as Sharp from 'sharp';
+
+const statAsync = Promise.promisify(fs.stat);
 
 const resized = express();
 
-resized.get('/*', (req, res) => {
+resized.get('/*', async (req, res) => {
     let imgPath = req.params[0];
     if (!imgPath) {
         res.status(404).end();
     }
     imgPath = path.join(__dirname, '../../web/assets/images', imgPath);
 
-    const w = req.query.w && parseInt(req.query.w, 10);
-    const h = req.query.h && parseInt(req.query.h, 10);
+    const w = req.query.width && parseInt(req.query.width, 10);
+    const h = req.query.height && parseInt(req.query.height, 10);
+
+    const sendFileAsync = Promise.promisify(res.sendFile);
 
     if (!w && !h) {
-        res.sendFile(imgPath, {}, (err) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log('sent done');
-            }
+        try {
+            await sendFileAsync.call(res, imgPath, {});
             res.end();
-        });
+        } catch (e) {
+            console.error(e);
+        }
+
     } else {
-        Sharp(imgPath)
-            .resize(w, h)
-            .max()
-            .withoutEnlargement()
-            .toBuffer((err, buff) => {
-                if (err) {
-                    res.status(404).end();
-                }
-                res.contentType('image/jpeg').write(buff, () => {
-                    res.end();
+        const parsedPath = path.parse(req.params[0]);
+        const width = w ? `w${w}` : '';
+        const height = h ? `h${h}` : '';
+        const filename = `${parsedPath.name}${width}${height}${parsedPath.ext}`;
+        const newDir = path.join(__dirname, '../../.resized-cache/', parsedPath.dir);
+        try {
+            await new Promise((resolve, reject) => {
+                mkdirp(newDir, (err: NodeJS.ErrnoException) => {
+                    if (err) {
+                        reject();
+                    } else {
+                        resolve();
+                    }
                 });
             });
+            const newPath = path.join(newDir, filename);
+
+            try {
+                await statAsync(newPath);
+
+                try {
+                    await sendFileAsync.call(res, newPath, {});
+                    res.end();
+                } catch (e) {
+                    console.error(e);
+                }
+            } catch (_) {
+                try {
+                    await Sharp(imgPath)
+                        .resize(w, h)
+                        .max()
+                        .withoutEnlargement()
+                        .toFile(newPath);
+
+                    await sendFileAsync.call(res, newPath, {});
+                    res.end();
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
     }
 });
 

@@ -1,6 +1,7 @@
 import * as moment from 'moment-timezone';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
+import ReactMedia from 'react-media';
 
 import { FadeBackgroundImage, FadeBackgroundImageProps } from 'src/components/LazyImage';
 
@@ -9,9 +10,10 @@ import { easeQuadOut } from 'd3-ease';
 import blurbs from 'src/components/About/blurbs';
 import { offWhite } from 'src/styles/colors';
 import { lato1, lato2, lato3 } from 'src/styles/fonts';
-import { sycWithPianoBW } from 'src/styles/imageUrls';
+import { resizedImage, sycWithPianoBW } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
-import { screenM, screenPortrait, screenXS } from 'src/styles/screens';
+import { reactMediaMobileQuery, screenM, screenPortrait, screenXS } from 'src/styles/screens';
+import { getViewportSize } from 'src/utils';
 
 const pictureHeight = 250;
 
@@ -149,14 +151,27 @@ class About extends React.Component {
 
     render() {
         return (
-            <AboutContainer onScroll={this.setScrollTop}>
-                <ImageContainer
-                    currScrollTop={this.state.currScrollTop}
-                    src={sycWithPianoBW}
-                    duration={250}
-                />
-                <TextContainer />
-            </AboutContainer>
+            <ReactMedia query={reactMediaMobileQuery}>
+                {(matches: boolean) => {
+                    const viewport = getViewportSize();
+                    const resizeOption: { width?: number; height?: number } = {};
+                    if (matches) {
+                        resizeOption.width = viewport.width;
+                    } else {
+                        resizeOption.height = viewport.height;
+                    }
+                    return (
+                        <AboutContainer onScroll={this.setScrollTop}>
+                            <ImageContainer
+                                currScrollTop={this.state.currScrollTop}
+                                src={resizedImage(sycWithPianoBW, resizeOption)}
+                                duration={250}
+                            />
+                            <TextContainer />
+                        </AboutContainer>
+                    );
+                }}
+            </ReactMedia>
         );
     }
 }

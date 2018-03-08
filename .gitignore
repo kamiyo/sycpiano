@@ -2,6 +2,7 @@
 .env
 .happypack
 .cache-loader
+.resized-cache
 .htaccess
 .vscode
 *.BASE
