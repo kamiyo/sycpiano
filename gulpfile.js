@@ -38,6 +38,7 @@ gulp.task('build-app', buildApp);
 const cleanServer = () => (
     del([
         'server/build/**/*.js',
+        '.resized-cache/*',
     ])
 );
 

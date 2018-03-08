@@ -77,6 +77,7 @@ class LazyBackgroundImageComponent extends React.Component<BackgroundImageProps,
     componentWillMount() {
         const img = new Image();
         img.onload = () => {
+            this.ref.style.backgroundImage = `url(${this.props.src})`;
             this.setState({ loaded: true });
             this.props.callback && this.props.callback();
         };
@@ -88,7 +89,6 @@ class LazyBackgroundImageComponent extends React.Component<BackgroundImageProps,
         const attachment = this.props.backgroundAttachment || 'initial';
         const repeat = this.props.backgroundRepeat || 'no-repeat';
         const style = css`
-            background-image: url(${this.props.src});
             background-repeat: ${repeat};
             background-attachment: ${attachment};
         `;
@@ -144,7 +144,7 @@ export interface FadeBackgroundImageProps {
 export const FadeBackgroundImage: React.SFC<FadeBackgroundImageProps> = (props) => (
     <LazyBackgroundImageComponent
         animation={(el) => {
-            TweenLite.fromTo(el, props.duration / 1000, { opacity: 0 }, { opacity: 1, clearProps: 'opacity' });
+            TweenLite.fromTo(el, props.duration / 1000, { opacity: 0 }, { opacity: 1, clearProps: 'opacity', delay: 0.1 });
         }}
         {...props}
     />

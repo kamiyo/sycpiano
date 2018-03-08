@@ -7,6 +7,7 @@ import { ContactItemShape } from 'src/components/Contact/types';
 
 import {
     joelHarrisonContactPhotoUrl,
+    resizedImage,
     seanChenContactPhotoUrl,
 } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
@@ -14,27 +15,27 @@ import { pushed } from 'src/styles/mixins';
 const imageInsetShadowColor = '#222';
 const alternateBackgroundColor = '#eee';
 
-const contactNameToPhotoStylesMap: { [key: string]: string } = {
-    'Sean Chen': css({
-        background: `url(${seanChenContactPhotoUrl}) no-repeat`,
+const contactNameToPhotoStylesMap: { [key: string]: (resizeOptions: { width?: number; height?: number }) => string } = {
+    'Sean Chen': (resizeOptions: { width?: number; height?: number }) => css({
+        background: `url(${resizedImage(seanChenContactPhotoUrl, resizeOptions)}) no-repeat`,
         backgroundSize: 'cover',
         backgroundPosition: '0 28%',
     }),
-    'Joel Harrison': css({
-        background: `url(${joelHarrisonContactPhotoUrl}) no-repeat`,
+    'Joel Harrison': (resizeOptions: { width?: number; height?: number }) => css({
+        background: `url(${resizedImage(joelHarrisonContactPhotoUrl, resizeOptions)}) no-repeat`,
         backgroundSize: '125%',
         backgroundPosition: 'center 40%',
     }),
 };
 
-const ContactImage = styled('div')`
+const ContactImage = styled('div') `
     flex: 0 0 55%;
     box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
 `;
 
-const StyledContactInfo = styled(ContactInfo)` flex: 0 0 31%; `;
+const StyledContactInfo = styled(ContactInfo) ` flex: 0 0 31%; `;
 
-const StyledContactSocialMedia = styled(ContactSocialMedia)` flex: 1 0 auto; `;
+const StyledContactSocialMedia = styled(ContactSocialMedia) ` flex: 1 0 auto; `;
 
 let ContactItem: React.SFC<ContactItemShape> = ({
     className,
@@ -44,23 +45,25 @@ let ContactItem: React.SFC<ContactItemShape> = ({
     phone,
     email,
     social,
-}) => (
-    <div className={className}>
-        <ContactImage className={contactNameToPhotoStylesMap[name]} />
+}) => {
+    return (
+        <div className={className}>
+            <ContactImage className={contactNameToPhotoStylesMap[name]({ width: 600 })} />
 
-        <StyledContactInfo
-            name={name}
-            title={title}
-            organization={organization}
-            phone={phone}
-            email={email}
-        />
+            <StyledContactInfo
+                name={name}
+                title={title}
+                organization={organization}
+                phone={phone}
+                email={email}
+            />
 
-        <StyledContactSocialMedia social={social} />
-    </div>
-);
+            <StyledContactSocialMedia social={social} />
+        </div>
+    );
+};
 
-ContactItem = styled(ContactItem)`
+ContactItem = styled(ContactItem) `
     ${pushed};
     display: flex;
     flex-direction: column;

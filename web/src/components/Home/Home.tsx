@@ -6,9 +6,10 @@ import TweenLite from 'gsap/TweenLite';
 import { hiDPI } from 'polished';
 
 import { lato2, lato2i } from 'src/styles/fonts';
-import { homeBackground } from 'src/styles/imageUrls';
+import { homeBackground, resizedImage } from 'src/styles/imageUrls';
 import { container } from 'src/styles/mixins';
 import { navBarHeight } from 'src/styles/variables';
+import { getViewportSize } from 'src/utils';
 
 const textShadowColor = 'rgba(0, 0, 0, 0.75)';
 
@@ -196,7 +197,8 @@ class Home extends React.Component<{ bgLoaded: () => void }, { bgLoaded: boolean
             this.imgRef.src = img.src;
             this.setState({ bgLoaded: true });
         };
-        img.src = homeBackground;
+        const { width } = getViewportSize();
+        img.src = resizedImage(homeBackground, { width });
     }
 
     render() {
