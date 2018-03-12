@@ -40,3 +40,6 @@ export const screenXS = mediaQuery({ maxWidth: xs });
 export const screenM = mediaQuery({ maxWidth: m });
 export const screenXL = mediaQuery({ minWidth: xl });
 export const screenPortrait = mediaQuery({ orientation: 'portrait' });
+
+export const screenWidths = [1600, 1440, 1080, 800, 768, 720, 640, 480, 320];
+export const screenLengths = [2560, 2160, 1920, 1600, 1440, 1366, 1280, 1024];

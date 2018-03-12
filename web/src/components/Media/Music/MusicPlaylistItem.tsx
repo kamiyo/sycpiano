@@ -115,7 +115,7 @@ const StyledCategory = styled('div') `
     font-size: 1.2rem;
 `;
 
-const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps & React.HTMLProps<HTMLLIElement>> = ({
+const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
     audio,
     item,
     currentItemId,

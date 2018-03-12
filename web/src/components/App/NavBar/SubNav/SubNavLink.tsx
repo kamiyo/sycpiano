@@ -58,7 +58,7 @@ const SubNavLink: React.SFC<SubNavLinkProps> = ({ basePath, link, onClick, isHom
             to={`${basePath}/${link}`}
             className={cx(
                 getSubNavLinkStyle(isMobile),
-                { [subNavHomeStyle]: isHome },
+                { [subNavHomeStyle]: isHome && !isMobile },
             )}
             activeClassName={activeCSS}
             onClick={() => { setTimeout(() => onClick(), 250); }}

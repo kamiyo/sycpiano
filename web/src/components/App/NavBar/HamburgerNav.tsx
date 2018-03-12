@@ -8,27 +8,19 @@ import { links } from 'src/components/App/NavBar/links';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import { NavBarLinksProps } from 'src/components/App/NavBar/types';
 
-class HamburgerNav extends React.Component<NavBarLinksProps, { isExpanded: boolean }> {
-    state = { isExpanded: false };
-
-    setExpandedState = (toExpand?: boolean) => this.setState({
-        isExpanded: (toExpand || !this.state.isExpanded),
-    });
-
+class HamburgerNav extends React.Component<NavBarLinksProps, {}> {
     render() {
         return (
             <div className={css` margin: auto 0; `}>
                 <HamburgerMenu
-                    isExpanded={this.state.isExpanded}
-                    onClick={() => this.setExpandedState()}
-                    layerColor={this.props.currentBasePath === '/' ? 'white' : 'black'}
+                    isExpanded={this.props.isExpanded}
+                    onClick={() => this.props.closeMobileMenu()}
+                    layerColor={this.props.currentBasePath === '/' && !this.props.isExpanded ? 'white' : 'black'}
                 />
                 <Transition
-                    mountOnEnter={true}
-                    unmountOnExit={true}
-                    in={this.state.isExpanded}
-                    onEnter={(el) => TweenLite.fromTo(el, 0.25, { opacity: 0 }, { opacity: 1 })}
-                    onExit={(el) => TweenLite.fromTo(el, 0.25, { opacity: 1 }, { opacity: 0 })}
+                    in={this.props.isExpanded}
+                    onEnter={(el) => TweenLite.to(el, 0.25, { autoAlpha: 1 })}
+                    onExit={(el) => TweenLite.to(el, 0.25, { autoAlpha: 0 })}
                     timeout={250}
                 >
                     <NavBarLinks
@@ -37,7 +29,8 @@ class HamburgerNav extends React.Component<NavBarLinksProps, { isExpanded: boole
                         toggleSub={this.props.toggleSub}
                         currentBasePath={this.props.currentBasePath}
                         isMobile={this.props.isMobile}
-                        closeMobileMenu={() => this.setExpandedState(false)}
+                        isExpanded={this.props.isExpanded}
+                        closeMobileMenu={() => this.props.closeMobileMenu(false)}
                     />
                 </Transition>
             </div>

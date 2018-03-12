@@ -1,4 +1,3 @@
-import { hiDPI } from 'polished';
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
 import ReactMedia from 'react-media';
@@ -13,10 +12,10 @@ import { reactMediaMobileQuery, screenPortrait, screenXS } from 'src/styles/scre
 import { navBarHeight } from 'src/styles/variables';
 
 const navBarFontSizeREM = 2.5;
-const navBarHDPIFontSizeREM = 2.19;
 
 interface NavBarLogoProps {
     isHome: boolean;
+    isExpanded: boolean;
     specificRouteName: string;
 }
 
@@ -26,11 +25,6 @@ const LogoText = styled<{ isMobile: boolean }, 'div'>('div')`
     margin-left: ${({ isMobile }) => isMobile ? 0 : '20px'};
     vertical-align: middle;
     line-height: ${navBarHeight.nonHdpi}px;
-
-    /* stylelint-disable-next-line */
-    ${hiDPI(2)} {
-        line-height: ${navBarHeight.hdpi}px;
-    }
 
     span {
         vertical-align: -3px;
@@ -44,16 +38,6 @@ const LogoText = styled<{ isMobile: boolean }, 'div'>('div')`
 `;
 
 const logoStyle = css`
-    /* stylelint-disable-next-line */
-    ${hiDPI(2)} {
-        font-size: ${navBarHDPIFontSizeREM}rem;
-
-        /* stylelint-disable-next-line */
-        ${screenPortrait}, ${screenXS} {
-            font-size: ${navBarHDPIFontSizeREM * 0.6}rem;
-        }
-    }
-
     font-family: ${lato2};
     font-size: ${navBarFontSizeREM}rem;
 
@@ -75,16 +59,17 @@ const logoStyle = css`
 
 const NavBarLogo: React.SFC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProps> = ({
     isHome,
+    isExpanded,
     specificRouteName,
 }) => (
-    <Link to="/" className={cx(logoStyle, { [css` fill: white; `]: isHome })}>
+    <Link to="/" className={cx(logoStyle, { [css` fill: white; `]: isHome && !isExpanded })}>
         <ReactMedia query={reactMediaMobileQuery}>
             {(matches: boolean) => matches
                 ? (
                     <>
                         <SycLogo />
                         <LogoText isMobile={matches}>
-                            <span>{isHome ? 'SEAN CHEN' : specificRouteName}</span>
+                            <span>{isHome ? '' : specificRouteName}</span>
                         </LogoText>
                     </>
                 )

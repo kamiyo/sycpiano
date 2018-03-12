@@ -49,9 +49,11 @@ export const formatLocation = (location: string): FormattedLocationShape => {
     return { venue, street, stateZipCountry };
 };
 
+const AudioContextFill = (window as any).AudioContext || (window as any).webkitAudioContext;
+const acx = new AudioContextFill();
+
 export const getAudioContext: any = () => {
-    const AudioContextFill = (window as any).AudioContext || (window as any).webkitAudioContext;
-    return new AudioContextFill();
+    return acx;
 };
 
 export const getViewportSize = () => (

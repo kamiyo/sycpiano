@@ -86,6 +86,10 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
+"@types/blazy@^1.5.30":
+  version "1.5.30"
+  resolved "https://registry.yarnpkg.com/@types/blazy/-/blazy-1.5.30.tgz#6fd66c8579f76cc27dbc160ec5ee1150e5cf5c23"
+
 "@types/bluebird-global@^3.5.5":
   version "3.5.5"
   resolved "https://registry.yarnpkg.com/@types/bluebird-global/-/bluebird-global-3.5.5.tgz#b3bd9dc0a020c8ee74cebd2c460249e5629a89ef"
@@ -1001,6 +1005,10 @@ bl@^1.0.0:
   resolved "https://registry.yarnpkg.com/bl/-/bl-1.2.1.tgz#cac328f7bee45730d404b692203fcb590e172d5e"
   dependencies:
     readable-stream "^2.0.5"
+
+blazy@^1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/blazy/-/blazy-1.8.2.tgz#50dfd638baaf9003efd6eb3a836aca54184ab6da"
 
 blessed@^0.1.81:
   version "0.1.81"
@@ -6278,6 +6286,10 @@ pgpass@1.x:
   resolved "https://registry.yarnpkg.com/pgpass/-/pgpass-1.0.2.tgz#2a7bb41b6065b67907e91da1b07c1847c877b306"
   dependencies:
     split "^1.0.0"
+
+picturefill@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/picturefill/-/picturefill-3.0.2.tgz#fa3d35fffbef5ab5300fe2ad9dca8f2e36cba27b"
 
 pidusage@^1.2.0:
   version "1.2.0"

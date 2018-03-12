@@ -28,12 +28,17 @@ const VideoPlaylist: React.SFC<VideoPlaylistProps> = (props) => {
             isShow={props.isShow}
             hasToggler={true}
             togglePlaylist={props.togglePlaylistAction}
-            items={props.videos}
-            currentItemId={props.videoId}
-            onClick={props.playVideo}
-            ChildRenderer={VideoPlaylistItem}
             shouldAppear={false}
-        />
+        >
+            {props.videos.map((video) => (
+                <VideoPlaylistItem
+                    key={video.id}
+                    item={video}
+                    currentItemId={props.videoId}
+                    onClick={props.playVideo}
+                />
+            ))}
+        </Playlist>
     );
 };
 

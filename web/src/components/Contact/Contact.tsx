@@ -13,7 +13,7 @@ const ContactContainer = styled('div')`
     top: 0;
 `;
 
-const Contact: React.SFC<{}> = () => (
+const Contact: React.SFC<{ isMobile: boolean; }> = () => (
     <ContactContainer>
         {contacts.map((contact, i) => (
             <ContactItem {...contact} key={i} />

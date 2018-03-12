@@ -25,7 +25,11 @@ interface VideosDispatchToProps {
     readonly resetPlayer: () => void;
 }
 
-type VideosProps = VideosStateToProps & VideosDispatchToProps;
+interface VideosOwnProps {
+    readonly isMobile: boolean;
+}
+
+type VideosProps = VideosStateToProps & VideosDispatchToProps & VideosOwnProps;
 
 const StyledVideos = styled('div')`
     ${pushed}
@@ -70,7 +74,7 @@ class Videos extends React.Component<VideosProps, any> {
                 <PreviewOverlay />
                 <Transition
                     in={!this.props.isPlayerReady}
-                    onExit={(el) => { TweenLite.fromTo(el, 0.3, { opacity: 1 }, { opacity: 0 }); }}
+                    onExit={(el) => TweenLite.to(el, 0.3, { autoAlpha: 0 })}
                     timeout={300}
                     mountOnEnter={true}
                     unmountOnExit={true}

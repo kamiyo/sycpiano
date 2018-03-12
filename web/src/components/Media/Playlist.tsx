@@ -43,8 +43,22 @@ const playlistStyle = css`
     background-color: ${playlistBackground};
 `;
 
-class Playlist<T> extends React.Component<PlaylistProps<T>, {}> {
+class Playlist extends React.Component<PlaylistProps, {}> {
     ulRef: HTMLUListElement = null;
+
+    onEnter = (el: HTMLElement, isAppearing: boolean) => {
+        const amount = this.ulRef.getBoundingClientRect().width;
+        if ((!this.props.hasToggler || !this.props.shouldAppear) && isAppearing) {
+            el.style.transform = 'translateX(0)';
+        } else {
+            slideLeft(el, amount, (isAppearing) ? 0.25 : 0);
+        }
+    }
+
+    onExit = (el: HTMLElement) => {
+        const amount = this.ulRef.getBoundingClientRect().width;
+        slideRight(el, amount);
+    }
 
     render() {
         const props = this.props;
@@ -52,18 +66,8 @@ class Playlist<T> extends React.Component<PlaylistProps<T>, {}> {
             <Transition
                 in={props.isShow}
                 appear={true}
-                onEnter={(el, isAppearing) => {
-                    const amount = this.ulRef.getBoundingClientRect().width;
-                    if ((!props.hasToggler || !props.shouldAppear) && isAppearing) {
-                        el.style.transform = 'translateX(0)';
-                    } else {
-                        slideLeft(el, amount, (isAppearing) ? 0.25 : 0);
-                    }
-                }}
-                onExit={(el) => {
-                    const amount = this.ulRef.getBoundingClientRect().width;
-                    slideRight(el, amount);
-                }}
+                onEnter={this.onEnter}
+                onExit={this.onExit}
                 timeout={400}
             >
                 <div
@@ -72,27 +76,23 @@ class Playlist<T> extends React.Component<PlaylistProps<T>, {}> {
                         props.extraStyles && props.extraStyles.div,
                     )}
                 >
-                    {props.hasToggler && <PlaylistToggler
-                        isPlaylistVisible={props.isShow}
-                        onClick={() => {
-                            props.togglePlaylist();
-                        }}
-                    />}
+                    {props.hasToggler &&
+                        <PlaylistToggler
+                            isPlaylistVisible={props.isShow}
+                            onClick={() => {
+                                props.togglePlaylist();
+                            }}
+                        />
+                    }
                     <ul
+                        id={props.id}
                         ref={(ul) => this.ulRef = ul}
                         className={cx(
                             playlistStyle,
                             props.extraStyles && props.extraStyles.ul,
                         )}
                     >
-                        {props.items.map((item: any) => (
-                            <props.ChildRenderer
-                                key={item.id}
-                                currentItemId={props.currentItemId}
-                                item={item}
-                                onClick={props.onClick}
-                            />
-                        ))}
+                        {this.props.children}
                     </ul>
                 </div>
             </Transition>
