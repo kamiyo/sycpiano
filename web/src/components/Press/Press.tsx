@@ -6,7 +6,7 @@ import { container } from 'src/styles/mixins';
 
 import { pushed } from 'src/styles/mixins';
 
-let Press: React.SFC<{className?: string}> = (props) => (
+let Press: React.SFC<{ className?: string; isMobile?: boolean; }> = (props) => (
     <div className={props.className}>
         <AcclaimsList className={css` ${pushed}; `}/>
     </div>

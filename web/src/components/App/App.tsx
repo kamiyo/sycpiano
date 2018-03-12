@@ -1,10 +1,13 @@
-import _ from 'lodash';
+import toUpper from 'lodash-es/toUpper';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import ReactMedia from 'react-media';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
+
+import 'picturefill';
+import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 
 import 'gsap/CSSPlugin';
 import TweenLite from 'gsap/TweenLite';
@@ -29,9 +32,10 @@ const fadeOnExit = (element: HTMLElement) => {
     TweenLite.fromTo(element, 0.25, { opacity: 1 }, { opacity: 0 });
 };
 
-const RootContainer = styled('div') `
+const RootContainer = styled<{ isHome: boolean; }, 'div'>('div') `
     height: 100%;
     width: 100%;
+    background-color: ${props => props.isHome ? 'black' : 'white'};
 `;
 
 export default class App extends React.Component<RouteComponentProps<void>, { homeBgLoaded: boolean; }> {
@@ -60,7 +64,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
     getMostSpecificRouteName = () => {
         const matches: string[] = this.props.location.pathname.match(/^(\/[^\/]+)?(\/[^\/]+)?/);
         const match = matches[2] || matches[1];
-        return (match ? _.toUpper(match.slice(1)) : '') || null;
+        return (match ? toUpper(match.slice(1)) : '') || null;
     }
 
     bgLoaded = () => {
@@ -69,51 +73,51 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
 
     render() {
         return (
-            <RootContainer>
-                <LogoSVG />
-                <LoadingSVG />
-                <Transition
-                    in={this.state.homeBgLoaded}
-                    onEntering={fadeOnEnter}
-                    timeout={250}
-                    appear={true}
-                >
-                    <ReactMedia query={reactMediaMobileQuery}>
-                        {(matches: boolean) =>
+            <ReactMedia query={reactMediaMobileQuery}>
+                {(matches: boolean) => (
+                    <RootContainer isHome={this.getRouteBase() === '/'}>
+                        <LogoSVG />
+                        <LoadingSVG />
+                        <Transition
+                            in={this.state.homeBgLoaded}
+                            onEntering={fadeOnEnter}
+                            timeout={250}
+                            appear={true}
+                        >
                             <NavBar
                                 className={css` opacity: 0; `}
                                 currentBasePath={this.getRouteBase()}
                                 specificRouteName={this.getMostSpecificRouteName()}
                                 isMobile={matches}
                             />
-                        }
-                    </ReactMedia>
-                </Transition>
-                <TransitionGroup>
-                    <Transition
-                        key={this.getRouteBase()}
-                        onEntering={fadeOnEnter}
-                        onExiting={fadeOnExit}
-                        timeout={500}
-                        appear={true}
-                    >
-                        <Switch location={this.props.location}>
-                            <Route path="/about" exact={true} component={About} />
-                            <Route path="/contact" exact={true} component={Contact} />
-                            <Route path="/media" component={Media} />
-                            <Route path="/press" exact={true} component={Press} />
-                            <Route path="/schedule" component={Schedule} />
-                            <Route
-                                path="/"
-                                exact={true}
-                                render={(childProps) => (
-                                    <Home {...childProps} bgLoaded={this.bgLoaded} />
-                                )}
-                            />
-                        </Switch>
-                    </Transition>
-                </TransitionGroup>
-            </RootContainer>
+                        </Transition>
+                        <TransitionGroup>
+                            <Transition
+                                key={this.getRouteBase()}
+                                onEntering={fadeOnEnter}
+                                onExiting={fadeOnExit}
+                                timeout={500}
+                                appear={true}
+                            >
+                                <Switch location={this.props.location}>
+                                    <Route path="/about" exact={true} render={(childProps) => <About {...childProps} isMobile={matches} />} />
+                                    <Route path="/contact" exact={true} render={(childProps) => <Contact {...childProps} isMobile={matches} />} />
+                                    <Route path="/media" render={(childProps) => <Media {...childProps} isMobile={matches} />} />
+                                    <Route path="/press" exact={true} render={(childProps) => <Press {...childProps} isMobile={matches} />} />
+                                    <Route path="/schedule" render={(childProps) => <Schedule {...childProps} isMobile={matches} />} />
+                                    <Route
+                                        path="/"
+                                        exact={true}
+                                        render={(childProps) => (
+                                            <Home {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />
+                                        )}
+                                    />
+                                </Switch>
+                            </Transition>
+                        </TransitionGroup>
+                    </RootContainer>
+                )}
+            </ReactMedia>
         );
     }
 }

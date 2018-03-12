@@ -17,7 +17,7 @@ const scheduleStyles = css`
     box-sizing: border-box;
 `;
 
-const Schedule: React.SFC<{}> = () => (
+const Schedule: React.SFC<{ isMobile: boolean; }> = () => (
     <div className={scheduleStyles}>
         <div className={css` height: 100%; `}>
             <Switch>

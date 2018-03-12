@@ -1,5 +1,5 @@
 import { css } from 'emotion';
-import { darken, hiDPI } from 'polished';
+import { darken } from 'polished';
 
 import { navBarHeight } from 'src/styles/variables';
 
@@ -10,7 +10,6 @@ const pushedHelper = (marginTop: number) => ({
 
 export const pushed = css({
     ...pushedHelper(navBarHeight.nonHdpi),
-    [hiDPI(2)]: pushedHelper(navBarHeight.hdpi),
 });
 
 export const link = (colorString: string, hoverDelta = 0.2) => css`

@@ -1,19 +1,18 @@
 import * as moment from 'moment-timezone';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
-import ReactMedia from 'react-media';
-
-import { FadeBackgroundImage, FadeBackgroundImageProps } from 'src/components/LazyImage';
 
 import { easeQuadOut } from 'd3-ease';
+import TweenLite from 'gsap/TweenLite';
 
 import blurbs from 'src/components/About/blurbs';
+import { LazyImage } from 'src/components/LazyImage';
+
 import { offWhite } from 'src/styles/colors';
 import { lato1, lato2, lato3 } from 'src/styles/fonts';
-import { resizedImage, sycWithPianoBW } from 'src/styles/imageUrls';
+import { generateSrcsetWidths, resizedImage, sycWithPianoBW, sycWithPianoBWWebP } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
-import { reactMediaMobileQuery, screenM, screenPortrait, screenXS } from 'src/styles/screens';
-import { getViewportSize } from 'src/utils';
+import { screenLengths, screenM, screenPortrait, screenXS } from 'src/styles/screens';
 
 const pictureHeight = 250;
 
@@ -83,12 +82,18 @@ const AboutText: React.SFC<{ className?: string }> = (props) => (
     </div>
 );
 
-interface ImageContainerProps { currScrollTop: number; }
+interface ImageContainerProps { currScrollTop: number; bgImage?: string; }
 
-const ImageContainer = styled<ImageContainerProps & FadeBackgroundImageProps, typeof FadeBackgroundImage>(FadeBackgroundImage) `
+const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
     flex: 1;
+    /* stylelint-disable-next-line */
+    ${props => props.bgImage && `background-image: url(${props.bgImage});`}
     background-size: cover;
     background-position: center -100px;
+    background-attachment: initial;
+    background-repeat: no-repeat;
+    background-color: black;
+    visibility: hidden;
 
     /* stylelint-disable-next-line */
     ${screenM} {
@@ -132,7 +137,7 @@ const TextContainer = styled(AboutText) `
 const AboutContainer = styled('div') `
     ${pushed};
     width: 100%;
-    background-color: white;
+    background-color: black;
     position: absolute;
     display: flex;
 
@@ -142,36 +147,95 @@ const AboutContainer = styled('div') `
     }
 `;
 
-class About extends React.Component {
-    state = { currScrollTop: 0 };
+const srcWidths = screenLengths.map((value) => (
+    Math.round(value * 1736 / 2560)
+));
+
+const mobileWidths = [1600, 1440, 1080, 800, 768, 720, 640, 480, 320];
+
+interface AboutProps {
+    readonly isMobile: boolean;
+}
+
+interface AboutState {
+    readonly currScrollTop: number;
+    readonly bgImage?: string;
+}
+
+const imageLoaderStyle = css`
+    visibility: hidden;
+    position: absolute;
+`;
+
+class About extends React.Component<AboutProps, AboutState> {
+    state: AboutState = { currScrollTop: 0, bgImage: '' };
+    private bgRef: HTMLDivElement;
 
     setScrollTop = (event: React.SyntheticEvent<HTMLElement>) => {
         this.setState({ currScrollTop: (event.target as HTMLElement).scrollTop });
     };
 
+    onImageLoad = (el: HTMLImageElement) => {
+        this.setState({ bgImage: el.currentSrc }, () => {
+            TweenLite.to(
+                this.bgRef,
+                0.3,
+                { autoAlpha: 1, delay: 0.2, clearProps: 'opacity' });
+        });
+    }
+
+    onImageDestroy = () => {
+        TweenLite.to(
+            this.bgRef,
+            0.1,
+            { autoAlpha: 0 },
+        );
+    }
+
     render() {
         return (
-            <ReactMedia query={reactMediaMobileQuery}>
-                {(matches: boolean) => {
-                    const viewport = getViewportSize();
-                    const resizeOption: { width?: number; height?: number } = {};
-                    if (matches) {
-                        resizeOption.width = viewport.width;
-                    } else {
-                        resizeOption.height = viewport.height;
-                    }
-                    return (
-                        <AboutContainer onScroll={this.setScrollTop}>
-                            <ImageContainer
-                                currScrollTop={this.state.currScrollTop}
-                                src={resizedImage(sycWithPianoBW, resizeOption)}
-                                duration={250}
-                            />
-                            <TextContainer />
-                        </AboutContainer>
-                    );
-                }}
-            </ReactMedia>
+            <AboutContainer onScroll={this.setScrollTop}>
+                <ImageContainer
+                    currScrollTop={this.state.currScrollTop}
+                    bgImage={this.state.bgImage}
+                    innerRef={(div) => this.bgRef = div}
+                >
+                    <LazyImage
+                        isMobile={this.props.isMobile}
+                        id="about_lazy_image"
+                        classNames={{
+                            mobile: imageLoaderStyle,
+                            desktop: imageLoaderStyle,
+                        }}
+                        mobileAttributes={{
+                            webp: {
+                                srcset: generateSrcsetWidths(sycWithPianoBWWebP, mobileWidths),
+                                sizes: '100vw',
+                            },
+                            jpg: {
+                                srcset: generateSrcsetWidths(sycWithPianoBW, mobileWidths),
+                                sizes: '100vw',
+                            },
+                            src: resizedImage(sycWithPianoBW, { width: 640 }),
+                        }}
+                        desktopAttributes={{
+                            webp: {
+                                srcset: generateSrcsetWidths(sycWithPianoBWWebP, srcWidths),
+                                sizes: '100vh',
+                            },
+                            jpg: {
+                                srcset: generateSrcsetWidths(sycWithPianoBW, srcWidths),
+                                sizes: '100vh',
+                            },
+                            src: resizedImage(sycWithPianoBW, { height: 1080 }),
+                        }}
+                        alt="about background"
+                        successCb={this.onImageLoad}
+                        destroyCb={this.onImageDestroy}
+                    />
+                </ImageContainer>
+                <TextContainer />
+            </AboutContainer>
         );
     }
 }

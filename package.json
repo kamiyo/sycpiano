@@ -24,6 +24,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "@types/blazy": "^1.5.30",
     "@types/bluebird-global": "^3.5.5",
     "@types/d3-ease": "^1.0.7",
     "@types/dotenv": "^4.0.2",
@@ -52,6 +53,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.3",
     "babel-plugin-emotion": "^9.0.1",
+    "blazy": "^1.8.2",
     "bluebird": "^3.5.1",
     "cache-loader": "^1.2.2",
     "clean-webpack-plugin": "^0.1.18",
@@ -86,6 +88,7 @@
     "mustache-express": "^1.2.5",
     "node-mkdirp": "^0.0.1",
     "pg": "^7.4.1",
+    "picturefill": "^3.0.2",
     "plugin-error": "^1.0.1",
     "pm2": "^2.10.1",
     "polished": "^1.9.2",

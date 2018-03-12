@@ -1,15 +1,15 @@
 import * as React from 'react';
-import styled from 'react-emotion';
-import { Transition } from 'react-transition-group';
+import styled, { css } from 'react-emotion';
 
 import TweenLite from 'gsap/TweenLite';
-import { hiDPI } from 'polished';
 
 import { lato2, lato2i } from 'src/styles/fonts';
-import { homeBackground, resizedImage } from 'src/styles/imageUrls';
+import { generateSrcsetWidths, homeBackground, homeBackgroundWebP, resizedImage, sycChairVertical, sycChairVerticalWebP } from 'src/styles/imageUrls';
 import { container } from 'src/styles/mixins';
 import { navBarHeight } from 'src/styles/variables';
-import { getViewportSize } from 'src/utils';
+
+import { LazyImage } from 'src/components/LazyImage';
+import { screenLengths } from 'src/styles/screens';
 
 const textShadowColor = 'rgba(0, 0, 0, 0.75)';
 
@@ -19,7 +19,7 @@ const HomeContainer = styled('div') `
     width: 100%;
 `;
 
-const Content = styled('div') `
+const Content = styled<{ isMobile: boolean; }, 'div'>('div') `
     position: absolute;
     width: 100%;
     text-align: center;
@@ -28,27 +28,54 @@ const Content = styled('div') `
     color: white;
     text-shadow: 0 0 8px ${textShadowColor};
     z-index: 100;
+
+    /* stylelint-disable-next-line */
+    ${props => props.isMobile && 'height: 100%;'}
 `;
 
-const Name = styled('div') `
+const Name = styled<{ isMobile: boolean; }, 'div'>('div') `
     font-family: ${lato2};
-    font-size: 100px;
+    font-size: ${props => props.isMobile ? 'calc(100vw / 6.2)' : 'calc(100vh / 8)'};
     text-transform: uppercase;
+
+    /* stylelint-disable */
+    ${props => props.isMobile && `
+        width: 100%;
+        position: absolute;
+        bottom: 63%;
+    `}
+    /* stylelint-enable */
 `;
 
-const Skills = styled('div') `
+const Skills = styled<{ isMobile: boolean; }, 'div'>('div') `
     font-family: ${lato2};
-    font-size: 30px;
-    color: #efe6b0;
+    font-size: ${props => props.isMobile ? `calc(100vw / 16)` : `calc(100vh / 16)`};
+    color: #fff6b0;
     text-shadow: 0 0 6px ${textShadowColor};
+
+    /* stylelint-disable */
+    ${props => props.isMobile && `
+        width: 100%;
+        position: absolute;
+        bottom: 58%;
+    `}
+    /* stylelint-enable */
 `;
 
-const Handle = styled('div') `
+const Handle = styled<{ isMobile: boolean; }, 'div'>('div') `
     margin-top: 15px;
     font-family: ${lato2i};
     font-size: 30px;
     color: white;
     text-shadow: 0 0 6px ${textShadowColor};
+
+    /* stylelint-disable */
+    ${props => props.isMobile && `
+        width: 100%;
+        position: absolute;
+        bottom: 5%;
+    `}
+    /* stylelint-enable */
 `;
 
 const BackgroundContainer = styled('div') `
@@ -57,10 +84,11 @@ const BackgroundContainer = styled('div') `
     position: absolute;
     top: 0;
     left: 0;
-    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
 `;
 
-const Background = styled('img') `
+const backgroundStyle = css`
     top: 0;
     left: 50%;
     width: 100%;
@@ -70,45 +98,67 @@ const Background = styled('img') `
     z-index: 0;
 `;
 
-const BackgroundCover = styled('div') `
+const mobileBackgroundStyle = css`
+    bottom: 0;
+    left: 50%;
+    height: 100%;
+    position: absolute;
+    filter: saturate(0.8);
+    transform: translateX(-50%);
+    z-index: 0;
+`;
+
+const BackgroundCover = styled<{ isMobile: boolean; }, 'div'>('div') `
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1;
-    background-image:
+
+    /* stylelint-disable */
+    background-image: ${props => props.isMobile ? `
+        linear-gradient(
+            66deg,
+            rgba(0,0,0,0) 30%,
+            rgba(0,0,0,0.2) 55%
+        );` : `
         linear-gradient(
             66deg,
             rgba(0, 0, 0, 0) 70%,
             rgba(0, 0, 0, 0.2) 75%
-        );
+        );`}
+    /* stylelint-enable */
 `;
 
-const NavBarGradient = styled('div') `
+const NavBarGradient = styled<{ isMobile: boolean; }, 'div'>('div') `
     height: ${navBarHeight.nonHdpi}px;
     padding: 0 30px 0 0;
-
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
-    ${hiDPI(2)} {
-        height: ${navBarHeight.hdpi}px;
-        padding-left: 15px;
-    }
-
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 2;
-    background-image:
+
+    /* stylelint-disable */
+    background-image: ${props => props.isMobile ? `
+        linear-gradient(
+            122deg,
+            rgba(3,3,3,0.4) 5%,
+            rgba(255,255,255,0.11) 40%,
+            rgba(255, 255, 255, 0.21) 52%,
+            rgba(255, 255, 255, 0.36) 60%,
+            rgba(53,53,53,0.27) 90%
+        );` : `
         linear-gradient(
             122deg,
             rgba(3, 3, 3, 0.4) 5%,
             rgba(255, 255, 255, 0.11) 20%,
             rgba(255, 255, 255, 0.62) 22%,
-            rgba(255, 255, 255, 0.6) 50%,
+            rgba(255, 255, 255, 0.6) 40%,
             rgba(53, 53, 53, 0.27) 70%
-        );
+        );`}
+    /* stylelint-enable */
 `;
 
 /*
@@ -184,45 +234,64 @@ const EventLocation = styled('div')`
 `;
 */
 
-class Home extends React.Component<{ bgLoaded: () => void }, { bgLoaded: boolean; }> {
-    private imgRef: HTMLImageElement;
-    private bgRef: HTMLDivElement;
-    state = {
-        bgLoaded: false,
-    };
+const srcWidths = screenLengths.map((value) => (
+    Math.round(value * 1779 / 2560)
+));
 
-    componentWillMount() {
-        const img = new Image();
-        img.onload = () => {
-            this.imgRef.src = img.src;
-            this.setState({ bgLoaded: true });
-        };
-        const { width } = getViewportSize();
-        img.src = resizedImage(homeBackground, { width });
+class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }, {}> {
+    private bgRef: HTMLDivElement;
+
+    onImageLoaded = () => {
+        this.props.bgLoaded();
+        TweenLite.to(this.bgRef, 0.3, { autoAlpha: 1 });
+    }
+
+    onImageDestroy = () => {
+        TweenLite.to(this.bgRef, 0.1, { autoAlpha: 0 });
     }
 
     render() {
         return (
             <HomeContainer>
-                <Transition
-                    in={this.state.bgLoaded}
-                    onEnter={() => {
-                        this.props.bgLoaded();
-                        TweenLite.fromTo(this.bgRef, 0.3, { opacity: 0 }, { opacity: 1 });
-                    }}
-                    timeout={300}
-                    appear={true}
-                >
-                    <BackgroundContainer innerRef={(div) => this.bgRef = div}>
-                        <Background alt="Sean Chen Pianist Photo" innerRef={(img) => this.imgRef = img} />
-                        <BackgroundCover />
-                        <NavBarGradient />
-                    </BackgroundContainer>
-                </Transition>
-                <Content>
-                    <Name>Sean Chen</Name>
-                    <Skills>pianist / composer / arranger</Skills>
-                    <Handle>@seanchenpiano</Handle>
+                <BackgroundContainer innerRef={(div) => this.bgRef = div}>
+                    <LazyImage
+                        isMobile={this.props.isMobile}
+                        id="home_bg"
+                        classNames={{
+                            mobile: mobileBackgroundStyle,
+                            desktop: backgroundStyle,
+                        }}
+                        mobileAttributes={{
+                            webp: {
+                                srcset: generateSrcsetWidths(sycChairVerticalWebP, srcWidths),
+                                sizes: '100vh',
+                            },
+                            jpg: {
+                                srcset: generateSrcsetWidths(sycChairVertical, srcWidths),
+                                sizes: '100vh',
+                            },
+                            src: resizedImage(sycChairVertical, { height: 1920 }),
+                        }}
+                        desktopAttributes={{
+                            webp: {
+                                srcset: generateSrcsetWidths(homeBackgroundWebP, screenLengths),
+                            },
+                            jpg: {
+                                srcset: generateSrcsetWidths(homeBackground, screenLengths),
+                            },
+                            src: resizedImage(homeBackground, { width: 1920 }),
+                        }}
+                        alt="home background"
+                        successCb={this.onImageLoaded}
+                        destroyCb={this.onImageDestroy}
+                    />
+                    <BackgroundCover isMobile={this.props.isMobile} />
+                    <NavBarGradient isMobile={this.props.isMobile} />
+                </BackgroundContainer>
+                <Content isMobile={this.props.isMobile}>
+                    <Name isMobile={this.props.isMobile}>Sean Chen</Name>
+                    <Skills isMobile={this.props.isMobile}>pianist / composer / arranger</Skills>
+                    <Handle isMobile={this.props.isMobile}>@seanchenpiano</Handle>
                 </Content>
             </HomeContainer>
         );

@@ -1,175 +1,146 @@
+import * as Blazy from 'blazy';
 import * as React from 'react';
-import { css, cx } from 'react-emotion';
-import { Transition } from 'react-transition-group';
+import styled from 'react-emotion';
 
-import TweenLite from 'gsap/TweenLite';
+import { LoadingInstance } from 'src/components/LoadingSVG';
+import { lightBlue } from 'src/styles/colors';
 
-interface ImageProps {
-    readonly src: string;
-    readonly animation?: (el: HTMLImageElement) => void;
-    readonly duration?: number;
-    readonly callback?: () => void;
-    readonly className?: string;
-}
+const StyledLoadingInstance = styled(LoadingInstance)`
+    position: relative;
+    height: 100px;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    padding: 10px;
+    stroke: ${lightBlue};
+`;
 
-interface ImageState {
-    loaded: boolean;
-}
-
-class LazyImageComponent extends React.Component<ImageProps, ImageState> {
-    state = {
-        loaded: false,
+interface PictureGroupAttributes {
+    readonly webp?: {
+        readonly srcset?: string;
+        readonly sizes?: string;
     };
-    ref: HTMLImageElement;
+    readonly jpg?: {
+        readonly srcset?: string;
+        readonly sizes?: string;
+    };
+    readonly src?: string;
+}
 
-    componentWillMount() {
-        const img = new Image();
-        img.onload = () => {
-            this.ref.src = img.src;
-            this.setState({ loaded: true });
-            this.props.callback && this.props.callback();
-        };
-        img.src = this.props.src;
+interface LazyImageProps {
+    readonly isMobile?: boolean;
+    readonly id: string;
+    readonly offset?: number;
+    readonly container?: string;
+    readonly mobileAttributes?: PictureGroupAttributes;
+    readonly desktopAttributes?: PictureGroupAttributes;
+    readonly classNames?: {
+        readonly mobile?: string;
+        readonly desktop?: string;
+        readonly loading?: string;
+    };
+    readonly alt: string;
+    readonly successCb?: (el?: HTMLImageElement) => void;
+    readonly destroyCb?: () => void;
+}
+
+interface LazyImageState {
+    isLoaded: boolean;
+}
+
+class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
+    private blazy: BlazyInstance;
+    state = {
+        isLoaded: false,
+    };
+
+    activateBlazy = () => {
+        this.blazy = new Blazy({
+            selector: `#${this.props.id}`,
+            offset: this.props.offset || Infinity,
+            container: this.props.container ? `#${this.props.container}` : 'window',
+            success: (el: HTMLImageElement) => {
+                this.setState({ isLoaded: true });
+                this.props.successCb && this.props.successCb(el);
+            },
+        });
     }
 
-    componentWillUpdate(nextProps: ImageProps) {
-        if (this.props.src !== nextProps.src) {
-            const img = new Image();
-            img.onload = () => {
-                this.ref.src = img.src;
-                this.setState({ loaded: true });
-                this.props.callback && this.props.callback();
-            };
-            img.src = this.props.src;
+    componentDidMount() {
+        this.activateBlazy();
+    }
+
+    componentWillUnmount() {
+        this.blazy.destroy();
+    }
+
+    componentDidUpdate(prevProps: LazyImageProps) {
+        if (prevProps.isMobile !== this.props.isMobile) {
+            setTimeout(() => this.activateBlazy(), 500);
         }
+    }
+
+    componentWillUpdate(nextProps: LazyImageProps) {
+        if (nextProps.isMobile !== this.props.isMobile) {
+            this.blazy.destroy();
+            this.props.destroyCb && this.props.destroyCb();
+        }
+    }
+
+    shouldComponentUpdate(nextProps: LazyImageProps, nextState: LazyImageState) {
+        if (nextProps.isMobile !== this.props.isMobile) {
+            return true;
+        }
+        if (nextState.isLoaded !== this.state.isLoaded) {
+            return true;
+        }
+        return false;
     }
 
     render() {
         return (
-            <Transition
-                in={this.state.loaded}
-                onEnter={(this.props.animation !== null) ?
-                    () => this.props.animation(this.ref) : null
+            <>
+                {!this.state.isLoaded &&
+                    <div className={this.props.classNames.loading}>
+                        <StyledLoadingInstance />
+                    </div>}
+                {this.props.isMobile ? (
+                    <picture key="mobile">
+                        <source
+                            data-srcset={this.props.mobileAttributes.webp.srcset}
+                            sizes={this.props.mobileAttributes.webp.sizes}
+                            type="image/webp"
+                        />
+                        <img
+                            id={this.props.id}
+                            className={this.props.classNames.mobile}
+                            data-srcset={this.props.mobileAttributes.jpg.srcset}
+                            data-src={this.props.mobileAttributes.src}
+                            sizes={this.props.mobileAttributes.jpg.sizes}
+                            alt={this.props.alt}
+                        />
+                    </picture>
+                ) : (
+                        <picture key="desktop">
+                            <source
+                                data-srcset={this.props.desktopAttributes.webp.srcset}
+                                sizes={this.props.desktopAttributes.webp.sizes}
+                                type="image/webp"
+                            />
+                            <img
+                                id={this.props.id}
+                                className={this.props.classNames.desktop}
+                                data-srcset={this.props.desktopAttributes.jpg.srcset}
+                                data-src={this.props.desktopAttributes.src}
+                                sizes={this.props.desktopAttributes.jpg.sizes}
+                                alt={this.props.alt}
+                            />
+                        </picture>
+                    )
                 }
-                timeout={this.props.duration || 0}
-            >
-                <img
-                    className={cx(
-                        () => this.state.loaded ?
-                            css` opacity: 1; ` :
-                            css` opacity: 0; `,
-                        this.props.className,
-                    )}
-                    ref={(img) => this.ref = img}
-                />
-            </Transition>
+            </>
         );
     }
 }
 
-interface BackgroundImageProps {
-    readonly src: string;
-    readonly animation?: (el: HTMLElement) => void;
-    readonly duration?: number;
-    readonly callback?: () => void;
-    readonly className?: string;
-    readonly backgroundRepeat?: string;
-    readonly backgroundAttachment?: string;
-    readonly component?: string;
-}
-
-export const LazyImage = LazyImageComponent;
-
-class LazyBackgroundImageComponent extends React.Component<BackgroundImageProps, ImageState> {
-    state = {
-        loaded: false,
-    };
-    ref: HTMLElement;
-
-    componentWillMount() {
-        const img = new Image();
-        img.onload = () => {
-            this.ref.style.backgroundImage = `url(${this.props.src})`;
-            this.setState({ loaded: true });
-            this.props.callback && this.props.callback();
-        };
-        img.src = this.props.src;
-    }
-
-    componentWillUpdate(nextProps: ImageProps) {
-        if (this.props.src !== nextProps.src) {
-            const img = new Image();
-            img.onload = () => {
-                this.ref.style.backgroundImage = `url(${this.props.src})`;
-                this.setState({ loaded: true });
-                this.props.callback && this.props.callback();
-            };
-            img.src = this.props.src;
-        }
-    }
-
-    render() {
-        const Tag = this.props.component || 'div';
-        const attachment = this.props.backgroundAttachment || 'initial';
-        const repeat = this.props.backgroundRepeat || 'no-repeat';
-        const style = css`
-            background-repeat: ${repeat};
-            background-attachment: ${attachment};
-        `;
-        return (
-            <Transition
-                in={this.state.loaded}
-                onEnter={this.props.animation ?
-                    () => this.props.animation(this.ref) : null
-                }
-                timeout={this.props.duration || 0}
-            >
-                <Tag
-                    className={cx(
-                        () => this.state.loaded ?
-                            css` opacity: 1; ` :
-                            css` opacity: 0; `,
-                        this.props.className,
-                        { [style]: this.state.loaded },
-                    )}
-                    ref={(el: HTMLElement) => this.ref = el}
-                />
-            </Transition>
-        );
-    }
-}
-
-export const LazyBackgroundImage = LazyBackgroundImageComponent;
-
-export interface FadeImageProps {
-    readonly src: string;
-    readonly duration?: number;
-    readonly callback?: () => void;
-    readonly className?: string;
-}
-
-export const FadeImage: React.SFC<FadeImageProps> = (props) => (
-    <LazyImageComponent
-        animation={(el) => {
-            TweenLite.fromTo(el, props.duration / 1000, { opacity: 0 }, { opacity: 1, clearProps: 'opacity', delay: 0.1 });
-        }}
-        {...props}
-    />
-);
-
-export interface FadeBackgroundImageProps {
-    readonly src: string;
-    readonly duration?: number;
-    readonly callback?: () => void;
-    readonly className?: string;
-    readonly component?: string;
-}
-
-export const FadeBackgroundImage: React.SFC<FadeBackgroundImageProps> = (props) => (
-    <LazyBackgroundImageComponent
-        animation={(el) => {
-            TweenLite.fromTo(el, props.duration / 1000, { opacity: 0 }, { opacity: 1, clearProps: 'opacity', delay: 0.1 });
-        }}
-        {...props}
-    />
-);
+export const LazyImage = LazyImageClass;

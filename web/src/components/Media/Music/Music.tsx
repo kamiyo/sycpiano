@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { css } from 'react-emotion';
-import ReactMedia from 'react-media';
 import { connect, Dispatch } from 'react-redux';
 import { match } from 'react-router';
 
@@ -18,7 +17,6 @@ import { isMusicItem, MusicFileItem, MusicItem, MusicListItem } from 'src/compon
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
-import { reactMediaMobileQuery } from 'src/styles/screens';
 
 interface MusicState {
     readonly isPlaying: boolean;
@@ -42,6 +40,7 @@ interface MusicDispatchToProps {
 interface MusicOwnProps {
     baseRoute: string;
     match: match<any>;
+    isMobile: boolean;
 }
 
 type MusicProps = MusicOwnProps & MusicStateToProps & MusicDispatchToProps;
@@ -51,7 +50,7 @@ const musicStyle = css`
     position: relative;
     width: 100%;
     background-color: black;
-    overflow-y: auto;
+    overflow-y: scroll;
 `;
 
 class Music extends React.Component<MusicProps, MusicState> {
@@ -264,51 +263,48 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     render() {
+        const isMobile = this.props.isMobile;
         return (
-            <ReactMedia query={reactMediaMobileQuery} >
-                {(matches: boolean) =>
-                    <div className={musicStyle}>
-                        <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
-                        <MusicPlaylist
-                            audio={this.audio}
-                            onClick={this.loadTrack}
-                            currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
-                            baseRoute={this.props.baseRoute}
-                            userInput={this.state.userInput}
-                            onFirstUserInput={this.onFirstUserInput}
-                            isMobile={matches}
-                        />
-                        <AudioUI
-                            seekAudio={this.seekAudio}
-                            onStartDrag={this.onStartDrag}
-                            onDrag={this.onDrag}
-                            play={this.play}
-                            pause={this.pause}
-                            isPlaying={this.state.isPlaying}
-                            currentPosition={this.state.playbackPosition}
-                            userInput={this.state.userInput}
-                            onFirstUserInput={this.onFirstUserInput}
-                            isMobile={matches}
-                            isLoading={this.state.isLoading}
-                        />
-                        <AudioInfo
-                            duration={this.state.duration}
-                            currentPosition={this.state.playbackPosition}
-                            currentTrack={this.state.currentTrack}
-                            isMobile={matches}
-                        />
-                        <AudioVisualizer
-                            currentPosition={this.state.playbackPosition}
-                            analyzers={[this.analyzerL, this.analyzerR]}
-                            isPlaying={this.state.isPlaying}
-                            duration={this.state.duration}
-                            prevTimestamp={this.state.lastUpdateTimestamp}
-                            volume={this.state.volume}
-                            isMobile={matches}
-                        />
-                    </div>
-                }
-            </ReactMedia>
+            <div className={musicStyle}>
+                <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
+                <MusicPlaylist
+                    audio={this.audio}
+                    onClick={this.loadTrack}
+                    currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
+                    baseRoute={this.props.baseRoute}
+                    userInput={this.state.userInput}
+                    onFirstUserInput={this.onFirstUserInput}
+                    isMobile={isMobile}
+                />
+                <AudioUI
+                    seekAudio={this.seekAudio}
+                    onStartDrag={this.onStartDrag}
+                    onDrag={this.onDrag}
+                    play={this.play}
+                    pause={this.pause}
+                    isPlaying={this.state.isPlaying}
+                    currentPosition={this.state.playbackPosition}
+                    userInput={this.state.userInput}
+                    onFirstUserInput={this.onFirstUserInput}
+                    isMobile={isMobile}
+                    isLoading={this.state.isLoading}
+                />
+                <AudioInfo
+                    duration={this.state.duration}
+                    currentPosition={this.state.playbackPosition}
+                    currentTrack={this.state.currentTrack}
+                    isMobile={isMobile}
+                />
+                <AudioVisualizer
+                    currentPosition={this.state.playbackPosition}
+                    analyzers={[this.analyzerL, this.analyzerR]}
+                    isPlaying={this.state.isPlaying}
+                    duration={this.state.duration}
+                    prevTimestamp={this.state.lastUpdateTimestamp}
+                    volume={this.state.volume}
+                    isMobile={isMobile}
+                />
+            </div>
         );
     }
 }

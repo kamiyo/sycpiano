@@ -14,12 +14,17 @@ const hamburgerLayerStyles = ({ backgroundColor }: { backgroundColor: string; })
     position: absolute;
     height: ${hamburgerLayerHeight}px;
     width: 100%;
-    background: ${backgroundColor};
+    background-color: ${backgroundColor};
     border-radius: ${hamburgerLayerBorderRadius};
     opacity: 1;
     left: 0;
     transform: rotate(0deg);
-    transition: 0.25s ease-in-out;
+    transition:
+        transform 0.25s ease-in-out,
+        left 0.25s ease-in-out,
+        top 0.25s ease-in-out,
+        opacity 0.25s ease-in-out,
+        background-color 0.25s;
 `;
 
 interface HamburgerLayerProps {

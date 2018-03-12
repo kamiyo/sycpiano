@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
 import Playlist from 'src/components/Media/Playlist';
 
-import { MusicFileItem, MusicItem, MusicListItem } from 'src/components/Media/Music/types';
-import { ChildRendererProps } from 'src/components/Media/types';
+import { MusicFileItem, MusicListItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 import { playlistBackground } from 'src/styles/colors';
@@ -56,21 +55,22 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
             extraStyles={{ div: getMusicPlaylistStyle(props.isMobile), ul: getMusicULStyle(props.isMobile) }}
             isShow={true}
             hasToggler={false}
-            items={props.items}
-            currentItemId={props.currentTrackId}
-            onClick={props.onClick}
-            ChildRenderer={(childProps: ChildRendererProps<MusicItem>) =>
+            shouldAppear={false}
+            isMobile={props.isMobile}
+        >
+            {props.items.map((item) => (
                 <MusicPlaylistItem
-                    {...childProps}
+                    key={item.id}
+                    item={item}
+                    onClick={props.onClick}
+                    currentItemId={props.currentTrackId}
                     audio={props.audio}
                     baseRoute={props.baseRoute}
                     userInput={props.userInput}
                     onFirstUserInput={props.onFirstUserInput}
                 />
-            }
-            shouldAppear={false}
-            isMobile={props.isMobile}
-        />
+            ))}
+        </Playlist>
     </StyledPlaylistContainer>
 );
 

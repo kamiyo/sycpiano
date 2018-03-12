@@ -11,5 +11,6 @@ export interface NavBarLinksProps {
     readonly showSubs: string[];
     readonly toggleSub: (show?: string) => void;
     readonly isMobile: boolean;
+    readonly isExpanded: boolean;
     readonly closeMobileMenu?: (toExpand?: boolean) => void;
 }

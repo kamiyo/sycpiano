@@ -6,7 +6,6 @@ import { links } from 'src/components/App/NavBar/links';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import NavBarLogo from 'src/components/App/NavBar/NavBarLogo';
 
-import { hiDPI } from 'polished';
 import { screenPortrait, screenXS } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
@@ -19,6 +18,7 @@ interface NavBarProps {
 
 interface NavBarState {
     readonly showSubs: string[];
+    readonly isExpanded?: boolean;
 }
 
 const navBarStyle = css`
@@ -30,12 +30,6 @@ const navBarStyle = css`
         padding-right: 15px;
     }
 
-    /* stylelint-disable-next-line */
-    ${hiDPI(2)} {
-        height: ${navBarHeight.hdpi}px;
-        padding-left: 15px;
-    }
-
     position: fixed;
     display: flex;
     justify-content: space-between;
@@ -45,12 +39,12 @@ const navBarStyle = css`
     right: 0;
     z-index: 5000;
     background-color: white;
-    transition: background-color 0.5s;
+    transition: background-color 0.25s;
     box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.3);
 `;
 
-const homeNavBarStyle = css`
-    background-color: transparent;
+const homeNavBarStyle = (isExpanded: boolean) => css`
+    background-color: ${isExpanded ? 'white' : 'transparent'};
 `;
 
 const StyledNavBarLogo = styled(NavBarLogo) `
@@ -60,7 +54,12 @@ const StyledNavBarLogo = styled(NavBarLogo) `
 export default class NavBar extends React.Component<NavBarProps, NavBarState> {
     state = {
         showSubs: [''],
+        isExpanded: false,
     };
+
+    setExpandedState = (toExpand: boolean = null) => this.setState({
+        isExpanded: (toExpand === null) ? !this.state.isExpanded : toExpand,
+    });
 
     toggleSubNav = (arg = '') => {
         if (this.props.isMobile) {
@@ -85,11 +84,12 @@ export default class NavBar extends React.Component<NavBarProps, NavBarState> {
                 className={cx(
                     this.props.className,
                     navBarStyle,
-                    { [homeNavBarStyle]: this.props.currentBasePath === '/' },
+                    { [homeNavBarStyle(this.state.isExpanded)]: this.props.currentBasePath === '/' },
                 )}
             >
                 <StyledNavBarLogo
                     isHome={this.props.currentBasePath === '/'}
+                    isExpanded={this.state.isExpanded}
                     specificRouteName={this.props.specificRouteName}
                 />
                 <NavComponent
@@ -98,6 +98,8 @@ export default class NavBar extends React.Component<NavBarProps, NavBarState> {
                     toggleSub={this.toggleSubNav}
                     currentBasePath={this.props.currentBasePath}
                     isMobile={this.props.isMobile}
+                    isExpanded={this.state.isExpanded}
+                    closeMobileMenu={this.setExpandedState}
                 />
             </div >
         );

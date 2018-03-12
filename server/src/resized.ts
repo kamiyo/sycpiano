@@ -35,7 +35,7 @@ resized.get('/*', async (req, res) => {
         const parsedPath = path.parse(req.params[0]);
         const width = w ? `w${w}` : '';
         const height = h ? `h${h}` : '';
-        const filename = `${parsedPath.name}${width}${height}${parsedPath.ext}`;
+        const filename = `${parsedPath.name}.${width}${height}${parsedPath.ext}`;
         const newDir = path.join(__dirname, '../../.resized-cache/', parsedPath.dir);
         try {
             await new Promise((resolve, reject) => {
@@ -66,11 +66,24 @@ resized.get('/*', async (req, res) => {
                         .withoutEnlargement()
                         .toFile(newPath);
 
-                    await sendFileAsync.call(res, newPath, {});
-                    res.end();
                 } catch (e) {
-                    console.error(e);
+                    const parsedImg = path.parse(imgPath);
+                    const jpegPath = `${parsedImg.dir}/${parsedImg.name}.jpg`;
+                    try {
+                        await statAsync(jpegPath);
+                        await Sharp(jpegPath)
+                            .resize(w, h)
+                            .max()
+                            .withoutEnlargement()
+                            .webp()
+                            .toFile(newPath);
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
+
+                await sendFileAsync.call(res, newPath, {});
+                res.end();
             }
         } catch (e) {
             console.error(e);

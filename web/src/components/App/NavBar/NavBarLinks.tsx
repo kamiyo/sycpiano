@@ -34,6 +34,7 @@ let NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
                         to={link.path}
                         subNavLinks={link.subPaths}
                         showSubs={props.showSubs}
+                        isExpanded={props.isExpanded}
                         toggleSub={props.toggleSub}
                         active={link.path === props.currentBasePath}
                         isHome={props.currentBasePath === '/'}
@@ -62,6 +63,7 @@ NavBarLinks = styled(NavBarLinks)`
         display: flex;
         justify-content: center;
         box-shadow: inset 0 7px 6px -5px rgba(0, 0, 0, 0.25);
+        visibility: hidden;
     }
 `;
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
 
-import { hiDPI, mix } from 'polished';
+import { mix } from 'polished';
 import { Link } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 
@@ -24,11 +24,6 @@ interface HighlightProps {
 const getHighlightStyles = (isMobile: boolean) => css`
     /* stylelint-disable */
     ${!isMobile && `
-        ${hiDPI(2)} {
-            height: ${navBarHeight.hdpi}px;
-            margin-top: 0;
-        }
-
         margin-top: ${navBarMarginTop.nonHdpi}px;
         height: ${navBarHeight.nonHdpi - navBarMarginTop.nonHdpi}px;
     `}
@@ -54,20 +49,10 @@ const highlightActiveStyle = css`
 `;
 
 const highlightHomeStyle = css`
-    /* stylelint-disable-next-line */
-    ${hiDPI(2)} {
-        background-color: white;
-    }
-
     background-color: white;
 `;
 
 const highlightHomeActivestyle = css`
-    /* stylelint-disable-next-line */
-    ${hiDPI(2)} {
-        height: 2px;
-    }
-
     height: 5px;
 `;
 
@@ -93,6 +78,7 @@ interface NavBarLinkProps {
     readonly className?: string;
     readonly active: boolean;
     readonly isHome: boolean;
+    readonly isExpanded: boolean;
     readonly link: string;
     readonly showSubs: string[];
     readonly subNavLinks: string[];
@@ -130,8 +116,7 @@ const linkHomeStyle = css`
     }
 `;
 
-const linkHomeActiveStyle = (isMobile: boolean) => css`
-    color: ${isMobile ? 'rgba(200, 200, 200, 1)' : 'rgba(255, 255, 255, 1)'};
+const linkHomeActiveStyle = css`
     text-shadow: 0 0 1px rgba(255, 255, 255, 1);
 `;
 
@@ -141,7 +126,7 @@ const getSubNavContainer = (isMobile: boolean) => css`
         height: 0;
         overflow: hidden;
     ` : `
-        opacity: 0;
+        visibility: hidden;
     `}
     /* stylelint-enable */
 `;
@@ -155,14 +140,14 @@ const enterAnimation = (el: HTMLElement, isAppearing: boolean, isMobile: boolean
             TweenLite.from(el, 0.25, { height: 0 });
         }
     } else {
-        TweenLite.fromTo(el, 0.25, { opacity: 0 }, { opacity: 1 });
+        TweenLite.to(el, 0.25, { autoAlpha: 1 });
     }
 };
 
 const exitAnimation = (el: HTMLElement, isMobile: boolean) => {
     isMobile ?
         TweenLite.to(el, 0.25, { height: 0 })
-        : TweenLite.fromTo(el, 0.25, { opacity: 1 }, { opacity: 0 });
+        : TweenLite.to(el, 0.25, { autoAlpha: 0 });
 };
 
 let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
@@ -174,8 +159,8 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                     className={cx(
                         linkStyle,
                         { [linkActiveStyle]: props.active && !props.isHome && !props.isMobile },
-                        { [linkHomeStyle]: props.isHome },
-                        { [linkHomeActiveStyle(props.isMobile)]: props.active && props.isHome },
+                        { [linkHomeStyle]: props.isHome && !props.isExpanded },
+                        { [linkHomeActiveStyle]: props.active && props.isHome && !props.isMobile },
                     )}
                 >
                     <Highlight active={props.active} isHome={props.isHome} link={props.link} isMobile={props.isMobile} />
@@ -184,13 +169,13 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                     to={props.to}
                     onClick={() => {
                         props.toggleSub('');
-                        props.closeMobileMenu && props.closeMobileMenu();
+                        props.closeMobileMenu && props.closeMobileMenu(false);
                     }}
                     className={cx(
                         linkStyle,
                         { [linkActiveStyle]: props.active && !props.isHome && !props.isMobile },
-                        { [linkHomeStyle]: props.isHome },
-                        { [linkHomeActiveStyle(props.isMobile)]: props.active && props.isHome },
+                        { [linkHomeStyle]: props.isHome && !props.isExpanded },
+                        { [linkHomeActiveStyle]: props.active && props.isHome && !props.isMobile },
                     )}
                 >
                     <Highlight active={props.active} isHome={props.isHome} link={props.link} isMobile={props.isMobile} />
@@ -210,7 +195,7 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                         links={props.subNavLinks}
                         onClick={() => {
                             props.toggleSub('');
-                            props.closeMobileMenu && props.closeMobileMenu();
+                            props.closeMobileMenu && props.closeMobileMenu(false);
                         }}
                         isHome={props.isHome}
                         isMobile={props.isMobile}
@@ -222,11 +207,6 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
 );
 
 NavBarLink = styled(NavBarLink) `
-    /* stylelint-disable-next-line */
-    ${hiDPI(2)} {
-        font-size: 1.4rem;
-    }
-
     font-size: 1.4rem;
     position: relative;
     font-family: ${lato2};
