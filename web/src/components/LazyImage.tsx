@@ -1,12 +1,23 @@
 import * as Blazy from 'blazy';
 import * as React from 'react';
 import styled from 'react-emotion';
+import { Transition } from 'react-transition-group';
+
+import TweenLite from 'gsap/TweenLite';
 
 import { LoadingInstance } from 'src/components/LoadingSVG';
 import { lightBlue } from 'src/styles/colors';
 
-const StyledLoadingInstance = styled(LoadingInstance)`
-    position: relative;
+const fadeOnEnter = (element: HTMLElement) => {
+    TweenLite.to(element, 0.25, { autoAlpha: 1 });
+};
+
+const fadeOnExit = (element: HTMLElement) => {
+    TweenLite.to(element, 0.25, { autoAlpha: 0 });
+};
+
+const StyledLoadingInstance = styled(LoadingInstance) `
+    position: absolute;
     height: 100px;
     top: 50%;
     left: 50%;
@@ -76,34 +87,25 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
 
     componentDidUpdate(prevProps: LazyImageProps) {
         if (prevProps.isMobile !== this.props.isMobile) {
-            setTimeout(() => this.activateBlazy(), 500);
+            setTimeout(() => this.blazy.revalidate(), 500);
         }
-    }
-
-    componentWillUpdate(nextProps: LazyImageProps) {
-        if (nextProps.isMobile !== this.props.isMobile) {
-            this.blazy.destroy();
-            this.props.destroyCb && this.props.destroyCb();
-        }
-    }
-
-    shouldComponentUpdate(nextProps: LazyImageProps, nextState: LazyImageState) {
-        if (nextProps.isMobile !== this.props.isMobile) {
-            return true;
-        }
-        if (nextState.isLoaded !== this.state.isLoaded) {
-            return true;
-        }
-        return false;
     }
 
     render() {
         return (
             <>
-                {!this.state.isLoaded &&
+                <Transition
+                    in={!this.state.isLoaded}
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                    onEnter={fadeOnEnter}
+                    onExit={fadeOnExit}
+                    timeout={250}
+                >
                     <div className={this.props.classNames.loading}>
                         <StyledLoadingInstance />
-                    </div>}
+                    </div>
+                </Transition>
                 {this.props.isMobile ? (
                     <picture key="mobile">
                         <source

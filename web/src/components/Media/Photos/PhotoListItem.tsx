@@ -21,8 +21,9 @@ const photoRowHover = (isMobile: boolean): string => (
     `
 );
 
-const PhotoRow = styled<{ isMobile: boolean; }, 'div'>('div') `
-    height: ${props => props.isMobile ? 'auto' : '300px'};
+const PhotoRow = styled<{ isMobile: boolean; isLoaded: boolean }, 'div'>('div') `
+    position: relative;
+    height: ${props => props.isMobile && props.isLoaded ? 'auto' : '300px'};
     border: 1px solid transparent;
     transition: all 0.2s;
     border-radius: 10px;
@@ -30,6 +31,7 @@ const PhotoRow = styled<{ isMobile: boolean; }, 'div'>('div') `
 
     img {
         width: 100%;
+        position: ${props => props.isMobile ? 'relative' : 'absolute'};
     }
 
     /* tslint:disable:declaration-empty-line-before */
@@ -53,9 +55,13 @@ const loadingStyle = css`
     background-color: rgb(208, 208, 208);
     fill: rgb(208, 208, 208);
     height: 300px;
+    width: 100%;
+    position: absolute;
 `;
 
-class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, {}> {
+class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, { isLoaded: boolean; }> {
+    state = { isLoaded: false };
+
     render() {
         const { item, currentItemId, isMobile, onClick } = this.props;
         const isActive = currentItemId === idFromItem(item);
@@ -64,7 +70,7 @@ class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, {}> {
         const mobileWebP = resizedPathFromItem(item, { gallery: true, webp: true });
         const desktopWebP = resizedPathFromItem(item, { gallery: true, thumbnail: true, webp: true });
         const photoRow = (
-            <PhotoRow onClick={() => onClick && onClick(item)} isMobile={isMobile}>
+            <PhotoRow onClick={() => onClick && onClick(item)} isMobile={isMobile} isLoaded={this.state.isLoaded}>
                 <LazyImage
                     id={idFromItem(item)}
                     offset={500}
@@ -99,6 +105,7 @@ class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, {}> {
                         src: desktopUrl,
                     }}
                     successCb={(el: HTMLImageElement) => {
+                        this.setState({isLoaded: true});
                         TweenLite.to(el, 0.2, { autoAlpha: 1 });
                     }}
                 />

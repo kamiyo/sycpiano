@@ -11,11 +11,11 @@ import { generateSrcsetWidths } from 'src/styles/imageUrls';
 import { screenWidths } from 'src/styles/screens';
 
 const fadeOnEnter = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.6, { opacity: 0 }, { opacity: 1 });
+    TweenLite.to(element, 0.25, { autoAlpha: 1 });
 };
 
 const fadeOnExit = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.6, { opacity: 1 }, { opacity: 0 });
+    TweenLite.to(element, 0.25, { autoAlpha: 0 });
 };
 
 interface PhotoFaderProps {
@@ -34,10 +34,10 @@ const PhotoFader: React.SFC<PhotoFaderProps> = ({ item, isCurrent }) => {
             onEntering={fadeOnEnter}
             onExiting={fadeOnExit}
             appear={true}
-            timeout={600}
+            timeout={250}
         >
             <LazyImage
-                id={idFromItem(item)}
+                id={`${idFromItem(item)}_view`}
                 alt="Sean Chen Pianist Photo Viewer"
                 classNames={{
                     desktop: css` visibility: hidden; `,
