@@ -21,4 +21,5 @@ Press = styled(Press)`
     top: 0;
 `;
 
-export default Press;
+export const Component = Press;
+export default { Component };

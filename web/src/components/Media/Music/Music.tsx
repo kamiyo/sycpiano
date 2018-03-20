@@ -317,7 +317,9 @@ const mapDispatchToProps = (dispatch: Dispatch<GlobalStateShape>): MusicDispatch
     fetchPlaylistAction: (track: string) => dispatch(fetchPlaylistAction(track)),
 });
 
-export default connect<MusicStateToProps, MusicDispatchToProps>(
+export const Component = connect<MusicStateToProps, MusicDispatchToProps>(
     mapStateToProps,
     mapDispatchToProps,
 )(Music);
+
+export default { Component };

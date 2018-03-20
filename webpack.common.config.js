@@ -35,6 +35,7 @@ const config = () => {
         },
         output: {
             path: path.resolve(__dirname, 'web/build'),
+            chunkFilename: '[name].chunk.js',
         },
         module: {
             rules: [{

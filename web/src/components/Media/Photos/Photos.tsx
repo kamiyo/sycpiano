@@ -93,7 +93,9 @@ const mapDispatchToProps = (dispatch: Dispatch<GlobalStateShape>): PhotosDispatc
     selectPhotoAction: (item: PhotoItem) => dispatch(selectPhoto(item)),
 });
 
-export default connect<PhotosStateToProps, PhotosDispatchToProps>(
+export const Component = connect<PhotosStateToProps, PhotosDispatchToProps>(
     mapStateToProps,
     mapDispatchToProps,
 )(Photos);
+
+export default { Component };

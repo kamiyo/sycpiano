@@ -298,4 +298,5 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; },
     }
 }
 
-export default Home;
+export const Component = Home;
+export default { Component };

@@ -13,15 +13,14 @@ import 'gsap/CSSPlugin';
 import TweenLite from 'gsap/TweenLite';
 
 import NavBar from 'src/components/App/NavBar/NavBar';
-import { LoadingSVG } from 'src/components/LoadingSVG';
 import { LogoSVG } from 'src/components/LogoSVG';
 
-import About from 'src/components/About/About';
-import Contact from 'src/components/Contact/Contact';
-import Home from 'src/components/Home/Home';
-import Media from 'src/components/Media/Media';
-import Press from 'src/components/Press/Press';
-import Schedule from 'src/components/Schedule/Schedule';
+const About = () => import(/* webpackChunkName: 'about' */ 'src/components/About/About');
+const Contact = () => import(/* webpackChunkName: 'contact' */ 'src/components/Contact/Contact');
+const Home = () => import(/* webpackChunkName: 'home' */ 'src/components/Home/Home');
+const Media = () => import(/* webpackChunkName: 'media' */ 'src/components/Media/Media');
+const Press = () => import(/* webpackChunkName: 'press' */ 'src/components/Press/Press');
+const Schedule = () => import(/* webpackChunkName: 'schedule' */ 'src/components/Schedule/Schedule');
 import { reactMediaMobileQuery } from 'src/styles/screens';
 
 const fadeOnEnter = (element: HTMLElement) => {
@@ -77,7 +76,6 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                 {(matches: boolean) => (
                     <RootContainer isHome={this.getRouteBase() === '/'}>
                         <LogoSVG />
-                        <LoadingSVG />
                         <Transition
                             in={this.state.homeBgLoaded}
                             onEntering={fadeOnEnter}

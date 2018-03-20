@@ -47,4 +47,5 @@ const Media: React.SFC<{ isMobile: boolean; }> = ({ isMobile }) => (
     </MediaContainer>
 );
 
-export default Media;
+export const Component = Media;
+export default { Component };
