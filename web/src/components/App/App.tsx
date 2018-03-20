@@ -1,3 +1,4 @@
+import AsyncComponent from 'src/components/AsyncComponent';
 import toUpper from 'lodash-es/toUpper';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
