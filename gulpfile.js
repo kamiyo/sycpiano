@@ -34,12 +34,13 @@ const buildApp = (done) => (
 
 gulp.task('build-app', buildApp);
 
-const cleanServer = () => (
-    del([
+const cleanServer = async (done) => {
+    await del([
         'server/build/**/*.js',
         '.resized-cache/*',
-    ])
-);
+    ]);
+    done();
+};
 
 const lintServer = () => {
     const program = linter.Linter.createProgram("server/tsconfig.json");
@@ -71,8 +72,7 @@ gulp.task('build-server', buildServer);
 gulp.task(
     'build-prod',
     // We don't have enough memory in production to do build-server and build-app in parallel.
-    (isProduction ? gulp.series : gulp.parallel)
-        .call(this, 'build-server', 'build-app')
+    gulp.series(buildServer, buildApp)
 );
 
 // build folder needs to exist when nodemon watch is called
