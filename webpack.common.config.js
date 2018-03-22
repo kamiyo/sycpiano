@@ -8,7 +8,6 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const os = require('os');
 const threadLoader = require('thread-loader');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -97,7 +96,6 @@ const config = () => {
                 format: '[:percent] webpack: :msg... :elapseds \n',
                 clear: false,
             }),
-            // new BundleAnalyzerPlugin(),
         ],
         resolve: {
             extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
