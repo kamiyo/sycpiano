@@ -5,4 +5,4 @@ yarn run build-prod;
 node server/build/seed down;
 node server/build/seed up;
 node server/build/migrate up;
-pm2 start yarn -- start --name=sycpiano;
+pm2 start yarn --name=sycpiano -- start;
