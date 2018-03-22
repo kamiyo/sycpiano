@@ -21,5 +21,5 @@ const Contact: React.SFC<{ isMobile: boolean; }> = () => (
     </ContactContainer>
 );
 
-export const Component = Contact;
-export default { Component };
+export type ContactType = typeof Contact;
+export default Contact;

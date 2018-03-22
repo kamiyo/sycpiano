@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'react-emotion';
 
-import { tint } from 'polished';
+import tint from 'polished/lib/color/tint';
 
 import SubNavLink from 'src/components/App/NavBar/SubNav/SubNavLink';
 import { logoBlue } from 'src/styles/colors';

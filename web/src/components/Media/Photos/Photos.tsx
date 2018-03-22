@@ -93,9 +93,10 @@ const mapDispatchToProps = (dispatch: Dispatch<GlobalStateShape>): PhotosDispatc
     selectPhotoAction: (item: PhotoItem) => dispatch(selectPhoto(item)),
 });
 
-export const Component = connect<PhotosStateToProps, PhotosDispatchToProps>(
+const ConnectedPhotos = connect<PhotosStateToProps, PhotosDispatchToProps>(
     mapStateToProps,
     mapDispatchToProps,
 )(Photos);
 
-export default { Component };
+export type PhotosType = typeof ConnectedPhotos;
+export default ConnectedPhotos;

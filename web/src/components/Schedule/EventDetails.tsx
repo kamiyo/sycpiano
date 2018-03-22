@@ -1,6 +1,6 @@
 import startCase from 'lodash-es/startCase';
 import { Moment } from 'moment-timezone';
-import { mix } from 'polished';
+import mix from 'polished/lib/color/mix';
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
 

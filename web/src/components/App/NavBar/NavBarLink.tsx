@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
 
-import { mix } from 'polished';
+import mix from 'polished/lib/color/mix';
 import { Link } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 

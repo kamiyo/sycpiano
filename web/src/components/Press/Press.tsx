@@ -21,5 +21,5 @@ Press = styled(Press)`
     top: 0;
 `;
 
-export const Component = Press;
-export default { Component };
+export type PressType = typeof Press;
+export default Press;

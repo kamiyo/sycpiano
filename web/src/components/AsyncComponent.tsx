@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
 
 interface AsyncComponentProps {
-    moduleProvider?: () => Promise<any>;
+    moduleProvider?: () => Promise<{ Component: new () => React.Component<any, any> }>;
+    [props: string]: any;
 }
 
 interface AsyncComponentState {
@@ -22,8 +23,9 @@ export default class AsyncComponent extends PureComponent<AsyncComponentProps, A
 
     render() {
         const { Component } = this.state;
+        const { moduleProvider, ...props } = this.props;
         return (
-            Component && <Component />
+            Component && <Component {...props} />
         );
     }
 }

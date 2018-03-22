@@ -1,5 +1,5 @@
 import { css } from 'emotion';
-import { darken } from 'polished';
+import darken from 'polished/lib/color/darken';
 
 import { navBarHeight } from 'src/styles/variables';
 

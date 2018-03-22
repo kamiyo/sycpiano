@@ -100,9 +100,10 @@ const mapDispatchToProps: VideosDispatchToProps = {
     resetPlayer,
 };
 
-export const Component = connect<VideosStateToProps, VideosDispatchToProps>(
+const ConnectedVideos = connect<VideosStateToProps, VideosDispatchToProps, VideosOwnProps>(
     mapStateToProps,
     mapDispatchToProps,
 )(Videos);
 
-export default { Component };
+export type VideosType = typeof ConnectedVideos;
+export default ConnectedVideos;

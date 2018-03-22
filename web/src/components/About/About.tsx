@@ -240,5 +240,5 @@ class About extends React.Component<AboutProps, AboutState> {
     }
 }
 
-export const Component = About;
-export default { Component };
+export type AboutType = typeof About;
+export default About;

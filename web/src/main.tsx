@@ -1,21 +1,21 @@
+import * as bluebird from 'bluebird';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-global.Promise = Promise;
+global.Promise = bluebird;
 
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route } from 'react-router-dom';
 
 import 'src/styles/global';
 
-import createSycStore from 'src/store';
+import store from 'src/store';
 
 import App from 'src/components/App/App';
 
 main();
 
 function main() {
-    const store = createSycStore();
     ReactDOM.render((
         <Provider store={store}>
             <BrowserRouter>

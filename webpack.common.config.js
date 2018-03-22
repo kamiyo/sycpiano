@@ -8,6 +8,7 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const os = require('os');
 const threadLoader = require('thread-loader');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -35,7 +36,7 @@ const config = () => {
         },
         output: {
             path: path.resolve(__dirname, 'web/build'),
-            chunkFilename: '[name].chunk.js',
+            publicPath: '/static/',
         },
         module: {
             rules: [{
@@ -77,17 +78,11 @@ const config = () => {
         optimization: {
             runtimeChunk: 'single',
             splitChunks: {
-                cacheGroups: {
-                    vendor: {
-                        test: /[\\/]node_modules[\\/]/,
-                        name: "vendor",
-                        chunks: "all"
-                    }
-                }
-            }
+                chunks: 'all',
+            },
         },
         plugins: [
-            new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
+            new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /^en$/),
             new webpack.DefinePlugin({
                 BINARY_PATH: JSON.stringify(staticPrefix + '/binary'),
                 IMAGES_PATH: JSON.stringify(staticPrefix + '/images'),
@@ -103,6 +98,7 @@ const config = () => {
                 format: '[:percent] webpack: :msg... :elapseds \n',
                 clear: false,
             }),
+            // new BundleAnalyzerPlugin(),
         ],
         resolve: {
             extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
