@@ -16,8 +16,6 @@ const workerPool = {
 };
 
 const config = () => {
-    threadLoader.warmup(workerPool, ['stylelint-custom-processor-loader']);
-
     return merge(common, {
         mode: 'development',
         devtool: 'inline-cheap-source-map',

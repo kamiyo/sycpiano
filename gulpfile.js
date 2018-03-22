@@ -1,5 +1,4 @@
 // gulpfile.js
-
 const nodemon = require('gulp-nodemon');
 const gulp = require('gulp');
 const fancyLog = require('fancy-log');
@@ -59,7 +58,7 @@ const compileServer = () => (
         .pipe(tsProject())
         .js
         .pipe(gulp.dest('./server/build'))
-)
+);
 
 const buildServer = gulp.series(
     // We don't need linting in production.

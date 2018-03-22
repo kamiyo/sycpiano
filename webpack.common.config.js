@@ -28,7 +28,6 @@ const workerPool = {
 };
 
 const config = () => {
-    threadLoader.warmup(workerPool, ['babel-loader', 'babel-plugin-emotion', 'ts-loader']);
     return {
         cache: true,
         entry: {
