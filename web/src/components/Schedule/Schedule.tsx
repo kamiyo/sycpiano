@@ -50,4 +50,5 @@ const Schedule: React.SFC<{ isMobile: boolean; }> = () => (
     </div>
 );
 
+export type ScheduleType = typeof Schedule;
 export default Schedule;

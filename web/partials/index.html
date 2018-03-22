@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html>
-  <head>
-      <title>Sean Chen: Pianist, Composer, Arranger</title>
-      <link rel="icon" type="image/png" href="/static/images/favicon.png">
-      <meta charset="UTF-8">
-      <meta name="description" content="The official website of pianist, composer, arranger Sean Chen.">
-      <meta name="keywords" content="piano,pianist,music,composer,arranger,performer,artist">
-      <meta name="viewport" content="width=device-width">
-  </head>
-  <body>
-    <div id="hero-container"></div>
-    <script defer src="/static/<%= htmlWebpackPlugin.files.chunks.runtime.entry%>"></script>
-    <script defer src="/static/<%= htmlWebpackPlugin.files.chunks.vendor.entry%>"></script>
-    <script defer src="/static/<%= htmlWebpackPlugin.files.chunks.sycpiano.entry%>"></script>
-  </body>
+
+<head>
+  <title>Sean Chen: Pianist, Composer, Arranger</title>
+  <link rel="icon" type="image/png" href="/static/images/favicon.png">
+  <meta charset="UTF-8">
+  <meta name="description" content="The official website of pianist, composer, arranger Sean Chen.">
+  <meta name="keywords" content="piano,pianist,music,composer,arranger,performer,artist">
+  <meta name="viewport" content="width=device-width">
+</head>
+
+<body>
+  <div id="hero-container"></div>
+  <% _.each(Object.keys(htmlWebpackPlugin.files.chunks), function(name, key) { %>
+    <script defer src="<%= htmlWebpackPlugin.files.chunks[name].entry %>"></script>
+    <% })%>
+</body>
+
 </html>

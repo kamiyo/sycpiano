@@ -13,29 +13,43 @@ import 'gsap/CSSPlugin';
 import TweenLite from 'gsap/TweenLite';
 
 import NavBar from 'src/components/App/NavBar/NavBar';
-import { LoadingSVG } from 'src/components/LoadingSVG';
 import { LogoSVG } from 'src/components/LogoSVG';
 
-import About from 'src/components/About/About';
-import Contact from 'src/components/Contact/Contact';
-import Home from 'src/components/Home/Home';
-import Media from 'src/components/Media/Media';
-import Press from 'src/components/Press/Press';
-import Schedule from 'src/components/Schedule/Schedule';
+import AsyncComponent from 'src/components/AsyncComponent';
+import extractModule from 'src/module';
+import store from 'src/store';
 import { reactMediaMobileQuery } from 'src/styles/screens';
 
-const fadeOnEnter = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.25, { opacity: 0 }, { opacity: 1, delay: 0.25 });
+const register = extractModule(store);
+const About = () => register('about', import(/* webpackChunkName: 'about' */ 'src/components/About'));
+const Contact = () => register('contact', import(/* webpackChunkName: 'contact' */ 'src/components/Contact'));
+const Home = () => register('home', import(/* webpackChunkName: 'home' */ 'src/components/Home'));
+const Media = () => register('media', import(/* webpackChunkName: 'media' */ 'src/components/Media'));
+const Press = () => register('press', import(/* webpackChunkName: 'press' */ 'src/components/Press'));
+const Schedule = () => register('schedule', import(/* webpackChunkName: 'schedule' */ 'src/components/Schedule'));
+
+const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
+    if (element) {
+        TweenLite.fromTo(element, 0.25, { autoAlpha: 0 }, { autoAlpha: 1, delay });
+    }
 };
 
 const fadeOnExit = (element: HTMLElement) => {
-    TweenLite.fromTo(element, 0.25, { opacity: 1 }, { opacity: 0 });
+    if (element) {
+        TweenLite.fromTo(element, 0.25, { autoAlpha: 1 }, { autoAlpha: 0 });
+    }
 };
 
 const RootContainer = styled<{ isHome: boolean; }, 'div'>('div') `
     height: 100%;
     width: 100%;
     background-color: ${props => props.isHome ? 'black' : 'white'};
+`;
+
+const FadingContainer = styled('div') `
+    height: 100%;
+    width: 100%;
+    visibility: hidden;
 `;
 
 export default class App extends React.Component<RouteComponentProps<void>, { homeBgLoaded: boolean; }> {
@@ -77,15 +91,14 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                 {(matches: boolean) => (
                     <RootContainer isHome={this.getRouteBase() === '/'}>
                         <LogoSVG />
-                        <LoadingSVG />
                         <Transition
                             in={this.state.homeBgLoaded}
-                            onEntering={fadeOnEnter}
+                            onEntering={fadeOnEnter(0)}
                             timeout={250}
                             appear={true}
                         >
                             <NavBar
-                                className={css` opacity: 0; `}
+                                className={css` visibility: hidden; `}
                                 currentBasePath={this.getRouteBase()}
                                 specificRouteName={this.getMostSpecificRouteName()}
                                 isMobile={matches}
@@ -94,25 +107,43 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                         <TransitionGroup>
                             <Transition
                                 key={this.getRouteBase()}
-                                onEntering={fadeOnEnter}
+                                onEntering={fadeOnEnter(0.25)}
                                 onExiting={fadeOnExit}
-                                timeout={500}
+                                timeout={750}
                                 appear={true}
                             >
-                                <Switch location={this.props.location}>
-                                    <Route path="/about" exact={true} render={(childProps) => <About {...childProps} isMobile={matches} />} />
-                                    <Route path="/contact" exact={true} render={(childProps) => <Contact {...childProps} isMobile={matches} />} />
-                                    <Route path="/media" render={(childProps) => <Media {...childProps} isMobile={matches} />} />
-                                    <Route path="/press" exact={true} render={(childProps) => <Press {...childProps} isMobile={matches} />} />
-                                    <Route path="/schedule" render={(childProps) => <Schedule {...childProps} isMobile={matches} />} />
-                                    <Route
-                                        path="/"
-                                        exact={true}
-                                        render={(childProps) => (
-                                            <Home {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />
-                                        )}
-                                    />
-                                </Switch>
+                                <FadingContainer>
+                                    <Switch location={this.props.location}>
+                                        <Route
+                                            path="/about"
+                                            exact={true}
+                                            render={(childProps) => <AsyncComponent moduleProvider={About} {...childProps} isMobile={matches} />}
+                                        />
+                                        <Route
+                                            path="/contact"
+                                            exact={true}
+                                            render={(childProps) => <AsyncComponent moduleProvider={Contact} {...childProps} isMobile={matches} />}
+                                        />
+                                        <Route
+                                            path="/media"
+                                            render={(childProps) => <AsyncComponent moduleProvider={Media} {...childProps} isMobile={matches} />}
+                                        />
+                                        <Route
+                                            path="/press"
+                                            exact={true}
+                                            render={(childProps) => <AsyncComponent moduleProvider={Press} {...childProps} isMobile={matches} />}
+                                        />
+                                        <Route
+                                            path="/schedule"
+                                            render={(childProps) => <AsyncComponent moduleProvider={Schedule} {...childProps} isMobile={matches} />}
+                                        />
+                                        <Route
+                                            path="/"
+                                            exact={true}
+                                            render={(childProps) => <AsyncComponent moduleProvider={Home} {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />}
+                                        />
+                                    </Switch>
+                                </FadingContainer>
                             </Transition>
                         </TransitionGroup>
                     </RootContainer>

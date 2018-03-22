@@ -5,7 +5,8 @@
                 ["emotion", {
                     "sourceMap": false,
                     "hoist": true
-                }]
+                }],
+                ["syntax-dynamic-import"]
             ]
         },
         "development": {
@@ -14,7 +15,8 @@
                     "sourceMap": true,
                     "hoist": true,
                     "autoLabel": true
-                }]
+                }],
+                ["syntax-dynamic-import"]
             ]
         }
     }

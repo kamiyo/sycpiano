@@ -21,4 +21,5 @@ Press = styled(Press)`
     top: 0;
 `;
 
+export type PressType = typeof Press;
 export default Press;

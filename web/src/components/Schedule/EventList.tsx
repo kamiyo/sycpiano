@@ -297,7 +297,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
         <CellMeasurer
             cache={cache}
             columnIndex={0}
-            key={key}
+            key={`${key}_${this.props.activeName}`}
             rowIndex={index}
             parent={parent}
         >
