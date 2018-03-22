@@ -13,7 +13,7 @@
     "test-prod": "cross-env NODE_ENV=production gulp build-prod",
     "start": "node app.js",
     "start-dev": "cross-env NODE_ENV=development gulp run-dev",
-    "start-prod": "pm2 start bin/start.sh --name=sycpiano",
+    "start-prod": "bin/start.sh",
     "test": "jest --config='__tests__/' --coverage",
     "test-watch": "jest --config='__tests__/' --coverage --watchAll"
   },
