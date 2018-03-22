@@ -72,7 +72,7 @@ gulp.task('build-server', buildServer);
 gulp.task(
     'build-prod',
     // We don't have enough memory in production to do build-server and build-app in parallel.
-    gulp.series(buildServer, buildApp)
+    gulp.series('build-server', 'build-app')
 );
 
 // build folder needs to exist when nodemon watch is called

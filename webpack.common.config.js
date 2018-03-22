@@ -23,7 +23,7 @@ const sourcePaths = [
 
 const workerPool = {
     workers: threadPoolSize,
-    poolTimeout: isProd ? Infinity : 2000,
+    poolTimeout: isProd ? 2000 : Infinity,
 };
 
 const config = () => {
