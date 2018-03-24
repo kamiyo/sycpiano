@@ -84,7 +84,7 @@ const config = () => {
             new webpack.DefinePlugin({
                 BINARY_PATH: JSON.stringify(staticPrefix + '/binary'),
                 IMAGES_PATH: JSON.stringify(staticPrefix + '/images'),
-                MUSIC_PATH: JSON.stringify(staticPrefix + '/music'),
+                // MUSIC_PATH: JSON.stringify(staticPrefix + '/music'), => see dev and prod files
                 VIDEOS_PATH: JSON.stringify(staticPrefix + '/videos'),
             }),
             new CleanWebpackPlugin([path.resolve(__dirname, 'web/build/*')]),
@@ -107,4 +107,7 @@ const config = () => {
     }
 };
 
-module.exports = config();
+module.exports = {
+    config: config(),
+    staticPrefix,
+};

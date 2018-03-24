@@ -15,9 +15,9 @@ coverage/
 node_modules
 nohup.out
 npm-debug.log
-scripts/cpp/Eigen
 secret.ts
 web/build/
+web/assets/music/
 server/build/
 server/gapi-key.json
 yarn-error.log

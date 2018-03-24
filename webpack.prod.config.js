@@ -4,9 +4,10 @@
 const merge = require('webpack-merge');
 const common = require('./webpack.common.config.js');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
 const os = require('os');
 
-const config = merge(common, {
+const config = merge(common.config, {
     mode: 'production',
     output: {
         filename: '[name].bundle.js',
@@ -17,6 +18,9 @@ const config = merge(common, {
             uglifyOptions: {
                 ecma: 6,
             },
+        }),
+        new webpack.DefinePlugin({
+            MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music'),
         }),
     ],
 });
