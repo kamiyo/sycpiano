@@ -4,6 +4,7 @@
 const path = require('path');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.config.js');
+const webpack = require('webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const os = require('os');
 const threadLoader = require('thread-loader');
@@ -16,7 +17,7 @@ const workerPool = {
 };
 
 const config = () => {
-    return merge(common, {
+    return merge(common.config, {
         mode: 'development',
         devtool: 'inline-cheap-source-map',
         output: {
@@ -43,6 +44,9 @@ const config = () => {
                 watch: [
                     path.resolve(__dirname, 'web/src'),
                 ],
+            }),
+            new webpack.DefinePlugin({
+                MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music_dev'),
             }),
         ],
     });
