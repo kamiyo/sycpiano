@@ -134,7 +134,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                                             render={(childProps) => <AsyncComponent moduleProvider={Press} {...childProps} isMobile={matches} />}
                                         />
                                         <Route
-                                            path="/schedule"
+                                            path="/schedule/:type?/:date?"
                                             render={(childProps) => <AsyncComponent moduleProvider={Schedule} {...childProps} isMobile={matches} />}
                                         />
                                         <Route

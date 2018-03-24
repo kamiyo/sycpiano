@@ -21,23 +21,23 @@ const FlexEventInfoContainer = styled('div')`
     padding: 0 0 0 35px;
 `;
 
-type EventItemBody = DayItem & { className?: string };
+type EventItemBodyProps = DayItem & { className?: string, isMobile?: boolean; permaLink: string; };
 
 const detailSectionMargin = (extra?: number) => css` margin-bottom: ${20 + (extra || 0)}px; `;
 
-let EventItemBody: React.SFC<EventItemBody> = (props) => (
+let EventItemBody: React.SFC<EventItemBodyProps> = (props) => (
     <div className={props.className}>
-        <div><FlexEventDate dateTime={props.dateTime} /></div>
+        <div><FlexEventDate dateTime={props.dateTime} isMobile={props.isMobile}/></div>
 
         <FlexEventInfoContainer>
-            <EventName className={detailSectionMargin()} name={props.name} />
+            <EventName className={detailSectionMargin()} name={props.name} isMobile={props.isMobile} permaLink={props.permaLink} />
 
             <EventTime
                 className={detailSectionMargin()}
                 dateTime={props.dateTime}
             />
 
-            <EventLocation location={props.location} className={detailSectionMargin()} />
+            <EventLocation location={props.location} className={detailSectionMargin()} isMobile={props.isMobile}/>
             <EventCollaborators collaborators={props.collaborators} className={detailSectionMargin()} />
             <EventProgram program={props.program} className={detailSectionMargin(5)} />
 
@@ -46,14 +46,14 @@ let EventItemBody: React.SFC<EventItemBody> = (props) => (
     </div>
 );
 
-EventItemBody = styled(EventItemBody)`
+EventItemBody = styled<EventItemBodyProps, typeof EventItemBody>(EventItemBody)`
     display: flex;
-    padding: 30px 0 30px 30px;
+    padding: ${props => props.isMobile ? '30px 0' : '30px 0 30px 30px'};
     font-family: ${lato1};
     align-items: top;
     color: black;
     transition: 0.2s all;
-    width: 80%;
+    width: ${props => props.isMobile ? 90 : 80}%;
     max-width: 1240px;
     margin: 0 auto;
 `;

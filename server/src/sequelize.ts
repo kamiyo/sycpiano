@@ -1,7 +1,8 @@
 import Sequelize from 'sequelize';
 import * as Config from './config/config';
 
-const config = (process.env.NODE_ENV === 'production') ? Config.production : Config.development;
+// const config = (process.env.NODE_ENV === 'production') ? Config.production : Config.development;
+const config = Config.development;
 
 const {
     database,
