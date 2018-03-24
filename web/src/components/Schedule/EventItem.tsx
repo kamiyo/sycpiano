@@ -11,20 +11,17 @@ interface EventItemProps {
     readonly measure: () => void;
     readonly active: boolean;
     readonly type: EventListName;
+    readonly isMobile?: boolean;
+    readonly permaLink: string;
 }
 
 class EventItem extends React.Component<EventItemProps, {}> {
-    componentDidMount() {
-        this.props.measure();
-    }
-
     render() {
         const { event, style } = this.props;
 
-        // permalink creation: {`/schedule/${type}/${event.dateTime.format('YYYY-MM-DD')}`
         return (
             <div style={style}>
-                <EventItemBody {...event} />
+                <EventItemBody {...event} isMobile={this.props.isMobile} permaLink={this.props.permaLink} />
             </div>
         );
     }

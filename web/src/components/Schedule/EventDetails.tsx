@@ -2,52 +2,94 @@ import startCase from 'lodash-es/startCase';
 import { Moment } from 'moment-timezone';
 import mix from 'polished/lib/color/mix';
 import * as React from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import styled, { css, cx } from 'react-emotion';
 
+import { LinkIconInstance } from 'src/components/Schedule/LinkIconSVG';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
 import { Collaborator, Piece } from 'src/components/Schedule/types';
 import { getGoogleMapsSearchUrl } from 'src/components/Schedule/utils';
 
-import { lightBlue, magenta, textGrey } from 'src/styles/colors';
+import { lightBlue, logoBlue, magenta, textGrey } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 
-const eventDateDimension = '107px';
+import TweenLite from 'gsap/TweenLite';
+
 const locationIconDimension = '30px';
 
-interface EventDateTimeProps { dateTime: Moment; className?: string; }
+interface EventDateTimeProps { dateTime: Moment; className?: string; isMobile?: boolean; }
 
 let EventDate: React.SFC<EventDateTimeProps> = (props) => (
     <div className={props.className}>
-        <div className={css({ fontSize: '35px' })}>
+        <div className={css({ fontSize: '2.2em' })}>
             {parseInt(props.dateTime.format('D'), 10)}
         </div>
-        <div className={css({ fontSize: '20px' })}>
+        <div className={css({ fontSize: '1.4em' })}>
             {props.dateTime.format('ddd')}
         </div>
     </div>
 );
 
-EventDate = styled(EventDate)`
+EventDate = styled<EventDateTimeProps, typeof EventDate>(EventDate) `
     text-align: center;
     background-color: ${lightBlue};
     color: white;
-    height: ${eventDateDimension};
-    width: ${eventDateDimension};
-    line-height: 43px;
+    height: 6.7em;
+    width: 6.7em;
+    line-height: 2.5em;
     border-radius: 50%;
-    padding: 12px;
+    padding: 0.8em;
 `;
 
-interface EventNameProps { name: string; className?: string; }
+interface EventNameProps { name: string; className?: string; isMobile?: boolean; permaLink: string; }
 
-let EventName: React.SFC<EventNameProps> = (props) => (
-    <div className={props.className}>{props.name}</div>
-);
+const linkIconStyle = css`
+    margin: 0 0.5em;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: top;
+`;
 
-EventName = styled(EventName)`
-    font-size: 35px;
+const eventNameStyle = (isMobile?: boolean) => css`
+    font-size: 2em;
     font-family: ${lato2};
+    transition: fill 0.2s, color 0.2s;
+    fill: ${isMobile ? logoBlue : 'transparent'};
+    color: ${logoBlue};
+
+    &:hover {
+        cursor: pointer;
+        fill: #999;
+    }
 `;
+
+class EventName extends React.Component<EventNameProps, {}> {
+    copiedSpan: HTMLSpanElement;
+    onCopy = () => {
+        TweenLite.fromTo(this.copiedSpan, 0.2, { autoAlpha: 1 }, { autoAlpha: 0, delay: 0.5 });
+    }
+
+    render() {
+        return (
+            <CopyToClipboard onCopy={this.onCopy} text={this.props.permaLink}>
+                <div className={eventNameStyle(this.props.isMobile)}>
+                    <span>{this.props.name}</span>
+                    <LinkIconInstance className={linkIconStyle} />
+                    <span
+                        className={css`
+                            visibility: hidden;
+                            font-size: 0.5em;
+                        `}
+                        ref={(span) => this.copiedSpan = span}
+                    >
+                        copied
+                    </span>
+                </div>
+            </CopyToClipboard>
+        );
+    }
+}
 
 let EventTime: React.SFC<EventDateTimeProps> = (props) => (
     <div className={props.className}>
@@ -55,9 +97,9 @@ let EventTime: React.SFC<EventDateTimeProps> = (props) => (
     </div>
 );
 
-EventTime = styled(EventTime)` font-size: 20px; `;
+EventTime = styled(EventTime) ` font-size: 1.5em; `;
 
-interface EventLocationProps { location: string; className?: string; }
+interface EventLocationProps { location: string; className?: string; isMobile?: boolean; }
 
 const getVenueName = (location: string): string => {
     if (!location) {
@@ -77,13 +119,12 @@ let EventLocation: React.SFC<EventLocationProps> = (props) => {
     });
 
     return (
-        <a href={getGoogleMapsSearchUrl(props.location)} className={cx(props.className, css` width: fit-content; `)} target="_blank">
+        <a href={getGoogleMapsSearchUrl(props.location)} className={cx(props.className)} target="_blank">
             <LocationIconInstance className={locationIconStyle} />
 
             <strong
                 className={css`
-                    color: black;
-                    margin-left: 10px;
+                    margin-left: ${props.isMobile ? 0 : 10}px;
                 `}
             >
                 {getVenueName(props.location)}
@@ -92,11 +133,19 @@ let EventLocation: React.SFC<EventLocationProps> = (props) => {
     );
 };
 
-EventLocation = styled(EventLocation)`
-    font-size: 20px;
+EventLocation = styled<EventLocationProps, typeof EventLocation>(EventLocation) `
+    font-size: 1.2em;
     display: flex;
     flex-direction: row;
     align-items: center;
+    width: fit-content;
+    text-decoration: underline solid transparent;
+    transition: text-decoration-color 0.2s;
+
+    &:hover {
+        color: ${logoBlue};
+        text-decoration-color: ${logoBlue};
+    }
 `;
 
 interface EventCollaboratorsProps {
@@ -117,9 +166,10 @@ let EventCollaborators: React.SFC<EventCollaboratorsProps> = (props) => (
     </div>
 );
 
-EventCollaborators = styled(EventCollaborators)`
+EventCollaborators = styled(EventCollaborators) `
     list-style: none;
     padding: 0;
+    font-size: 1.2em;
     font-family: ${lato2};
 `;
 
@@ -132,16 +182,16 @@ let EventProgram: React.SFC<EventProgramProps> = (props) => (
     <div className={props.className}>
         {props.program.map(({ composer, piece }: Piece, i: number) => (
             <div key={i}>
-                {composer}{piece ? ': ' : ''}<i>{piece}</i>
+                {composer}{piece ? ' ' : ''}<i>{piece}</i>
             </div>
         ))}
     </div>
 );
 
-EventProgram = styled(EventProgram)`
+EventProgram = styled(EventProgram) `
     list-style: none;
     padding: 0;
-    font-size: 20px;
+    font-size: 1.2em;
     font-family: ${lato2};
 `;
 
@@ -156,9 +206,9 @@ let EventWebsiteButton: React.SFC<EventWebsiteButtonProps> = (props) => (
     </a>
 );
 
-EventWebsiteButton = styled(EventWebsiteButton)`
+EventWebsiteButton = styled(EventWebsiteButton) `
     display: block;
-    font-size: 20px;
+    font-size: 1.2em;
     width: 150px;
     padding: 10px;
     text-align: center;

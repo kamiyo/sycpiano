@@ -80,6 +80,7 @@ export interface ScheduleStateShape {
 }
 
 export interface EventItemsStateShape {
+    readonly itemArray: EventItemType[];
     readonly items: SortedArraySet<EventItemType>;
     readonly currentItem: DayItem;
     readonly currentLatLng: LatLngLiteral;

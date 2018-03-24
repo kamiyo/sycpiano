@@ -26,8 +26,6 @@ import {
 import { lightBlue } from 'src/styles/colors';
 import { GlobalStateShape } from 'src/types';
 
-const cache = new CellMeasurerCache({ fixedWidth: true });
-
 interface EventListStateToProps {
     readonly eventItems: EventItemType[];
     readonly hasEventBeenSelected: boolean;
@@ -46,17 +44,16 @@ interface EventListDispatchToProps {
 }
 
 interface EventListOwnProps {
+    readonly date: string;
     readonly type: EventListName;
+    readonly isMobile?: boolean;
 }
 
 type EventListProps = RouteComponentProps<ParamProps> & EventListOwnProps & EventListStateToProps & EventListDispatchToProps;
 
 interface ParamProps {
+    readonly type: string;
     readonly date: string;
-}
-
-interface EventListState {
-    scrollUpdater: boolean;
 }
 
 interface OnScrollProps {
@@ -65,7 +62,7 @@ interface OnScrollProps {
     clientHeight: number;
 }
 
-const StyledLoadingInstance = styled(LoadingInstance)`
+const StyledLoadingInstance = styled(LoadingInstance) `
     position: relative;
     left: 50%;
     transform: translateX(-50%);
@@ -79,115 +76,86 @@ const fullWidthHeight = css`
     height: 100%;
 `;
 
-class EventList extends React.Component<EventListProps, EventListState> {
+class EventList extends React.Component<EventListProps, { updatedCurrent?: boolean; }> {
     private List: ListWithGrid;
-    private updateReason: 'listChange' | 'selectItem' | 'typeChange' | 'activeChange' | 'initialList' | 'unsetScroll' | 'noMore';
     state = {
-        scrollUpdater: false,
+        updatedCurrent: false,
     };
+
+    keyMapper = (rowIndex: number) => {
+        return this.props.eventItems.length && this.props.eventItems[rowIndex] ? this.props.eventItems[rowIndex].dateTime.format() : '';
+    }
+
+    cache = new CellMeasurerCache({ fixedWidth: true, keyMapper: this.keyMapper});
 
     componentWillMount() {
         // enforce if date is after now, use upcoming
         // or if date is before now, use archive
-        const date = this.props.match.params.date;
-        if (date) {
-            if (moment(date).isSameOrAfter(moment(), 'day') && this.props.type === 'archive') {
-                this.props.history.replace(`/schedule/upcoming/${date}`);
-            } else if (moment(date).isBefore(moment(), 'day') && this.props.type === 'upcoming') {
-                this.props.history.replace(`/schedule/archive/${date}`);
+        const strDate = this.props.match.params.date;
+        const date = moment(this.props.match.params.date, 'YYYY-MM-DD');
+        if (strDate) {
+            if (date.isSameOrAfter(moment(), 'day') && this.props.type === 'archive') {
+                this.props.history.replace(`/schedule/upcoming/${strDate}`);
+            } else if (date.isBefore(moment(), 'day') && this.props.type === 'upcoming') {
+                this.props.history.replace(`/schedule/archive/${strDate}`);
             }
         }
 
         // activate redux state for current type
         this.props.switchList(this.props.type);
-        let params;
-        if (date) {
-            params = { date: moment(date, 'YYYY-MM-DD'), scrollTo: true };
-        } else if (this.props.type === 'upcoming') {
-            params = { after: moment(), scrollTo: true };
-        } else if (this.props.type === 'archive') {
-            params = { before: moment(), scrollTo: true };
-        }
-        this.props.createFetchEventsAction({ ...params });
     }
 
-    componentWillUpdate(nextProps: EventListProps) {
-        if (this.updateReason === 'typeChange') {
+    componentDidCatch(error: any, info: any) {
+        console.log(error, info);
+    }
+
+    componentWillUpdate(nextProps: EventListProps & { [key: string]: any }) {
+        const date = moment(nextProps.match.params.date, 'YYYY-MM-DD');
+        if (nextProps.type !== this.props.type) {
             nextProps.switchList(nextProps.type);
             return;
-        }
-
-        if (this.updateReason === 'activeChange') {
-            const date = nextProps.match.params.date;
+        } else if (nextProps.eventItems.length === 0 && nextProps.hasMore && !nextProps.isFetchingList) {
+            let params;
+            if (nextProps.match.params.date) {
+                params = { date, scrollTo: true };
+            } else if (nextProps.activeName === 'upcoming') {
+                params = { after: moment(), scrollTo: false };
+            } else if (nextProps.activeName === 'archive') {
+                params = { before: moment(), scrollTo: false };
+            }
+            nextProps.createFetchEventsAction(params);
+            return;
+        } else if (nextProps.activeName !== this.props.activeName) {
             let params;
             if (nextProps.eventItems.length === 0) {
-                if (date) {
-                    params = { date: moment(date, 'YYYY-MM-DD'), scrollTo: true };
+                if (nextProps.match.params.date) {
+                    params = { date, scrollTo: true };
                 } else if (nextProps.activeName === 'upcoming') {
-                    params = { after: moment(), scrollTo: true };
+                    params = { after: moment(), scrollTo: false };
                 } else if (nextProps.activeName === 'archive') {
-                    params = { before: moment(), scrollTo: true };
+                    params = { before: moment(), scrollTo: false };
                 }
             } else if (
-                date &&
-                nextProps.eventItems.find(
+                nextProps.match.params.date &&
+                !nextProps.eventItems.find(
                     (value) => itemNotLoading(value) && value.dateTime.isSame(moment(date), 'day'))
             ) {
-                params = { date: moment(date, 'YYYY-MM-DD'), scrollTo: true };
+                params = { date, scrollTo: true };
             } else {
+                this.setState({ updatedCurrent: true });
                 return;
             }
             nextProps.createFetchEventsAction({ ...params });
+            return;
+        } else if (nextProps.currentItem !== this.props.currentItem) {
+            this.setState({ updatedCurrent: true });
+            return;
         }
-    }
-
-    // used to force List component to unset scrollToIndex prop on List
-    // after successful update of any non-unset-scroll type, because
-    // bug in library causes upwards scroll to lock if the prop is set.
-    componentDidUpdate() {
-        if (this.updateReason !== 'unsetScroll') {
-            this.setState({ scrollUpdater: !this.state.scrollUpdater });
-        }
-    }
-
-    shouldComponentUpdate(nextProps: EventListProps, nextState: any) {
-        if (nextProps.type !== this.props.type) {
-            this.updateReason = 'typeChange';
-            return true;
-        }
-        if (nextProps.activeName !== this.props.activeName) {
-            this.updateReason = 'activeChange';
-            return true;
-        }
-        if (!this.props.eventItems.length && nextProps.eventItems.length) {
-            this.updateReason = 'initialList';
-            return true;
-        }
-        if (nextProps.eventItems.length !== this.props.eventItems.length) {
-            this.updateReason = 'listChange';
-            return true;
-        }
-        if (nextProps.currentItem !== this.props.currentItem) {
-            this.updateReason = 'selectItem';
-            return true;
-        }
-        if (nextState.scrollUpdater !== this.state.scrollUpdater) {
-            this.updateReason = 'unsetScroll';
-            return true;
-        }
-        if (nextProps.hasMore === false) {
-            this.updateReason = 'noMore';
-            return true;
-        }
-        if (nextProps.isFetchingList !== this.props.isFetchingList) {
-            return true;
-        }
-        this.updateReason = null;
-        return false;
     }
 
     onScroll = ({ clientHeight, scrollTop, scrollHeight }: OnScrollProps) => {
-        if (scrollTop + clientHeight > scrollHeight - 400) {
+        if (scrollTop + clientHeight > scrollHeight - 400 && this.props.hasMore && !this.props.isFetchingList && this.props.maxDate && this.props.minDate) {
+            console.log('here');
             if (this.props.type === 'upcoming') {
                 this.props.createFetchEventsAction({
                     after: this.props.maxDate,
@@ -203,11 +171,12 @@ class EventList extends React.Component<EventListProps, EventListState> {
     debouncedFetch = debounce(this.onScroll, 500, { leading: true });
 
     getScrollTarget = () => {
-        if (this.updateReason === 'initialList' ||
-            this.updateReason === 'activeChange') {
+        if (this.state.updatedCurrent) {
             if (this.props.currentItem) {
+                this.setState({updatedCurrent: false});
                 return this.getScrollIndex(this.props.currentItem);
             } else {
+                this.setState({updatedCurrent: false});
                 return 0;
             }
         } else {
@@ -216,6 +185,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
     }
 
     render() {
+        console.log('render');
         return (
             <div className={fullWidthHeight}>
                 {
@@ -226,15 +196,13 @@ class EventList extends React.Component<EventListProps, EventListState> {
                                 height={height}
                                 width={width}
                                 rowCount={this.props.eventItems.length + 1}
-                                rowHeight={cache.rowHeight}
-                                deferredMeasurementCache={cache}
+                                rowHeight={this.cache.rowHeight}
+                                deferredMeasurementCache={this.cache}
                                 rowRenderer={this.rowItemRenderer}
                                 scrollToAlignment="center"
                                 noRowsRenderer={() => <div />}
                                 estimatedRowSize={200}
-                                onScroll={({ clientHeight, scrollTop, scrollHeight }: OnScrollProps) => {
-                                    this.debouncedFetch({ clientHeight, scrollTop, scrollHeight });
-                                }}
+                                onScroll={this.debouncedFetch}
                                 scrollToIndex={this.getScrollTarget()}
                             />
                         )}
@@ -280,6 +248,8 @@ class EventList extends React.Component<EventListProps, EventListState> {
                 />
             );
         } else {
+
+            const permaLink = `${window.location.host}/schedule/${this.props.type}/${item.dateTime.format('YYYY-MM-DD')}`;
             return (
                 <EventItem
                     measure={measure}
@@ -287,7 +257,9 @@ class EventList extends React.Component<EventListProps, EventListState> {
                     style={style}
                     handleSelect={() => this.props.selectEvent(item)}
                     type={this.props.type}
-                    active={item.id === this.props.currentItem.id}
+                    active={this.props.currentItem && item.id === this.props.currentItem.id}
+                    isMobile={this.props.isMobile}
+                    permaLink={permaLink}
                 />
             );
         }
@@ -295,7 +267,7 @@ class EventList extends React.Component<EventListProps, EventListState> {
 
     private rowItemRenderer: ListRowRenderer = ({ index, key, parent, style }) => (
         <CellMeasurer
-            cache={cache}
+            cache={this.cache}
             columnIndex={0}
             key={`${key}_${this.props.activeName}`}
             rowIndex={index}
@@ -307,10 +279,10 @@ class EventList extends React.Component<EventListProps, EventListState> {
 }
 
 const mapStateToProps = (state: GlobalStateShape): EventListStateToProps => {
-    const name = state.schedule_eventItems.activeName;
+    const name = state.schedule_eventItems.activeName || 'upcoming';
     const reducer = state.schedule_eventItems[name];
     return {
-        eventItems: reducer.items.toArray(),
+        eventItems: reducer.itemArray,
         hasEventBeenSelected: reducer.hasEventBeenSelected,
         minDate: reducer.minDate,
         maxDate: reducer.maxDate,

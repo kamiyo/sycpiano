@@ -29,6 +29,7 @@ function descendCompare(a: EventItemType, b: EventItemType) {
 
 const initialState: EventItemsStateShape = {
     items: null,
+    itemArray: [],
     currentItem: null,
     currentLatLng: {
         lat: 39.0997,
@@ -44,7 +45,7 @@ const initialState: EventItemsStateShape = {
 };
 
 export const scheduleReducer = (state: ScheduleStateShape = {
-    activeName: 'upcoming',
+    activeName: undefined,
     upcoming: {
         ...initialState,
         items: new SortedArraySet<EventItemType>([], equals, ascendCompare),
@@ -85,6 +86,7 @@ const eventItemsReducer = (
             state.items.addEach(action.listItems);
             return {
                 ...state,
+                itemArray: state.items.toArray(),
                 isFetchingList: false,
                 currentItem: action.currentItem ? action.currentItem : state.currentItem,
                 // because of sorting mechanism, reverse list has min and max reversed
