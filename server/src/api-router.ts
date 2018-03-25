@@ -253,7 +253,7 @@ const getMusicInstancesOfType = (type: string) => (
             },
         }],
         order: [
-            [sequelize.fn('substring', sequelize.col('composer'), '([^\\s]+)(,|$)'), 'ASC'] as any,
+            [sequelize.fn('substring', sequelize.col('composer'), '([^\\s]+)\\s?(?:\\(.*\\))?$'), 'ASC'] as any,
             [models.musicFile, 'name', 'ASC'],
         ],
     })

@@ -115,6 +115,11 @@ const StyledCategory = styled('div') `
     font-size: 1.2rem;
 `;
 
+const getComposerTitle = (composer: string, piece: string) => {
+    const comp = composer === 'Sean Chen' ? '' : `${composer} `;
+    return `${comp}${piece}`;
+};
+
 const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
     audio,
     item,
@@ -146,7 +151,7 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
                     <Highlight active={currentItemId === musicFile.id}>
                         <StyledInfo>
                             <TextLeft>
-                                {`${item.composer}: ${item.piece}`}
+                                {getComposerTitle(item.composer, item.piece)}
                             </TextLeft>
                             <TextRight>
                                 {formatTime(musicFile.durationSeconds)}
@@ -161,7 +166,7 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
             <StyledCollectionContainer>
                 <StyledCollectionTitleContainer>
                     <StyledInfo>
-                        <h4 className={h4style}>{`${item.composer}: ${item.piece}`}</h4>
+                        <h4 className={h4style}>{getComposerTitle(item.composer, item.piece)}</h4>
                     </StyledInfo>
                 </StyledCollectionTitleContainer>
                 <StyledCollectionList>
