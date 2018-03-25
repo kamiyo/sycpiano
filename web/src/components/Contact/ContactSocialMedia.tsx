@@ -27,7 +27,7 @@ const SocialMediaLink: React.SFC<SocialMediaLinkProps> = (props) => (
     <a className={props.className} href={props.url} target="_blank">
         <img
             className={socialMediaButtonStyles}
-            src={staticImage(`soc-logos/${props.social}-color.svg`)}
+            src={staticImage(`/soc-logos/${props.social}-color.svg`)}
         />
     </a>
 );
