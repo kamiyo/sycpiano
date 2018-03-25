@@ -3,6 +3,7 @@ import * as moment from 'moment-timezone';
 
 import db from './models';
 const models = db.models;
+const sequelize = db.sequelize;
 
 const apiRouter = express.Router();
 
@@ -252,7 +253,7 @@ const getMusicInstancesOfType = (type: string) => (
             },
         }],
         order: [
-            ['composer', 'ASC'],
+            [sequelize.fn('substring', sequelize.col('composer'), '([^\\s]+)(,|$)'), 'ASC'] as any,
             [models.musicFile, 'name', 'ASC'],
         ],
     })

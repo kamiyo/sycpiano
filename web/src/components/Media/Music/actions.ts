@@ -96,9 +96,13 @@ export const fetchPlaylistAction = (track: string): ThunkAction<Promise<MusicFil
 
         if (track) {
             firstTrack = items.reduce((prev, item) => {
-                return prev.concat(isMusicItem(item) && item.musicFiles.filter((musicFile) => (
-                    path.basename(musicFile.audioFile, '.mp3') === track
-                )));
+                if (isMusicItem(item)) {
+                    return prev.concat(item.musicFiles.filter((musicFile) => (
+                        path.basename(musicFile.audioFile, '.mp3') === track
+                    )));
+                } else {
+                    return prev;
+                }
             }, [])[0];
         }
         return firstTrack;

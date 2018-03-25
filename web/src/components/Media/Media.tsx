@@ -45,11 +45,11 @@ const FadingContainer = styled('div') `
     position: absolute;
 `;
 
-const Media: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{}>> = ({ isMobile, ...props }) => (
+const Media: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{ media: string; }>> = ({ isMobile, ...props }) => (
     <MediaContainer>
         <TransitionGroup>
             <Transition
-                key={props.location.pathname}
+                key={props.match.params.media}
                 onEntering={fadeOnEnter(0.25)}
                 onExiting={fadeOnExit}
                 timeout={750}
@@ -64,15 +64,14 @@ const Media: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{}>> = ({ is
                         />
                         <Route
                             path="/media/music"
-                            render={(subProps) =>
+                            render={({ match }) =>
                                 <Route
                                     path="/media/music/:track?"
                                     render={(childProps) => (
-                                        <AsyncComponent moduleProvider={Music} {...childProps} baseRoute={subProps.match.url} isMobile={isMobile} />
+                                        <AsyncComponent moduleProvider={Music} {...childProps} baseRoute={match.url} isMobile={isMobile} />
                                     )}
                                     exact={true}
-                                />
-                            }
+                                />}
                         />
                         <Route
                             path="/media/photos"
