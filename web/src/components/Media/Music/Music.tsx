@@ -72,6 +72,13 @@ class Music extends React.Component<MusicProps, MusicState> {
     analyzerL: AnalyserNode;
     analyzerR: AnalyserNode;
 
+    getNextMovement = () => {
+        const curr = this.props.items.find((item) => isMusicItem(item) && item.id === this.state.currentTrack.id) as MusicItem;
+        const trackNo = curr.musicFiles.findIndex((file) => file.id === this.state.currentTrack.musicFiles[0].id);
+        const nextTrackNo = trackNo + 1;
+        return (nextTrackNo < curr.musicFiles.length) ? curr.musicFiles[nextTrackNo] : null;
+    }
+
     play = () => {
         if (!this.loaded) {
             this.autoPlay = false;
@@ -191,6 +198,10 @@ class Music extends React.Component<MusicProps, MusicState> {
             playbackPosition: 0,
             lastUpdateTimestamp: performance.now(),
         });
+        const next = this.getNextMovement();
+        if (next) {
+            this.loadTrack(next, true);
+        }
     }
 
     onDrag = (percent: number) => {

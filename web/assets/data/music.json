@@ -1,6 +1,7 @@
 [
     {
-        "piece": "Fantasy-Duo, for violin and piano (2013)",
+        "piece": "Fantasy-Duo, for violin and piano",
+        "year": 2013,
         "composer": "Niccolo Athens",
         "contributors": "Betty Zhou - violin",
         "type": "chamber",
@@ -13,7 +14,8 @@
         ]
     },
     {
-        "piece": "Piano Trio (2011)",
+        "piece": "Piano Trio",
+        "year": 2011,
         "composer": "Niccolo Athens",
         "contributors": "Betty Zhou - violin, Nan-Cheng Chen - cello",
         "type": "chamber",
@@ -52,6 +54,7 @@
     },
     {
         "piece": "Caténaires for piano (2006)",
+        "year": 2006,
         "composer": "Elliott Carter",
         "type": "solo",
         "musicFiles": [
@@ -169,7 +172,8 @@
         ]
     },
     {
-        "piece": "Somnium (2011)",
+        "piece": "Somnium",
+        "year": 2011,
         "composer": "Sean Chen",
         "contributors": "Double Vision Orchestra, Euntaek Kim - conductor",
         "type": "composition",
@@ -182,7 +186,8 @@
         ]
     },
     {
-        "piece": "String Quartet (2010-2011)",
+        "piece": "String Quartet",
+        "year": 2010,
         "composer": "Sean Chen",
         "type": "composition",
         "musicFiles": [
@@ -195,7 +200,8 @@
         ]
     },
     {
-        "piece": "Nocturnette (2010)",
+        "piece": "Nocturnette",
+        "year": 2010,
         "composer": "Sean Chen",
         "type": "composition",
         "musicFiles": [
@@ -207,7 +213,8 @@
         ]
     },
     {
-        "piece": "Improvisation No. 1 (2007)",
+        "piece": "Improvisation No. 1",
+        "year": 2007,
         "composer": "Sean Chen",
         "type": "composition",
         "musicFiles": [
@@ -219,7 +226,8 @@
         ]
     },
     {
-        "piece": "Improvisation No. 2 (2010)",
+        "piece": "Improvisation No. 2",
+        "year": 2010,
         "composer": "Sean Chen",
         "type": "composition",
         "musicFiles": [
@@ -231,7 +239,8 @@
         ]
     },
     {
-        "piece": "Concerto Salamander (2002)",
+        "piece": "Concerto Salamander",
+        "year": 2002,
         "composer": "Sean Chen",
         "type": "composition",
         "musicFiles": [
@@ -244,7 +253,8 @@
         ]
     },
     {
-        "piece": "Piano Concerto in Db (2006)",
+        "piece": "Piano Concerto in Db",
+        "year": 2006,
         "composer": "Sean Chen",
         "type": "composition",
         "musicFiles": [
@@ -256,7 +266,8 @@
         ]
     },
     {
-        "piece": "Gaia Romance (2006)",
+        "piece": "Gaia Romance",
+        "year": 2006,
         "composer": "Sean Chen",
         "type": "composition",
         "musicFiles": [
@@ -268,7 +279,8 @@
         ]
     },
     {
-        "piece": "Fantasie (Improv) in D (2006)",
+        "piece": "Fantasie (Improv) in D",
+        "year": 2006,
         "composer": "Sean Chen",
         "type": "composition",
         "musicFiles": [
@@ -280,9 +292,10 @@
         ]
     },
     {
-        "piece": "Flight (2004)",
+        "piece": "Flight",
+        "year": 2004,
         "composer": "Sean Chen",
-        "type": "composition",
+        "type": "videogame",
         "musicFiles": [
             {
                 "audioFile": "flying.mp3",
@@ -292,9 +305,10 @@
         ]
     },
     {
-        "piece": "Opening (2004)",
+        "piece": "Opening",
+        "year": 2004,
         "composer": "Sean Chen",
-        "type": "composition",
+        "type": "videogame",
         "musicFiles": [
             {
                 "audioFile": "opening.mp3",
@@ -304,9 +318,10 @@
         ]
     },
     {
-        "piece": "Battle Music (2003)",
+        "piece": "Battle Music",
+        "year": 2003,
         "composer": "Sean Chen",
-        "type": "composition",
+        "type": "videogame",
         "musicFiles": [
             {
                 "audioFile": "battle.mp3",
@@ -316,9 +331,10 @@
         ]
     },
     {
-        "piece": "Boss Fight Music (2003)",
+        "piece": "Boss Fight Music",
+        "year": 2003,
         "composer": "Sean Chen",
-        "type": "composition",
+        "type": "videogame",
         "musicFiles": [
             {
                 "audioFile": "boss.mp3",

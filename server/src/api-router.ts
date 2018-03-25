@@ -238,8 +238,18 @@ calendarRouter.get('/', async (req, res) => {
 
 apiRouter.use(/\/calendar/, calendarRouter);
 
-const getMusicInstancesOfType = (type: string) => (
-    models.music.findAll({
+const getMusicInstancesOfType = (type: string) => {
+    const order = type === 'videogame' ?
+        [
+            ['year', 'DESC'],
+            [models.musicFile, 'name', 'ASC'],
+        ] :
+        [
+            [sequelize.fn('substring', sequelize.col('composer'), '([^\\s]+)\\s?(?:\\(.*\\))?$'), 'ASC'] as any,
+            [models.musicFile, 'name', 'ASC'],
+        ];
+
+    return models.music.findAll({
         where: {
             type,
         },
@@ -252,12 +262,9 @@ const getMusicInstancesOfType = (type: string) => (
                 exclude: ['createdAt', 'updatedAt'],
             },
         }],
-        order: [
-            [sequelize.fn('substring', sequelize.col('composer'), '([^\\s]+)\\s?(?:\\(.*\\))?$'), 'ASC'] as any,
-            [models.musicFile, 'name', 'ASC'],
-        ],
-    })
-);
+        order,
+    });
+};
 
 apiRouter.get('/music', async (_, res) => {
     const [concerto, solo, chamber, composition] = await Promise.all([
@@ -265,6 +272,7 @@ apiRouter.get('/music', async (_, res) => {
         getMusicInstancesOfType('solo'),
         getMusicInstancesOfType('chamber'),
         getMusicInstancesOfType('composition'),
+        getMusicInstancesOfType('videogame'),
     ]);
 
     res.json({ concerto, solo, chamber, composition });
