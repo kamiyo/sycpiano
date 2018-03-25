@@ -2,6 +2,7 @@ import * as React from 'react';
 import styled, { css } from 'react-emotion';
 
 import { ContactSocialMediaShape } from 'src/components/Contact/types';
+import { staticImage } from 'src/styles/imageUrls';
 
 const SocialMediaLinkContainer = styled('div')` padding-top: 20px; `;
 
@@ -26,7 +27,7 @@ const SocialMediaLink: React.SFC<SocialMediaLinkProps> = (props) => (
     <a className={props.className} href={props.url} target="_blank">
         <img
             className={socialMediaButtonStyles}
-            src={`/static/images/soc-logos/${props.social}-color.svg`}
+            src={staticImage(`soc-logos/${props.social}-color.svg`)}
         />
     </a>
 );

@@ -3,6 +3,7 @@ import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
 
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
+import SpotifyButton from 'src/components/Media/Music/SpotifyButton';
 import Playlist from 'src/components/Media/Playlist';
 
 import { MusicFileItem, MusicListItem } from 'src/components/Media/Music/types';
@@ -29,6 +30,7 @@ type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;
 
 const getMusicPlaylistStyle = (isMobile: boolean) => css`
     width: ${isMobile ? '100%' : `${playlistWidth}px`};
+    position: initial;
 
     /* stylelint-disable-next-line */
     ${isMobile && `
@@ -39,14 +41,23 @@ const getMusicPlaylistStyle = (isMobile: boolean) => css`
     `};
 `;
 
-const getMusicULStyle = (isMobile: boolean) => css`
+const getMusicULStyle = (_: boolean) => css`
     background-color: ${playlistBackground};
-    ${isMobile && 'padding-bottom: 20px;'}
+    padding-bottom: 60px;
 `;
 
 const StyledPlaylistContainer = styled<{ isMobile: boolean }, 'div'>('div') `
-    width: 100%;
-    height: ${props => props.isMobile ? 'auto' : '100%'};
+    /* stylelint-disable */
+    ${props => props.isMobile ? `
+        width: 100%;
+        height: auto;
+    ` : `
+        width: fit-content;
+        height: 100%;
+        right: 0;
+        position: absolute;
+    `}
+    /* stylelint-enable */
 `;
 
 const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
@@ -71,6 +82,7 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = (props) => (
                 />
             ))}
         </Playlist>
+        <SpotifyButton isMobile={props.isMobile} />
     </StyledPlaylistContainer>
 );
 
