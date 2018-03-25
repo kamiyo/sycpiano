@@ -125,7 +125,8 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                                             render={(childProps) => <AsyncComponent moduleProvider={Contact} {...childProps} isMobile={matches} />}
                                         />
                                         <Route
-                                            path="/media"
+                                            path="/media/:media/:track?"
+                                            exact={true}
                                             render={(childProps) => <AsyncComponent moduleProvider={Media} {...childProps} isMobile={matches} />}
                                         />
                                         <Route
