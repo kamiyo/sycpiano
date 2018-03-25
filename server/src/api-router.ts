@@ -239,7 +239,7 @@ calendarRouter.get('/', async (req, res) => {
 apiRouter.use(/\/calendar/, calendarRouter);
 
 const getMusicInstancesOfType = (type: string) => {
-    const order = type === 'videogame' ?
+    const order = (type === 'videogame' || type === 'composition') ?
         [
             ['year', 'DESC'],
             [models.musicFile, 'name', 'ASC'],
@@ -267,7 +267,7 @@ const getMusicInstancesOfType = (type: string) => {
 };
 
 apiRouter.get('/music', async (_, res) => {
-    const [concerto, solo, chamber, composition] = await Promise.all([
+    const [concerto, solo, chamber, composition, videogame] = await Promise.all([
         getMusicInstancesOfType('concerto'),
         getMusicInstancesOfType('solo'),
         getMusicInstancesOfType('chamber'),
@@ -275,7 +275,7 @@ apiRouter.get('/music', async (_, res) => {
         getMusicInstancesOfType('videogame'),
     ]);
 
-    res.json({ concerto, solo, chamber, composition });
+    res.json({ concerto, solo, chamber, composition, videogame });
 });
 
 apiRouter.get('/photos', async (_, res) => {

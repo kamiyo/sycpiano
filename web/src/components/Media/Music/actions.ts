@@ -75,6 +75,7 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
             ...musicListIfExists(response, 'solo'),
             ...musicListIfExists(response, 'chamber'),
             ...musicListIfExists(response, 'composition'),
+            ...musicListIfExists(response, 'videogame'),
         ]);
         dispatch(fetchPlaylistSuccess(items));
         return items;
