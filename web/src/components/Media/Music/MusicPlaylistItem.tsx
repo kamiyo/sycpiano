@@ -68,17 +68,17 @@ const h4style = css`
     color: black;
     font-size: 0.9rem;
     display: inline-block;
+    line-height: 1rem;
 `;
 
 const TextLeft = styled('h4') `
     ${h4style}
-    float: left;
 `;
 
 const TextRight = styled('h4') `
     ${h4style}
+    margin: 0 0 0 10px;
     font-size: 0.75rem;
-    float: right;
 `;
 
 const StyledCollectionContainer = styled('li') `
@@ -102,11 +102,15 @@ const StyledInfo = styled('div') `
     height: 100%;
     position: relative;
     padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 
-    /* stylelint-disable-next-line */
+    /* stylelint-disable */
     ${StyledCollectionItem} &, ${StyledCollectionTitleContainer} & {
         padding: 0;
     }
+    /* stylelint-enable */
 `;
 
 const StyledCategory = styled('div') `
