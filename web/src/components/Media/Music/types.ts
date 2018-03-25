@@ -3,6 +3,8 @@ export interface MusicItem {
     readonly piece: string;
     readonly composer: string;
     readonly contributors: string;
+    readonly type: MusicCategories;
+    readonly year: number;
     readonly musicFiles?: MusicFileItem[];
 }
 
@@ -14,7 +16,7 @@ export interface MusicFileItem {
     readonly durationSeconds: number;
     readonly musicId: string;
 }
-export type MusicCategories = 'concerto' | 'solo' | 'chamber' | 'composition';
+export type MusicCategories = 'concerto' | 'solo' | 'chamber' | 'composition' | 'videogame';
 
 export interface MusicCategoryItem {
     readonly id: MusicCategories;

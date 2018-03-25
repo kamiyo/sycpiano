@@ -65,13 +65,14 @@ const AudioInfo: React.SFC<AudioInfoProps> = ({ currentTrack, currentPosition, d
         piece = '',
         composer = '',
         contributors = '',
+        year = null,
         musicFiles = [],
     } = currentTrack || {};
 
     const {
         name: movement = '',
     } = musicFiles[0] || {};
-    const composerTitle = composer + ' ' + piece;
+    const composerTitle = composer + ' ' + piece + (year && ` (${year})`);
     return (
         <AudioInfoContainer isMobile={isMobile}>
             <ComposerTitle isMobile={isMobile}>{composerTitle}</ComposerTitle>

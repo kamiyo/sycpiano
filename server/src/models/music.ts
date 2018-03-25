@@ -14,6 +14,7 @@ const Music = (sequelize: Sequelize, dataTypes: DataTypes) => {
         piece: dataTypes.STRING,
         contributors: dataTypes.STRING,
         type: dataTypes.STRING,
+        year: dataTypes.INTEGER,
     }) as MusicModel;
 
     music.associate = (models) => {
