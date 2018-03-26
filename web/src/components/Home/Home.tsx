@@ -132,7 +132,7 @@ const BackgroundCover = styled<{ isMobile: boolean; }, 'div'>('div') `
 `;
 
 const NavBarGradient = styled<{ isMobile: boolean; }, 'div'>('div') `
-    height: ${navBarHeight.nonHdpi}px;
+    height: ${props => props.isMobile ? navBarHeight.mobile : navBarHeight.desktop}px;
     padding: 0 30px 0 0;
     position: fixed;
     top: 0;

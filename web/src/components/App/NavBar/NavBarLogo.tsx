@@ -24,7 +24,7 @@ const LogoText = styled<{ isMobile: boolean }, 'div'>('div')`
     display: inline-block;
     margin-left: ${({ isMobile }) => isMobile ? 0 : '20px'};
     vertical-align: middle;
-    line-height: ${navBarHeight.nonHdpi}px;
+    line-height: ${navBarHeight.desktop}px;
 
     span {
         vertical-align: -3px;
@@ -33,6 +33,7 @@ const LogoText = styled<{ isMobile: boolean }, 'div'>('div')`
         ${screenPortrait}, ${screenXS} {
             vertical-align: initial;
             margin-left: 10px;
+            line-height: ${navBarHeight.mobile}px;
         }
     }
 `;

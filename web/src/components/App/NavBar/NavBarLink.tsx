@@ -24,8 +24,8 @@ interface HighlightProps {
 const getHighlightStyles = (isMobile: boolean) => css`
     /* stylelint-disable */
     ${!isMobile && `
-        margin-top: ${navBarMarginTop.nonHdpi}px;
-        height: ${navBarHeight.nonHdpi - navBarMarginTop.nonHdpi}px;
+        margin-top: ${navBarMarginTop}px;
+        height: ${navBarHeight.desktop - navBarMarginTop}px;
     `}
     /* stylelint-enable */
     padding: ${isMobile ? '1.8rem 0' : '20px 10px 0 10px'};
@@ -37,7 +37,7 @@ const getHighlightDefaultStyle = (isMobile: boolean) => css`
     position: absolute;
     bottom: 0;
     padding: 0;
-    margin-top: ${navBarMarginTop.nonHdpi}px;
+    margin-top: ${navBarMarginTop}px;
     opacity: 0;
     height: 5px;
     z-index: -1;

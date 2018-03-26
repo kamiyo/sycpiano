@@ -22,11 +22,12 @@ interface NavBarState {
 }
 
 const navBarStyle = css`
-    height: ${navBarHeight.nonHdpi}px;
+    height: ${navBarHeight.desktop}px;
     padding: 0 30px 0 0;
 
     /* stylelint-disable-next-line */
     ${screenPortrait}, ${screenXS} {
+        height: ${navBarHeight.mobile}px;
         padding-right: 15px;
     }
 

@@ -30,17 +30,30 @@ const Schedule = () => register('schedule', import(/* webpackChunkName: 'schedul
 
 const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
     if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 0 }, { autoAlpha: 1, delay });
+        TweenLite.to(element, 0.25, { autoAlpha: 1, delay });
     }
 };
 
-const fadeOnExit = (element: HTMLElement) => {
+const slideOnEnter = (delay: number) => (element: HTMLElement) => {
+    TweenLite.set(element, { autoAlpha: 1 });
     if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 1 }, { autoAlpha: 0 });
+        TweenLite.to(element, 0.25, { y: '0%', delay, clearProps: 'transform', force3D: true });
     }
 };
 
-const RootContainer = styled<{ isHome: boolean; }, 'div'>('div') `
+const fadeOnExit = (delay: number) => (element: HTMLElement) => {
+    if (element) {
+        TweenLite.to(element, 0.25, { autoAlpha: 0, delay });
+    }
+};
+
+const slideOnExit = (delay: number) => (element: HTMLElement) => {
+    if (element) {
+        TweenLite.to(element, 0.25, { y: '-100%', delay, force3D: true });
+    }
+};
+
+const RootContainer = styled<{ isHome: boolean; isMobile: boolean; }, 'div'>('div') `
     height: 100%;
     width: 100%;
     background-color: ${props => props.isHome ? 'black' : 'white'};
@@ -52,16 +65,18 @@ const FadingContainer = styled('div') `
     visibility: hidden;
 `;
 
-export default class App extends React.Component<RouteComponentProps<void>, { homeBgLoaded: boolean; }> {
+export default class App extends React.Component<RouteComponentProps<void>, { homeBgLoaded: boolean; navbarVisible: boolean; }> {
     constructor(props: RouteComponentProps<void>) {
         super(props);
         if (this.getRouteBase() === '/') {
             this.state = {
                 homeBgLoaded: false,
+                navbarVisible: true,
             };
         } else {
             this.state = {
                 homeBgLoaded: true,
+                navbarVisible: true,
             };
         }
     }
@@ -85,15 +100,20 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
         this.setState({ homeBgLoaded: true });
     }
 
+    toggleNavbar = (show: boolean = !this.state.navbarVisible) => {
+        this.setState({ navbarVisible: show });
+    }
+
     render() {
         return (
             <ReactMedia query={reactMediaMobileQuery}>
                 {(matches: boolean) => (
-                    <RootContainer isHome={this.getRouteBase() === '/'}>
+                    <RootContainer isHome={this.getRouteBase() === '/'} isMobile={matches}>
                         <LogoSVG />
                         <Transition
-                            in={this.state.homeBgLoaded}
-                            onEntering={fadeOnEnter(0)}
+                            in={this.state.homeBgLoaded && this.state.navbarVisible}
+                            onEntering={this.getRouteBase() === '/' ? fadeOnEnter(0) : slideOnEnter(0)}
+                            onExiting={slideOnExit(0)}
                             timeout={250}
                             appear={true}
                         >
@@ -108,7 +128,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                             <Transition
                                 key={this.getRouteBase()}
                                 onEntering={fadeOnEnter(0.25)}
-                                onExiting={fadeOnExit}
+                                onExiting={fadeOnExit(0)}
                                 timeout={750}
                                 appear={true}
                             >
@@ -117,7 +137,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                                         <Route
                                             path="/about"
                                             exact={true}
-                                            render={(childProps) => <AsyncComponent moduleProvider={About} {...childProps} isMobile={matches} />}
+                                            render={(childProps) => <AsyncComponent moduleProvider={About} {...childProps} isMobile={matches} toggleNavbar={this.toggleNavbar} />}
                                         />
                                         <Route
                                             path="/contact"
