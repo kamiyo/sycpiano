@@ -53,7 +53,7 @@ const lastScroll = (scrollTop: number): ThunkAction<void, GlobalStateShape, void
         dispatch({
             type: NAV_ACTIONS.NAV_LAST_SCROLL,
             scrollTop,
-        });
+        } as ActionTypes.LastScroll);
     };
 
 const onScroll = (triggerHeight: number, dispatch: Dispatch<GlobalStateShape>, getState: () => GlobalStateShape) => (event: React.SyntheticEvent<HTMLElement>) => {

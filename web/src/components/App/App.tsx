@@ -76,15 +76,9 @@ type AppProps = RouteComponentProps<{}> & AppStateToProps;
 class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
     constructor(props: AppProps) {
         super(props);
-        if (this.getRouteBase() === '/') {
-            this.state = {
-                homeBgLoaded: false,
-            };
-        } else {
-            this.state = {
-                homeBgLoaded: true,
-            };
-        }
+        this.state = {
+            homeBgLoaded: this.getRouteBase() !== '/',
+        };
     }
 
     isSubPath = (testPath: string) => {
@@ -180,6 +174,6 @@ const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
     navbarVisible: navbar.isVisible,
 });
 
-export default connect<AppStateToProps, {}>(
+export default connect<AppStateToProps>(
     mapStateToProps,
 )(App);

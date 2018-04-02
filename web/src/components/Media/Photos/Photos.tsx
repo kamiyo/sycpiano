@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'react-emotion';
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
 import PhotoFader from 'src/components/Media/Photos/PhotoFader';
 import PhotoList from 'src/components/Media/Photos/PhotoList';
@@ -20,8 +20,8 @@ interface PhotosStateToProps {
 }
 
 interface PhotosDispatchToProps {
-    readonly createFetchPhotosAction: () => Promise<void>;
-    readonly selectPhotoAction: (item: PhotoItem) => void;
+    readonly createFetchPhotosAction: typeof createFetchPhotosAction;
+    readonly selectPhotoAction: typeof selectPhoto;
 }
 
 interface PhotosOwnProps {
@@ -58,7 +58,7 @@ const StyledPhotoViewer = styled('div') `
     }
 `;
 
-class Photos extends React.Component<PhotosProps, {}> {
+class Photos extends React.Component<PhotosProps> {
     componentWillMount() {
         this.props.createFetchPhotosAction();
     }
@@ -90,15 +90,15 @@ class Photos extends React.Component<PhotosProps, {}> {
     }
 }
 
-const mapStateToProps = (state: GlobalStateShape) => ({
+const mapStateToProps = (state: GlobalStateShape): PhotosStateToProps => ({
     items: state.photo_list.items,
     currentItem: state.photo_viewer.currentItem,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<GlobalStateShape>): PhotosDispatchToProps => ({
-    createFetchPhotosAction: () => dispatch(createFetchPhotosAction()),
-    selectPhotoAction: (item: PhotoItem) => dispatch(selectPhoto(item)),
-});
+const mapDispatchToProps: PhotosDispatchToProps = {
+    createFetchPhotosAction,
+    selectPhotoAction: selectPhoto,
+};
 
 const ConnectedPhotos = connect<PhotosStateToProps, PhotosDispatchToProps>(
     mapStateToProps,

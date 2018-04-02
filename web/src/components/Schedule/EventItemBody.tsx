@@ -25,23 +25,33 @@ type EventItemBodyProps = DayItem & { className?: string, isMobile?: boolean; pe
 
 const detailSectionMargin = (extra?: number) => css` margin-bottom: ${20 + (extra || 0)}px; `;
 
-let EventItemBody: React.SFC<EventItemBodyProps> = (props) => (
-    <div className={props.className}>
-        <div><FlexEventDate dateTime={props.dateTime} isMobile={props.isMobile}/></div>
+let EventItemBody: React.SFC<EventItemBodyProps> = ({
+    className,
+    dateTime,
+    isMobile,
+    name,
+    location,
+    collaborators,
+    program,
+    website,
+    permaLink,
+}) => (
+    <div className={className}>
+        <div><FlexEventDate dateTime={dateTime} isMobile={isMobile}/></div>
 
         <FlexEventInfoContainer>
-            <EventName className={detailSectionMargin()} name={props.name} isMobile={props.isMobile} permaLink={props.permaLink} />
+            <EventName className={detailSectionMargin()} name={name} isMobile={isMobile} permaLink={permaLink} />
 
             <EventTime
                 className={detailSectionMargin()}
-                dateTime={props.dateTime}
+                dateTime={dateTime}
             />
 
-            <EventLocation location={props.location} className={detailSectionMargin()} isMobile={props.isMobile}/>
-            <EventCollaborators collaborators={props.collaborators} className={detailSectionMargin()} />
-            <EventProgram program={props.program} className={detailSectionMargin(5)} />
+            <EventLocation location={location} className={detailSectionMargin()} isMobile={isMobile}/>
+            <EventCollaborators collaborators={collaborators} className={detailSectionMargin()} />
+            <EventProgram program={program} className={detailSectionMargin(5)} />
 
-            {props.website && <EventWebsiteButton website={props.website} />}
+            {website && <EventWebsiteButton website={website} />}
         </FlexEventInfoContainer>
     </div>
 );

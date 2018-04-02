@@ -20,31 +20,32 @@ interface HamburgerNavDispatchToProps {
     toggleExpanded: typeof toggleExpanded;
 }
 
-class HamburgerNav extends React.Component<NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps, {}> {
-    render() {
-        return (
-            <div className={css` margin: auto 0; `}>
-                <HamburgerMenu
-                    isExpanded={this.props.isExpanded}
-                    onClick={() => this.props.toggleExpanded()}
-                    layerColor={this.props.currentBasePath === '/' && !this.props.isExpanded ? 'white' : 'black'}
+const HamburgerNav: React.SFC<NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps> = ({
+    isExpanded,
+    toggleExpanded: toggleExpand,
+    currentBasePath,
+    isMobile,
+}) => (
+        <div className={css` margin: auto 0; `}>
+            <HamburgerMenu
+                isExpanded={isExpanded}
+                onClick={() => toggleExpand()}
+                layerColor={currentBasePath === '/' && !isExpanded ? 'white' : 'black'}
+            />
+            <Transition
+                in={isExpanded}
+                onEnter={(el) => TweenLite.to(el, 0.25, { autoAlpha: 1 })}
+                onExit={(el) => TweenLite.to(el, 0.25, { autoAlpha: 0 })}
+                timeout={250}
+            >
+                <NavBarLinks
+                    links={links}
+                    currentBasePath={currentBasePath}
+                    isMobile={isMobile}
                 />
-                <Transition
-                    in={this.props.isExpanded}
-                    onEnter={(el) => TweenLite.to(el, 0.25, { autoAlpha: 1 })}
-                    onExit={(el) => TweenLite.to(el, 0.25, { autoAlpha: 0 })}
-                    timeout={250}
-                >
-                    <NavBarLinks
-                        links={links}
-                        currentBasePath={this.props.currentBasePath}
-                        isMobile={this.props.isMobile}
-                    />
-                </Transition>
-            </div>
-        );
-    }
-}
+            </Transition>
+        </div>
+    );
 
 const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
     isExpanded: navbar.isExpanded,

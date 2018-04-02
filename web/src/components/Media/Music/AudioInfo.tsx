@@ -81,7 +81,7 @@ const Duration = styled<{ isMobile: boolean; }, 'div'>('div') `
     font-size: ${(props) => props.isMobile ? '1.3rem' : '2rem'};
 `;
 
-class AudioInfo extends React.Component<AudioInfoProps, {}> {
+class AudioInfo extends React.Component<AudioInfoProps> {
     private tween: any;
     private titleDiv: HTMLDivElement;
     private marquee: HTMLDivElement;
@@ -115,9 +115,7 @@ class AudioInfo extends React.Component<AudioInfoProps, {}> {
             musicFiles = [],
         } = this.props.currentTrack || {};
 
-        const {
-            name: movement = '',
-        } = musicFiles[0] || {};
+        const { name: movement = '' } = musicFiles[0] || {};
         const { isMobile, currentPosition, duration } = this.props;
         const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '') + (isMobile && movement ? ': ' + movement : '');
         return (

@@ -190,7 +190,8 @@ let NavBarLink: React.SFC<NavBarLinkProps & NavBarLinkDispatchToProps & NavBarLi
                     <Highlight active={props.active} isHome={props.isHome} link={props.link} isMobile={props.isMobile} />
                 </Link>
         }
-        {props.subNavLinks &&
+        {
+            props.subNavLinks &&
             <Transition
                 in={props.showSubs.includes(props.link)}
                 onEnter={(el, isAppearing) => enterAnimation(el, isAppearing, props.isMobile)}

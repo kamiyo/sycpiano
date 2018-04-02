@@ -52,20 +52,20 @@ interface AcclaimsListItemProps {
     className?: string;
 }
 
-const AcclaimsListItem: React.SFC<AcclaimsListItemProps> = (props) => (
+const AcclaimsListItem: React.SFC<AcclaimsListItemProps> = ({ className, style, acclaim }) => (
     <div
-        className={cx(props.className, css`
+        className={cx(className, css`
             padding: 20px 0;
 
             &:first-child {
                 padding-top: 40px;
             }
         `)}
-        style={props.style}
+        style={style}
     >
         <AcclaimContainer>
-            <Quote short={props.acclaim.short} quote={props.acclaim.quote} />
-            <Author author={props.acclaim.author} />
+            <Quote short={acclaim.short} quote={acclaim.quote} />
+            <Author author={acclaim.author} />
         </AcclaimContainer>
     </div>
 );

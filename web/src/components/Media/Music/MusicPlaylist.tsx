@@ -59,51 +59,46 @@ const StyledPlaylistContainer = styled<{ isMobile: boolean }, 'div'>('div') `
     /* stylelint-enable */
 `;
 
-class MusicPlaylist extends React.Component<MusicPlaylistProps, {}> {
-    render() {
-        const {
-            isMobile,
-            items,
-            onClick,
-            currentTrackId,
-            audio,
-            baseRoute,
-            userInput,
-            onFirstUserInput,
-        } = this.props;
-        return (
-            <StyledPlaylistContainer isMobile={isMobile}>
-                <Playlist
-                    extraStyles={{ div: getMusicPlaylistStyle(isMobile), ul: getMusicULStyle(isMobile) }}
-                    isShow={true}
-                    hasToggler={false}
-                    shouldAppear={false}
-                    isMobile={isMobile}
-                >
-                    {items.map((item) => (
-                        <MusicPlaylistItem
-                            key={item.id}
-                            item={item}
-                            onClick={onClick}
-                            currentItemId={currentTrackId}
-                            audio={audio}
-                            baseRoute={baseRoute}
-                            userInput={userInput}
-                            onFirstUserInput={onFirstUserInput}
-                        />
-                    ))}
-                </Playlist>
-                <SpotifyButton isMobile={isMobile} />
-            </StyledPlaylistContainer>
-        );
-    }
-}
+const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
+    isMobile,
+    items,
+    onClick,
+    currentTrackId,
+    audio,
+    baseRoute,
+    userInput,
+    onFirstUserInput,
+}) => (
+        <StyledPlaylistContainer isMobile={isMobile}>
+            <Playlist
+                extraStyles={{ div: getMusicPlaylistStyle(isMobile), ul: getMusicULStyle(isMobile) }}
+                isShow={true}
+                hasToggler={false}
+                shouldAppear={false}
+                isMobile={isMobile}
+            >
+                {items.map((item) => (
+                    <MusicPlaylistItem
+                        key={item.id}
+                        item={item}
+                        onClick={onClick}
+                        currentItemId={currentTrackId}
+                        audio={audio}
+                        baseRoute={baseRoute}
+                        userInput={userInput}
+                        onFirstUserInput={onFirstUserInput}
+                    />
+                ))}
+            </Playlist>
+            <SpotifyButton isMobile={isMobile} />
+        </StyledPlaylistContainer>
+    );
 
 const mapStateToProps = (state: GlobalStateShape) => ({
     items: state.audio_playlist.items,
 });
 
-export default connect<MusicPlaylistStateToProps, {}>(
+export default connect<MusicPlaylistStateToProps>(
     mapStateToProps,
     null,
 )(MusicPlaylist);

@@ -17,7 +17,6 @@ import EventMonthItem from 'src/components/Schedule/EventMonthItem';
 import {
     DayItem,
     EventItemType,
-    FetchEventsArguments,
     itemIsDay,
     itemIsMonth,
     itemNotLoading,
@@ -38,9 +37,9 @@ interface EventListStateToProps {
 }
 
 interface EventListDispatchToProps {
-    readonly selectEvent: (item: EventItemType) => void;
-    readonly createFetchEventsAction: (args: FetchEventsArguments) => void;
-    readonly switchList: (name: EventListName) => void;
+    readonly selectEvent: typeof selectEvent;
+    readonly createFetchEventsAction: typeof createFetchEventsAction;
+    readonly switchList: typeof switchList;
 }
 
 interface EventListOwnProps {

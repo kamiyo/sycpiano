@@ -22,9 +22,9 @@ interface AudioUIStateToProps {
 }
 
 interface AudioUIDispatchToProps {
-    readonly setHoverSeekring: (isHoverSeekring: boolean, angle: number) => void;
-    readonly setHoverPlaypause: (isHoverPlaypause: boolean) => void;
-    readonly setMouseMove: (isMouseMove: boolean) => void;
+    readonly setHoverSeekring: typeof setHoverSeekring;
+    readonly setHoverPlaypause: typeof setHoverPlaypause;
+    readonly setMouseMove: typeof setMouseMove;
 }
 
 interface AudioUIOwnProps {
@@ -80,7 +80,7 @@ const StyledSeekRing = styled('canvas') `
     -webkit-tap-highlight-color: transparent;
 `;
 
-class AudioUI extends React.Component<AudioUIProps, {}> {
+class AudioUI extends React.Component<AudioUIProps> {
     playButton: HTMLDivElement;
     pauseButton: HTMLDivElement;
 

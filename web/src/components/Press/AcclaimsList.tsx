@@ -18,7 +18,7 @@ interface AcclaimsListStateToProps {
 }
 
 interface AcclaimsListDispatchToProps {
-    readonly createFetchAcclaimsAction: () => void;
+    readonly createFetchAcclaimsAction: typeof createFetchAcclaimsAction;
 }
 
 type AcclaimsListProps = (

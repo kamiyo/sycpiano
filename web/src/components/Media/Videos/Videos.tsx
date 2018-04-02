@@ -20,9 +20,9 @@ interface VideosStateToProps {
 }
 
 interface VideosDispatchToProps {
-    readonly createFetchPlaylistAction: () => void;
-    readonly initializeYoutubeElement: (el: HTMLElement) => void;
-    readonly resetPlayer: () => void;
+    readonly createFetchPlaylistAction: typeof createFetchPlaylistAction;
+    readonly initializeYoutubeElement: typeof initializeYoutubeElement;
+    readonly resetPlayer: typeof resetPlayer;
 }
 
 interface VideosOwnProps {

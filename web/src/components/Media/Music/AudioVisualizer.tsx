@@ -25,8 +25,8 @@ interface AudioVisualizerStateToProps {
 }
 
 interface AudioVisualizerDispatchToProps {
-    readonly storeRadii: (innerRadius: number, outerRadius: number, baseRadius: number) => void;
-    readonly storeVerticalOffset: (offset: number) => void;
+    readonly storeRadii: typeof storeRadii;
+    readonly storeVerticalOffset: typeof storeVerticalOffset;
 }
 
 interface AudioVisualizerOwnProps {
@@ -55,7 +55,7 @@ const VisualizerCanvas = styled('canvas') `
     height: 100%;
 `;
 
-class AudioVisualizer extends React.Component<AudioVisualizerProps, {}> {
+class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     lastPlayheadPosition = 0;
     height: number;
     width: number;

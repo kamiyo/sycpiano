@@ -67,7 +67,7 @@ interface PhotoListDispatchToProps {
 
 type PhotoListProps = PhotoListOwnProps & PhotoListStateToProps & PhotoListDispatchToProps;
 
-class PhotoList extends React.Component<PhotoListProps, {}> {
+class PhotoList extends React.Component<PhotoListProps> {
     componentDidMount() {
         this.props.setOnScroll(navBarHeight.mobile);
     }
@@ -107,7 +107,7 @@ class PhotoList extends React.Component<PhotoListProps, {}> {
     }
 }
 
-const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
+const mapStateToProps = ({ navbar }: GlobalStateShape): PhotoListStateToProps => ({
     onScroll: navbar.onScroll,
 });
 

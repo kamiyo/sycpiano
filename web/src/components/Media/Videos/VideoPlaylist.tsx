@@ -16,31 +16,35 @@ interface VideoPlaylistStateToProps {
 }
 
 interface VideoPlaylistDispatchToProps {
-    readonly playVideo: (id?: string) => void;
-    readonly togglePlaylistAction: () => void;
+    readonly playVideo: typeof playVideo;
+    readonly togglePlaylistAction: typeof togglePlaylistAction;
 }
 
 type VideoPlaylistProps = VideoPlaylistStateToProps & VideoPlaylistDispatchToProps;
 
-const VideoPlaylist: React.SFC<VideoPlaylistProps> = (props) => {
-    return (
+const VideoPlaylist: React.SFC<VideoPlaylistProps> = ({
+    isShow,
+    togglePlaylistAction: togglePlaylist,
+    videos,
+    videoId,
+    playVideo: play,
+}) => (
         <Playlist
-            isShow={props.isShow}
+            isShow={isShow}
             hasToggler={true}
-            togglePlaylist={props.togglePlaylistAction}
+            togglePlaylist={togglePlaylist}
             shouldAppear={false}
         >
-            {props.videos.map((video) => (
+            {videos.map((video) => (
                 <VideoPlaylistItem
                     key={video.id}
                     item={video}
-                    currentItemId={props.videoId}
-                    onClick={props.playVideo}
+                    currentItemId={videoId}
+                    onClick={play}
                 />
             ))}
         </Playlist>
     );
-};
 
 const mapStateToProps = (state: GlobalStateShape): VideoPlaylistStateToProps => ({
     videos: state.video_playlist.items,

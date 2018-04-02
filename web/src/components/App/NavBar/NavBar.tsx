@@ -53,26 +53,32 @@ const StyledNavBarLogo = styled(NavBarLogo) `
     display: inline-flex;
 `;
 
-const NavBar: React.SFC<NavBarProps & NavBarStateToProps> = (props) => {
-    const NavComponent = props.isMobile ? HamburgerNav : NavBarLinks;
-    const isHome = props.currentBasePath === '/';
+const NavBar: React.SFC<NavBarProps & NavBarStateToProps> = ({
+    isMobile,
+    currentBasePath,
+    isExpanded,
+    specificRouteName,
+    className,
+}) => {
+    const NavComponent = isMobile ? HamburgerNav : NavBarLinks;
+    const isHome = currentBasePath === '/';
     return (
         <div
             className={cx(
-                props.className,
+                className,
                 navBarStyle,
-                { [homeNavBarStyle(props.isExpanded)]: isHome },
+                { [homeNavBarStyle(isExpanded)]: isHome },
             )}
         >
             <StyledNavBarLogo
                 isHome={isHome}
-                isExpanded={props.isExpanded}
-                specificRouteName={props.specificRouteName}
+                isExpanded={isExpanded}
+                specificRouteName={specificRouteName}
             />
             <NavComponent
                 links={links}
-                currentBasePath={props.currentBasePath}
-                isMobile={props.isMobile}
+                currentBasePath={currentBasePath}
+                isMobile={isMobile}
             />
         </div >
     );

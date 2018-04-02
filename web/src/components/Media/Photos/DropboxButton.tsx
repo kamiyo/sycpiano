@@ -5,9 +5,14 @@ import { Link } from 'react-router-dom';
 import { staticImage } from 'src/styles/imageUrls';
 import { playlistWidth } from 'src/styles/variables';
 
-let DropboxButton: React.SFC<{ className?: string; isMobile?: boolean; }> = (props) => {
+interface DropboxButtonProps {
+    className?: string;
+    isMobile?: boolean;
+}
+
+let DropboxButton: React.SFC<DropboxButtonProps> = ({ className }) => {
     return (
-        <div className={props.className}>
+        <div className={className}>
             <Link style={{ display: 'block' }} to={'https://www.dropbox.com/sh/pzou7yeukjktznn/AADNCU7fmgUy_vmA3WioLiria?dl=0'} target="_blank">
                 <img width={50} height={50} src={staticImage(`/soc-logos/dropbox.svg`)} />
             </Link>
