@@ -43,7 +43,7 @@ const playlistStyle = css`
     background-color: ${playlistBackground};
 `;
 
-class Playlist extends React.Component<PlaylistProps, {}> {
+class Playlist extends React.Component<PlaylistProps> {
     ulRef: HTMLUListElement = null;
 
     onEnter = (el: HTMLElement, isAppearing: boolean) => {
@@ -91,6 +91,7 @@ class Playlist extends React.Component<PlaylistProps, {}> {
                             playlistStyle,
                             props.extraStyles && props.extraStyles.ul,
                         )}
+                        onScroll={this.props.onScroll}
                     >
                         {this.props.children}
                     </ul>

@@ -2,7 +2,7 @@ import { registerReducer } from 'src/store';
 import { AsyncModule, AsyncStore } from 'src/types';
 
 const modules: {
-    [key: string]: any;
+    [key: string]: AsyncModule;
 } = {};
 
 const extractModule = (store: AsyncStore) => async (name: string, moduleProvider: Promise<AsyncModule>) => {

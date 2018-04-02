@@ -1,6 +1,9 @@
 import * as moment from 'moment-timezone';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
+import { connect } from 'react-redux';
+
+import { setOnScroll } from 'src/components/App/NavBar/actions';
 
 import { easeQuadOut } from 'd3-ease';
 import TweenLite from 'gsap/TweenLite';
@@ -9,26 +12,27 @@ import blurbs from 'src/components/About/blurbs';
 import { LazyImage } from 'src/components/LazyImage';
 
 import { offWhite } from 'src/styles/colors';
-import { lato1, lato2, lato3 } from 'src/styles/fonts';
+import { lato2, lato3 } from 'src/styles/fonts';
 import { generateSrcsetWidths, resizedImage, sycWithPianoBW, sycWithPianoBWWebP } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
 import { screenLengths, screenM, screenPortrait, screenXS } from 'src/styles/screens';
+import { navBarHeight } from 'src/styles/variables';
+import { GlobalStateShape } from 'src/types';
 
 const pictureHeight = 250;
 
-const FirstLetter = styled('span') `
-    display: block;
-    float: left;
-    font-family: ${lato1};
-    font-size: 68px;
-    margin-left: -6px;
-`;
-
 const Paragraph = styled('p') `
     font-family: ${lato2};
-    font-size: 19px;
-    margin: 21px 0 21px 0;
-    line-height: 2.2em;
+    font-size: 1.2em;
+    line-height: 2em;
+    margin: 1.6em 0;
+
+    /* stylelint-disable-next-line */
+    ${screenXS} {
+        font-size: 1em;
+        line-height: 1.6em;
+        margin: 1.3em 0;
+    }
 `;
 
 const SpaceFiller = styled('div') `
@@ -47,7 +51,7 @@ const TextGroup = styled('div') `
     /* stylelint-disable-next-line */
     ${screenPortrait}, ${screenXS} {
         background-color: white;
-        padding: 20px 30px;
+        padding: 20px 20px;
     }
 `;
 
@@ -57,17 +61,14 @@ const AboutText: React.SFC<{ className?: string }> = (props) => (
         <TextGroup>
             {blurbs.map((blurb, i) => {
                 if (i === 0) {
-                    const firstLetter = blurb[0];
                     const age = moment().diff('1988-08-27', 'year');
                     blurb = blurb.replace(/##/, age.toString());
-                    const withoutFirstLetter = blurb.slice(1);
-                    const nameLocation = withoutFirstLetter.indexOf('Sean Chen');
-                    const name = withoutFirstLetter.slice(nameLocation, nameLocation + 9);
-                    const beforeName = withoutFirstLetter.slice(0, nameLocation);
-                    const afterName = withoutFirstLetter.slice(nameLocation + 9);
+                    const nameLocation = blurb.indexOf('Sean Chen');
+                    const name = blurb.slice(nameLocation, nameLocation + 9);
+                    const beforeName = blurb.slice(0, nameLocation);
+                    const afterName = blurb.slice(nameLocation + 9);
                     return (
                         <Paragraph key={i}>
-                            <FirstLetter>{firstLetter}</FirstLetter>
                             {beforeName}
                             <span className={css` font-family: ${lato3}; `}>
                                 {name}
@@ -103,7 +104,9 @@ const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
 
     /* stylelint-disable-next-line */
     ${screenPortrait}, ${screenXS} {
-        position: absolute;
+        position: fixed;
+        z-index: 0;
+        top: ${navBarHeight}px;
         height: ${pictureHeight}px;
         width: 100%;
         background-size: 106%;
@@ -123,14 +126,14 @@ const TextContainer = styled(AboutText) `
 
     /* stylelint-disable-next-line */
     ${screenPortrait}, ${screenXS} {
-        position: absolute;
+        position: relative;
+        z-index: 1;
         margin-top: 0;
         height: 100%;
         left: 0;
-        overflow-y: scroll;
-        text-align: justify;
         background-color: transparent;
         padding: 0;
+        overflow-y: visible;
     }
 `;
 
@@ -143,7 +146,11 @@ const AboutContainer = styled('div') `
 
     /* stylelint-disable-next-line */
     ${screenXS} {
+        margin-top: 0;
+        padding-top: ${navBarHeight.mobile}px;
+        height: 100%;
         display: block;
+        overflow-y: scroll;
     }
 `;
 
@@ -153,13 +160,21 @@ const srcWidths = screenLengths.map((value) => (
 
 const mobileWidths = [1600, 1440, 1080, 800, 768, 720, 640, 480, 320];
 
-interface AboutProps {
+interface AboutOwnProps {
     readonly isMobile: boolean;
 }
 
 interface AboutState {
-    readonly currScrollTop: number;
     readonly bgImage?: string;
+}
+
+interface AboutStateToProps {
+    readonly scrollTop: number;
+    readonly onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
+}
+
+interface AboutDispatchToProps {
+    readonly setOnScroll: typeof setOnScroll;
 }
 
 const imageLoaderStyle = css`
@@ -167,13 +182,15 @@ const imageLoaderStyle = css`
     position: absolute;
 `;
 
+type AboutProps = AboutOwnProps & AboutStateToProps & AboutDispatchToProps;
+
 class About extends React.Component<AboutProps, AboutState> {
-    state: AboutState = { currScrollTop: 0, bgImage: '' };
+    state: AboutState = { bgImage: '' };
     private bgRef: HTMLDivElement;
 
-    setScrollTop = (event: React.SyntheticEvent<HTMLElement>) => {
-        this.setState({ currScrollTop: (event.target as HTMLElement).scrollTop });
-    };
+    componentDidMount() {
+        this.props.setOnScroll(pictureHeight + navBarHeight.mobile);
+    }
 
     onImageLoad = (el: HTMLImageElement) => {
         this.setState({ bgImage: el.currentSrc }, () => {
@@ -194,9 +211,9 @@ class About extends React.Component<AboutProps, AboutState> {
 
     render() {
         return (
-            <AboutContainer onScroll={this.setScrollTop}>
+            <AboutContainer onScroll={this.props.isMobile ? this.props.onScroll : null}>
                 <ImageContainer
-                    currScrollTop={this.state.currScrollTop}
+                    currScrollTop={this.props.scrollTop}
                     bgImage={this.state.bgImage}
                     innerRef={(div) => this.bgRef = div}
                 >
@@ -240,5 +257,15 @@ class About extends React.Component<AboutProps, AboutState> {
     }
 }
 
-export type AboutType = typeof About;
-export default About;
+const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
+    onScroll: navbar.onScroll,
+    scrollTop: navbar.lastScrollTop,
+});
+
+const connectedAbout = connect<AboutStateToProps, AboutDispatchToProps, AboutProps>(
+    mapStateToProps,
+    { setOnScroll },
+)(About);
+
+export type AboutType = typeof connectedAbout;
+export default connectedAbout;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
+import { connect } from 'react-redux';
 
 import mix from 'polished/lib/color/mix';
 import { Link } from 'react-router-dom';
@@ -7,7 +8,9 @@ import { Transition } from 'react-transition-group';
 
 import TweenLite from 'gsap/TweenLite';
 
+import { toggleExpanded, toggleSubNav } from 'src/components/App/NavBar/actions';
 import SubNav from 'src/components/App/NavBar/SubNav/SubNav';
+import { GlobalStateShape } from 'src/types';
 
 import { lightBlue, logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
@@ -24,8 +27,8 @@ interface HighlightProps {
 const getHighlightStyles = (isMobile: boolean) => css`
     /* stylelint-disable */
     ${!isMobile && `
-        margin-top: ${navBarMarginTop.nonHdpi}px;
-        height: ${navBarHeight.nonHdpi - navBarMarginTop.nonHdpi}px;
+        margin-top: ${navBarMarginTop}px;
+        height: ${navBarHeight.desktop - navBarMarginTop}px;
     `}
     /* stylelint-enable */
     padding: ${isMobile ? '1.8rem 0' : '20px 10px 0 10px'};
@@ -37,7 +40,7 @@ const getHighlightDefaultStyle = (isMobile: boolean) => css`
     position: absolute;
     bottom: 0;
     padding: 0;
-    margin-top: ${navBarMarginTop.nonHdpi}px;
+    margin-top: ${navBarMarginTop}px;
     opacity: 0;
     height: 5px;
     z-index: -1;
@@ -78,14 +81,20 @@ interface NavBarLinkProps {
     readonly className?: string;
     readonly active: boolean;
     readonly isHome: boolean;
-    readonly isExpanded: boolean;
     readonly link: string;
-    readonly showSubs: string[];
     readonly subNavLinks: string[];
     readonly to: string;
-    readonly toggleSub: (show?: string) => void;
     readonly isMobile: boolean;
-    readonly closeMobileMenu?: (toExpand?: boolean) => void;
+}
+
+interface NavBarLinkStateToProps {
+    readonly isExpanded: boolean;
+    readonly showSubs: string[];
+}
+
+interface NavBarLinkDispatchToProps {
+    readonly toggleSubNav: typeof toggleSubNav;
+    readonly toggleExpanded: typeof toggleExpanded;
 }
 
 const linkStyle = css`
@@ -150,12 +159,12 @@ const exitAnimation = (el: HTMLElement, isMobile: boolean) => {
         : TweenLite.to(el, 0.25, { autoAlpha: 0 });
 };
 
-let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
+let NavBarLink: React.SFC<NavBarLinkProps & NavBarLinkDispatchToProps & NavBarLinkStateToProps> = (props) => (
     <li className={props.className}>
         {
             (props.subNavLinks) ?
                 <a
-                    onClick={() => props.toggleSub(props.link)}
+                    onClick={() => props.toggleSubNav(props.link)}
                     className={cx(
                         linkStyle,
                         { [linkActiveStyle]: props.active && !props.isHome && !props.isMobile },
@@ -168,8 +177,8 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                 <Link
                     to={props.to}
                     onClick={() => {
-                        props.toggleSub('');
-                        props.closeMobileMenu && props.closeMobileMenu(false);
+                        props.toggleSubNav('');
+                        props.isMobile && props.toggleExpanded(false);
                     }}
                     className={cx(
                         linkStyle,
@@ -181,7 +190,8 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                     <Highlight active={props.active} isHome={props.isHome} link={props.link} isMobile={props.isMobile} />
                 </Link>
         }
-        {props.subNavLinks &&
+        {
+            props.subNavLinks &&
             <Transition
                 in={props.showSubs.includes(props.link)}
                 onEnter={(el, isAppearing) => enterAnimation(el, isAppearing, props.isMobile)}
@@ -194,8 +204,8 @@ let NavBarLink: React.SFC<NavBarLinkProps> = (props) => (
                         basePath={props.to}
                         links={props.subNavLinks}
                         onClick={() => {
-                            props.toggleSub('');
-                            props.closeMobileMenu && props.closeMobileMenu(false);
+                            props.toggleSubNav('');
+                            props.isMobile && props.toggleExpanded(false);
                         }}
                         isHome={props.isHome}
                         isMobile={props.isMobile}
@@ -221,4 +231,15 @@ NavBarLink = styled(NavBarLink) `
     }
 `;
 
-export default NavBarLink;
+const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
+    showSubs: navbar.showSubs,
+    isExpanded: navbar.isExpanded,
+});
+
+export default connect<NavBarLinkStateToProps, NavBarLinkDispatchToProps>(
+    mapStateToProps,
+    {
+        toggleSubNav,
+        toggleExpanded,
+    },
+)(NavBarLink);

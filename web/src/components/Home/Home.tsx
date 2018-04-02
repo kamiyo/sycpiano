@@ -132,7 +132,7 @@ const BackgroundCover = styled<{ isMobile: boolean; }, 'div'>('div') `
 `;
 
 const NavBarGradient = styled<{ isMobile: boolean; }, 'div'>('div') `
-    height: ${navBarHeight.nonHdpi}px;
+    height: ${props => props.isMobile ? navBarHeight.mobile : navBarHeight.desktop}px;
     padding: 0 30px 0 0;
     position: fixed;
     top: 0;
@@ -238,7 +238,7 @@ const srcWidths = screenLengths.map((value) => (
     Math.round(value * 1779 / 2560)
 ));
 
-class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }, {}> {
+class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }> {
     private bgRef: HTMLDivElement;
 
     onImageLoaded = () => {

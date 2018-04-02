@@ -64,7 +64,7 @@ const eventNameStyle = (isMobile?: boolean) => css`
     }
 `;
 
-class EventName extends React.Component<EventNameProps, {}> {
+class EventName extends React.Component<EventNameProps> {
     copiedSpan: HTMLSpanElement;
     onCopy = () => {
         TweenLite.fromTo(this.copiedSpan, 0.2, { autoAlpha: 1 }, { autoAlpha: 0, delay: 0.5 });
@@ -91,9 +91,9 @@ class EventName extends React.Component<EventNameProps, {}> {
     }
 }
 
-let EventTime: React.SFC<EventDateTimeProps> = (props) => (
-    <div className={props.className}>
-        {props.dateTime.format('h:mm a z')}
+let EventTime: React.SFC<EventDateTimeProps> = ({ className, dateTime }) => (
+    <div className={className}>
+        {dateTime.format('h:mm a z')}
     </div>
 );
 
@@ -112,22 +112,22 @@ const getVenueName = (location: string): string => {
     return locArray.length >= 1 ? locArray[0] : '';
 };
 
-let EventLocation: React.SFC<EventLocationProps> = (props) => {
+let EventLocation: React.SFC<EventLocationProps> = ({ location, className, isMobile }) => {
     const locationIconStyle = css({
         height: locationIconDimension,
         width: locationIconDimension,
     });
 
     return (
-        <a href={getGoogleMapsSearchUrl(props.location)} className={cx(props.className)} target="_blank">
+        <a href={getGoogleMapsSearchUrl(location)} className={cx(className)} target="_blank">
             <LocationIconInstance className={locationIconStyle} />
 
             <strong
                 className={css`
-                    margin-left: ${props.isMobile ? 0 : 10}px;
+                    margin-left: ${isMobile ? 0 : 10}px;
                 `}
             >
-                {getVenueName(props.location)}
+                {getVenueName(location)}
             </strong>
         </a>
     );
@@ -153,9 +153,9 @@ interface EventCollaboratorsProps {
     className?: string;
 }
 
-let EventCollaborators: React.SFC<EventCollaboratorsProps> = (props) => (
-    <div className={props.className}>
-        {props.collaborators.map((collaborator: Collaborator, i: number) => (
+let EventCollaborators: React.SFC<EventCollaboratorsProps> = ({ className, collaborators }) => (
+    <div className={className}>
+        {collaborators.map((collaborator: Collaborator, i: number) => (
             collaborator.name && collaborator.instrument && (
                 <div key={i}>
                     <span><strong>{collaborator.name}</strong></span>{' - '}
@@ -178,9 +178,9 @@ interface EventProgramProps {
     className?: string;
 }
 
-let EventProgram: React.SFC<EventProgramProps> = (props) => (
-    <div className={props.className}>
-        {props.program.map(({ composer, piece }: Piece, i: number) => (
+let EventProgram: React.SFC<EventProgramProps> = ({ program, className }) => (
+    <div className={className}>
+        {program.map(({ composer, piece }: Piece, i: number) => (
             <div key={i}>
                 {composer}{piece ? ' ' : ''}<i>{piece}</i>
             </div>
@@ -200,8 +200,8 @@ interface EventWebsiteButtonProps {
     className?: string;
 }
 
-let EventWebsiteButton: React.SFC<EventWebsiteButtonProps> = (props) => (
-    <a href={props.website} target="_blank" className={props.className}>
+let EventWebsiteButton: React.SFC<EventWebsiteButtonProps> = ({ website, className }) => (
+    <a href={website} target="_blank" className={className}>
         {`Tickets & Info`}
     </a>
 );

@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
+import { AnyComponentType, AsyncModule } from 'src/types';
 
 interface AsyncComponentProps {
-    moduleProvider?: () => Promise<{ Component: new () => React.Component<any, any> }>;
+    moduleProvider?: () => Promise<AsyncModule>;
     [props: string]: any;
 }
 
 interface AsyncComponentState {
-    Component?: typeof React.Component;
+    Component?: AnyComponentType;
 }
 
 export default class AsyncComponent extends PureComponent<AsyncComponentProps, AsyncComponentState> {

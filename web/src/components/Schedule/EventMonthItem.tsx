@@ -16,22 +16,14 @@ interface EventMonthItemProps {
     readonly className?: string;
 }
 
-class EventMonthItem extends React.Component<EventMonthItemProps, {}> {
-    componentDidMount() {
-        this.props.measure();
-    }
+const EventMonthItem: React.SFC<EventMonthItemProps> = ({ className, style, month, year }) => (
+    <div className={className} style={style}>
+        <EventMonthItemMonthYear month={month} year={year} />
+        <EventMonthItemBottomBorder />
+    </div>
+);
 
-    render() {
-        return (
-            <div className={this.props.className} style={this.props.style}>
-                <EventMonthItemMonthYear month={this.props.month} year={this.props.year} />
-                <EventMonthItemBottomBorder />
-            </div>
-        );
-    }
-}
-
-const StyledEventMonthItem = styled(EventMonthItem)`
+const StyledEventMonthItem = styled(EventMonthItem) `
     font-family: ${lato2};
     font-size: 40px;
     width: 100%;

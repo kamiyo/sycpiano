@@ -15,16 +15,10 @@ interface EventItemProps {
     readonly permaLink: string;
 }
 
-class EventItem extends React.Component<EventItemProps, {}> {
-    render() {
-        const { event, style } = this.props;
-
-        return (
-            <div style={style}>
-                <EventItemBody {...event} isMobile={this.props.isMobile} permaLink={this.props.permaLink} />
-            </div>
-        );
-    }
-}
+const EventItem: React.SFC<EventItemProps> = ({ event, style, isMobile, permaLink }) => (
+    <div style={style}>
+        <EventItemBody {...event} isMobile={isMobile} permaLink={permaLink} />
+    </div>
+);
 
 export default EventItem;

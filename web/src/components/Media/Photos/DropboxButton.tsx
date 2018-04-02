@@ -5,22 +5,22 @@ import { Link } from 'react-router-dom';
 import { staticImage } from 'src/styles/imageUrls';
 import { playlistWidth } from 'src/styles/variables';
 
-interface SpotifyButtonProps {
+interface DropboxButtonProps {
     className?: string;
     isMobile?: boolean;
 }
 
-let SpotifyButton: React.SFC<SpotifyButtonProps> = ({ className }) => {
+let DropboxButton: React.SFC<DropboxButtonProps> = ({ className }) => {
     return (
         <div className={className}>
-            <Link style={{ display: 'block' }} to={'https://open.spotify.com/artist/6kMZjx0C2LY2v2fUsaN27y?si=8Uxb9kFTQPisQCvAyOybMQ'} target="_blank">
-                <img width={50} height={50} src={staticImage(`/soc-logos/spotify-color.svg`)} />
+            <Link style={{ display: 'block' }} to={'https://www.dropbox.com/sh/pzou7yeukjktznn/AADNCU7fmgUy_vmA3WioLiria?dl=0'} target="_blank">
+                <img width={50} height={50} src={staticImage(`/soc-logos/dropbox.svg`)} />
             </Link>
         </div>
     );
 };
 
-SpotifyButton = styled<SpotifyButtonProps, typeof SpotifyButton>(SpotifyButton) `
+DropboxButton = styled<{ isMobile?: boolean; }, typeof DropboxButton>(DropboxButton) `
     position: fixed;
     bottom: 10px;
     right: ${props => props.isMobile ? '50%' : `${playlistWidth / 2}px`};
@@ -40,4 +40,4 @@ SpotifyButton = styled<SpotifyButtonProps, typeof SpotifyButton>(SpotifyButton) 
     }
 `;
 
-export default SpotifyButton;
+export default DropboxButton;

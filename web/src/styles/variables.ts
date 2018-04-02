@@ -1,12 +1,9 @@
 export const navBarHeight = {
-    nonHdpi: 80,
-    hdpi: 50,
+    desktop: 80,
+    mobile: 60,
 };
 
-export const navBarMarginTop = {
-    nonHdpi: 18,
-    hdpi: 12,
-};
+export const navBarMarginTop = 18;
 
 export const playlistContainerWidth = 550;
 export const playlistTogglerWidth = 20;

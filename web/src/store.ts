@@ -10,11 +10,20 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
+import { NavBarReducer } from 'src/components/App/NavBar/reducers';
+
 import { AsyncStore, GlobalStateShape, Reducers } from 'src/types';
+
+const createReducer = (reducers?: Reducers) => {
+    return combineReducers<GlobalStateShape>({
+        navbar: NavBarReducer,
+        ...reducers,
+    });
+};
 
 export default (() => {
     /* tslint:disable-next-line:no-empty */
-    const store: AsyncStore = createStore(() => {}, applyMiddleware(thunk));
+    const store: AsyncStore = createStore(createReducer(), applyMiddleware(thunk));
     store.async = {};
     return store;
 })();
@@ -22,11 +31,4 @@ export default (() => {
 export const registerReducer = (store: AsyncStore, reducers: Reducers) => {
     store.async = { ...store.async, ...reducers };
     store.replaceReducer(createReducer(store.async));
-};
-
-const createReducer = (reducers: Reducers) => {
-    return combineReducers<GlobalStateShape>({
-        root: (state = null) => state,
-        ...reducers,
-    });
 };

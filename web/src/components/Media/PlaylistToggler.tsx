@@ -33,9 +33,9 @@ interface PlaylistTogglerProps {
     readonly isPlaylistVisible: boolean;
 }
 
-const PlaylistToggler: React.SFC<PlaylistTogglerProps> = (props) => (
-    <StyledToggler onClick={props.onClick}>
-        {props.isPlaylistVisible ? '\u25B6' : '\u25C0'}
+const PlaylistToggler: React.SFC<PlaylistTogglerProps> = ({ onClick, isPlaylistVisible }) => (
+    <StyledToggler onClick={onClick}>
+        {isPlaylistVisible ? '\u25B6' : '\u25C0'}
     </StyledToggler>
 );
 

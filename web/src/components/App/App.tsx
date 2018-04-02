@@ -2,6 +2,7 @@ import toUpper from 'lodash-es/toUpper';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import ReactMedia from 'react-media';
+import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -19,6 +20,7 @@ import AsyncComponent from 'src/components/AsyncComponent';
 import extractModule from 'src/module';
 import store from 'src/store';
 import { reactMediaMobileQuery } from 'src/styles/screens';
+import { GlobalStateShape } from 'src/types';
 
 const register = extractModule(store);
 const About = () => register('about', import(/* webpackChunkName: 'about' */ 'src/components/About'));
@@ -30,17 +32,30 @@ const Schedule = () => register('schedule', import(/* webpackChunkName: 'schedul
 
 const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
     if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 0 }, { autoAlpha: 1, delay });
+        TweenLite.to(element, 0.25, { autoAlpha: 1, delay });
     }
 };
 
-const fadeOnExit = (element: HTMLElement) => {
+const slideOnEnter = (delay: number) => (element: HTMLElement) => {
+    TweenLite.set(element, { autoAlpha: 1 });
     if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 1 }, { autoAlpha: 0 });
+        TweenLite.to(element, 0.25, { y: '0%', delay, clearProps: 'transform', force3D: true });
     }
 };
 
-const RootContainer = styled<{ isHome: boolean; }, 'div'>('div') `
+const fadeOnExit = (delay: number) => (element: HTMLElement) => {
+    if (element) {
+        TweenLite.to(element, 0.25, { autoAlpha: 0, delay });
+    }
+};
+
+const slideOnExit = (delay: number) => (element: HTMLElement) => {
+    if (element) {
+        TweenLite.to(element, 0.25, { y: '-100%', delay, force3D: true });
+    }
+};
+
+const RootContainer = styled<{ isHome: boolean; isMobile: boolean; }, 'div'>('div') `
     height: 100%;
     width: 100%;
     background-color: ${props => props.isHome ? 'black' : 'white'};
@@ -52,18 +67,18 @@ const FadingContainer = styled('div') `
     visibility: hidden;
 `;
 
-export default class App extends React.Component<RouteComponentProps<void>, { homeBgLoaded: boolean; }> {
-    constructor(props: RouteComponentProps<void>) {
+interface AppStateToProps {
+    navbarVisible: boolean;
+}
+
+type AppProps = RouteComponentProps<{}> & AppStateToProps;
+
+class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
+    constructor(props: AppProps) {
         super(props);
-        if (this.getRouteBase() === '/') {
-            this.state = {
-                homeBgLoaded: false,
-            };
-        } else {
-            this.state = {
-                homeBgLoaded: true,
-            };
-        }
+        this.state = {
+            homeBgLoaded: this.getRouteBase() !== '/',
+        };
     }
 
     isSubPath = (testPath: string) => {
@@ -89,11 +104,12 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
         return (
             <ReactMedia query={reactMediaMobileQuery}>
                 {(matches: boolean) => (
-                    <RootContainer isHome={this.getRouteBase() === '/'}>
+                    <RootContainer isHome={this.getRouteBase() === '/'} isMobile={matches}>
                         <LogoSVG />
                         <Transition
-                            in={this.state.homeBgLoaded}
-                            onEntering={fadeOnEnter(0)}
+                            in={this.state.homeBgLoaded && this.props.navbarVisible}
+                            onEntering={this.getRouteBase() === '/' ? fadeOnEnter(0) : slideOnEnter(0)}
+                            onExiting={slideOnExit(0)}
                             timeout={250}
                             appear={true}
                         >
@@ -108,7 +124,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                             <Transition
                                 key={this.getRouteBase()}
                                 onEntering={fadeOnEnter(0.25)}
-                                onExiting={fadeOnExit}
+                                onExiting={fadeOnExit(0)}
                                 timeout={750}
                                 appear={true}
                             >
@@ -153,3 +169,11 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
         );
     }
 }
+
+const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
+    navbarVisible: navbar.isVisible,
+});
+
+export default connect<AppStateToProps>(
+    mapStateToProps,
+)(App);

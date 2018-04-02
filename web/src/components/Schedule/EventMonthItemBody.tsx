@@ -18,8 +18,8 @@ const EventMonthItemBottomBorder = styled('div')`
     background: radial-gradient(circle farthest-side at 0%, black, white 90%);
 `;
 
-let EventMonthItemMonthYear: React.SFC<EventMonthItemBodyProps> = (props) => (
-    <div className={props.className}>{`${props.month} ${props.year}`}</div>
+let EventMonthItemMonthYear: React.SFC<EventMonthItemBodyProps> = ({ className, month, year }) => (
+    <div className={className}>{`${month} ${year}`}</div>
 );
 
 EventMonthItemMonthYear = styled(EventMonthItemMonthYear)`

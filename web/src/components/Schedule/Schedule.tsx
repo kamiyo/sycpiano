@@ -20,35 +20,36 @@ const scheduleStyles = (isMobile?: boolean) => css`
     box-sizing: border-box;
 `;
 
-class Schedule extends React.Component<{ isMobile: boolean; }, {}> {
-    render() {
-        return (
-            <div className={scheduleStyles(this.props.isMobile)}>
-                <div className={css` height: 100%; `}>
-                    <Switch>
-                        <Route
-                            path="/schedule/:type/:date?"
-                            exact={true}
-                            render={(routeProps: RouteComponentProps<{ type: string; date: string; }>) => (
-                                <EventList {...routeProps} date={routeProps.match.params.date} type={routeProps.match.params.type as EventListName} isMobile={this.props.isMobile} />
-                            )}
+const Schedule: React.SFC<{ isMobile: boolean; }> = ({ isMobile }) => (
+    <div className={scheduleStyles(isMobile)}>
+        <div className={css` height: 100%; `}>
+            <Switch>
+                <Route
+                    path="/schedule/:type/:date?"
+                    exact={true}
+                    render={(routeProps: RouteComponentProps<{ type: string; date: string; }>) => (
+                        <EventList
+                            {...routeProps}
+                            date={routeProps.match.params.date}
+                            type={routeProps.match.params.type as EventListName}
+                            isMobile={isMobile}
                         />
-                        <Route
-                            path="/schedule"
-                            render={() => (
-                                <Redirect to="/schedule/upcoming" />
-                            )}
-                        />
-                    </Switch>
-                </div>
-                <DateIconSVG />
-                <LocationIconSVG />
-                <TrebleIconSVG />
-                <LinkIconSVG />
-            </div>
-        );
-    }
-}
+                    )}
+                />
+                <Route
+                    path="/schedule"
+                    render={() => (
+                        <Redirect to="/schedule/upcoming" />
+                    )}
+                />
+            </Switch>
+        </div>
+        <DateIconSVG />
+        <LocationIconSVG />
+        <TrebleIconSVG />
+        <LinkIconSVG />
+    </div>
+);
 
 export type ScheduleType = typeof Schedule;
 export default Schedule;
