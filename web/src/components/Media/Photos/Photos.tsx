@@ -11,6 +11,7 @@ import { idFromItem } from 'src/components/Media/Photos/utils';
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
+import { screenXS } from 'src/styles/screens';
 import { playlistWidth } from 'src/styles/variables';
 
 interface PhotosStateToProps {
@@ -34,6 +35,12 @@ const StyledPhotos = styled('div') `
     width: 100%;
     background-color: black;
     position: relative;
+
+    /* stylelint-disable-next-line */
+    ${screenXS} {
+        height: 100%;
+        margin-top: 0;
+    }
 `;
 
 const StyledPhotoViewer = styled('div') `

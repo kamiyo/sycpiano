@@ -8,9 +8,13 @@ export interface NavBarLinksProps {
     readonly className?: string;
     readonly currentBasePath: string;
     readonly links: ReadonlyArray<LinkShape>;
-    readonly showSubs: string[];
-    readonly toggleSub: (show?: string) => void;
     readonly isMobile: boolean;
+}
+
+export interface NavBarStateShape {
+    readonly isVisible: boolean;
     readonly isExpanded: boolean;
-    readonly closeMobileMenu?: (toExpand?: boolean) => void;
+    readonly showSubs: string[];
+    readonly lastScrollTop: number;
+    readonly onScroll?: (event: React.SyntheticEvent<HTMLElement>) => void;
 }

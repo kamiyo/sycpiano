@@ -17,4 +17,5 @@ export interface PlaylistProps {
     readonly shouldAppear: boolean;
     readonly isMobile?: boolean;
     readonly id?: string;
+    readonly onScroll?: (event: React.SyntheticEvent<HTMLElement>) => void;
 }

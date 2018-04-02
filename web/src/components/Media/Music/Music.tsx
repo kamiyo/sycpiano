@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { css } from 'react-emotion';
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { match } from 'react-router';
 
 import TweenLite from 'gsap/TweenLite';
 
+import { setOnScroll } from 'src/components/App/NavBar/actions';
 import { fetchPlaylistAction } from 'src/components/Media/Music/actions';
 import AudioInfo from 'src/components/Media/Music/AudioInfo';
 import AudioUI from 'src/components/Media/Music/AudioUI';
@@ -17,6 +18,8 @@ import { isMusicItem, MusicFileItem, MusicItem, MusicListItem } from 'src/compon
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
+import { screenXS } from 'src/styles/screens';
+import { navBarHeight } from 'src/styles/variables';
 
 interface MusicState {
     readonly isPlaying: boolean;
@@ -31,10 +34,12 @@ interface MusicState {
 
 interface MusicStateToProps {
     readonly items: MusicListItem[];
+    readonly onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
 }
 
 interface MusicDispatchToProps {
-    readonly fetchPlaylistAction: (trackId: string) => Promise<MusicFileItem>;
+    readonly fetchPlaylistAction: typeof fetchPlaylistAction;
+    readonly setOnScroll: typeof setOnScroll;
 }
 
 interface MusicOwnProps {
@@ -51,6 +56,13 @@ const musicStyle = css`
     width: 100%;
     background-color: black;
     overflow-y: scroll;
+
+    /* stylelint-disable-next-line */
+    ${screenXS} {
+        margin-top: 0;
+        padding-top: ${navBarHeight.mobile}px;
+        height: 100%;
+    }
 `;
 
 class Music extends React.Component<MusicProps, MusicState> {
@@ -137,7 +149,7 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     waitForPlaylist = async () => {
         try {
-            const firstTrack = await this.props.fetchPlaylistAction(this.props.match.params.track);
+            const firstTrack = await this.props.fetchPlaylistAction(this.props.match.params.track) as any;
             this.loadTrack(firstTrack, false);
         } catch (err) {
             console.error('playlist init failed.', err);
@@ -260,6 +272,7 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     componentDidMount() {
+        this.props.setOnScroll(navBarHeight.mobile);
         this.initializeAudioPlayer();
     }
 
@@ -276,7 +289,7 @@ class Music extends React.Component<MusicProps, MusicState> {
     render() {
         const isMobile = this.props.isMobile;
         return (
-            <div className={musicStyle}>
+            <div className={musicStyle} onScroll={isMobile ? this.props.onScroll : null}>
                 <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
                 <MusicPlaylist
                     audio={this.audio}
@@ -322,15 +335,15 @@ class Music extends React.Component<MusicProps, MusicState> {
 
 const mapStateToProps = (state: GlobalStateShape): MusicStateToProps => ({
     items: state.audio_playlist.items,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch<GlobalStateShape>): MusicDispatchToProps => ({
-    fetchPlaylistAction: (track: string) => dispatch(fetchPlaylistAction(track)),
+    onScroll: state.navbar.onScroll,
 });
 
 const ConnectedMusic = connect<MusicStateToProps, MusicDispatchToProps>(
     mapStateToProps,
-    mapDispatchToProps,
+    {
+        fetchPlaylistAction,
+        setOnScroll,
+    },
 )(Music);
 
 export type MusicType = typeof ConnectedMusic;

@@ -105,10 +105,6 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
         this.props.switchList(this.props.type);
     }
 
-    componentDidCatch(error: any, info: any) {
-        console.log(error, info);
-    }
-
     componentWillUpdate(nextProps: EventListProps & { [key: string]: any }) {
         const date = moment(nextProps.match.params.date, 'YYYY-MM-DD');
         if (nextProps.type !== this.props.type) {
@@ -155,7 +151,6 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
 
     onScroll = ({ clientHeight, scrollTop, scrollHeight }: OnScrollProps) => {
         if (scrollTop + clientHeight > scrollHeight - 400 && this.props.hasMore && !this.props.isFetchingList && this.props.maxDate && this.props.minDate) {
-            console.log('here');
             if (this.props.type === 'upcoming') {
                 this.props.createFetchEventsAction({
                     after: this.props.maxDate,
@@ -185,7 +180,6 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
     }
 
     render() {
-        console.log('render');
         return (
             <div className={fullWidthHeight}>
                 {

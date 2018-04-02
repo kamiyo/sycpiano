@@ -76,4 +76,4 @@ HamburgerMenu = styled(HamburgerMenu)`
     -webkit-tap-highlight-color: transparent;
 `;
 
-export { HamburgerMenu };
+export default HamburgerMenu;

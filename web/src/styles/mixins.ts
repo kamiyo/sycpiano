@@ -1,8 +1,8 @@
 import { css } from 'emotion';
 import darken from 'polished/lib/color/darken';
 
-import { navBarHeight } from 'src/styles/variables';
 import { screenXS } from 'src/styles/screens';
+import { navBarHeight } from 'src/styles/variables';
 
 const pushedHelper = (marginTop: number) => css`
     height: calc(100% - ${marginTop}px);
@@ -12,6 +12,7 @@ const pushedHelper = (marginTop: number) => css`
 export const pushed = css`
     ${pushedHelper(navBarHeight.desktop)}
 
+    /* stylelint-disable-next-line */
     ${screenXS} {
         ${pushedHelper(navBarHeight.mobile)}
     }

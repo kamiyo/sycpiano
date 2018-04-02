@@ -7,7 +7,7 @@ import { constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/compon
 import { GlobalStateShape } from 'src/types';
 import { polarToCartesian } from 'src/utils';
 
-import { playlistWidth } from 'src/styles/variables';
+import { navBarHeight, playlistWidth } from 'src/styles/variables';
 
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;
@@ -44,7 +44,7 @@ type AudioVisualizerProps = AudioVisualizerStateToProps & AudioVisualizerDispatc
 const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     position: absolute;
     left: 0;
-    top: 0;
+    top: ${(props) => props.isMobile ? navBarHeight.mobile : 0}px;
     width: ${(props) => props.isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
     height: ${(props) => props.isMobile ? '450px' : '100%'};
 `;

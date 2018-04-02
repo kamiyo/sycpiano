@@ -13,6 +13,7 @@ import { scheduleReducer } from 'src/components/Schedule/reducers';
 import { Store } from 'react-redux';
 
 import { AboutType } from 'src/components/About/About';
+import { NavBarStateShape } from 'src/components/App/NavBar/types';
 import { ContactType } from 'src/components/Contact/Contact';
 import { HomeType } from 'src/components/Home/Home';
 import { MediaType } from 'src/components/Media/Media';
@@ -32,6 +33,7 @@ export interface GlobalStateShape {
     readonly schedule_eventItems?: ScheduleStateShape;
     readonly video_player?: VideoPlayerStateShape;
     readonly video_playlist?: VideoPlaylistStateShape;
+    readonly navbar: NavBarStateShape;
 }
 
 export type AnyReducerType = typeof audioPlaylistReducer | typeof audioUIReducer | typeof audioVisualizerReducer |

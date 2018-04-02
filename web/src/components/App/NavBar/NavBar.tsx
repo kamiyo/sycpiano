@@ -1,13 +1,15 @@
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
+import { connect } from 'react-redux';
 
-import { HamburgerNav } from 'src/components/App/NavBar/HamburgerNav';
+import HamburgerNav from 'src/components/App/NavBar/HamburgerNav';
 import { links } from 'src/components/App/NavBar/links';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import NavBarLogo from 'src/components/App/NavBar/NavBarLogo';
 
 import { screenPortrait, screenXS } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
+import { GlobalStateShape } from 'src/types';
 
 interface NavBarProps {
     readonly currentBasePath: string;
@@ -16,8 +18,7 @@ interface NavBarProps {
     readonly isMobile: boolean;
 }
 
-interface NavBarState {
-    readonly showSubs: string[];
+interface NavBarStateToProps {
     readonly isExpanded?: boolean;
 }
 
@@ -52,57 +53,38 @@ const StyledNavBarLogo = styled(NavBarLogo) `
     display: inline-flex;
 `;
 
-export default class NavBar extends React.Component<NavBarProps, NavBarState> {
-    state = {
-        showSubs: [''],
-        isExpanded: false,
-    };
+const NavBar: React.SFC<NavBarProps & NavBarStateToProps> = (props) => {
+    const NavComponent = props.isMobile ? HamburgerNav : NavBarLinks;
+    const isHome = props.currentBasePath === '/';
+    return (
+        <div
+            className={cx(
+                props.className,
+                navBarStyle,
+                { [homeNavBarStyle(props.isExpanded)]: isHome },
+            )}
+        >
+            <StyledNavBarLogo
+                isHome={isHome}
+                isExpanded={props.isExpanded}
+                specificRouteName={props.specificRouteName}
+            />
+            <NavComponent
+                links={links}
+                currentBasePath={props.currentBasePath}
+                isMobile={props.isMobile}
+            />
+        </div >
+    );
+};
 
-    setExpandedState = (toExpand: boolean = null) => this.setState({
-        isExpanded: (toExpand === null) ? !this.state.isExpanded : toExpand,
-    });
+const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
+    isExpanded: navbar.isExpanded,
+    showSubs: navbar.showSubs,
+});
 
-    toggleSubNav = (arg = '') => {
-        if (this.props.isMobile) {
-            if (this.state.showSubs.includes(arg)) {
-                this.setState({ showSubs: this.state.showSubs.filter((value) => arg !== value) });
-            } else {
-                this.setState({ showSubs: [...this.state.showSubs, arg] });
-            }
-        } else {
-            if (arg === this.state.showSubs[0]) {
-                this.setState({ showSubs: [] });
-            } else {
-                this.setState({ showSubs: [arg] });
-            }
-        }
-    }
+const connectedNavBar = connect<NavBarStateToProps, {}, NavBarProps>(
+    mapStateToProps,
+)(NavBar);
 
-    render() {
-        const NavComponent = this.props.isMobile ? HamburgerNav : NavBarLinks;
-        return (
-            <div
-                className={cx(
-                    this.props.className,
-                    navBarStyle,
-                    { [homeNavBarStyle(this.state.isExpanded)]: this.props.currentBasePath === '/' },
-                )}
-            >
-                <StyledNavBarLogo
-                    isHome={this.props.currentBasePath === '/'}
-                    isExpanded={this.state.isExpanded}
-                    specificRouteName={this.props.specificRouteName}
-                />
-                <NavComponent
-                    links={links}
-                    showSubs={this.state.showSubs}
-                    toggleSub={this.toggleSubNav}
-                    currentBasePath={this.props.currentBasePath}
-                    isMobile={this.props.isMobile}
-                    isExpanded={this.state.isExpanded}
-                    closeMobileMenu={this.setExpandedState}
-                />
-            </div >
-        );
-    }
-}
+export default connectedNavBar;

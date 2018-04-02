@@ -1,6 +1,9 @@
 import * as moment from 'moment-timezone';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
+import { connect } from 'react-redux';
+
+import { setOnScroll } from 'src/components/App/NavBar/actions';
 
 import { easeQuadOut } from 'd3-ease';
 import TweenLite from 'gsap/TweenLite';
@@ -14,7 +17,7 @@ import { generateSrcsetWidths, resizedImage, sycWithPianoBW, sycWithPianoBWWebP 
 import { pushed } from 'src/styles/mixins';
 import { screenLengths, screenM, screenPortrait, screenXS } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
-import debounce from 'lodash-es/debounce';
+import { GlobalStateShape } from 'src/types';
 
 const pictureHeight = 250;
 
@@ -24,6 +27,7 @@ const Paragraph = styled('p') `
     line-height: 2em;
     margin: 1.6em 0;
 
+    /* stylelint-disable-next-line */
     ${screenXS} {
         font-size: 1em;
         line-height: 1.6em;
@@ -156,14 +160,21 @@ const srcWidths = screenLengths.map((value) => (
 
 const mobileWidths = [1600, 1440, 1080, 800, 768, 720, 640, 480, 320];
 
-interface AboutProps {
+interface AboutOwnProps {
     readonly isMobile: boolean;
-    readonly toggleNavbar: (show?: boolean) => void;
 }
 
 interface AboutState {
-    readonly currScrollTop: number;
     readonly bgImage?: string;
+}
+
+interface AboutStateToProps {
+    readonly scrollTop: number;
+    readonly onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
+}
+
+interface AboutDispatchToProps {
+    readonly setOnScroll: typeof setOnScroll;
 }
 
 const imageLoaderStyle = css`
@@ -171,23 +182,15 @@ const imageLoaderStyle = css`
     position: absolute;
 `;
 
+type AboutProps = AboutOwnProps & AboutStateToProps & AboutDispatchToProps;
+
 class About extends React.Component<AboutProps, AboutState> {
-    state: AboutState = { currScrollTop: 0, bgImage: '' };
+    state: AboutState = { bgImage: '' };
     private bgRef: HTMLDivElement;
 
-    debouncedNavbar = debounce(this.props.toggleNavbar, 50, { leading: true });
-
-    setScrollTop = (event: React.SyntheticEvent<HTMLElement>) => {
-        const scrollTop = (event.target as HTMLElement).scrollTop;
-        if (this.props.isMobile) {
-            if (scrollTop > this.state.currScrollTop && scrollTop > (pictureHeight + navBarHeight.mobile)) {
-                this.debouncedNavbar(false);
-            } else {
-                this.debouncedNavbar(true);
-            }
-        }
-        this.setState({ currScrollTop: scrollTop });
-    };
+    componentDidMount() {
+        this.props.setOnScroll(pictureHeight + navBarHeight.mobile);
+    }
 
     onImageLoad = (el: HTMLImageElement) => {
         this.setState({ bgImage: el.currentSrc }, () => {
@@ -208,9 +211,9 @@ class About extends React.Component<AboutProps, AboutState> {
 
     render() {
         return (
-            <AboutContainer onScroll={this.setScrollTop}>
+            <AboutContainer onScroll={this.props.isMobile ? this.props.onScroll : null}>
                 <ImageContainer
-                    currScrollTop={this.state.currScrollTop}
+                    currScrollTop={this.props.scrollTop}
                     bgImage={this.state.bgImage}
                     innerRef={(div) => this.bgRef = div}
                 >
@@ -254,5 +257,15 @@ class About extends React.Component<AboutProps, AboutState> {
     }
 }
 
-export type AboutType = typeof About;
-export default About;
+const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
+    onScroll: navbar.onScroll,
+    scrollTop: navbar.lastScrollTop,
+});
+
+const connectedAbout = connect<AboutStateToProps, AboutDispatchToProps, AboutProps>(
+    mapStateToProps,
+    { setOnScroll },
+)(About);
+
+export type AboutType = typeof connectedAbout;
+export default connectedAbout;

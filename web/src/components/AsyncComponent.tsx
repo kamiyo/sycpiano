@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { AsyncModule, AnyComponentType } from 'src/types';
+import { AnyComponentType, AsyncModule } from 'src/types';
 
 interface AsyncComponentProps {
     moduleProvider?: () => Promise<AsyncModule>;

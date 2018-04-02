@@ -1,20 +1,32 @@
 import TweenLite from 'gsap/TweenLite';
 import * as React from 'react';
 import { css } from 'react-emotion';
+import { connect } from 'react-redux';
 import { Transition } from 'react-transition-group';
 
-import { HamburgerMenu } from 'src/components/App/NavBar/HamburgerMenu';
+import { toggleExpanded } from 'src/components/App/NavBar/actions';
+import HamburgerMenu from 'src/components/App/NavBar/HamburgerMenu';
 import { links } from 'src/components/App/NavBar/links';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import { NavBarLinksProps } from 'src/components/App/NavBar/types';
 
-class HamburgerNav extends React.Component<NavBarLinksProps, {}> {
+import { GlobalStateShape } from 'src/types';
+
+interface HamburgerNavStateToProps {
+    isExpanded: boolean;
+}
+
+interface HamburgerNavDispatchToProps {
+    toggleExpanded: typeof toggleExpanded;
+}
+
+class HamburgerNav extends React.Component<NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps, {}> {
     render() {
         return (
             <div className={css` margin: auto 0; `}>
                 <HamburgerMenu
                     isExpanded={this.props.isExpanded}
-                    onClick={() => this.props.closeMobileMenu()}
+                    onClick={() => this.props.toggleExpanded()}
                     layerColor={this.props.currentBasePath === '/' && !this.props.isExpanded ? 'white' : 'black'}
                 />
                 <Transition
@@ -25,12 +37,8 @@ class HamburgerNav extends React.Component<NavBarLinksProps, {}> {
                 >
                     <NavBarLinks
                         links={links}
-                        showSubs={this.props.showSubs}
-                        toggleSub={this.props.toggleSub}
                         currentBasePath={this.props.currentBasePath}
                         isMobile={this.props.isMobile}
-                        isExpanded={this.props.isExpanded}
-                        closeMobileMenu={() => this.props.closeMobileMenu(false)}
                     />
                 </Transition>
             </div>
@@ -38,4 +46,11 @@ class HamburgerNav extends React.Component<NavBarLinksProps, {}> {
     }
 }
 
-export { HamburgerNav };
+const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
+    isExpanded: navbar.isExpanded,
+});
+
+export default connect<HamburgerNavStateToProps, HamburgerNavDispatchToProps>(
+    mapStateToProps,
+    { toggleExpanded },
+)(HamburgerNav);

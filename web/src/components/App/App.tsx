@@ -2,6 +2,7 @@ import toUpper from 'lodash-es/toUpper';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import ReactMedia from 'react-media';
+import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -19,6 +20,7 @@ import AsyncComponent from 'src/components/AsyncComponent';
 import extractModule from 'src/module';
 import store from 'src/store';
 import { reactMediaMobileQuery } from 'src/styles/screens';
+import { GlobalStateShape } from 'src/types';
 
 const register = extractModule(store);
 const About = () => register('about', import(/* webpackChunkName: 'about' */ 'src/components/About'));
@@ -65,18 +67,22 @@ const FadingContainer = styled('div') `
     visibility: hidden;
 `;
 
-export default class App extends React.Component<RouteComponentProps<void>, { homeBgLoaded: boolean; navbarVisible: boolean; }> {
-    constructor(props: RouteComponentProps<void>) {
+interface AppStateToProps {
+    navbarVisible: boolean;
+}
+
+type AppProps = RouteComponentProps<{}> & AppStateToProps;
+
+class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
+    constructor(props: AppProps) {
         super(props);
         if (this.getRouteBase() === '/') {
             this.state = {
                 homeBgLoaded: false,
-                navbarVisible: true,
             };
         } else {
             this.state = {
                 homeBgLoaded: true,
-                navbarVisible: true,
             };
         }
     }
@@ -100,10 +106,6 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
         this.setState({ homeBgLoaded: true });
     }
 
-    toggleNavbar = (show: boolean = !this.state.navbarVisible) => {
-        this.setState({ navbarVisible: show });
-    }
-
     render() {
         return (
             <ReactMedia query={reactMediaMobileQuery}>
@@ -111,7 +113,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                     <RootContainer isHome={this.getRouteBase() === '/'} isMobile={matches}>
                         <LogoSVG />
                         <Transition
-                            in={this.state.homeBgLoaded && this.state.navbarVisible}
+                            in={this.state.homeBgLoaded && this.props.navbarVisible}
                             onEntering={this.getRouteBase() === '/' ? fadeOnEnter(0) : slideOnEnter(0)}
                             onExiting={slideOnExit(0)}
                             timeout={250}
@@ -137,7 +139,7 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
                                         <Route
                                             path="/about"
                                             exact={true}
-                                            render={(childProps) => <AsyncComponent moduleProvider={About} {...childProps} isMobile={matches} toggleNavbar={this.toggleNavbar} />}
+                                            render={(childProps) => <AsyncComponent moduleProvider={About} {...childProps} isMobile={matches} />}
                                         />
                                         <Route
                                             path="/contact"
@@ -173,3 +175,11 @@ export default class App extends React.Component<RouteComponentProps<void>, { ho
         );
     }
 }
+
+const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
+    navbarVisible: navbar.isVisible,
+});
+
+export default connect<AppStateToProps, {}>(
+    mapStateToProps,
+)(App);

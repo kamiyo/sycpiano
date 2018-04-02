@@ -10,7 +10,7 @@ import { GlobalStateShape } from 'src/types';
 import { cartesianToPolar } from 'src/utils';
 
 import { lightBlue } from 'src/styles/colors';
-import { playlistWidth } from 'src/styles/variables';
+import { navBarHeight, playlistWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
     readonly innerRadius: number;
@@ -65,7 +65,7 @@ const UIContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     width: ${(props) => props.isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
     height: ${(props) => props.isMobile ? '450px' : '100%'};
     left: 0;
-    top: 0;
+    top: ${(props) => props.isMobile ? navBarHeight.mobile : 0}px;
     z-index: 20;
     display: flex;
     align-items: center;

@@ -33,13 +33,9 @@ let NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
                         link={link.name}
                         to={link.path}
                         subNavLinks={link.subPaths}
-                        showSubs={props.showSubs}
-                        isExpanded={props.isExpanded}
-                        toggleSub={props.toggleSub}
                         active={link.path === props.currentBasePath}
                         isHome={props.currentBasePath === '/'}
                         isMobile={props.isMobile}
-                        closeMobileMenu={props.closeMobileMenu}
                     />
                 );
             })}
