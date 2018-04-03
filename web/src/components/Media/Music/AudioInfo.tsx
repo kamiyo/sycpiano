@@ -108,7 +108,7 @@ const Duration: React.SFC<{ currentPosition: number; duration: number, isMobile:
     <div className={durationStyle(isMobile)}>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</div>
 );
 
-class AudioInfo extends React.Component<AudioInfoProps, {}> {
+class AudioInfo extends React.Component<AudioInfoProps> {
     private tween: any;
     private titleDiv: HTMLDivElement;
     private marquee: HTMLDivElement;
