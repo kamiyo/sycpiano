@@ -88,6 +88,7 @@ class AudioInfo extends React.Component<AudioInfoProps> {
     private marquee: HTMLDivElement;
 
     componentDidUpdate(prevProps: AudioInfoProps) {
+        console.log('here');
         if (this.props.isMobile && this.props.currentTrack && (
             !prevProps.currentTrack ||
             prevProps.currentTrack.musicFiles[0].id !== this.props.currentTrack.musicFiles[0].id
@@ -97,6 +98,7 @@ class AudioInfo extends React.Component<AudioInfoProps> {
             this.titleDiv.removeAttribute('style');
             const divWidth = this.titleDiv.offsetWidth;
             const spanWidth = (this.marquee.children[0] as HTMLDivElement).offsetWidth;
+            console.log(divWidth, spanWidth);
             if (divWidth > spanWidth) {
                 this.marquee.style.left = `${(divWidth - spanWidth) / 2}px`;
                 this.titleDiv.style.padding = '0';
@@ -121,17 +123,18 @@ class AudioInfo extends React.Component<AudioInfoProps> {
         const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '') + (isMobile && movement ? ': ' + movement : '');
         return (
             <AudioInfoContainer isMobile={isMobile}>
-                {isMobile ?
-                    <ComposerTitle innerRef={(div) => this.titleDiv = div} isMobile={isMobile}>
-                        <div ref={(div) => this.marquee = div} >
-                            <span>{composerTitle}</span><span>{composerTitle}</span>
-                        </div>
-                    </ComposerTitle> :
-                    <>
-                        <ComposerTitle isMobile={isMobile}>{composerTitle}</ComposerTitle>
-                        {movement && <Movement isMobile={isMobile}>{movement}</Movement>}
-                    </>
-                }
+                <ComposerTitle innerRef={(div) => this.titleDiv = div} isMobile={isMobile}>
+                    {
+                        isMobile ? (
+                            <div ref={(div) => this.marquee = div}>
+                                <span>{composerTitle}</span><span>{composerTitle}</span>
+                            </div>
+                        ) : (
+                                composerTitle
+                            )
+                    }
+                </ComposerTitle>
+                {movement && !isMobile && <Movement isMobile={isMobile}>{movement}</Movement>}
                 {contributors && <Contributing isMobile={isMobile}>{contributors}</Contributing>}
                 <Duration isMobile={isMobile}>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</Duration>
             </AudioInfoContainer>
