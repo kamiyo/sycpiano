@@ -162,11 +162,11 @@ class AudioInfo extends React.Component<AudioInfoProps, {}> {
                 />
                 {movement && !isMobile && <Movement isMobile={isMobile}>{movement}</Movement>}
                 {contributors && <Contributing isMobile={isMobile}>{contributors}</Contributing>}
-                <Duration
+                {/* <Duration
                     currentPosition={currentPosition}
                     duration={duration}
                     isMobile={isMobile}
-                />
+                /> */}
             </div>
         );
     }
