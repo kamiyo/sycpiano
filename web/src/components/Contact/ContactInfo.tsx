@@ -49,7 +49,7 @@ const PersonalInfo: React.SFC<PersonalInfoShape> = (props) => (
 );
 
 const StyledPersonalInfo = styled(PersonalInfo)({
-    flex: '0 0 125px',
+    flex: '0 1 125px',
     [screenXL]: { flex: '0 0 150px' },
     display: 'flex',
     flexDirection: 'column',

@@ -28,12 +28,14 @@ const contactNameToPhotoStylesMap: { [key: string]: (resizeOptions: { width?: nu
     }),
 };
 
-const ContactImage = styled('div') `
+const ContactImage = styled('div')`
     flex: 0 0 55%;
     box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
 `;
 
-const StyledContactInfo = styled(ContactInfo) ` flex: 0 0 31%; `;
+const StyledContactInfo = styled(ContactInfo)`
+    flex: 1 0 31%;
+`;
 
 const StyledContactSocialMedia = styled(ContactSocialMedia) ` flex: 1 0 auto; `;
 
@@ -63,12 +65,13 @@ let ContactItem: React.SFC<ContactItemShape> = ({
     );
 };
 
-ContactItem = styled(ContactItem) `
+ContactItem = styled(ContactItem)`
     ${pushed};
     display: flex;
     flex-direction: column;
     background-color: white;
     flex: 0 1 600px;
+    width: 100%;
 
     &:nth-child(2n) {
         background-color: ${alternateBackgroundColor};
