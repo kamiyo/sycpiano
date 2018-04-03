@@ -18,13 +18,13 @@ interface AudioInfoProps {
     isMobile: boolean;
 }
 
-const AudioInfoContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
+const audioInfoContainerStyle = (isMobile?: boolean) => css `
     ${noHighlight}
-    width: ${(props) => props.isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
-    height: ${(props) => (props.isMobile) ? '450px' : '100%'};
+    width: ${isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
+    height: ${isMobile ? '450px' : '100%'};
     z-index: 10;
     position: absolute;
-    top: ${(props) => props.isMobile ? navBarHeight.mobile : 0}px;
+    top: ${isMobile ? navBarHeight.mobile : 0}px;
     left: 0;
     display: flex;
     flex-direction: column;
@@ -34,7 +34,7 @@ const AudioInfoContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     font-family: ${lato1};
     letter-spacing: 2px;
     color: white;
-    padding-bottom: ${(props) => props.isMobile ? '1rem' : '3rem'};
+    padding-bottom: ${isMobile ? '1rem' : '3rem'};
 `;
 
 const getAudioInfoStyle = (isMobile: boolean) => css`
@@ -151,7 +151,7 @@ class AudioInfo extends React.Component<AudioInfoProps, {}> {
         const { name: movement = '' } = musicFiles[0] || {};
         const { isMobile, currentPosition, duration } = this.props;
         return (
-            <AudioInfoContainer isMobile={isMobile}>
+            <div className={audioInfoContainerStyle(isMobile)}>
                 <ComposerTitle
                     composer={composer}
                     piece={piece}
@@ -167,7 +167,7 @@ class AudioInfo extends React.Component<AudioInfoProps, {}> {
                     duration={duration}
                     isMobile={isMobile}
                 />
-            </AudioInfoContainer>
+            </div>
         );
     }
 }
