@@ -50,6 +50,7 @@ const ComposerTitle = styled<{ isMobile: boolean; }, 'div'>('div') `
     ${(props) => props.isMobile && `
         width: 100%;
         white-space: nowrap;
+        overflow-x: hidden;
 
         div {
             width: fit-content;
