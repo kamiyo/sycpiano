@@ -60,7 +60,6 @@ const composerTitleStyle = (isMobile?: boolean) => css`
     ${isMobile && `
         width: 100%;
         white-space: nowrap;
-        overflow-x: hidden;
 
         div {
             width: fit-content;
