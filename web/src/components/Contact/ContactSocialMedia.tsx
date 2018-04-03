@@ -10,6 +10,7 @@ const socialMediaButtonStyles = css`
     transform: scale(1.5);
     transition: all 0.2s;
     vertical-align: middle;
+    margin: 0 20px;
 
     &:hover {
         transform: scale(1.7);
@@ -51,9 +52,9 @@ let ContactSocialMedia = (props: ContactSocialMediaShape) => (
 );
 
 ContactSocialMedia = styled(ContactSocialMedia)`
-    padding: 0 25% 10px;
+    padding: 0 10px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 `;
 
 export { ContactSocialMedia };

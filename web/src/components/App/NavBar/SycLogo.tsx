@@ -8,6 +8,7 @@ export const SycLogo = styled(LogoInstance)`
     height: 150px;
     float: left;
 
+    /* stylelint-disable-next-line */
     ${screenXS} {
         width: 120px;
         height: 120px;
