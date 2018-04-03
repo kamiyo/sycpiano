@@ -113,6 +113,10 @@ class AudioInfo extends React.Component<AudioInfoProps, {}> {
     private titleDiv: HTMLDivElement;
     private marquee: HTMLDivElement;
 
+    componentDidMount() {
+        console.log('mounted');
+    }
+
     componentDidUpdate(prevProps: AudioInfoProps) {
         console.log('here');
         if (this.props.isMobile && this.props.currentTrack && (
