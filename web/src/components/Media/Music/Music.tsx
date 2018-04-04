@@ -55,13 +55,12 @@ const musicStyle = css`
     position: relative;
     width: 100%;
     background-color: black;
-    overflow-y: scroll;
 
-    /* stylelint-disable-next-line */
-    ${screenXS} {
+    ${/* sc-selector */ screenXS} {
         margin-top: 0;
         padding-top: ${navBarHeight.mobile}px;
         height: 100%;
+        overflow-y: scroll;
     }
 `;
 

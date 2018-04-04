@@ -1,12 +1,13 @@
 import * as React from 'react';
+import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 
 import Playlist from 'src/components/Media/Playlist';
+import { playVideo, togglePlaylistAction } from 'src/components/Media/Videos/actions';
+import { VideoItemShape } from 'src/components/Media/Videos/types';
 import VideoPlaylistItem from 'src/components/Media/Videos/VideoPlaylistItem';
 
-import { playVideo, togglePlaylistAction } from 'src/components/Media/Videos/actions';
-
-import { VideoItemShape } from 'src/components/Media/Videos/types';
+import { screenXS } from 'src/styles/screens';
 import { GlobalStateShape } from 'src/types';
 
 interface VideoPlaylistStateToProps {
@@ -20,30 +21,62 @@ interface VideoPlaylistDispatchToProps {
     readonly togglePlaylistAction: typeof togglePlaylistAction;
 }
 
-type VideoPlaylistProps = VideoPlaylistStateToProps & VideoPlaylistDispatchToProps;
+interface VideoOwnProps {
+    readonly isMobile: boolean;
+}
+
+type VideoPlaylistProps = VideoOwnProps & VideoPlaylistStateToProps & VideoPlaylistDispatchToProps;
+
+const videoPlaylistStyle = css`
+    ${/* sc-selector */ screenXS} {
+        top: 56.25vw;
+        position: relative;
+        overflow: visible;
+    }
+`;
+
+const playlistContainerStyle = css`
+    width: fit-content;
+    height: 100%;
+    right: 0;
+    position: absolute;
+
+    ${/* sc-selector */ screenXS} {
+        width: 100%;
+        height: auto;
+        position: unset;
+        right: unset;
+    }
+`;
 
 const VideoPlaylist: React.SFC<VideoPlaylistProps> = ({
     isShow,
     togglePlaylistAction: togglePlaylist,
     videos,
     videoId,
+    isMobile,
     playVideo: play,
 }) => (
-        <Playlist
-            isShow={isShow}
-            hasToggler={true}
-            togglePlaylist={togglePlaylist}
-            shouldAppear={false}
-        >
-            {videos.map((video) => (
-                <VideoPlaylistItem
-                    key={video.id}
-                    item={video}
-                    currentItemId={videoId}
-                    onClick={play}
-                />
-            ))}
-        </Playlist>
+        <div className={playlistContainerStyle}>
+            <Playlist
+                extraStyles={{ div: videoPlaylistStyle }}
+                isShow={isShow}
+                hasToggler={!isMobile}
+                togglePlaylist={togglePlaylist}
+                shouldAppear={false}
+                isMobile={isMobile}
+            >
+                {videos.map((video) => (
+                    <VideoPlaylistItem
+                        key={video.id}
+                        item={video}
+                        currentItemId={videoId}
+                        onClick={play}
+                        isMobile={isMobile}
+                    />
+                ))}
+            </Playlist>
+        </div>
     );
 
 const mapStateToProps = (state: GlobalStateShape): VideoPlaylistStateToProps => ({

@@ -1,7 +1,7 @@
 type imageFormat = 'jpg' | 'webp';
 
 export const sycWithPianoBW = (format: imageFormat = 'jpg') => `/syc_withpiano_bw.${format}`;
-export const cliburn1 = `/gallery/cliburn1.jpg`;
+export const cliburn1 = (format: imageFormat = 'jpg') => `/gallery/cliburn1.${format}`;
 export const seanChenContactPhotoUrl = (format: imageFormat = 'jpg') => `/gallery/syc_headshot1.${format}`;
 export const joelHarrisonContactPhotoUrl = (format: imageFormat = 'jpg') => `/joel.${format}`;
 export const bg1 = `/bg_1.jpg`;

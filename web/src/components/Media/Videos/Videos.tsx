@@ -9,20 +9,25 @@ import { LoadingInstance } from 'src/components/LoadingSVG';
 import PreviewOverlay from 'src/components/Media/Videos/PreviewOverlay';
 import VideoPlaylist from 'src/components/Media/Videos/VideoPlaylist';
 
+import { setOnScroll } from 'src/components/App/NavBar/actions';
 import { createFetchPlaylistAction, initializeYoutubeElement, resetPlayer } from 'src/components/Media/Videos/actions';
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
+import { screenXS } from 'src/styles/screens';
+import { navBarHeight } from 'src/styles/variables';
 
 interface VideosStateToProps {
     readonly videoId: string;
     readonly isPlayerReady: boolean;
+    readonly onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
 }
 
 interface VideosDispatchToProps {
     readonly createFetchPlaylistAction: typeof createFetchPlaylistAction;
     readonly initializeYoutubeElement: typeof initializeYoutubeElement;
     readonly resetPlayer: typeof resetPlayer;
+    readonly setOnScroll: typeof setOnScroll;
 }
 
 interface VideosOwnProps {
@@ -37,9 +42,22 @@ const StyledVideos = styled('div')`
     background-color: black;
     position: relative;
 
+    ${/* sc-selector */ screenXS} {
+        overflow-y: scroll;
+        margin-top: 0;
+        padding-top: ${navBarHeight.mobile}px;
+        height: 100%;
+    }
+
     iframe {
         width: 100%;
         height: 100%;
+
+        ${/* sc-selector */ screenXS} {
+            position: absolute;
+            top: ${navBarHeight.mobile}px;
+            height: 56.25vw;
+        }
     }
 `;
 
@@ -62,6 +80,7 @@ class Videos extends React.Component<VideosProps, any> {
     componentDidMount() {
         this.props.createFetchPlaylistAction();
         this.props.initializeYoutubeElement(this.domElement);
+        this.props.setOnScroll(navBarHeight.mobile);
     }
 
     componentWillUnmount() {
@@ -70,8 +89,11 @@ class Videos extends React.Component<VideosProps, any> {
 
     render() {
         return (
-            <StyledVideos innerRef={(div) => this.domElement = div}>
-                <PreviewOverlay />
+            <StyledVideos
+                innerRef={(div) => this.domElement = div}
+                onScroll={this.props.isMobile ? this.props.onScroll : null}
+            >
+                <PreviewOverlay isMobile={this.props.isMobile}/>
                 <Transition
                     in={!this.props.isPlayerReady}
                     onExit={(el) => TweenLite.to(el, 0.3, { autoAlpha: 0 })}
@@ -83,21 +105,23 @@ class Videos extends React.Component<VideosProps, any> {
                         <LoadingInstance width={120} height={120} />
                     </LoadingOverlayDiv>
                 </Transition>
-                <VideoPlaylist />
+                <VideoPlaylist isMobile={this.props.isMobile}/>
             </StyledVideos>
         );
     }
 }
 
-const mapStateToProps = (state: GlobalStateShape): VideosStateToProps => ({
-    videoId: state.video_player.videoId,
-    isPlayerReady: state.video_player.isPlayerReady,
+const mapStateToProps = ({ video_player, navbar }: GlobalStateShape): VideosStateToProps => ({
+    videoId: video_player.videoId,
+    isPlayerReady: video_player.isPlayerReady,
+    onScroll: navbar.onScroll,
 });
 
 const mapDispatchToProps: VideosDispatchToProps = {
     initializeYoutubeElement,
     createFetchPlaylistAction,
     resetPlayer,
+    setOnScroll,
 };
 
 const ConnectedVideos = connect<VideosStateToProps, VideosDispatchToProps, VideosOwnProps>(

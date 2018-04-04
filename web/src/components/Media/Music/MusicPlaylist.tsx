@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
+import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
@@ -10,7 +10,7 @@ import { MusicFileItem, MusicListItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 import { playlistBackground } from 'src/styles/colors';
-import { playlistWidth } from 'src/styles/variables';
+import { screenXS } from 'src/styles/screens';
 
 interface MusicPlaylistStateToProps {
     readonly items: MusicListItem[];
@@ -28,35 +28,33 @@ interface MusicPlaylistOwnProps {
 
 type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;
 
-const getMusicPlaylistStyle = (isMobile: boolean) => css`
-    width: ${isMobile ? '100%' : `${playlistWidth}px`};
+const musicPlaylistStyle = css`
     position: initial;
 
-    /* stylelint-disable-next-line */
-    ${isMobile && `
+    ${/* sc-selector */ screenXS} {
         top: 450px;
         position: relative;
         overflow: visible;
-    `};
+    }
 `;
 
-const getMusicULStyle = (_: boolean) => css`
+const musicULStyle = css`
     background-color: ${playlistBackground};
     padding-bottom: 60px;
 `;
 
-const StyledPlaylistContainer = styled<{ isMobile: boolean }, 'div'>('div') `
-    /* stylelint-disable */
-    ${props => props.isMobile ? `
+const playlistContainerStyle = css `
+    width: fit-content;
+    height: 100%;
+    right: 0;
+    position: absolute;
+
+    ${/* sc-selector */ screenXS} {
         width: 100%;
         height: auto;
-    ` : `
-        width: fit-content;
-        height: 100%;
-        right: 0;
-        position: absolute;
-    `}
-    /* stylelint-enable */
+        position: unset;
+        right: unset;
+    }
 `;
 
 const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
@@ -69,9 +67,9 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
     userInput,
     onFirstUserInput,
 }) => (
-        <StyledPlaylistContainer isMobile={isMobile}>
+        <div className={playlistContainerStyle}>
             <Playlist
-                extraStyles={{ div: getMusicPlaylistStyle(isMobile), ul: getMusicULStyle(isMobile) }}
+                extraStyles={{ div: musicPlaylistStyle, ul: musicULStyle }}
                 isShow={true}
                 hasToggler={false}
                 shouldAppear={false}
@@ -91,7 +89,7 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
                 ))}
             </Playlist>
             <SpotifyButton isMobile={isMobile} />
-        </StyledPlaylistContainer>
+        </div>
     );
 
 const mapStateToProps = (state: GlobalStateShape) => ({
