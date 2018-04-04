@@ -50,6 +50,7 @@ interface LazyImageProps {
         readonly desktop?: string;
         readonly loading?: string;
     };
+    readonly showLoading?: boolean;
     readonly alt: string;
     readonly successCb?: (el?: HTMLImageElement) => void;
     readonly destroyCb?: () => void;
@@ -95,7 +96,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
         return (
             <>
                 <Transition
-                    in={!this.state.isLoaded}
+                    in={this.props.showLoading && !this.state.isLoaded}
                     mountOnEnter={true}
                     unmountOnExit={true}
                     onEnter={fadeOnEnter}

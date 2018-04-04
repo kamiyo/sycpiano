@@ -13,9 +13,9 @@ import { LazyImage } from 'src/components/LazyImage';
 
 import { offWhite } from 'src/styles/colors';
 import { lato2, lato3 } from 'src/styles/fonts';
-import { generateSrcsetWidths, resizedImage, sycWithPianoBW, sycWithPianoBWWebP } from 'src/styles/imageUrls';
+import { generateSrcsetWidths, resizedImage, sycWithPianoBW } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
-import { screenLengths, screenM, screenPortrait, screenXS } from 'src/styles/screens';
+import { screenLengths, screenM, screenPortrait, screenWidths, screenXS } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
 
@@ -27,8 +27,7 @@ const Paragraph = styled('p') `
     line-height: 2em;
     margin: 1.6em 0;
 
-    /* stylelint-disable-next-line */
-    ${screenXS} {
+    ${/*sc-selector*/ screenXS} {
         font-size: 1em;
         line-height: 1.6em;
         margin: 1.3em 0;
@@ -38,8 +37,8 @@ const Paragraph = styled('p') `
 const SpaceFiller = styled('div') `
     display: none;
 
-    /* stylelint-disable-next-line */
-    ${screenPortrait}, ${screenXS} {
+    ${/*sc-selector*/ screenPortrait},
+    ${/*sc-selector*/ screenXS} {
         display: block;
         height: ${pictureHeight}px;
         width: 100%;
@@ -48,8 +47,8 @@ const SpaceFiller = styled('div') `
 `;
 
 const TextGroup = styled('div') `
-    /* stylelint-disable-next-line */
-    ${screenPortrait}, ${screenXS} {
+    ${/*sc-selector*/ screenPortrait},
+    ${/*sc-selector*/ screenXS} {
         background-color: white;
         padding: 20px 20px;
     }
@@ -87,7 +86,6 @@ interface ImageContainerProps { currScrollTop: number; bgImage?: string; }
 
 const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
     flex: 1;
-    /* stylelint-disable-next-line */
     ${props => props.bgImage && `background-image: url(${props.bgImage});`}
     background-size: cover;
     background-position: center -100px;
@@ -96,14 +94,14 @@ const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
     background-color: black;
     visibility: hidden;
 
-    /* stylelint-disable-next-line */
-    ${screenM} {
+    ${/* sc-sel */ screenM} {
         background-size: cover;
         background-position: center 0;
     }
 
     /* stylelint-disable-next-line */
-    ${screenPortrait}, ${screenXS} {
+    ${/* sc-sel */ screenPortrait},
+    ${/* sc-sel */ screenXS} {
         position: fixed;
         z-index: 0;
         top: ${navBarHeight}px;
@@ -124,8 +122,8 @@ const TextContainer = styled(AboutText) `
     color: black;
     overflow-y: scroll;
 
-    /* stylelint-disable-next-line */
-    ${screenPortrait}, ${screenXS} {
+    ${/* sc-selector */ screenPortrait},
+    ${/* sc-selector */ screenXS} {
         position: relative;
         z-index: 1;
         margin-top: 0;
@@ -144,8 +142,7 @@ const AboutContainer = styled('div') `
     position: absolute;
     display: flex;
 
-    /* stylelint-disable-next-line */
-    ${screenXS} {
+    ${/* sc-selector */ screenXS} {
         margin-top: 0;
         padding-top: ${navBarHeight.mobile}px;
         height: 100%;
@@ -157,8 +154,6 @@ const AboutContainer = styled('div') `
 const srcWidths = screenLengths.map((value) => (
     Math.round(value * 1736 / 2560)
 ));
-
-const mobileWidths = [1600, 1440, 1080, 800, 768, 720, 640, 480, 320];
 
 interface AboutOwnProps {
     readonly isMobile: boolean;
@@ -226,26 +221,27 @@ class About extends React.Component<AboutProps, AboutState> {
                         }}
                         mobileAttributes={{
                             webp: {
-                                srcset: generateSrcsetWidths(sycWithPianoBWWebP, mobileWidths),
+                                srcset: generateSrcsetWidths(sycWithPianoBW('webp'), screenWidths),
                                 sizes: '100vw',
                             },
                             jpg: {
-                                srcset: generateSrcsetWidths(sycWithPianoBW, mobileWidths),
+                                srcset: generateSrcsetWidths(sycWithPianoBW(), screenWidths),
                                 sizes: '100vw',
                             },
-                            src: resizedImage(sycWithPianoBW, { width: 640 }),
+                            src: resizedImage(sycWithPianoBW(), { width: 640 }),
                         }}
                         desktopAttributes={{
                             webp: {
-                                srcset: generateSrcsetWidths(sycWithPianoBWWebP, srcWidths),
+                                srcset: generateSrcsetWidths(sycWithPianoBW('webp'), srcWidths),
                                 sizes: '100vh',
                             },
                             jpg: {
-                                srcset: generateSrcsetWidths(sycWithPianoBW, srcWidths),
+                                srcset: generateSrcsetWidths(sycWithPianoBW(), srcWidths),
                                 sizes: '100vh',
                             },
-                            src: resizedImage(sycWithPianoBW, { height: 1080 }),
+                            src: resizedImage(sycWithPianoBW(), { height: 1080 }),
                         }}
+                        showLoading={false}
                         alt="about background"
                         successCb={this.onImageLoad}
                         destroyCb={this.onImageDestroy}

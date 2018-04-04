@@ -10,6 +10,7 @@ import { MusicItem } from 'src/components/Media/Music/types';
 
 import { lato1 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
+import { screenXS } from 'src/styles/screens';
 import { navBarHeight, playlistWidth } from 'src/styles/variables';
 
 interface AudioInfoProps {
@@ -44,8 +45,7 @@ const ComposerTitle = styled<{ isMobile: boolean; }, 'div'>('div') `
     font-size: ${(props) => props.isMobile ? '1.4rem' : '2.2rem'};
     line-height: ${(props) => props.isMobile ? '2rem' : '3.2rem'};
 
-    /* stylelint-disable */
-    ${(props) => props.isMobile && `
+    ${/* sc-selector */ screenXS} {
         width: 100%;
         white-space: nowrap;
         overflow-x: hidden;
@@ -56,13 +56,13 @@ const ComposerTitle = styled<{ isMobile: boolean; }, 'div'>('div') `
 
             span {
                 display: inline-block;
+
                 &:last-child {
                     margin: 0 200px;
                 }
             }
         }
-    `}
-    /* stylelint-enable */
+    }
 `;
 
 const Movement = styled('div') `
@@ -116,6 +116,7 @@ class AudioInfo extends React.Component<AudioInfoProps> {
             musicFiles = [],
         } = this.props.currentTrack || {};
 
+        const contribArray = contributors && contributors.split(', ');
         const { name: movement = '' } = musicFiles[0] || {};
         const { isMobile, currentPosition, duration } = this.props;
         const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '') + (isMobile && movement ? ': ' + movement : '');
@@ -133,7 +134,16 @@ class AudioInfo extends React.Component<AudioInfoProps> {
                     }
                 </ComposerTitle>
                 {movement && !isMobile && <Movement>{movement}</Movement>}
-                {contributors && <ContributingOrDuration isMobile={isMobile}>{contributors}</ContributingOrDuration>}
+                {contributors &&
+                    (isMobile ? contribArray.map((contributor, index) => (
+                        <ContributingOrDuration key={index} isMobile={isMobile}>
+                            {contributor}
+                        </ContributingOrDuration>
+                    )) : <ContributingOrDuration isMobile={isMobile}>
+                            {contributors}
+                        </ContributingOrDuration>
+                    )
+                }
                 <ContributingOrDuration isMobile={isMobile}>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</ContributingOrDuration>
             </AudioInfoContainer>
         );

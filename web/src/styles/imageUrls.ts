@@ -1,13 +1,12 @@
-export const sycWithPianoBW = `/syc_withpiano_bw.jpg`;
-export const sycWithPianoBWWebP = `/syc_withpiano_bw.webp`;
+type imageFormat = 'jpg' | 'webp';
+
+export const sycWithPianoBW = (format: imageFormat = 'jpg') => `/syc_withpiano_bw.${format}`;
 export const cliburn1 = `/gallery/cliburn1.jpg`;
-export const seanChenContactPhotoUrl = `/gallery/syc_headshot1.jpg`;
-export const joelHarrisonContactPhotoUrl = `/joel.jpg`;
+export const seanChenContactPhotoUrl = (format: imageFormat = 'jpg') => `/gallery/syc_headshot1.${format}`;
+export const joelHarrisonContactPhotoUrl = (format: imageFormat = 'jpg') => `/joel.${format}`;
 export const bg1 = `/bg_1.jpg`;
-export const homeBackground = `/syc_chair_bg_clean.jpg`;
-export const homeBackgroundWebP = `/syc_chair_bg_clean.webp`;
-export const sycChairVertical = `/syc_chair_vertical.jpg`;
-export const sycChairVerticalWebP = `/syc_chair_vertical.webp`;
+export const homeBackground = (format: imageFormat = 'jpg') => `/syc_chair_bg_clean.${format}`;
+export const sycChairVertical = (format: imageFormat = 'jpg') => `/syc_chair_vertical.${format}`;
 
 export const staticImage = (url: string) => (
     `${IMAGES_PATH}${url}`

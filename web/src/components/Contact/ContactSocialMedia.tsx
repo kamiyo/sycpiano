@@ -3,17 +3,22 @@ import styled, { css } from 'react-emotion';
 
 import { ContactSocialMediaShape } from 'src/components/Contact/types';
 import { staticImage } from 'src/styles/imageUrls';
+import { screenXS } from 'src/styles/screens';
 
 const SocialMediaLinkContainer = styled('div')` padding-top: 20px; `;
 
 const socialMediaButtonStyles = css`
-    transform: scale(1.5);
     transition: all 0.2s;
     vertical-align: middle;
     margin: 0 20px;
+    width: 3em;
+
+    ${/*sc-selector*/ screenXS} {
+        width: 2em;
+    }
 
     &:hover {
-        transform: scale(1.7);
+        transform: scale(1.2);
         cursor: pointer;
     }
 `;
