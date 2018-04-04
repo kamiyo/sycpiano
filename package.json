@@ -10,7 +10,7 @@
     "build-app": "gulp build-app",
     "build-server": "gulp build-server",
     "build-prod": "gulp build-prod",
-    "test-prod": "cross-env NODE_ENV=production PORT=8000 gulp run-dev",
+    "test-prod": "cross-env NODE_ENV=production SERVER_ENV=test PORT=8000 gulp run-dev",
     "start": "node app.js",
     "start-dev": "cross-env NODE_ENV=development gulp run-dev",
     "start-prod": "bin/start.sh",
