@@ -79,9 +79,11 @@ export const togglePlaylistAction = (show: boolean = null): ThunkAction<void, Gl
     dispatch(togglePlaylist(show, getState()))
 );
 
-export const playVideo = (videoId: string): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
+export const playVideo = (isMobile: boolean = false, videoId?: string): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
     const videoPlayerReducer = getState().video_player;
-    setTimeout(() => dispatch(togglePlaylist(false, getState())), 500);
+    if (!isMobile) {
+        setTimeout(() => dispatch(togglePlaylist(false, getState())), 500);
+    }
     if (videoPlayerReducer.isPlaying && videoId === videoPlayerReducer.videoId) {
         return;
     }

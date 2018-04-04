@@ -1,5 +1,6 @@
 import moment from 'moment-timezone';
 import * as React from 'react';
+import ClampLines from 'react-clamp-lines';
 import styled, { css } from 'react-emotion';
 
 import { VideoItemShape } from 'src/components/Media/Videos/types';
@@ -10,7 +11,8 @@ import { playlistWidth } from 'src/styles/variables';
 interface VideoPlaylistItemProps {
     readonly item: VideoItemShape;
     readonly currentItemId: number | string;
-    readonly onClick: (id: string) => void;
+    readonly onClick: (isMobile: boolean, id?: string) => void;
+    readonly isMobile: boolean;
 }
 
 const aspectRatio = 4 / 3;
@@ -51,8 +53,7 @@ const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li') `
     &:hover {
         background-color: rgba(255, 255, 255, 1);
 
-        /* stylelint-disable-next-line */
-        ${ImageContainer as any} img {
+        ${/* sc-selector */ ImageContainer as any} img {
             filter: brightness(60%);
         }
     }
@@ -62,7 +63,7 @@ const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li') `
         `border-left-color: ${lightBlue};
         background-color: rgba(255, 255, 255, 1);
 
-        ${ImageContainer} img {
+        ${/* sc-selector */ ImageContainer} img {
             filter: brightness(60%);
         }`
     }
@@ -93,10 +94,11 @@ const h4style = css`
     color: black;
 `;
 
-const TextTop = styled('h4') `
+const TextTop = styled(ClampLines) `
     ${h4style}
     padding-top: 5px;
     font-size: 1rem;
+    font-weight: bold;
 `;
 
 const TextBottom = styled('h4') `
@@ -105,10 +107,10 @@ const TextBottom = styled('h4') `
     font-size: 0.8rem;
 `;
 
-const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentItemId, onClick }) => (
+const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentItemId, onClick, isMobile }) => (
     <StyledVideoItem
         active={currentItemId === item.id}
-        onClick={() => onClick(item.id)}
+        onClick={() => onClick(isMobile, item.id)}
     >
         <ImageContainer>
             <img alt="Sean Chen Piano Video" src={item.snippet.thumbnails.high.url} />
@@ -117,9 +119,12 @@ const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentIte
             </Duration>
         </ImageContainer>
         <VideoInfo>
-            <TextTop>
-                {item.snippet.title}
-            </TextTop>
+            <TextTop
+                text={item.snippet.title}
+                lines="2"
+                ellipsis="..."
+                buttons={false}
+            />
             <TextBottom>
                 {item.statistics.viewCount} views
                         | published on {publishedDateToDisplay(item.snippet.publishedAt)}
@@ -146,5 +151,5 @@ function videoDurationToDisplay(durationString: string) {
 }
 
 function publishedDateToDisplay(publishedAt: string) {
-    return moment(publishedAt).format('MMMM D, YYYY');
+    return moment(publishedAt).format('MMM D, YYYY');
 }
