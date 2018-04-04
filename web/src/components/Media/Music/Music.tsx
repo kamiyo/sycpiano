@@ -287,8 +287,9 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     render() {
+        const isMobile = this.props.isMobile;
         return (
-            <div className={musicStyle} onScroll={this.props.isMobile ? this.props.onScroll : null}>
+            <div className={musicStyle} onScroll={isMobile ? this.props.onScroll : null}>
                 <audio id="audio" crossOrigin="anonymous" ref={(audio) => this.audio = audio} />
                 <MusicPlaylist
                     audio={this.audio}
@@ -297,7 +298,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     baseRoute={this.props.baseRoute}
                     userInput={this.state.userInput}
                     onFirstUserInput={this.onFirstUserInput}
-                    isMobile={this.props.isMobile}
+                    isMobile={isMobile}
                 />
                 <AudioUI
                     seekAudio={this.seekAudio}
@@ -309,14 +310,14 @@ class Music extends React.Component<MusicProps, MusicState> {
                     currentPosition={this.state.playbackPosition}
                     userInput={this.state.userInput}
                     onFirstUserInput={this.onFirstUserInput}
-                    isMobile={this.props.isMobile}
+                    isMobile={isMobile}
                     isLoading={this.state.isLoading}
                 />
                 <AudioInfo
                     duration={this.state.duration}
                     currentPosition={this.state.playbackPosition}
                     currentTrack={this.state.currentTrack}
-                    isMobile={this.props.isMobile}
+                    isMobile={isMobile}
                 />
                 <AudioVisualizer
                     currentPosition={this.state.playbackPosition}
@@ -325,7 +326,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     duration={this.state.duration}
                     prevTimestamp={this.state.lastUpdateTimestamp}
                     volume={this.state.volume}
-                    isMobile={this.props.isMobile}
+                    isMobile={isMobile}
                 />
             </div>
         );

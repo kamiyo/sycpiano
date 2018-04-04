@@ -1,5 +1,6 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
+import styled from 'react-emotion';
+import { connect } from 'react-redux';
 
 import TweenLite from 'gsap/TweenLite';
 
@@ -16,15 +17,16 @@ interface AudioInfoProps {
     duration: number;
     currentPosition: number;
     isMobile: boolean;
+    dispatch: any;
 }
 
-const audioInfoContainerStyle = (isMobile?: boolean) => css `
+const AudioInfoContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     ${noHighlight}
-    width: ${isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
-    height: ${isMobile ? '450px' : '100%'};
+    width: ${(props) => props.isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
+    height: ${(props) => (props.isMobile) ? '450px' : '100%'};
     z-index: 10;
     position: absolute;
-    top: ${isMobile ? navBarHeight.mobile : 0}px;
+    top: ${(props) => props.isMobile ? navBarHeight.mobile : 0}px;
     left: 0;
     display: flex;
     flex-direction: column;
@@ -34,30 +36,16 @@ const audioInfoContainerStyle = (isMobile?: boolean) => css `
     font-family: ${lato1};
     letter-spacing: 2px;
     color: white;
-    padding-bottom: ${isMobile ? '1rem' : '3rem'};
+    padding-bottom: ${(props) => props.isMobile ? '1rem' : '3rem'};
 `;
 
-const getAudioInfoStyle = (isMobile: boolean) => css`
+const ComposerTitle = styled<{ isMobile: boolean; }, 'div'>('div') `
     padding: 0 10px;
-    line-height: ${isMobile ? '2rem' : '3.2rem'};
-`;
-
-const Movement = styled<{ isMobile: boolean; }, 'div'>('div') `
-    ${(props) => getAudioInfoStyle(props.isMobile)}
     font-size: ${(props) => props.isMobile ? '1.4rem' : '2.2rem'};
-`;
-
-const Contributing = styled<{ isMobile: boolean; }, 'div'>('div') `
-    ${(props) => getAudioInfoStyle(props.isMobile)}
-    font-size: ${(props) => props.isMobile ? '1.3rem' : '2rem'};
-`;
-
-const composerTitleStyle = (isMobile?: boolean) => css`
-    ${getAudioInfoStyle(isMobile)}
-    font-size: ${isMobile ? '1.4rem' : '2.2rem'};
+    line-height: ${(props) => props.isMobile ? '2rem' : '3.2rem'};
 
     /* stylelint-disable */
-    ${isMobile && `
+    ${(props) => props.isMobile && `
         width: 100%;
         white-space: nowrap;
         overflow-x: hidden;
@@ -77,58 +65,38 @@ const composerTitleStyle = (isMobile?: boolean) => css`
     /* stylelint-enable */
 `;
 
-interface ComposerTitleProps {
-    composer: string;
-    year: number;
-    piece: string;
-    movement?: string;
-    isMobile?: boolean;
-    divRef: (div: HTMLDivElement) => void;
-    marqueeRef: (div: HTMLDivElement) => void;
-}
-
-const ComposerTitle: React.SFC<ComposerTitleProps> = ({ composer, year, piece, movement, divRef, marqueeRef, isMobile }) => {
-    const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '') + (isMobile && movement ? ': ' + movement : '');
-    const child = isMobile ? (
-        <div ref={marqueeRef}>
-            <span>{composerTitle}</span><span>{composerTitle}</span>
-        </div>
-    ) : composerTitle;
-    return (
-        <div className={composerTitleStyle(isMobile)} ref={divRef}>{child}</div>
-    );
-};
-
-const durationStyle = (isMobile?: boolean) => css`
-    ${getAudioInfoStyle(isMobile)}
-    font-size: ${isMobile ? '1.3rem' : '2rem'};
+const Movement = styled('div') `
+    padding: 0 10px;
+    font-size: 2.2rem;
+    line-height: 3.2rem;
 `;
 
-const Duration: React.SFC<{ currentPosition: number; duration: number, isMobile: boolean; }> = ({ currentPosition, duration, isMobile }) => (
-    <div className={durationStyle(isMobile)}>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</div>
-);
+const ContributingOrDuration = styled<{ isMobile: boolean; }, 'div'>('div') `
+    padding: 0 10px;
+    font-size: ${(props) => props.isMobile ? '1.1rem' : '2rem'};
+    line-height: ${(props) => props.isMobile ? '1.5rem' : '3.2rem'};
+`;
 
-class AudioInfo extends React.Component<AudioInfoProps, {}> {
+class AudioInfo extends React.Component<AudioInfoProps> {
     private tween: any;
     private titleDiv: HTMLDivElement;
     private marquee: HTMLDivElement;
 
-    componentDidMount() {
-        console.log('mounted');
-    }
-
     componentDidUpdate(prevProps: AudioInfoProps) {
-        console.log('here');
-        if (this.props.isMobile && this.props.currentTrack && (
-            !prevProps.currentTrack ||
-            prevProps.currentTrack.musicFiles[0].id !== this.props.currentTrack.musicFiles[0].id
-        )) {
+        if (
+            this.props.isMobile && (
+                !prevProps.isMobile ||
+                this.props.currentTrack && (
+                    !prevProps.currentTrack ||
+                    prevProps.currentTrack.musicFiles[0].id !== this.props.currentTrack.musicFiles[0].id
+                )
+            )
+        ) {
             this.tween && this.tween.kill();
             this.marquee.removeAttribute('style');
             this.titleDiv.removeAttribute('style');
             const divWidth = this.titleDiv.offsetWidth;
             const spanWidth = (this.marquee.children[0] as HTMLDivElement).offsetWidth;
-            console.log(divWidth, spanWidth);
             if (divWidth > spanWidth) {
                 this.marquee.style.left = `${(divWidth - spanWidth) / 2}px`;
                 this.titleDiv.style.padding = '0';
@@ -150,26 +118,26 @@ class AudioInfo extends React.Component<AudioInfoProps, {}> {
 
         const { name: movement = '' } = musicFiles[0] || {};
         const { isMobile, currentPosition, duration } = this.props;
+        const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '') + (isMobile && movement ? ': ' + movement : '');
         return (
-            <div className={audioInfoContainerStyle(isMobile)}>
-                <ComposerTitle
-                    composer={composer}
-                    piece={piece}
-                    year={year}
-                    divRef={(div) => this.titleDiv = div}
-                    marqueeRef={(div) => this.marquee = div}
-                    isMobile={isMobile}
-                />
-                {movement && !isMobile && <Movement isMobile={isMobile}>{movement}</Movement>}
-                {contributors && <Contributing isMobile={isMobile}>{contributors}</Contributing>}
-                {/* <Duration
-                    currentPosition={currentPosition}
-                    duration={duration}
-                    isMobile={isMobile}
-                /> */}
-            </div>
+            <AudioInfoContainer isMobile={isMobile}>
+                <ComposerTitle innerRef={(div) => this.titleDiv = div} isMobile={isMobile}>
+                    {
+                        isMobile ? (
+                            <div ref={(div) => this.marquee = div}>
+                                <span>{composerTitle}</span><span>{composerTitle}</span>
+                            </div>
+                        ) : (
+                                composerTitle
+                            )
+                    }
+                </ComposerTitle>
+                {movement && !isMobile && <Movement>{movement}</Movement>}
+                {contributors && <ContributingOrDuration isMobile={isMobile}>{contributors}</ContributingOrDuration>}
+                <ContributingOrDuration isMobile={isMobile}>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</ContributingOrDuration>
+            </AudioInfoContainer>
         );
     }
 }
 
-export default AudioInfo;
+export default connect()(AudioInfo);
