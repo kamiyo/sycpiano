@@ -77,6 +77,7 @@ class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, { isL
                     container="photos_ul"
                     alt={item.file}
                     isMobile={isMobile}
+                    showLoading={true}
                     classNames={{
                         mobile: css` visibility: hidden; `,
                         desktop: css` visibility: hidden; `,

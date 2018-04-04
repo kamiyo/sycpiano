@@ -4,7 +4,7 @@ import styled, { css } from 'react-emotion';
 import TweenLite from 'gsap/TweenLite';
 
 import { lato2, lato2i } from 'src/styles/fonts';
-import { generateSrcsetWidths, homeBackground, homeBackgroundWebP, resizedImage, sycChairVertical, sycChairVerticalWebP } from 'src/styles/imageUrls';
+import { generateSrcsetWidths, homeBackground, resizedImage, sycChairVertical } from 'src/styles/imageUrls';
 import { container } from 'src/styles/mixins';
 import { navBarHeight } from 'src/styles/variables';
 
@@ -263,25 +263,26 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }>
                         }}
                         mobileAttributes={{
                             webp: {
-                                srcset: generateSrcsetWidths(sycChairVerticalWebP, srcWidths),
+                                srcset: generateSrcsetWidths(sycChairVertical('webp'), srcWidths),
                                 sizes: '100vh',
                             },
                             jpg: {
-                                srcset: generateSrcsetWidths(sycChairVertical, srcWidths),
+                                srcset: generateSrcsetWidths(sycChairVertical(), srcWidths),
                                 sizes: '100vh',
                             },
-                            src: resizedImage(sycChairVertical, { height: 1920 }),
+                            src: resizedImage(sycChairVertical(), { height: 1920 }),
                         }}
                         desktopAttributes={{
                             webp: {
-                                srcset: generateSrcsetWidths(homeBackgroundWebP, screenLengths),
+                                srcset: generateSrcsetWidths(homeBackground('webp'), screenLengths),
                             },
                             jpg: {
-                                srcset: generateSrcsetWidths(homeBackground, screenLengths),
+                                srcset: generateSrcsetWidths(homeBackground(), screenLengths),
                             },
-                            src: resizedImage(homeBackground, { width: 1920 }),
+                            src: resizedImage(homeBackground(), { width: 1920 }),
                         }}
                         alt="home background"
+                        showLoading={false}
                         successCb={this.onImageLoaded}
                         destroyCb={this.onImageDestroy}
                     />
