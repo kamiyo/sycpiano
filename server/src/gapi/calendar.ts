@@ -5,7 +5,9 @@ import { getToken } from './oauth';
 import { GCalEvent } from '../types';
 
 const timeZoneKey = 'AIzaSyDEs770cNo7P5z0Szrysv0T5c-l9HT3cnc';
-const calendarId = 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
+const calendarId = (process.env.NODE_ENV === 'production' && process.env.SERVER_ENV !== 'test')
+    ? 'qdoiu1uovuc05c4egu65vs9uck@group.calendar.google.com'
+    : 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
 const uriEncCalId = encodeURIComponent(calendarId);
 
 export const getCalendarSingleEvent = async (id: string) => {

@@ -21,109 +21,117 @@ adminRest.use(express.json());
 adminRest.use(express.urlencoded({ extended: true }));
 
 adminRest.get('/sync', async (_, res) => {
-    res.write('Getting local events from db...\n');
-    const waitingNotification = setInterval(() => res.write('...still waiting for local events...\n'), 10000);
-    const models = db.models;
-    const events: CalendarInstance[] = await models.calendar.findAll({
-        attributes: {
-            exclude: ['createdAt', 'updatedAt', 'calendarCollaborator', 'calendarPiece'],
-        },
-        include: [
-            {
-                model: models.collaborator,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt', 'calendarCollaborator'],
-                },
-                through: {
-                    attributes: ['order'],
-                },
-                include: [{
-                    model: models.calendarCollaborator,
-                    attributes: ['order'],
-                }],
+    let events: CalendarInstance[];
+    const limit = 10;
+    let offset = 0;
+    do {
+        res.write('Getting local events from db...\n');
+        const waitingNotification = setInterval(() => res.write('...still waiting for local events...\n'), 10000);
+        const models = db.models;
+        events = await models.calendar.findAll({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'calendarCollaborator', 'calendarPiece'],
             },
-            {
-                model: models.piece,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt', 'calendarPiece'],
+            include: [
+                {
+                    model: models.collaborator,
+                    attributes: {
+                        exclude: ['id', 'createdAt', 'updatedAt', 'calendarCollaborator'],
+                    },
+                    through: {
+                        attributes: ['order'],
+                    },
+                    include: [{
+                        model: models.calendarCollaborator,
+                        attributes: ['order'],
+                    }],
                 },
-                through: {
-                    attributes: ['order'],
+                {
+                    model: models.piece,
+                    attributes: {
+                        exclude: ['id', 'createdAt', 'updatedAt', 'calendarPiece'],
+                    },
+                    through: {
+                        attributes: ['order'],
+                    },
+                    include: [{
+                        model: models.calendarPiece,
+                        attributes: ['order'],
+                    }],
                 },
-                include: [{
-                    model: models.calendarPiece,
-                    attributes: ['order'],
-                }],
-            },
-        ],
-        order: [
-            ['dateTime', 'DESC'],
-            [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
-            [models.piece, models.calendarPiece, 'order', 'ASC'],
-        ],
-    });
-    clearInterval(waitingNotification);
-    res.write('Local events fetched from db.');
-    const prunedEvents = events.map((cal) => {
-        return {
-            id: cal.id,
-            summary: cal.name,
-            location: cal.location,
-            startDatetime: moment(cal.dateTime),
-            timeZone: cal.timezone,
-            description: JSON.stringify({
-                collaborators: cal.collaborators.map((collab) => {
-                    return {
-                        name: collab.name,
-                        instrument: collab.instrument,
-                    };
+            ],
+            order: [
+                ['dateTime', 'DESC'],
+                [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
+                [models.piece, models.calendarPiece, 'order', 'ASC'],
+            ],
+            limit,
+            offset,
+        });
+        offset += limit;
+        clearInterval(waitingNotification);
+        res.write('Local events fetched from db.');
+        const prunedEvents = events.map((cal) => {
+            return {
+                id: cal.id,
+                summary: cal.name,
+                location: cal.location,
+                startDatetime: moment(cal.dateTime),
+                timeZone: cal.timezone,
+                description: JSON.stringify({
+                    collaborators: cal.collaborators.map((collab) => {
+                        return {
+                            name: collab.name,
+                            instrument: collab.instrument,
+                        };
+                    }),
+                    pieces: cal.pieces.map((piece) => {
+                        return {
+                            composer: piece.composer,
+                            piece: piece.piece,
+                        };
+                    }),
+                    type: cal.type,
+                    website: cal.website,
                 }),
-                pieces: cal.pieces.map((piece) => {
-                    return {
-                        composer: piece.composer,
-                        piece: piece.piece,
-                    };
-                }),
-                type: cal.type,
-                website: cal.website,
-            }),
-        };
-    });
+            };
+        });
 
-    let updated = 0;
-    let created = 0;
-    let errored = 0;
+        let updated = 0;
+        let created = 0;
+        let errored = 0;
 
-    await Promise.each(prunedEvents, async (item) => {
-        try {
-            await getCalendarSingleEvent(item.id);
+        await Promise.each(prunedEvents, async (item) => {
+            try {
+                await getCalendarSingleEvent(item.id);
 
-            // if error not thrown, then event exists, update it
-            await updateCalendar(item);
-            res.write(`updated: ${item.id}\n`);
-            updated++;
-        } catch (e) {
-            if (e.response.status === 404) {
-                try {
-                    await createCalendarEvent(item);
-                    res.write(`created: ${item.id}\n`);
-                    created++;
-                } catch (e) {
+                // if error not thrown, then event exists, update it
+                await updateCalendar(item);
+                res.write(`updated: ${item.id}\n`);
+                updated++;
+            } catch (e) {
+                if (e.response.status === 404) {
+                    try {
+                        await createCalendarEvent(item);
+                        res.write(`created: ${item.id}\n`);
+                        created++;
+                    } catch (e) {
+                        res.write(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
+                        errored++;
+                    }
+                } else {
                     res.write(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
                     errored++;
                 }
-            } else {
-                res.write(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
-                errored++;
             }
-        }
-    });
+        });
 
-    res.write(`updating finished.
+        res.write(`updating finished.
         created: ${created}
         updated: ${updated}
         errored: ${errored}
     `);
+    } while (events.length !== 0);
     res.end();
 });
 
