@@ -32,6 +32,7 @@ let EventItemBody: React.SFC<EventItemBodyProps> = ({
     name,
     location,
     collaborators,
+    eventType,
     program,
     website,
     permaLink,
@@ -40,7 +41,7 @@ let EventItemBody: React.SFC<EventItemBodyProps> = ({
         <div><FlexEventDate dateTime={dateTime} isMobile={isMobile}/></div>
 
         <FlexEventInfoContainer>
-            <EventName className={detailSectionMargin()} name={name} isMobile={isMobile} permaLink={permaLink} />
+            <EventName className={detailSectionMargin()} name={name} isMobile={isMobile} permaLink={permaLink} eventType={eventType} />
 
             <EventTime
                 className={detailSectionMargin()}

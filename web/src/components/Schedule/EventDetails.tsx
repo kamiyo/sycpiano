@@ -7,7 +7,7 @@ import styled, { css, cx } from 'react-emotion';
 
 import { LinkIconInstance } from 'src/components/Schedule/LinkIconSVG';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
-import { Collaborator, Piece } from 'src/components/Schedule/types';
+import { Collaborator, EventType, Piece } from 'src/components/Schedule/types';
 import { getGoogleMapsSearchUrl } from 'src/components/Schedule/utils';
 
 import { lightBlue, logoBlue, magenta, textGrey } from 'src/styles/colors';
@@ -41,7 +41,7 @@ EventDate = styled<EventDateTimeProps, typeof EventDate>(EventDate) `
     padding: 0.8em;
 `;
 
-interface EventNameProps { name: string; className?: string; isMobile?: boolean; permaLink: string; }
+interface EventNameProps { name: string; eventType: EventType; className?: string; isMobile?: boolean; permaLink: string; }
 
 const linkIconStyle = css`
     margin: 0 0.5em;
@@ -75,6 +75,7 @@ class EventName extends React.Component<EventNameProps> {
             <CopyToClipboard onCopy={this.onCopy} text={this.props.permaLink}>
                 <div className={eventNameStyle(this.props.isMobile)}>
                     <span>{this.props.name}</span>
+                    {this.props.eventType === 'masterclass' && <span>{`: Masterclass`}</span>}
                     <LinkIconInstance className={linkIconStyle} />
                     <span
                         className={css`
