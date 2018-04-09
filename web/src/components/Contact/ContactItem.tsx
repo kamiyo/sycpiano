@@ -15,7 +15,7 @@ import {
     seanChenContactPhotoUrl,
 } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
-import { screenWidths, screenXS } from 'src/styles/screens';
+import { screenWidths, screenXSorPortrait } from 'src/styles/screens';
 
 const imageInsetShadowColor = '#222';
 const alternateBackgroundColor = '#eee';
@@ -51,8 +51,8 @@ const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
     flex: 0 0 55%;
     box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
 
-    ${/* sc-selector */ screenXS} {
-        height: 100vw;
+    ${/* sc-selector */ screenXSorPortrait} {
+        height: 75vw;
     }
 `;
 
@@ -171,7 +171,7 @@ const StyledContactItem = styled(ContactItem) `
         background-color: ${alternateBackgroundColor};
     }
 
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         height: fit-content;
         padding-bottom: 3em;
 

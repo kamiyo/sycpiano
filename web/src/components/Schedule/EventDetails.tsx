@@ -14,6 +14,7 @@ import { lightBlue, logoBlue, magenta, textGrey } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 
 import TweenLite from 'gsap/TweenLite';
+import { screenXSorPortrait } from 'src/styles/screens';
 
 const locationIconDimension = '30px';
 
@@ -51,16 +52,20 @@ const linkIconStyle = css`
     vertical-align: top;
 `;
 
-const eventNameStyle = (isMobile?: boolean) => css`
+const eventNameStyle = css`
     font-size: 2em;
     font-family: ${lato2};
     transition: fill 0.2s, color 0.2s;
-    fill: ${isMobile ? logoBlue : 'transparent'};
+    fill: transparent;
     color: ${logoBlue};
 
     &:hover {
         cursor: pointer;
         fill: #999;
+    }
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        fill: logoBlue;
     }
 `;
 
@@ -73,7 +78,7 @@ class EventName extends React.Component<EventNameProps> {
     render() {
         return (
             <CopyToClipboard onCopy={this.onCopy} text={this.props.permaLink}>
-                <div className={eventNameStyle(this.props.isMobile)}>
+                <div className={eventNameStyle}>
                     <span>{this.props.name}</span>
                     {this.props.eventType === 'masterclass' && <span>{`: Masterclass`}</span>}
                     <LinkIconInstance className={linkIconStyle} />

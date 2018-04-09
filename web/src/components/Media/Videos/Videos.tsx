@@ -14,7 +14,7 @@ import { createFetchPlaylistAction, initializeYoutubeElement, resetPlayer } from
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
-import { screenXS } from 'src/styles/screens';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
 interface VideosStateToProps {
@@ -42,7 +42,7 @@ const StyledVideos = styled('div')`
     background-color: black;
     position: relative;
 
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         overflow-y: scroll;
         margin-top: 0;
         padding-top: ${navBarHeight.mobile}px;
@@ -53,7 +53,7 @@ const StyledVideos = styled('div')`
         width: 100%;
         height: 100%;
 
-        ${/* sc-selector */ screenXS} {
+        ${/* sc-selector */ screenXSorPortrait} {
             position: absolute;
             top: ${navBarHeight.mobile}px;
             height: 56.25vw;

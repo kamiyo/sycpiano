@@ -8,7 +8,7 @@ import { SycLogo } from 'src/components/App/NavBar/SycLogo';
 import { logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { reactMediaMobileQuery, screenPortrait, screenXS } from 'src/styles/screens';
+import { reactMediaMobileQuery, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
 const navBarFontSizeREM = 2.5;
@@ -28,9 +28,10 @@ const LogoText = styled<{ isMobile: boolean }, 'div'>('div')`
 
     span {
         vertical-align: -3px;
+    }
 
-        /* stylelint-disable-next-line */
-        ${screenPortrait}, ${screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
+        span {
             vertical-align: initial;
             margin-left: 10px;
             line-height: ${navBarHeight.mobile}px;
@@ -41,12 +42,6 @@ const LogoText = styled<{ isMobile: boolean }, 'div'>('div')`
 const logoStyle = css`
     font-family: ${lato2};
     font-size: ${navBarFontSizeREM}rem;
-
-    /* stylelint-disable-next-line */
-    ${screenPortrait}, ${screenXS} {
-        font-size: ${navBarFontSizeREM * 0.6}rem;
-    }
-
     letter-spacing: 0.05em;
     height: 100%;
     color: ${logoBlue};
@@ -56,6 +51,10 @@ const logoStyle = css`
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        font-size: ${navBarFontSizeREM * 0.6}rem;
+    }
 `;
 
 const NavBarLogo: React.SFC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProps> = ({

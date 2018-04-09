@@ -7,7 +7,7 @@ import { links } from 'src/components/App/NavBar/links';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import NavBarLogo from 'src/components/App/NavBar/NavBarLogo';
 
-import { screenPortrait, screenXS } from 'src/styles/screens';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
 
@@ -26,8 +26,7 @@ const navBarStyle = css`
     height: ${navBarHeight.desktop}px;
     padding: 0 30px 0 0;
 
-    /* stylelint-disable-next-line */
-    ${screenPortrait}, ${screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         height: ${navBarHeight.mobile}px;
         padding-right: 15px;
     }

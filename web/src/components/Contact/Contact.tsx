@@ -6,6 +6,7 @@ import { setOnScroll } from 'src/components/App/NavBar/actions';
 import StyledContactItem from 'src/components/Contact/ContactItem';
 import contacts from 'src/components/Contact/contacts';
 
+import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
 
@@ -46,12 +47,18 @@ class Contact extends React.Component<ContactProps> {
 const StyledContact = styled<ContactProps, typeof Contact>(Contact) `
     display: flex;
     flex-flow: row wrap;
-    justify-content: ${(props) => props.isMobile ? 'space-around' : 'center'};
+    justify-content: center;
     height: 100%;
     width: 100%;
     position: absolute;
     top: 0;
-    overflow-y: ${(props) => props.isMobile ? 'scroll' : 'default'};
+    overflow-y: unset;
+    overflow-x: hidden;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        overflow-y: scroll;
+        justify-content: space-around;
+    }
 `;
 
 const mapStateToProps = ({ navbar }: GlobalStateShape): ContactStateToProps => ({

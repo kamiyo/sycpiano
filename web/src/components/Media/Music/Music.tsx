@@ -18,7 +18,7 @@ import { isMusicItem, MusicFileItem, MusicItem, MusicListItem } from 'src/compon
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
-import { screenXS } from 'src/styles/screens';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
 interface MusicState {
@@ -56,7 +56,7 @@ const musicStyle = css`
     width: 100%;
     background-color: black;
 
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         margin-top: 0;
         padding-top: ${navBarHeight.mobile}px;
         height: 100%;

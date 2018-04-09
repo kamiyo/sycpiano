@@ -7,7 +7,7 @@ import { playVideo, togglePlaylistAction } from 'src/components/Media/Videos/act
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import VideoPlaylistItem from 'src/components/Media/Videos/VideoPlaylistItem';
 
-import { screenXS } from 'src/styles/screens';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { GlobalStateShape } from 'src/types';
 
 interface VideoPlaylistStateToProps {
@@ -28,7 +28,7 @@ interface VideoOwnProps {
 type VideoPlaylistProps = VideoOwnProps & VideoPlaylistStateToProps & VideoPlaylistDispatchToProps;
 
 const videoPlaylistStyle = css`
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         top: 56.25vw;
         position: relative;
         overflow: visible;
@@ -41,7 +41,7 @@ const playlistContainerStyle = css`
     right: 0;
     position: absolute;
 
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         height: auto;
         position: unset;

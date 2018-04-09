@@ -55,7 +55,7 @@ const slideOnExit = (delay: number) => (element: HTMLElement) => {
     }
 };
 
-const RootContainer = styled<{ isHome: boolean; isMobile: boolean; }, 'div'>('div') `
+const RootContainer = styled<{ isHome: boolean }, 'div'>('div') `
     height: 100%;
     width: 100%;
     background-color: ${props => props.isHome ? 'black' : 'white'};
@@ -104,7 +104,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
         return (
             <ReactMedia query={reactMediaMobileQuery}>
                 {(matches: boolean) => (
-                    <RootContainer isHome={this.getRouteBase() === '/'} isMobile={matches}>
+                    <RootContainer isHome={this.getRouteBase() === '/'}>
                         <LogoSVG />
                         <Transition
                             in={this.state.homeBgLoaded && this.props.navbarVisible}

@@ -13,6 +13,7 @@ import {
 import { DayItem } from 'src/components/Schedule/types';
 
 import { lato1 } from 'src/styles/fonts';
+import { screenXSorPortrait } from 'src/styles/screens';
 
 const FlexEventDate = styled(EventDate)` flex: 0 0 100px; `;
 
@@ -59,14 +60,19 @@ let EventItemBody: React.SFC<EventItemBodyProps> = ({
 
 EventItemBody = styled<EventItemBodyProps, typeof EventItemBody>(EventItemBody)`
     display: flex;
-    padding: ${props => props.isMobile ? '30px 0' : '30px 0 30px 30px'};
+    padding: 30px 0 30px 30px;
     font-family: ${lato1};
     align-items: top;
     color: black;
     transition: 0.2s all;
-    width: ${props => props.isMobile ? 90 : 80}%;
+    width: 80%;
     max-width: 1240px;
     margin: 0 auto;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        padding: 30px 0;
+        width: 90%;
+    }
 `;
 
 export { EventItemBody };

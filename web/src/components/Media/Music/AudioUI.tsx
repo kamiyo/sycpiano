@@ -10,6 +10,7 @@ import { GlobalStateShape } from 'src/types';
 import { cartesianToPolar } from 'src/utils';
 
 import { lightBlue } from 'src/styles/colors';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
@@ -60,16 +61,22 @@ const LoadingOverlay = styled('div') `
     background-color: rgba(0, 0, 0, 0.5);
 `;
 
-const UIContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
+const UIContainer = styled('div') `
     position: absolute;
-    width: ${(props) => props.isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
-    height: ${(props) => props.isMobile ? '450px' : '100%'};
+    width: calc(100% - ${playlistWidth}px);
+    height: 100%;
     left: 0;
-    top: ${(props) => props.isMobile ? navBarHeight.mobile : 0}px;
+    top: 0;
     z-index: 20;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        width: 100%;
+        height: 450px;
+        top: ${navBarHeight.mobile}px;
+    }
 `;
 
 const StyledSeekRing = styled('canvas') `
@@ -280,7 +287,7 @@ class AudioUI extends React.Component<AudioUIProps> {
     render() {
         const buttonLength = this.props.baseRadius * Math.SQRT1_2;
         return (
-            <UIContainer isMobile={this.props.isMobile}>
+            <UIContainer>
                 {this.props.isLoading &&
                     <LoadingOverlay>
                         <LoadingInstance

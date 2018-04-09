@@ -10,7 +10,7 @@ import { MusicItem } from 'src/components/Media/Music/types';
 
 import { lato1 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { screenXS } from 'src/styles/screens';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistWidth } from 'src/styles/variables';
 
 interface AudioInfoProps {
@@ -21,13 +21,13 @@ interface AudioInfoProps {
     dispatch: any;
 }
 
-const AudioInfoContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
+const AudioInfoContainer = styled('div') `
     ${noHighlight}
-    width: ${(props) => props.isMobile ? `100%` : `calc(100% - ${playlistWidth}px)`};
-    height: ${(props) => (props.isMobile) ? '450px' : '100%'};
+    width: calc(100% - ${playlistWidth}px);
+    height: 100%;
     z-index: 10;
     position: absolute;
-    top: ${(props) => props.isMobile ? navBarHeight.mobile : 0}px;
+    top: 0;
     left: 0;
     display: flex;
     flex-direction: column;
@@ -37,30 +37,39 @@ const AudioInfoContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     font-family: ${lato1};
     letter-spacing: 2px;
     color: white;
-    padding-bottom: ${(props) => props.isMobile ? '1rem' : '3rem'};
+    padding-bottom: 3rem;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        width: 100%;
+        height: 450px;
+        top: ${navBarHeight.mobile}px;
+        padding-bottom: 1rem;
+    }
 `;
 
-const ComposerTitle = styled<{ isMobile: boolean; }, 'div'>('div') `
+const ComposerTitle = styled('div') `
     padding: 0 10px;
-    font-size: ${(props) => props.isMobile ? '1.4rem' : '2.2rem'};
-    line-height: ${(props) => props.isMobile ? '2rem' : '3.2rem'};
+    font-size: 2.2rem;
+    line-height: 3.2rem;
 
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         white-space: nowrap;
         overflow-x: hidden;
+        font-size: 1.4rem;
+        line-height: 2rem;
+    }
+`;
 
-        div {
-            width: fit-content;
-            position: relative;
+const Marquee = styled('div') `
+    width: fit-content;
+    position: relative;
 
-            span {
-                display: inline-block;
+    span {
+        display: inline-block;
 
-                &:last-child {
-                    margin: 0 200px;
-                }
-            }
+        &:last-child {
+            margin: 0 200px;
         }
     }
 `;
@@ -71,10 +80,15 @@ const Movement = styled('div') `
     line-height: 3.2rem;
 `;
 
-const ContributingOrDuration = styled<{ isMobile: boolean; }, 'div'>('div') `
+const ContributingOrDuration = styled('div') `
     padding: 0 10px;
-    font-size: ${(props) => props.isMobile ? '1.1rem' : '2rem'};
-    line-height: ${(props) => props.isMobile ? '1.5rem' : '3.2rem'};
+    font-size: 2rem;
+    line-height: 3.2rem;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        font-size: 1.1rem;
+        line-height: 1.5rem;
+    }
 `;
 
 class AudioInfo extends React.Component<AudioInfoProps> {
@@ -121,13 +135,13 @@ class AudioInfo extends React.Component<AudioInfoProps> {
         const { isMobile, currentPosition, duration } = this.props;
         const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '') + (isMobile && movement ? ': ' + movement : '');
         return (
-            <AudioInfoContainer isMobile={isMobile}>
-                <ComposerTitle innerRef={(div) => this.titleDiv = div} isMobile={isMobile}>
+            <AudioInfoContainer>
+                <ComposerTitle innerRef={(div) => this.titleDiv = div}>
                     {
                         isMobile ? (
-                            <div ref={(div) => this.marquee = div}>
+                            <Marquee innerRef={(div) => this.marquee = div}>
                                 <span>{composerTitle}</span><span>{composerTitle}</span>
-                            </div>
+                            </Marquee>
                         ) : (
                                 composerTitle
                             )
@@ -136,15 +150,15 @@ class AudioInfo extends React.Component<AudioInfoProps> {
                 {movement && !isMobile && <Movement>{movement}</Movement>}
                 {contributors &&
                     (isMobile ? contribArray.map((contributor, index) => (
-                        <ContributingOrDuration key={index} isMobile={isMobile}>
+                        <ContributingOrDuration key={index}>
                             {contributor}
                         </ContributingOrDuration>
-                    )) : <ContributingOrDuration isMobile={isMobile}>
+                    )) : <ContributingOrDuration>
                             {contributors}
                         </ContributingOrDuration>
                     )
                 }
-                <ContributingOrDuration isMobile={isMobile}>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</ContributingOrDuration>
+                <ContributingOrDuration>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</ContributingOrDuration>
             </AudioInfoContainer>
         );
     }

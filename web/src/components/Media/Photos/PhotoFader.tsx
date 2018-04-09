@@ -53,7 +53,7 @@ const PhotoFader: React.SFC<PhotoFaderProps> = ({ item, isCurrent }) => {
                     },
                     src: staticPathFromItem(item),
                 }}
-                showLoading={true}
+                loadingComponent="default"
                 successCb={(el: HTMLImageElement) => {
                     TweenLite.to(el, 0.2, { autoAlpha: 1 });
                 }}

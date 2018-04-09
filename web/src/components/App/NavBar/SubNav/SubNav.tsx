@@ -5,6 +5,7 @@ import tint from 'polished/lib/color/tint';
 
 import SubNavLink from 'src/components/App/NavBar/SubNav/SubNavLink';
 import { logoBlue } from 'src/styles/colors';
+import { screenXSorPortrait } from 'src/styles/screens';
 
 interface SubNavProps {
     readonly className?: string;
@@ -25,23 +26,24 @@ let SubNav: React.SFC<SubNavProps> = ({ className, links, ...props }) => (
 
 SubNav = styled<SubNavProps, 'SubNav'>(SubNav)`
     z-index: 10;
-    position: ${(props) => props.isMobile ? 'relative' : 'absolute'};
+    position: absolute;
     list-style: none;
     padding-left: 0;
     margin-top: 0;
     display: inline-block;
     transform-origin: top;
-    transform: ${(props) => props.isMobile ? 'none' : 'translateX(-50%)'};
-    overflow: ${(props) => props.isMobile ? 'hidden' : 'visible'};
+    transform: translateX(-50%);
+    overflow: visible;
 
-    /* stylelint-disable */
-    ${(props) => props.isMobile && `
+    ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         padding: 10px 0;
         background-color: ${tint(0.2, logoBlue)};
         box-shadow: inset 0 4px 5px -2px rgba(0, 0, 0, 0.2);
-    `}
-    /* stylelint-enable */
+        position: relative;
+        transform: unset;
+        overflow: hidden;
+    }
 `;
 
 export default SubNav;

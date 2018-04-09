@@ -15,7 +15,7 @@ import { offWhite } from 'src/styles/colors';
 import { lato2, lato3 } from 'src/styles/fonts';
 import { generateSrcsetWidths, resizedImage, sycWithPianoBW } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
-import { screenLengths, screenM, screenPortrait, screenWidths, screenXS } from 'src/styles/screens';
+import { screenLengths, screenM, screenWidths, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
 
@@ -27,7 +27,7 @@ const Paragraph = styled('p') `
     line-height: 2em;
     margin: 1.6em 0;
 
-    ${/*sc-selector*/ screenXS} {
+    ${/*sc-selector*/ screenXSorPortrait} {
         font-size: 1em;
         line-height: 1.6em;
         margin: 1.3em 0;
@@ -37,8 +37,7 @@ const Paragraph = styled('p') `
 const SpaceFiller = styled('div') `
     display: none;
 
-    ${/*sc-selector*/ screenPortrait},
-    ${/*sc-selector*/ screenXS} {
+    ${/*sc-selector*/ screenXSorPortrait} {
         display: block;
         height: ${pictureHeight}px;
         width: 100%;
@@ -47,8 +46,7 @@ const SpaceFiller = styled('div') `
 `;
 
 const TextGroup = styled('div') `
-    ${/*sc-selector*/ screenPortrait},
-    ${/*sc-selector*/ screenXS} {
+    ${/*sc-selector*/ screenXSorPortrait} {
         background-color: white;
         padding: 20px 20px;
     }
@@ -100,8 +98,7 @@ const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
     }
 
     /* stylelint-disable-next-line */
-    ${/* sc-sel */ screenPortrait},
-    ${/* sc-sel */ screenXS} {
+    ${/* sc-sel */ screenXSorPortrait}, {
         position: fixed;
         z-index: 0;
         top: ${navBarHeight}px;
@@ -122,8 +119,7 @@ const TextContainer = styled(AboutText) `
     color: black;
     overflow-y: scroll;
 
-    ${/* sc-selector */ screenPortrait},
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         position: relative;
         z-index: 1;
         margin-top: 0;
@@ -142,7 +138,7 @@ const AboutContainer = styled('div') `
     position: absolute;
     display: flex;
 
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         margin-top: 0;
         padding-top: ${navBarHeight.mobile}px;
         height: 100%;
@@ -241,7 +237,6 @@ class About extends React.Component<AboutProps, AboutState> {
                             },
                             src: resizedImage(sycWithPianoBW(), { height: 1080 }),
                         }}
-                        showLoading={false}
                         alt="about background"
                         successCb={this.onImageLoad}
                         destroyCb={this.onImageDestroy}

@@ -7,20 +7,19 @@ import NavBarLink from 'src/components/App/NavBar/NavBarLink';
 
 import { noHighlight } from 'src/styles/mixins';
 import { pushed } from 'src/styles/mixins';
-import { screenPortrait, screenXS } from 'src/styles/screens';
+import { screenXSorPortrait } from 'src/styles/screens';
 
 const StyledUL = styled<{ isMobile: boolean; }, 'ul'>('ul')`
     padding: 0;
     margin: 0;
-    /* stylelint-disable */
-    ${props => props.isMobile && `
+
+    ${/* sc-selector */ screenXSorPortrait} {
         display: flex;
         flex-direction: column;
         width: 100%;
         padding-top: 1.8rem;
         overflow-y: auto;
-    `}
-    /* stylelint-enable */
+    }
 `;
 
 let NavBarLinks: React.SFC<NavBarLinksProps> = (props) => (
@@ -48,7 +47,7 @@ NavBarLinks = styled(NavBarLinks)`
     text-transform: uppercase;
 
     /* stylelint-disable-next-line */
-    ${screenPortrait}, ${screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         ${pushed};
         position: fixed;
         background-color: white;
