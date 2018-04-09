@@ -10,44 +10,48 @@ import PhotoListItem from 'src/components/Media/Photos/PhotoListItem';
 import { PhotoItem } from 'src/components/Media/Photos/types';
 import { idFromItem } from 'src/components/Media/Photos/utils';
 import Playlist from 'src/components/Media/Playlist';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
-const getPhotoListStyle = (isMobile: boolean) => css`
-    padding-left: ${isMobile ? 0 : 5}px;
+const photoListStyle = css`
+    padding-left: 5px;
     background-color: black;
     top: 0;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        padding-left: 0;
+    }
 `;
 
-const photoULStyle = (isMobile: boolean) => css`
+const photoULStyle = css`
     padding-bottom: 60px;
+    background-color: black;
 
-    /* stylelint-disable */
-    ${isMobile ? `
+    ${/* sc-selector */ screenXSorPortrait} {
         padding-top: ${navBarHeight.mobile}px;
-    ` : `
-        background-color: black;
-    `}
-    /* stylelint-enable */
+        background-color: unset;
+    }
 `;
 
-const getPlaylistExtraStyles = (isMobile: boolean) => ({
-    div: getPhotoListStyle(isMobile),
-    ul: photoULStyle(isMobile),
+const playlistExtraStyles = ({
+    div: photoListStyle,
+    ul: photoULStyle,
 });
 
-const StyledPhotoListContainer = styled<{ isMobile: boolean }, 'div'>('div') `
-    /* stylelint-disable */
-    ${props => props.isMobile ? `
+const StyledPhotoListContainer = styled('div') `
+    width: fit-content;
+    height: 100%;
+    right: 0;
+    top: 0;
+    position: absolute;
+
+    ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         height: auto;
-    ` : `
-        width: fit-content;
-        height: 100%;
-        right: 0;
-        top: 0;
-        position: absolute;
-    `}
-    /* stylelint-enable */
+        right: unset;
+        top: unset;
+        position: unset;
+    }
 `;
 
 interface PhotoListOwnProps {
@@ -81,10 +85,10 @@ class PhotoList extends React.Component<PhotoListProps> {
             onScroll,
         } = this.props;
         return (
-            <StyledPhotoListContainer isMobile={isMobile}>
+            <StyledPhotoListContainer>
                 <Playlist
                     id="photos_ul"
-                    extraStyles={getPlaylistExtraStyles(isMobile)}
+                    extraStyles={playlistExtraStyles}
                     hasToggler={false}
                     isShow={true}
                     shouldAppear={false}

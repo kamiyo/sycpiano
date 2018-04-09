@@ -9,6 +9,7 @@ import { PlaylistProps } from 'src/components/Media/types';
 import { playlistBackground } from 'src/styles/colors';
 import { lato1 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { playlistContainerWidth, playlistWidth } from 'src/styles/variables';
 
 const slideLeft = (element: HTMLElement, amount: number, delay = 0) => {
@@ -20,16 +21,20 @@ const slideRight = (element: HTMLElement, amount: number, delay = 0) => {
 };
 
 // need to add in css from parent
-const getPlaylistContainerStyle = (isMobile: boolean) => css`
+const playlistContainerStyle = css`
     position: absolute;
     height: 100%;
     right: 0;
-    width: ${isMobile ? '100%' : `${playlistContainerWidth}px`};
+    width: ${playlistContainerWidth}px;
     transform: translateX(${playlistWidth}px);
     font-family: ${lato1};
     z-index: 50;
     display: flex;
     ${noHighlight}
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        width: 100%;
+    }
 `;
 
 const playlistStyle = css`
@@ -72,7 +77,7 @@ class Playlist extends React.Component<PlaylistProps> {
             >
                 <div
                     className={cx(
-                        getPlaylistContainerStyle(props.isMobile),
+                        playlistContainerStyle,
                         props.extraStyles && props.extraStyles.div,
                     )}
                 >

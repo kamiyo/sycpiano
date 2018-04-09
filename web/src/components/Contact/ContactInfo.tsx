@@ -15,9 +15,9 @@ const dividerColor = '#888';
 
 const NameContainer = styled('div')({
     flex: '0 0 auto',
-    fontSize: '33px',
+    fontSize: '2rem',
     fontWeight: 'bold',
-    [screenXL]: { fontSize: '37px' },
+    [screenXL]: { fontSize: '2.4rem' },
 });
 
 const SubInfo = styled('div')`

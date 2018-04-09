@@ -138,7 +138,6 @@ class PreviewOverlay extends React.Component<PreviewOverlayProps, { bgImage: str
                             },
                             src: resizedImage(cliburn1(), { height: 1080 }),
                         }}
-                        showLoading={false}
                         alt="video preview"
                         successCb={this.onImageLoad}
                         destroyCb={this.onImageDestroy}

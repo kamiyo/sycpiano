@@ -1,15 +1,14 @@
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 
-import TweenLite from 'gsap/TweenLite';
-
 import { lato2, lato2i } from 'src/styles/fonts';
 import { generateSrcsetWidths, homeBackground, resizedImage, sycChairVertical } from 'src/styles/imageUrls';
 import { container } from 'src/styles/mixins';
 import { navBarHeight } from 'src/styles/variables';
 
+import { DesktopBackgroundPreview, MobileBackgroundPreview } from 'src/components/Home/PreviewSVGs';
 import { LazyImage } from 'src/components/LazyImage';
-import { screenLengths } from 'src/styles/screens';
+import { screenLengths, screenXSorPortrait } from 'src/styles/screens';
 
 const textShadowColor = 'rgba(0, 0, 0, 0.75)';
 
@@ -19,7 +18,7 @@ const HomeContainer = styled('div') `
     width: 100%;
 `;
 
-const Content = styled<{ isMobile: boolean; }, 'div'>('div') `
+const Content = styled('div') `
     position: absolute;
     width: 100%;
     text-align: center;
@@ -29,8 +28,9 @@ const Content = styled<{ isMobile: boolean; }, 'div'>('div') `
     text-shadow: 0 0 8px ${textShadowColor};
     z-index: 100;
 
-    /* stylelint-disable-next-line */
-    ${props => props.isMobile && 'height: 100%;'}
+    ${/* sc-selector */ screenXSorPortrait} {
+        height: 100%;
+    }
 `;
 
 const Name = styled<{ isMobile: boolean; }, 'div'>('div') `
@@ -38,13 +38,11 @@ const Name = styled<{ isMobile: boolean; }, 'div'>('div') `
     font-size: ${props => props.isMobile ? 'calc(100vw / 6.2)' : 'calc(100vh / 8)'};
     text-transform: uppercase;
 
-    /* stylelint-disable */
-    ${props => props.isMobile && `
+    ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         position: absolute;
         bottom: 63%;
-    `}
-    /* stylelint-enable */
+    }
 `;
 
 const Skills = styled<{ isMobile: boolean; }, 'div'>('div') `
@@ -53,13 +51,11 @@ const Skills = styled<{ isMobile: boolean; }, 'div'>('div') `
     color: #fff6b0;
     text-shadow: 0 0 6px ${textShadowColor};
 
-    /* stylelint-disable */
-    ${props => props.isMobile && `
+    ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         position: absolute;
         bottom: 58%;
-    `}
-    /* stylelint-enable */
+    }
 `;
 
 const Handle = styled<{ isMobile: boolean; }, 'div'>('div') `
@@ -69,13 +65,11 @@ const Handle = styled<{ isMobile: boolean; }, 'div'>('div') `
     color: white;
     text-shadow: 0 0 6px ${textShadowColor};
 
-    /* stylelint-disable */
-    ${props => props.isMobile && `
+    ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         position: absolute;
         bottom: 5%;
-    `}
-    /* stylelint-enable */
+    }
 `;
 
 const BackgroundContainer = styled('div') `
@@ -84,28 +78,33 @@ const BackgroundContainer = styled('div') `
     position: absolute;
     top: 0;
     left: 0;
-    visibility: hidden;
     overflow: hidden;
 `;
 
 const backgroundStyle = css`
-    top: 0;
-    left: 50%;
+    height: 100%;
     width: 100%;
     position: absolute;
     filter: saturate(0.8);
-    transform: translateX(-50%) translateY(-16%);
     z-index: 0;
+    object-fit: cover;
+`;
+
+const desktopBackgroundStyle = css`
+    ${backgroundStyle}
+    object-position: 50% 35%;
 `;
 
 const mobileBackgroundStyle = css`
-    bottom: 0;
-    left: 50%;
+    ${backgroundStyle}
+    object-position: 50% 100%;
+`;
+
+const loadingStyle = css`
+    width: 100%;
     height: 100%;
     position: absolute;
-    filter: saturate(0.8);
-    transform: translateX(-50%);
-    z-index: 0;
+    z-index: 10;
 `;
 
 const BackgroundCover = styled<{ isMobile: boolean; }, 'div'>('div') `
@@ -115,20 +114,21 @@ const BackgroundCover = styled<{ isMobile: boolean; }, 'div'>('div') `
     top: 0;
     left: 0;
     z-index: 1;
-
-    /* stylelint-disable */
-    background-image: ${props => props.isMobile ? `
-        linear-gradient(
-            66deg,
-            rgba(0,0,0,0) 30%,
-            rgba(0,0,0,0.2) 55%
-        );` : `
+    background-image:
         linear-gradient(
             66deg,
             rgba(0, 0, 0, 0) 70%,
             rgba(0, 0, 0, 0.2) 75%
-        );`}
-    /* stylelint-enable */
+        );
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        background-image:
+            linear-gradient(
+                66deg,
+                rgba(0, 0, 0, 0) 30%,
+                rgba(0, 0, 0, 0.2) 55%
+            );
+    }
 `;
 
 const NavBarGradient = styled<{ isMobile: boolean; }, 'div'>('div') `
@@ -139,17 +139,7 @@ const NavBarGradient = styled<{ isMobile: boolean; }, 'div'>('div') `
     left: 0;
     right: 0;
     z-index: 2;
-
-    /* stylelint-disable */
-    background-image: ${props => props.isMobile ? `
-        linear-gradient(
-            122deg,
-            rgba(3,3,3,0.4) 5%,
-            rgba(255,255,255,0.11) 40%,
-            rgba(255, 255, 255, 0.21) 52%,
-            rgba(255, 255, 255, 0.36) 60%,
-            rgba(53,53,53,0.27) 90%
-        );` : `
+    background-image:
         linear-gradient(
             122deg,
             rgba(3, 3, 3, 0.4) 5%,
@@ -157,8 +147,19 @@ const NavBarGradient = styled<{ isMobile: boolean; }, 'div'>('div') `
             rgba(255, 255, 255, 0.62) 22%,
             rgba(255, 255, 255, 0.6) 40%,
             rgba(53, 53, 53, 0.27) 70%
-        );`}
-    /* stylelint-enable */
+        );
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        background-image:
+            linear-gradient(
+                122deg,
+                rgba(3, 3, 3, 0.4) 5%,
+                rgba(255, 255, 255, 0.11) 40%,
+                rgba(255, 255, 255, 0.21) 52%,
+                rgba(255, 255, 255, 0.36) 60%,
+                rgba(53, 53, 53, 0.27) 90%
+            );
+    }
 `;
 
 /*
@@ -243,11 +244,6 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }>
 
     onImageLoaded = () => {
         this.props.bgLoaded();
-        TweenLite.to(this.bgRef, 0.3, { autoAlpha: 1 });
-    }
-
-    onImageDestroy = () => {
-        TweenLite.to(this.bgRef, 0.1, { autoAlpha: 0 });
     }
 
     render() {
@@ -259,7 +255,8 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }>
                         id="home_bg"
                         classNames={{
                             mobile: mobileBackgroundStyle,
-                            desktop: backgroundStyle,
+                            desktop: desktopBackgroundStyle,
+                            loading: loadingStyle,
                         }}
                         mobileAttributes={{
                             webp: {
@@ -281,15 +278,14 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }>
                             },
                             src: resizedImage(homeBackground(), { width: 1920 }),
                         }}
+                        loadingComponent={this.props.isMobile ? MobileBackgroundPreview : DesktopBackgroundPreview}
                         alt="home background"
-                        showLoading={false}
                         successCb={this.onImageLoaded}
-                        destroyCb={this.onImageDestroy}
                     />
                     <BackgroundCover isMobile={this.props.isMobile} />
                     <NavBarGradient isMobile={this.props.isMobile} />
                 </BackgroundContainer>
-                <Content isMobile={this.props.isMobile}>
+                <Content>
                     <Name isMobile={this.props.isMobile}>Sean Chen</Name>
                     <Skills isMobile={this.props.isMobile}>pianist / composer / arranger</Skills>
                     <Handle isMobile={this.props.isMobile}>@seanchenpiano</Handle>

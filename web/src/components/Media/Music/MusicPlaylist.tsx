@@ -10,7 +10,7 @@ import { MusicFileItem, MusicListItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 import { playlistBackground } from 'src/styles/colors';
-import { screenXS } from 'src/styles/screens';
+import { screenXSorPortrait } from 'src/styles/screens';
 
 interface MusicPlaylistStateToProps {
     readonly items: MusicListItem[];
@@ -31,7 +31,7 @@ type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;
 const musicPlaylistStyle = css`
     position: initial;
 
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         top: 450px;
         position: relative;
         overflow: visible;
@@ -49,7 +49,7 @@ const playlistContainerStyle = css `
     right: 0;
     position: absolute;
 
-    ${/* sc-selector */ screenXS} {
+    ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         height: auto;
         position: unset;

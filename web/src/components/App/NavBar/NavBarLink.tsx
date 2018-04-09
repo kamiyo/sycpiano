@@ -15,6 +15,7 @@ import { GlobalStateShape } from 'src/types';
 import { lightBlue, logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, navBarMarginTop } from 'src/styles/variables';
 
 interface HighlightProps {
@@ -25,17 +26,12 @@ interface HighlightProps {
 }
 
 const getHighlightStyles = (isMobile: boolean) => css`
-    /* stylelint-disable */
-    ${!isMobile && `
-        margin-top: ${navBarMarginTop}px;
-        height: ${navBarHeight.desktop - navBarMarginTop}px;
-    `}
-    /* stylelint-enable */
+    height: ${isMobile ? 'unset' : `${navBarHeight.desktop - navBarMarginTop}px`};
     padding: ${isMobile ? '1.8rem 0' : '20px 10px 0 10px'};
+    margin-top: ${navBarMarginTop}px;
 `;
 
-const getHighlightDefaultStyle = (isMobile: boolean) => css`
-    ${getHighlightStyles(isMobile)}
+const getHighlightDefaultStyle = css`
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -67,7 +63,7 @@ const Highlight: React.SFC<HighlightProps> = ({ active, isHome, link, isMobile }
     <>
         {!isMobile && <div
             className={cx(
-                getHighlightDefaultStyle(isMobile),
+                getHighlightDefaultStyle,
                 { [highlightActiveStyle]: active },
                 { [highlightHomeStyle]: isHome },
                 { [highlightHomeActivestyle]: active && isHome },
@@ -129,15 +125,14 @@ const linkHomeActiveStyle = css`
     text-shadow: 0 0 1px rgba(255, 255, 255, 1);
 `;
 
-const getSubNavContainer = (isMobile: boolean) => css`
-    /* stylelint-disable */
-    ${isMobile ? `
+const getSubNavContainer = css`
+    visibility: hidden;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        visibility: unset;
         height: 0;
         overflow: hidden;
-    ` : `
-        visibility: hidden;
-    `}
-    /* stylelint-enable */
+    }
 `;
 
 const enterAnimation = (el: HTMLElement, isAppearing: boolean, isMobile: boolean) => {
@@ -199,7 +194,7 @@ let NavBarLink: React.SFC<NavBarLinkProps & NavBarLinkDispatchToProps & NavBarLi
                 timeout={250}
                 appear={true}
             >
-                <div className={getSubNavContainer(props.isMobile)}>
+                <div className={getSubNavContainer}>
                     <SubNav
                         basePath={props.to}
                         links={props.subNavLinks}

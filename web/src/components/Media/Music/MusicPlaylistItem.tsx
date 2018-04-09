@@ -51,8 +51,7 @@ const Highlight = styled<{ active: boolean; }, 'div'>('div') `
     ${(props) => props.active && `border-left-color: ${lightBlue};`}
     transition: all 0.15s;
 
-    /* stylelint-disable-next-line rule-empty-line-before, declaration-block-semicolon-newline-after, no-duplicate-selectors */
-    ${StyledCollectionItem} & {
+    ${/* sc-selector */ StyledCollectionItem} & {
         border-left: 7px solid transparent;
         ${(props) => props.active && `border-left: 7px solid ${lightBlue};`}
     }
@@ -106,11 +105,10 @@ const StyledInfo = styled('div') `
     justify-content: space-between;
     align-items: flex-start;
 
-    /* stylelint-disable */
-    ${StyledCollectionItem} &, ${StyledCollectionTitleContainer} & {
+    ${/* sc-selector */ StyledCollectionItem} &,
+    ${/* sc-selector */ StyledCollectionTitleContainer} & {
         padding: 0;
     }
-    /* stylelint-enable */
 `;
 
 const StyledCategory = styled('div') `

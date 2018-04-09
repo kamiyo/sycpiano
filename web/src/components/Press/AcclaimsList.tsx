@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
@@ -10,8 +11,8 @@ import { AcclaimItemShape } from 'src/components/Press/types';
 import { GlobalStateShape } from 'src/types';
 
 import AcclaimsListItem from 'src/components/Press/AcclaimsListItem';
-
-const cache = new CellMeasurerCache({ fixedWidth: true });
+import { screenXSorPortrait } from 'src/styles/screens';
+import { navBarHeight } from 'src/styles/variables';
 
 interface AcclaimsListStateToProps {
     readonly acclaims: AcclaimItemShape[];
@@ -24,12 +25,29 @@ interface AcclaimsListDispatchToProps {
 type AcclaimsListProps = (
     AcclaimsListStateToProps
     & AcclaimsListDispatchToProps
-    & { className?: string; }
+    & {
+        className?: string;
+        isMobile?: boolean;
+    }
 );
 
+const listStyle = css `
+    ${/* sc-selector */ screenXSorPortrait} {
+        padding-top: ${navBarHeight.mobile}px;
+    }
+`;
+
 class AcclaimsList extends React.Component<AcclaimsListProps> {
-    componentWillMount() {
+    cache = new CellMeasurerCache({ fixedWidth: true });
+
+    componentDidMount() {
         this.props.createFetchAcclaimsAction();
+    }
+
+    componentDidUpdate(prevProps: AcclaimsListProps) {
+        if (prevProps.isMobile !== this.props.isMobile) {
+            this.cache.clearAll();
+        }
     }
 
     render() {
@@ -42,9 +60,10 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
                             height={height}
                             width={width}
                             rowCount={numRows}
-                            rowHeight={cache.rowHeight}
-                            deferredMeasurementCache={cache}
+                            rowHeight={this.cache.rowHeight}
+                            deferredMeasurementCache={this.cache}
                             rowRenderer={this.rowItemRenderer}
+                            className={listStyle}
                         />
                     )}
                 </AutoSizer>
@@ -60,7 +79,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
     private rowItemRenderer: ListRowRenderer = ({key, index, parent, style}) => {
         return (
             <CellMeasurer
-                cache={cache}
+                cache={this.cache}
                 key={key}
                 columnIndex={0}
                 rowIndex={index}

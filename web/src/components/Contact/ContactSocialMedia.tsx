@@ -3,7 +3,7 @@ import styled, { css } from 'react-emotion';
 
 import { ContactSocialMediaShape } from 'src/components/Contact/types';
 import { staticImage } from 'src/styles/imageUrls';
-import { screenXS } from 'src/styles/screens';
+import { screenXSorPortrait } from 'src/styles/screens';
 
 const SocialMediaLinkContainer = styled('div')` padding-top: 20px; `;
 
@@ -13,7 +13,7 @@ const socialMediaButtonStyles = css`
     margin: 0 20px;
     width: 3em;
 
-    ${/*sc-selector*/ screenXS} {
+    ${/*sc-selector*/ screenXSorPortrait} {
         width: 2em;
     }
 

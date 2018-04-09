@@ -10,39 +10,40 @@ import { ChildRendererProps } from 'src/components/Media/types';
 
 import { lightBlue } from 'src/styles/colors';
 import { generateSrcsetWidths, resizedImage } from 'src/styles/imageUrls';
-import { screenWidths } from 'src/styles/screens';
-
-const photoRowHover = (isMobile: boolean): string => (
-    isMobile ? css({}) : css`
-        &:hover {
-            cursor: pointer;
-            border-color: ${lightBlue};
-        }
-    `
-);
+import { screenWidths, screenXSorPortrait } from 'src/styles/screens';
 
 const PhotoRow = styled<{ isMobile: boolean; isLoaded: boolean }, 'div'>('div') `
     position: relative;
-    height: ${props => props.isMobile && props.isLoaded ? 'auto' : '300px'};
+    height: 300px;
     border: 1px solid transparent;
     transition: all 0.2s;
     border-radius: 10px;
-    line-height: ${props => props.isMobile ? 0 : 'inherit'};
-
-    img {
-        width: 100%;
-        position: ${props => props.isMobile ? 'relative' : 'absolute'};
-    }
-
-    /* tslint:disable:declaration-empty-line-before */
-
-    ${props => photoRowHover(props.isMobile)}
-
-    /* tslint:enable:declaration-empty-line-before */
-
     cursor: default;
     margin: 10px;
     overflow: hidden;
+
+    img {
+        width: 100%;
+        position: absolute;
+    }
+
+    &:hover {
+        cursor: pointer;
+        border-color: ${lightBlue};
+    }
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        height: ${props => props.isLoaded ? 'auto' : '300px'};
+        line-height: 0;
+
+        img {
+            position: relative;
+        }
+
+        &:hover {
+            border-color: unset;
+        }
+    }
 `;
 
 const Highlight = styled<{ active: boolean; }, 'div'>('div') `
@@ -62,6 +63,11 @@ const loadingStyle = css`
 class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, { isLoaded: boolean; }> {
     state = { isLoaded: false };
 
+    successCb = (el: HTMLImageElement) => {
+        this.setState({isLoaded: true});
+        TweenLite.to(el, 0.2, { autoAlpha: 1 });
+    };
+
     render() {
         const { item, currentItemId, isMobile, onClick } = this.props;
         const isActive = currentItemId === idFromItem(item);
@@ -77,7 +83,7 @@ class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, { isL
                     container="photos_ul"
                     alt={item.file}
                     isMobile={isMobile}
-                    showLoading={true}
+                    loadingComponent="default"
                     classNames={{
                         mobile: css` visibility: hidden; `,
                         desktop: css` visibility: hidden; `,
@@ -105,10 +111,7 @@ class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, { isL
                         },
                         src: desktopUrl,
                     }}
-                    successCb={(el: HTMLImageElement) => {
-                        this.setState({isLoaded: true});
-                        TweenLite.to(el, 0.2, { autoAlpha: 1 });
-                    }}
+                    successCb={this.successCb}
                 />
             </PhotoRow>
         );

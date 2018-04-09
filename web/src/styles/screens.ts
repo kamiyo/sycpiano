@@ -1,8 +1,8 @@
-const xs = '480px';
+const xs = '800px';
 const m = '1024px';
 const xl = '1600px';
 
-export const reactMediaMobileQuery = `(orientation: portrait) and (max-width: ${xs})`;
+export const reactMediaMobileQuery = `(orientation: portrait), (max-width: ${xs})`;
 
 type DimensionName = keyof MediaQueryBounds;
 
@@ -40,6 +40,7 @@ export const screenXS = mediaQuery({ maxWidth: xs });
 export const screenM = mediaQuery({ maxWidth: m });
 export const screenXL = mediaQuery({ minWidth: xl });
 export const screenPortrait = mediaQuery({ orientation: 'portrait' });
+export const screenXSorPortrait = `${screenPortrait}, ${screenXS}`;
 
 export const screenWidths = [1600, 1440, 1080, 800, 768, 720, 640, 480, 320];
 export const screenLengths = [2560, 2160, 1920, 1600, 1440, 1366, 1280, 1024];

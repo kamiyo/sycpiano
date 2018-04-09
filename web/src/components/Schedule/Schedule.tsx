@@ -11,17 +11,22 @@ import { DateIconSVG } from 'src/components/Schedule/DateIconSVG';
 import { LinkIconSVG } from 'src/components/Schedule/LinkIconSVG';
 import { LocationIconSVG } from 'src/components/Schedule/LocationIconSVG';
 import { TrebleIconSVG } from 'src/components/Schedule/TrebleIconSVG';
+import { screenXSorPortrait } from 'src/styles/screens';
 
-const scheduleStyles = (isMobile?: boolean) => css`
+const scheduleStyles = css`
     ${pushed}
     ${container}
-    font-size: ${isMobile ? 80 : 100}%;
+    font-size: 100%;
     width: 100%;
     box-sizing: border-box;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        font-size: 80%;
+    }
 `;
 
 const Schedule: React.SFC<{ isMobile: boolean; }> = ({ isMobile }) => (
-    <div className={scheduleStyles(isMobile)}>
+    <div className={scheduleStyles}>
         <div className={css` height: 100%; `}>
             <Switch>
                 <Route

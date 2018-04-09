@@ -9,11 +9,11 @@ import { LoadingInstance } from 'src/components/LoadingSVG';
 import { lightBlue } from 'src/styles/colors';
 
 const fadeOnEnter = (element: HTMLElement) => {
-    TweenLite.to(element, 0.25, { autoAlpha: 1 });
+    TweenLite.to(element.firstChild, 0.25, { autoAlpha: 1 });
 };
 
 const fadeOnExit = (element: HTMLElement) => {
-    TweenLite.to(element, 0.25, { autoAlpha: 0 });
+    TweenLite.to(element.firstChild, 0.25, { autoAlpha: 0 });
 };
 
 const StyledLoadingInstance = styled(LoadingInstance) `
@@ -50,7 +50,7 @@ interface LazyImageProps {
         readonly desktop?: string;
         readonly loading?: string;
     };
-    readonly showLoading?: boolean;
+    readonly loadingComponent?: React.ReactNode | 'default';
     readonly alt: string;
     readonly successCb?: (el?: HTMLImageElement) => void;
     readonly destroyCb?: () => void;
@@ -72,7 +72,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
             offset: this.props.offset || Infinity,
             container: this.props.container ? `#${this.props.container}` : 'window',
             success: (el: HTMLImageElement) => {
-                this.setState({ isLoaded: true });
+                setTimeout(() => this.setState({ isLoaded: true }), 500);
                 this.props.successCb && this.props.successCb(el);
             },
         });
@@ -88,15 +88,17 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
 
     componentDidUpdate(prevProps: LazyImageProps) {
         if (prevProps.isMobile !== this.props.isMobile) {
-            setTimeout(() => this.blazy.revalidate(), 500);
+            this.setState({ isLoaded: false });
+            this.blazy.revalidate();
         }
     }
 
     render() {
+        const Loading = (this.props.loadingComponent as typeof React.Component);
         return (
             <>
                 <Transition
-                    in={this.props.showLoading && !this.state.isLoaded}
+                    in={this.props.loadingComponent && !this.state.isLoaded}
                     mountOnEnter={true}
                     unmountOnExit={true}
                     onEnter={fadeOnEnter}
@@ -104,7 +106,12 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
                     timeout={250}
                 >
                     <div className={this.props.classNames.loading}>
-                        <StyledLoadingInstance />
+                        {this.props.loadingComponent === 'default'
+                            ? <StyledLoadingInstance />
+                            : this.props.loadingComponent
+                                ? <Loading isMobile={this.props.isMobile} />
+                                : null
+                        }
                     </div>
                 </Transition>
                 {this.props.isMobile ? (
