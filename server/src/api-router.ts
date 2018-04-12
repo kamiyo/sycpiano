@@ -242,11 +242,11 @@ const getMusicInstancesOfType = (type: string) => {
     const order = (type === 'videogame' || type === 'composition') ?
         [
             ['year', 'DESC'],
-            [models.musicFile, 'name', 'ASC'],
+            [ models.musicFile, 'name', 'ASC'],
         ] :
         [
             [sequelize.fn('substring', sequelize.col('composer'), '([^\\s]+)\\s?(?:\\(.*\\))?$'), 'ASC'] as any,
-            [models.musicFile, 'name', 'ASC'],
+            [ models.musicFile, 'name', 'ASC'],
         ];
 
     return models.music.findAll({
