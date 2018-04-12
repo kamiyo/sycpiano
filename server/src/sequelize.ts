@@ -23,6 +23,10 @@ export default new Sequelize(database, username, password, {
     host,
     port,
     dialect,
+    dialectOptions: {
+        charSet: 'utf8',
+        collate: 'utf8_unicode_ci',
+    },
     operatorsAliases: false,        // need to change if we are using operators
     pool: { max: 5, min: 0, idle: 10000 },
     define,
