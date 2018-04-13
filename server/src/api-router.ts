@@ -267,15 +267,15 @@ const getMusicInstancesOfType = (type: string) => {
 };
 
 apiRouter.get('/music', async (_, res) => {
-    const [concerto, solo, chamber, composition, videogame] = await Promise.all([
-        getMusicInstancesOfType('concerto'),
+    const [solo, concerto, chamber, composition, videogame] = await Promise.all([
         getMusicInstancesOfType('solo'),
+        getMusicInstancesOfType('concerto'),
         getMusicInstancesOfType('chamber'),
         getMusicInstancesOfType('composition'),
         getMusicInstancesOfType('videogame'),
     ]);
 
-    res.json({ concerto, solo, chamber, composition, videogame });
+    res.json({ solo, concerto, chamber, composition, videogame });
 });
 
 apiRouter.get('/photos', async (_, res) => {
