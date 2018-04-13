@@ -71,8 +71,8 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
         dispatch(fetchPlaylistRequest());
         const { data: response }: { data: MusicResponse } = await axios.get('/api/music');
         const items: MusicListItem[] = compact([
-            ...musicListIfExists(response, 'concerto'),
             ...musicListIfExists(response, 'solo'),
+            ...musicListIfExists(response, 'concerto'),
             ...musicListIfExists(response, 'chamber'),
             ...musicListIfExists(response, 'composition'),
             ...musicListIfExists(response, 'videogame'),
