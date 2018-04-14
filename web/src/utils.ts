@@ -56,6 +56,14 @@ export const getAudioContext: any = () => {
     return acx;
 };
 
+export const getLastName = (name: string) => {
+    return /([^\s]+)\s?(?:\(.*\))?$/.exec(name)[1];
+};
+
+export const normalizeString = (str: string) => {
+    return str.normalize('NFD').replace(/[\u0300-\u036f":()',\.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
+};
+
 export const getViewportSize = () => (
     {
         width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),

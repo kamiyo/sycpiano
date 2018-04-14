@@ -67,7 +67,7 @@ export class WaveformLoader {
                 });
                 const maxAbs = body.values.reduce((acc: number, value: number) => {
                     if (Math.abs(value) > acc) {
-                        acc = value;
+                        acc = Math.abs(value);
                     }
                     return acc;
                 }, 0);

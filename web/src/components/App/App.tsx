@@ -141,7 +141,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
                                             render={(childProps) => <AsyncComponent moduleProvider={Contact} {...childProps} isMobile={matches} />}
                                         />
                                         <Route
-                                            path="/media/:media/:track?"
+                                            path="/media/:media/:other*"
                                             exact={true}
                                             render={(childProps) => <AsyncComponent moduleProvider={Media} {...childProps} isMobile={matches} />}
                                         />
