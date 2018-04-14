@@ -1,5 +1,4 @@
 import axios from 'axios';
-import path from 'path';
 
 import compact from 'lodash-es/compact';
 import { ThunkAction } from 'redux-thunk';
@@ -8,6 +7,7 @@ import AUDIO_ACTIONS from 'src/components/Media/Music/actionTypeKeys';
 import * as ActionTypes from 'src/components/Media/Music/actionTypes';
 import { isMusicItem, MusicCategories, MusicFileItem, MusicItem, MusicListItem, MusicResponse } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
+import { getLastName, normalizeString } from 'src/utils';
 
 export const storeRadii = (innerRadius: number, outerRadius: number, baseRadius: number): ThunkAction<void, GlobalStateShape, void> =>
     (dispatch) => dispatch({
@@ -85,7 +85,7 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
     }
 };
 
-export const fetchPlaylistAction = (track: string): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void> =>
+export const fetchPlaylistAction = (composer: string, piece: string, movement: string = ''): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void> =>
     async (dispatch, getState) => {
         let items;
         if (shouldFetchPlaylist(getState())) {
@@ -95,11 +95,14 @@ export const fetchPlaylistAction = (track: string): ThunkAction<Promise<MusicFil
         }
         let firstTrack = (items.find((item) => isMusicItem(item)) as MusicItem).musicFiles[0];
 
-        if (track) {
+        if (composer && piece) {
             firstTrack = items.reduce((prev, item) => {
-                if (isMusicItem(item)) {
-                    return prev.concat(item.musicFiles.filter((musicFile) => (
-                        path.basename(musicFile.audioFile, '.mp3') === track
+                if (isMusicItem(item) && getLastName(item.composer) === composer && normalizeString(item.piece) === piece) {
+                    return prev.concat(
+                        item.musicFiles.length === 1
+                        ? item.musicFiles
+                        : item.musicFiles.filter((musicFile) => (
+                        normalizeString(musicFile.name) === movement
                     )));
                 } else {
                     return prev;

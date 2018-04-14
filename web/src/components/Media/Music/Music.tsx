@@ -44,7 +44,11 @@ interface MusicDispatchToProps {
 
 interface MusicOwnProps {
     baseRoute: string;
-    match: match<any>;
+    match: match<{
+        composer?: string;
+        piece?: string;
+        movement?: string;
+    }>;
     isMobile: boolean;
 }
 
@@ -148,7 +152,8 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     waitForPlaylist = async () => {
         try {
-            const firstTrack = await this.props.fetchPlaylistAction(this.props.match.params.track) as any;
+            const { composer, piece, movement } = this.props.match.params;
+            const firstTrack = await this.props.fetchPlaylistAction(composer, piece, movement) as any;
             this.loadTrack(firstTrack, false);
         } catch (err) {
             console.error('playlist init failed.', err);

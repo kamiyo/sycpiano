@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'react-emotion';
-import { Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
 
 import TweenLite from 'gsap/TweenLite';
@@ -65,13 +65,26 @@ const Media: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{ media: str
                         <Route
                             path="/media/music"
                             render={({ match: subMatch }) =>
-                                <Route
-                                    path="/media/music/:track?"
-                                    render={(childProps) => (
-                                        <AsyncComponent moduleProvider={Music} {...childProps} baseRoute={subMatch.url} isMobile={isMobile} />
-                                    )}
-                                    exact={true}
-                                />}
+                                <Switch location={location}>
+                                    <Route
+                                        path="/media/music/:composer?/:piece?/:movement?"
+                                        render={(childProps) => (
+                                            <AsyncComponent moduleProvider={Music} {...childProps} baseRoute={subMatch.url} isMobile={isMobile} />
+                                        )}
+                                    />
+                                    <Route
+                                        path="/media/music/(.*)"
+                                        render={() => (
+                                            <Redirect to="/media/music" />
+                                        )}
+                                    />
+                                    <Route
+                                        path="/media/music"
+                                        render={(childProps) => (
+                                            <AsyncComponent moduleProvider={Music} {...childProps} baseRoute={subMatch.url} isMobile={isMobile} />
+                                        )}
+                                    />
+                                </Switch>}
                         />
                         <Route
                             path="/media/photos"
