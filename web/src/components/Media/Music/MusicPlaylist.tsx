@@ -40,7 +40,11 @@ const musicPlaylistStyle = css`
 
 const musicULStyle = css`
     background-color: ${playlistBackground};
-    padding-bottom: 60px;
+    padding-bottom: 80px;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        padding-bottom: 60px;
+    }
 `;
 
 const playlistContainerStyle = css `

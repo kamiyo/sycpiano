@@ -16,5 +16,5 @@ export interface NavBarStateShape {
     readonly isExpanded: boolean;
     readonly showSubs: string[];
     readonly lastScrollTop: number;
-    readonly onScroll?: (event: React.SyntheticEvent<HTMLElement>) => void;
+    readonly onScroll?: (event: React.SyntheticEvent<HTMLElement> | UIEvent) => void;
 }

@@ -1,22 +1,26 @@
 import { Dispatch } from 'react-redux';
 import { ThunkAction } from 'redux-thunk';
 
+import debounce from 'lodash-es/debounce';
+
 import NAV_ACTIONS from 'src/components/App/NavBar/actionTypeKeys';
 import * as ActionTypes from 'src/components/App/NavBar/actionTypes';
 import { GlobalStateShape } from 'src/types';
+
+const debouncedToggle = debounce((dispatch, correctedShow) => dispatch({
+    type: NAV_ACTIONS.NAV_TOGGLE_NAV,
+    show: correctedShow,
+} as ActionTypes.ToggleNav), 50, { leading: true });
 
 export const toggleNavBar = (show?: boolean): ThunkAction<void, GlobalStateShape, void> =>
     (dispatch, getState) => {
         const correctedShow = (typeof show === 'boolean') ? show : !getState().navbar.isVisible;
         if (getState().navbar.isVisible !== correctedShow) {
-            dispatch({
-                type: NAV_ACTIONS.NAV_TOGGLE_NAV,
-                show: correctedShow,
-            } as ActionTypes.ToggleNav);
+            debouncedToggle(dispatch, correctedShow);
         }
     };
 
-export const toggleExpanded = (show?: boolean): ThunkAction<void, GlobalStateShape, void> =>
+export const toggleExpanded = (show?: boolean) : ThunkAction<void, GlobalStateShape, void> =>
     (dispatch, getState) => {
         const correctedShow = (typeof show === 'boolean') ? show : !getState().navbar.isExpanded;
         dispatch({
@@ -56,7 +60,11 @@ const lastScroll = (scrollTop: number): ThunkAction<void, GlobalStateShape, void
         } as ActionTypes.LastScroll);
     };
 
-const onScroll = (triggerHeight: number, dispatch: Dispatch<GlobalStateShape>, getState: () => GlobalStateShape) => (event: React.SyntheticEvent<HTMLElement>) => {
+const debouncedLastScroll = debounce((dispatch, scrollTop) => {
+    dispatch(lastScroll(scrollTop));
+}, 50, { leading: true });
+
+const onScroll = (triggerHeight: number, dispatch: Dispatch<GlobalStateShape>, getState: () => GlobalStateShape) => (event: React.UIEvent<HTMLElement> | UIEvent) => {
     const scrollTop = (event.target as HTMLElement).scrollTop;
     if (typeof triggerHeight === 'number') {
         if (scrollTop > getState().navbar.lastScrollTop && scrollTop > triggerHeight) {
@@ -64,7 +72,7 @@ const onScroll = (triggerHeight: number, dispatch: Dispatch<GlobalStateShape>, g
         } else {
             dispatch(toggleNavBar(true));
         }
-        dispatch(lastScroll(scrollTop));
+        debouncedLastScroll(dispatch, scrollTop);
     }
 };
 
