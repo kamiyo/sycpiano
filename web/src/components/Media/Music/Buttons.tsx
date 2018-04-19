@@ -83,8 +83,8 @@ interface ButtonProps {
     readonly isHovering: boolean;
     readonly onMouseOver: () => void;
     readonly onMouseOut: () => void;
-    readonly onMouseMove: (event: MouseEvent) => void;
-    readonly onClick: (event: MouseEvent | KeyboardEvent) => void;
+    readonly onMouseMove: (event: React.MouseEvent<HTMLElement>) => void;
+    readonly onClick: (event: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => void;
     readonly width: number;
     readonly height: number;
     readonly verticalOffset: number;
