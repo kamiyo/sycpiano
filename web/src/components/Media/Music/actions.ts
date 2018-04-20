@@ -87,7 +87,7 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
 
 export const fetchPlaylistAction = (composer: string, piece: string, movement: string = ''): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void> =>
     async (dispatch, getState) => {
-        let items;
+        let items: MusicListItem[];
         if (shouldFetchPlaylist(getState())) {
             items = await dispatch(fetchPlaylist());
         } else {

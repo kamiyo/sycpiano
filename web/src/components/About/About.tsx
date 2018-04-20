@@ -177,7 +177,7 @@ type AboutProps = AboutOwnProps & AboutStateToProps & AboutDispatchToProps;
 
 class About extends React.Component<AboutProps, AboutState> {
     state: AboutState = { bgImage: '' };
-    private bgRef: HTMLDivElement;
+    private bgRef: React.RefObject<HTMLDivElement> = React.createRef();
 
     componentDidMount() {
         this.props.setOnScroll(pictureHeight + navBarHeight.mobile);
@@ -186,7 +186,7 @@ class About extends React.Component<AboutProps, AboutState> {
     onImageLoad = (el: HTMLImageElement) => {
         this.setState({ bgImage: el.currentSrc }, () => {
             TweenLite.to(
-                this.bgRef,
+                this.bgRef.current,
                 0.3,
                 { autoAlpha: 1, delay: 0.2, clearProps: 'opacity' });
         });
@@ -194,7 +194,7 @@ class About extends React.Component<AboutProps, AboutState> {
 
     onImageDestroy = () => {
         TweenLite.to(
-            this.bgRef,
+            this.bgRef.current,
             0.1,
             { autoAlpha: 0 },
         );
@@ -206,7 +206,7 @@ class About extends React.Component<AboutProps, AboutState> {
                 <ImageContainer
                     currScrollTop={this.props.scrollTop}
                     bgImage={this.state.bgImage}
-                    innerRef={(div) => this.bgRef = div}
+                    innerRef={this.bgRef}
                 >
                     <LazyImage
                         isMobile={this.props.isMobile}

@@ -20,7 +20,7 @@ export const toggleNavBar = (show?: boolean): ThunkAction<void, GlobalStateShape
         }
     };
 
-export const toggleExpanded = (show?: boolean) : ThunkAction<void, GlobalStateShape, void> =>
+export const toggleExpanded = (show?: boolean): ThunkAction<void, GlobalStateShape, void> =>
     (dispatch, getState) => {
         const correctedShow = (typeof show === 'boolean') ? show : !getState().navbar.isExpanded;
         dispatch({

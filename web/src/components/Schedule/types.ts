@@ -1,6 +1,4 @@
 import { Moment } from 'moment-timezone';
-import { Grid } from 'react-virtualized/dist/es/Grid';
-import { List } from 'react-virtualized/dist/es/List';
 
 import { SortedArraySet } from 'collections/sorted-array-set';
 import { EventListName } from 'src/components/Schedule/actionTypes';
@@ -91,16 +89,6 @@ export interface EventItemsStateShape {
     readonly maxDate: Moment;
     readonly setOfMonths: Set<string>;
     readonly hasMore: boolean;
-}
-
-export class GridWithScrollingContainer extends Grid {
-    /* tslint:disable:variable-name */
-    _scrollingContainer: HTMLElement;
-    /* ts-lint:enable:variable-name */
-}
-
-export class ListWithGrid extends List {
-    Grid?: GridWithScrollingContainer;
 }
 
 export interface FetchEventsArguments {

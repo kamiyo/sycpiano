@@ -15,11 +15,11 @@ export default class AsyncComponent extends PureComponent<AsyncComponentProps, A
         Component: null,
     };
 
-    async componentWillMount() {
-        if (!this.state.Component) {
-            const { Component } = await this.props.moduleProvider();
+    constructor(props: AsyncComponent) {
+        super(props);
+        this.props.moduleProvider().then(({ Component }) => {
             this.setState({ Component });
-        }
+        });
     }
 
     render() {

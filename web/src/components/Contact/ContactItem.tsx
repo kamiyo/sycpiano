@@ -73,12 +73,12 @@ interface ContactItemState {
 
 class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
     state: ContactItemState = { bgImage: '' };
-    private bgRef: HTMLDivElement;
+    private bgRef: React.RefObject<HTMLDivElement> = React.createRef();
 
     onImageLoad = (el: HTMLImageElement) => {
         this.setState({ bgImage: el.currentSrc }, () => {
             TweenLite.to(
-                this.bgRef,
+                this.bgRef.current,
                 0.3,
                 { autoAlpha: 1, delay: 0.2, clearProps: 'opacity' });
         });
@@ -86,7 +86,7 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
 
     onImageDestroy = () => {
         TweenLite.to(
-            this.bgRef,
+            this.bgRef.current,
             0.1,
             { autoAlpha: 0 },
         );
@@ -107,7 +107,7 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
             <div className={className}>
                 <ImageContainer
                     bgImage={this.state.bgImage}
-                    innerRef={(div) => this.bgRef = div}
+                    innerRef={this.bgRef}
                     contact={name}
                 >
                     <LazyImage

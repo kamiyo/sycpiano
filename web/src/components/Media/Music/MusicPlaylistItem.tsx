@@ -43,13 +43,15 @@ const StyledCollectionItem = styled('li') `
     border: none;
 `;
 
-const Highlight = styled<{ active: boolean; }, 'div'>('div') `
+interface HighlightProps { active: boolean; }
+
+const Highlight = styled<HighlightProps, 'div'>('div') `
     padding: 10px 10px 10px 15px;
     border-left: 7px solid transparent;
     ${(props) => props.active && `border-left-color: ${lightBlue};`}
     transition: all 0.15s;
 
-    ${/* sc-selector */ StyledCollectionItem} & {
+    ${/* sc-selector */ StyledCollectionItem as any} & {
         border-left: 7px solid transparent;
         ${(props) => props.active && `border-left: 7px solid ${lightBlue};`}
     }
@@ -103,8 +105,8 @@ const StyledInfo = styled('div') `
     justify-content: space-between;
     align-items: flex-start;
 
-    ${/* sc-selector */ StyledCollectionItem} &,
-    ${/* sc-selector */ StyledCollectionTitleContainer} & {
+    ${/* sc-selector */ StyledCollectionItem as any} &,
+    ${/* sc-selector */ StyledCollectionTitleContainer as any} & {
         padding: 0;
     }
 `;

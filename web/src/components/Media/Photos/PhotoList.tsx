@@ -24,12 +24,13 @@ const photoListStyle = css`
 `;
 
 const photoULStyle = css`
-    padding-bottom: 60px;
+    padding-bottom: 80px;
     background-color: black;
 
     ${/* sc-selector */ screenXSorPortrait} {
         padding-top: ${navBarHeight.mobile}px;
         background-color: unset;
+        padding-bottom: 60px;
     }
 `;
 

@@ -70,9 +70,9 @@ const eventNameStyle = css`
 `;
 
 class EventName extends React.Component<EventNameProps> {
-    copiedSpan: HTMLSpanElement;
+    copiedSpan: React.RefObject<HTMLSpanElement> = React.createRef();
     onCopy = () => {
-        TweenLite.fromTo(this.copiedSpan, 0.2, { autoAlpha: 1 }, { autoAlpha: 0, delay: 0.5 });
+        TweenLite.fromTo(this.copiedSpan.current, 0.2, { autoAlpha: 1 }, { autoAlpha: 0, delay: 0.5 });
     }
 
     render() {
@@ -87,7 +87,7 @@ class EventName extends React.Component<EventNameProps> {
                             visibility: hidden;
                             font-size: 0.5em;
                         `}
-                        ref={(span) => this.copiedSpan = span}
+                        ref={this.copiedSpan}
                     >
                         copied
                     </span>

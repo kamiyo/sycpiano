@@ -240,7 +240,6 @@ const srcWidths = screenLengths.map((value) => (
 ));
 
 class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }> {
-    private bgRef: HTMLDivElement;
 
     onImageLoaded = () => {
         this.props.bgLoaded();
@@ -249,7 +248,7 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }>
     render() {
         return (
             <HomeContainer>
-                <BackgroundContainer innerRef={(div) => this.bgRef = div}>
+                <BackgroundContainer>
                     <LazyImage
                         isMobile={this.props.isMobile}
                         id="home_bg"

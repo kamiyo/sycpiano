@@ -66,7 +66,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     lastPlayheadPosition = 0;
     height: number;
     width: number;
-    visualization: HTMLCanvasElement;
+    visualization: React.RefObject<HTMLCanvasElement> = React.createRef();
     centerX: number;
     centerY: number;
     RADIUS_SCALE: number;
@@ -102,7 +102,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     initializeVisualizer = async () => {
         this.adjustHeight();
         this.onResize();
-        this.visualizationCtx = this.visualization.getContext('2d');
+        this.visualizationCtx = this.visualization.current.getContext('2d');
 
         try {
             await Promise.all([constantQ.loaded, firLoader.loaded]);
@@ -317,10 +317,10 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     onResize = () => {
-        this.height = this.visualization.offsetHeight;
-        this.width = this.visualization.offsetWidth;
-        this.visualization.height = this.height;
-        this.visualization.width = this.width;
+        this.height = this.visualization.current.offsetHeight;
+        this.width = this.visualization.current.offsetWidth;
+        this.visualization.current.height = this.height;
+        this.visualization.current.width = this.width;
         this.centerX = this.width / 2;
         this.centerY = this.height / 2 + this.HEIGHT_ADJUST;
         this.RADIUS_SCALE = Math.min(this.width, this.height) / 12;
@@ -356,7 +356,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     render() {
         return (
             <VisualizerContainer isMobile={this.props.isMobile}>
-                <VisualizerCanvas innerRef={(canvas) => this.visualization = canvas} />
+                <VisualizerCanvas innerRef={this.visualization} />
             </VisualizerContainer>
         );
     }

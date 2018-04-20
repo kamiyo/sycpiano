@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import PRESS_ACTIONS from 'src/components/Press/actionTypeKeys';
@@ -27,7 +26,7 @@ const fetchAcclaimsSuccess = (items: AcclaimItemShape[]): ActionTypes.FetchAccla
     items,
 });
 
-const fetchAcclaims = () => async (dispatch: Dispatch<GlobalStateShape>) => {
+const fetchAcclaims = (): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
     try {
         dispatch(fetchAcclaimsRequest());
         const response = await axios.get('/api/acclaims');

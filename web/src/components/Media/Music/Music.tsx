@@ -72,8 +72,7 @@ class Music extends React.Component<MusicProps, MusicState> {
     autoPlay = false;
     wasPlaying = false;
     loaded = false;
-    audio: HTMLAudioElement;
-    divRef: HTMLDivElement;
+    audio: React.RefObject<HTMLAudioElement> = React.createRef();
     state: MusicState = {
         isPlaying: false,
         userInput: false,
@@ -99,11 +98,11 @@ class Music extends React.Component<MusicProps, MusicState> {
         if (!this.loaded) {
             this.autoPlay = false;
         }
-        this.audio.play();
+        this.audio.current.play();
     }
 
     pause = () => {
-        this.audio.pause();
+        this.audio.current.pause();
     }
 
     onFirstUserInput = () => {
@@ -112,7 +111,7 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     initializeAudioPlayer = async () => {
         const audioCtx = getAudioContext();
-        const audioSrc = audioCtx.createMediaElementSource(this.audio);
+        const audioSrc = audioCtx.createMediaElementSource(this.audio.current);
 
         this.analyzerL = audioCtx.createAnalyser();
         this.analyzerR = audioCtx.createAnalyser();
@@ -128,7 +127,7 @@ class Music extends React.Component<MusicProps, MusicState> {
 
         this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(audioCtx.sampleRate / 192000, 2);
 
-        this.audio.volume = 0;
+        this.audio.current.volume = 0;
 
         this.setState({ isLoading: true });
         this.waitForConstantQ();
@@ -159,17 +158,17 @@ class Music extends React.Component<MusicProps, MusicState> {
         this.loaded = false;
         this.autoPlay = autoPlay;
         await new Promise((resolve) => {
-            TweenLite.fromTo(this.audio, 0.3, { volume: this.audio.volume }, {
+            TweenLite.fromTo(this.audio.current, 0.3, { volume: this.audio.current.volume }, {
                 volume: 0,
                 onUpdate: () => {
-                    this.setState({ volume: this.audio.volume });
+                    this.setState({ volume: this.audio.current.volume });
                 },
                 onComplete: () => {
                     setTimeout(resolve, 100);
                 },
             });
         });
-        this.audio.pause();
+        this.audio.current.pause();
         this.setState({
             currentTrack: {
                 ...this.props.items.find((item) => {
@@ -181,16 +180,16 @@ class Music extends React.Component<MusicProps, MusicState> {
             isLoading: true,
         });
         waveformLoader.loadWaveformFile(`${MUSIC_PATH}/waveforms/${track.waveformFile}`);
-        this.audio.src = `${MUSIC_PATH}/${track.audioFile}`;
+        this.audio.current.src = `${MUSIC_PATH}/${track.audioFile}`;
         await waveformLoader.loaded;
         this.setState({
             isLoading: false,
         });
-        TweenLite.fromTo(this.audio, 0.3, { volume: 0 }, {
+        TweenLite.fromTo(this.audio.current, 0.3, { volume: 0 }, {
             volume: 1,
             onUpdate: () => {
-                if (this.audio) {
-                    this.setState({ volume: this.audio.volume });
+                if (this.audio.current) {
+                    this.setState({ volume: this.audio.current.volume });
                 }
             },
         });
@@ -198,7 +197,7 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     onTimeUpdate = () => {
         this.setState({
-            playbackPosition: this.audio.currentTime,
+            playbackPosition: this.audio.current.currentTime,
             lastUpdateTimestamp: performance.now(),
         });
     }
@@ -216,7 +215,7 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     onDrag = (percent: number) => {
-        const position = percent * this.audio.duration;
+        const position = percent * this.audio.current.duration;
         this.setState({
             playbackPosition: position,
             lastUpdateTimestamp: performance.now(),
@@ -225,29 +224,29 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     onStartDrag = (percent: number) => {
         this.wasPlaying = this.state.isPlaying;
-        if (this.wasPlaying && !this.audio.paused) {
-            this.audio.pause();
+        if (this.wasPlaying && !this.audio.current.paused) {
+            this.audio.current.pause();
         }
-        const position = percent * this.audio.duration;
-        this.audio.currentTime = position;
+        const position = percent * this.audio.current.duration;
+        this.audio.current.currentTime = position;
     }
 
     seekAudio = (percent: number) => {
         this.onDrag(percent);
-        const position = percent * this.audio.duration;
-        this.audio.currentTime = position;
-        if (this.wasPlaying && this.audio.paused) {
-            this.audio.play();
+        const position = percent * this.audio.current.duration;
+        this.audio.current.currentTime = position;
+        if (this.wasPlaying && this.audio.current.paused) {
+            this.audio.current.play();
         }
     }
 
     audioOnLoad = async () => {
-        this.setState({ duration: this.audio.duration });
+        this.setState({ duration: this.audio.current.duration });
         this.loaded = true;
         try {
             await Promise.all([constantQ.loaded, firLoader.loaded, waveformLoader.loaded]);
             if (this.autoPlay) {
-                this.audio.play();
+                this.audio.current.play();
             }
         } catch (err) {
             console.error('music component init failed.', err);
@@ -257,7 +256,7 @@ class Music extends React.Component<MusicProps, MusicState> {
     onPause = () => {
         this.setState({
             isPlaying: false,
-            playbackPosition: this.audio.currentTime,
+            playbackPosition: this.audio.current.currentTime,
             lastUpdateTimestamp: performance.now(),
         });
     }
@@ -265,7 +264,7 @@ class Music extends React.Component<MusicProps, MusicState> {
     onPlaying = () => {
         this.setState({
             isPlaying: true,
-            playbackPosition: this.audio.currentTime,
+            playbackPosition: this.audio.current.currentTime,
             lastUpdateTimestamp: performance.now(),
         });
     }
@@ -276,18 +275,18 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     async componentWillUnmount() {
-        this.audio.pause();
+        this.audio.current.pause();
         waveformLoader.reset();
     }
 
     render() {
         const isMobile = this.props.isMobile;
         return (
-            <div ref={div => this.divRef = div} className={musicStyle} onScroll={this.props.isMobile ? this.props.onScroll : null}>
+            <div className={musicStyle} onScroll={this.props.isMobile ? this.props.onScroll : null}>
                 <audio
                     id="audio"
                     crossOrigin="anonymous"
-                    ref={(audio) => this.audio = audio}
+                    ref={this.audio}
                     onLoadedData={this.audioOnLoad}
                     onPlaying={this.onPlaying}
                     onTimeUpdate={this.onTimeUpdate}
@@ -295,7 +294,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     onEnded={this.onEnded}
                 />
                 <MusicPlaylist
-                    audio={this.audio}
+                    audio={this.audio.current}
                     onClick={this.loadTrack}
                     currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
                     baseRoute={this.props.baseRoute}
