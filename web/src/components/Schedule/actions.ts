@@ -13,7 +13,6 @@ import { GlobalStateShape } from 'src/types';
 
 import axios from 'axios';
 
-import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { EventListName } from 'src/components/Schedule/actionTypes';
@@ -121,7 +120,7 @@ const shouldFetchLatLng = (state: GlobalStateShape) => {
     return !eventItemsReducer.isFetchingLatLng;
 };
 
-const fetchLatLng = (location: string) => async (dispatch: Dispatch<GlobalStateShape>) => {
+const fetchLatLng = (location: string): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
     try {
         dispatch(fetchLatLngRequest());
         const geocodeResponse = await googleAPI.geocode(location);

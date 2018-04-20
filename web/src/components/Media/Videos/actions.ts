@@ -1,4 +1,3 @@
-import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import VIDEO_ACTIONS from 'src/components/Media/Videos/actionTypeKeys';
@@ -8,7 +7,7 @@ import youTube from 'src/services/YouTube';
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { GlobalStateShape } from 'src/types';
 
-export const initializeYoutubeElement = (el: HTMLElement) => (dispatch: Dispatch<GlobalStateShape>) => {
+export const initializeYoutubeElement = (el: HTMLElement): ThunkAction<void, GlobalStateShape, void> => (dispatch) => {
     youTube.initializePlayerOnElement(el);
     youTube.executeWhenPlayerReady(() => dispatch<ActionTypes.PlayerIsReady>({
         type: VIDEO_ACTIONS.PLAYER_IS_READY,
@@ -30,7 +29,7 @@ const fetchPlaylistError = (): ActionTypes.FetchPlaylistError => ({
 });
 
 // need two separate api requests, because statistics is only available when fetching videos
-const fetchPlaylist = () => async (dispatch: Dispatch<GlobalStateShape>) => {
+const fetchPlaylist = (): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
     try {
         dispatch(fetchPlaylistRequest());
         const playlistResponse = await youTube.getPlaylistItems();

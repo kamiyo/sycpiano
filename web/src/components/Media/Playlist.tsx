@@ -49,10 +49,10 @@ const playlistStyle = css`
 `;
 
 class Playlist extends React.Component<PlaylistProps> {
-    ulRef: HTMLUListElement = null;
+    ulRef: React.RefObject<HTMLUListElement> = React.createRef();
 
     onEnter = (el: HTMLElement, isAppearing: boolean) => {
-        const amount = this.ulRef.getBoundingClientRect().width;
+        const amount = this.ulRef.current.getBoundingClientRect().width;
         if ((!this.props.hasToggler || !this.props.shouldAppear) && isAppearing) {
             el.style.transform = 'translateX(0)';
         } else {
@@ -61,7 +61,7 @@ class Playlist extends React.Component<PlaylistProps> {
     }
 
     onExit = (el: HTMLElement) => {
-        const amount = this.ulRef.getBoundingClientRect().width;
+        const amount = this.ulRef.current.getBoundingClientRect().width;
         slideRight(el, amount);
     }
 
@@ -91,7 +91,7 @@ class Playlist extends React.Component<PlaylistProps> {
                     }
                     <ul
                         id={props.id}
-                        ref={(ul) => this.ulRef = ul}
+                        ref={this.ulRef}
                         className={cx(
                             playlistStyle,
                             props.extraStyles && props.extraStyles.ul,

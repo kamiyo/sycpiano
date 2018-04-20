@@ -93,8 +93,8 @@ const ContributingOrDuration = styled('div') `
 
 class AudioInfo extends React.Component<AudioInfoProps> {
     private tween: any;
-    private titleDiv: HTMLDivElement;
-    private marquee: HTMLDivElement;
+    private titleDiv: React.RefObject<HTMLDivElement> = React.createRef();
+    private marquee: React.RefObject<HTMLDivElement> = React.createRef();
 
     componentDidUpdate(prevProps: AudioInfoProps) {
         if (
@@ -107,16 +107,16 @@ class AudioInfo extends React.Component<AudioInfoProps> {
             )
         ) {
             this.tween && this.tween.kill();
-            this.marquee.removeAttribute('style');
-            this.titleDiv.removeAttribute('style');
-            const divWidth = this.titleDiv.offsetWidth;
-            const spanWidth = (this.marquee.children[0] as HTMLDivElement).offsetWidth;
+            this.marquee.current.removeAttribute('style');
+            this.titleDiv.current.removeAttribute('style');
+            const divWidth = this.titleDiv.current.offsetWidth;
+            const spanWidth = (this.marquee.current.children[0] as HTMLDivElement).offsetWidth;
             if (divWidth > spanWidth) {
-                this.marquee.style.left = `${(divWidth - spanWidth) / 2}px`;
-                this.titleDiv.style.padding = '0';
+                this.marquee.current.style.left = `${(divWidth - spanWidth) / 2}px`;
+                this.titleDiv.current.style.padding = '0';
             } else {
-                const dur = this.marquee.offsetWidth / 100;
-                this.tween = TweenLite.fromTo(this.marquee, dur, { x: '0%' }, { x: '-50%', ease: 'linear', clearProps: 'transform', delay: 3, onComplete: () => this.tween.restart(true) });
+                const dur = this.marquee.current.offsetWidth / 100;
+                this.tween = TweenLite.fromTo(this.marquee.current, dur, { x: '0%' }, { x: '-50%', ease: 'linear', clearProps: 'transform', delay: 3, onComplete: () => this.tween.restart(true) });
             }
         }
     }
@@ -136,10 +136,10 @@ class AudioInfo extends React.Component<AudioInfoProps> {
         const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '') + (isMobile && movement ? ': ' + movement : '');
         return (
             <AudioInfoContainer>
-                <ComposerTitle innerRef={(div) => this.titleDiv = div}>
+                <ComposerTitle innerRef={this.titleDiv}>
                     {
                         isMobile ? (
-                            <Marquee innerRef={(div) => this.marquee = div}>
+                            <Marquee innerRef={this.marquee}>
                                 <span>{composerTitle}</span><span>{composerTitle}</span>
                             </Marquee>
                         ) : (

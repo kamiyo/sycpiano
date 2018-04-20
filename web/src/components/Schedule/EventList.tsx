@@ -20,7 +20,6 @@ import {
     itemIsDay,
     itemIsMonth,
     itemNotLoading,
-    ListWithGrid,
 } from 'src/components/Schedule/types';
 import { lightBlue } from 'src/styles/colors';
 import { GlobalStateShape } from 'src/types';
@@ -76,18 +75,16 @@ const fullWidthHeight = css`
 `;
 
 class EventList extends React.Component<EventListProps, { updatedCurrent?: boolean; }> {
-    private List: ListWithGrid;
-    state = {
-        updatedCurrent: false,
-    };
+    private List: React.RefObject<List> = React.createRef();
+    private updatedCurrent = false;
 
     keyMapper = (rowIndex: number) => {
         return this.props.eventItems.length && this.props.eventItems[rowIndex] ? this.props.eventItems[rowIndex].dateTime.format() : '';
     }
 
-    cache = new CellMeasurerCache({ fixedWidth: true, keyMapper: this.keyMapper});
+    cache = new CellMeasurerCache({ fixedWidth: true, keyMapper: this.keyMapper });
 
-    componentWillMount() {
+    componentDidMount() {
         // enforce if date is after now, use upcoming
         // or if date is before now, use archive
         const strDate = this.props.match.params.date;
@@ -104,46 +101,47 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
         this.props.switchList(this.props.type);
     }
 
-    componentWillUpdate(nextProps: EventListProps & { [key: string]: any }) {
-        const date = moment(nextProps.match.params.date, 'YYYY-MM-DD');
-        if (nextProps.type !== this.props.type) {
-            nextProps.switchList(nextProps.type);
+    componentDidUpdate(prevProps: EventListProps & { [key: string]: any }) {
+        const date = moment(this.props.match.params.date, 'YYYY-MM-DD');
+        if (prevProps.type !== this.props.type) {
+            this.props.switchList(this.props.type);
             return;
-        } else if (nextProps.eventItems.length === 0 && nextProps.hasMore && !nextProps.isFetchingList) {
+        } else if (this.props.eventItems.length === 0 && this.props.hasMore && !this.props.isFetchingList) {
             let params;
-            if (nextProps.match.params.date) {
+            if (this.props.match.params.date) {
                 params = { date, scrollTo: true };
-            } else if (nextProps.activeName === 'upcoming') {
+            } else if (this.props.activeName === 'upcoming') {
                 params = { after: moment(), scrollTo: false };
-            } else if (nextProps.activeName === 'archive') {
+            } else if (this.props.activeName === 'archive') {
                 params = { before: moment(), scrollTo: false };
             }
-            nextProps.createFetchEventsAction(params);
+            this.props.createFetchEventsAction(params);
             return;
-        } else if (nextProps.activeName !== this.props.activeName) {
+        } else if (prevProps.activeName !== this.props.activeName) {
             let params;
-            if (nextProps.eventItems.length === 0) {
-                if (nextProps.match.params.date) {
+            if (this.props.eventItems.length === 0) {
+                if (this.props.match.params.date) {
                     params = { date, scrollTo: true };
-                } else if (nextProps.activeName === 'upcoming') {
+                } else if (this.props.activeName === 'upcoming') {
                     params = { after: moment(), scrollTo: false };
-                } else if (nextProps.activeName === 'archive') {
+                } else if (this.props.activeName === 'archive') {
                     params = { before: moment(), scrollTo: false };
                 }
             } else if (
-                nextProps.match.params.date &&
-                !nextProps.eventItems.find(
+                this.props.match.params.date &&
+                !this.props.eventItems.find(
                     (value) => itemNotLoading(value) && value.dateTime.isSame(moment(date), 'day'))
             ) {
                 params = { date, scrollTo: true };
             } else {
-                this.setState({ updatedCurrent: true });
+                this.updatedCurrent = false;
+                this.List.current.recomputeRowHeights();
                 return;
             }
-            nextProps.createFetchEventsAction({ ...params });
+            this.props.createFetchEventsAction({ ...params });
             return;
-        } else if (nextProps.currentItem !== this.props.currentItem) {
-            this.setState({ updatedCurrent: true });
+        } else if (prevProps.currentItem !== this.props.currentItem) {
+            this.updatedCurrent = true;
             return;
         }
     }
@@ -165,12 +163,12 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
     debouncedFetch = debounce(this.onScroll, 500, { leading: true });
 
     getScrollTarget = () => {
-        if (this.state.updatedCurrent) {
+        if (this.updatedCurrent) {
             if (this.props.currentItem) {
-                this.setState({updatedCurrent: false});
+                this.updatedCurrent = false;
                 return this.getScrollIndex(this.props.currentItem);
             } else {
-                this.setState({updatedCurrent: false});
+                this.updatedCurrent = false;
                 return 0;
             }
         } else {
@@ -185,7 +183,7 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
                     <AutoSizer>
                         {({ height, width }) => (
                             <List
-                                ref={(div) => this.List = div}
+                                ref={this.List}
                                 height={height}
                                 width={width}
                                 rowCount={this.props.eventItems.length + 1}
@@ -241,7 +239,6 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
                 />
             );
         } else {
-
             const permaLink = `${window.location.host}/schedule/${this.props.type}/${item.dateTime.format('YYYY-MM-DD')}`;
             return (
                 <EventItem

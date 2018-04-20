@@ -75,11 +75,11 @@ const LoadingOverlayDiv = styled('div')`
 `;
 
 class Videos extends React.Component<VideosProps, any> {
-    domElement: HTMLElement;
+    domElement: React.RefObject<HTMLDivElement> = React.createRef();
 
     componentDidMount() {
         this.props.createFetchPlaylistAction();
-        this.props.initializeYoutubeElement(this.domElement);
+        this.props.initializeYoutubeElement(this.domElement.current);
         this.props.setOnScroll(navBarHeight.mobile);
     }
 
@@ -90,7 +90,7 @@ class Videos extends React.Component<VideosProps, any> {
     render() {
         return (
             <StyledVideos
-                innerRef={(div) => this.domElement = div}
+                innerRef={this.domElement}
                 onScroll={this.props.isMobile ? this.props.onScroll : null}
             >
                 <PreviewOverlay isMobile={this.props.isMobile}/>

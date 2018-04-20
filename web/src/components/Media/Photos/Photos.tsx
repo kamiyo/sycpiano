@@ -58,7 +58,7 @@ const StyledPhotoViewer = styled('div') `
 `;
 
 class Photos extends React.Component<PhotosProps> {
-    componentWillMount() {
+    componentDidMount() {
         this.props.createFetchPhotosAction();
     }
 
