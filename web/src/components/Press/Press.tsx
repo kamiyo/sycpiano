@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
 import { setOnScroll } from 'src/components/App/NavBar/actions';
@@ -32,9 +33,14 @@ class Press extends React.Component<PressProps> {
 
     render() {
         return (
-            <div className={this.props.className} onScroll={this.props.isMobile ? this.props.onScroll : null}>
-                <AcclaimsList className={css ` height: 100%; `} isMobile={this.props.isMobile} />
-            </div>
+            <>
+                <Helmet>
+                    <meta name="description" content="Reviews of Sean Chen's performances." />
+                </Helmet>
+                <div className={this.props.className} onScroll={this.props.isMobile ? this.props.onScroll : null}>
+                    <AcclaimsList className={css` height: 100%; `} isMobile={this.props.isMobile} />
+                </div>
+            </>
         );
     }
 }

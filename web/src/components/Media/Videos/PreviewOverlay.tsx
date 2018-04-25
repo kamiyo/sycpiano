@@ -37,6 +37,7 @@ const StyledPreviewOverlay = styled<{ bgImage?: string; }, 'div'>('div') `
     ${/* sc-selector */ screenXS} {
         height: 56.25vw;
         top: ${navBarHeight.mobile}px;
+        position: fixed;
     }
 
     &:hover {

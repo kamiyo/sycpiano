@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'react-emotion';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
 import PhotoFader from 'src/components/Media/Photos/PhotoFader';
@@ -69,22 +70,27 @@ class Photos extends React.Component<PhotosProps> {
 
     render() {
         return (
-            <StyledPhotos>
-                {!this.props.isMobile &&
-                    <StyledPhotoViewer>
-                        {this.props.items.map((item, idx) => {
-                            const isCurrent = this.isCurrentItem(item);
-                            return <PhotoFader key={idx} item={item} isCurrent={isCurrent} />;
-                        })}
-                    </StyledPhotoViewer>
-                }
-                <PhotoList
-                    items={this.props.items}
-                    currentItem={this.props.currentItem}
-                    selectPhoto={this.props.selectPhotoAction}
-                    isMobile={this.props.isMobile}
-                />
-            </StyledPhotos>
+            <>
+                <Helmet>
+                    <meta name="description" content="Publicity and performance photos of Sean Chen." />
+                </Helmet>
+                <StyledPhotos>
+                    {!this.props.isMobile &&
+                        <StyledPhotoViewer>
+                            {this.props.items.map((item, idx) => {
+                                const isCurrent = this.isCurrentItem(item);
+                                return <PhotoFader key={idx} item={item} isCurrent={isCurrent} />;
+                            })}
+                        </StyledPhotoViewer>
+                    }
+                    <PhotoList
+                        items={this.props.items}
+                        currentItem={this.props.currentItem}
+                        selectPhoto={this.props.selectPhotoAction}
+                        isMobile={this.props.isMobile}
+                    />
+                </StyledPhotos>
+            </>
         );
     }
 }

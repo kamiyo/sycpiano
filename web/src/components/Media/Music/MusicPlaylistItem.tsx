@@ -7,7 +7,7 @@ import path from 'path';
 import { Link } from 'react-router-dom';
 
 import { isMusicItem, MusicFileItem, MusicListItem } from 'src/components/Media/Music/types';
-import { formatTime, getLastName, normalizeString } from 'src/utils';
+import { formatTime, getLastName, normalizeString } from 'src/components/Media/Music/utils';
 
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 

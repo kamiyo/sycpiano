@@ -62,6 +62,7 @@ interface LazyImageState {
 
 class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
     private blazy: BlazyInstance;
+    private timeout: NodeJS.Timer;
     state = {
         isLoaded: false,
     };
@@ -72,7 +73,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
             offset: this.props.offset || Infinity,
             container: this.props.container ? `#${this.props.container}` : 'window',
             success: (el: HTMLImageElement) => {
-                setTimeout(() => this.setState({ isLoaded: true }), 500);
+                this.timeout = setTimeout(() => this.setState({ isLoaded: true }), 500);
                 this.props.successCb && this.props.successCb(el);
             },
         });
@@ -83,6 +84,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
     }
 
     componentWillUnmount() {
+        clearTimeout(this.timeout);
         this.blazy.destroy();
     }
 

@@ -8,7 +8,7 @@ math.import(require('mathjs/lib/function/arithmetic/multiply'));
 import jBinary from 'jbinary';
 import jDataView from 'jdataview';
 
-import { getAudioContext } from 'src/utils';
+import { getAudioContext } from 'src/components/Media/Music/utils';
 
 type DrawCircleMaskShape = (
     context: CanvasRenderingContext2D,

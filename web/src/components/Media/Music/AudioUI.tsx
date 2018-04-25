@@ -7,7 +7,7 @@ import { LoadingInstance } from 'src/components/LoadingSVG';
 import { setHoverPlaypause, setHoverSeekring, setMouseMove } from 'src/components/Media/Music/actions';
 import { PauseButton, PauseIcon, PlayButton, PlayIcon } from 'src/components/Media/Music/Buttons';
 import { GlobalStateShape } from 'src/types';
-import { cartesianToPolar } from 'src/utils';
+import { cartesianToPolar } from 'src/components/Media/Music/utils';
 
 import { lightBlue } from 'src/styles/colors';
 import { screenXSorPortrait } from 'src/styles/screens';

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { storeRadii, storeVerticalOffset } from 'src/components/Media/Music/actions';
 import { constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
-import { polarToCartesian } from 'src/utils';
+import { polarToCartesian } from 'src/components/Media/Music/utils';
 
 import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistWidth } from 'src/styles/variables';

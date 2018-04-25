@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Moment } from 'moment-timezone';
 
-import { polarToCartesian } from 'src/utils';
+import { polarToCartesian } from 'src/components/Media/Music/utils';
 
 const HOUR_LENGTH = 120;
 const MINUTES_LENGTH = 180;

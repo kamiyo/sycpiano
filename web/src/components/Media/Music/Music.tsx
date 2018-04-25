@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { css } from 'react-emotion';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { match } from 'react-router';
 
@@ -11,8 +12,8 @@ import AudioInfo from 'src/components/Media/Music/AudioInfo';
 import AudioUI from 'src/components/Media/Music/AudioUI';
 import AudioVisualizer from 'src/components/Media/Music/AudioVisualizer';
 import MusicPlaylist from 'src/components/Media/Music/MusicPlaylist';
+import { getAudioContext } from 'src/components/Media/Music/utils';
 import { constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
-import { getAudioContext } from 'src/utils';
 
 import { isMusicItem, MusicFileItem, MusicItem, MusicListItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
@@ -282,55 +283,60 @@ class Music extends React.Component<MusicProps, MusicState> {
     render() {
         const isMobile = this.props.isMobile;
         return (
-            <div className={musicStyle} onScroll={this.props.isMobile ? this.props.onScroll : null}>
-                <audio
-                    id="audio"
-                    crossOrigin="anonymous"
-                    ref={this.audio}
-                    onLoadedData={this.audioOnLoad}
-                    onPlaying={this.onPlaying}
-                    onTimeUpdate={this.onTimeUpdate}
-                    onPause={this.onPause}
-                    onEnded={this.onEnded}
-                />
-                <MusicPlaylist
-                    audio={this.audio.current}
-                    onClick={this.loadTrack}
-                    currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
-                    baseRoute={this.props.baseRoute}
-                    userInput={this.state.userInput}
-                    onFirstUserInput={this.onFirstUserInput}
-                    isMobile={isMobile}
-                />
-                <AudioUI
-                    seekAudio={this.seekAudio}
-                    onStartDrag={this.onStartDrag}
-                    onDrag={this.onDrag}
-                    play={this.play}
-                    pause={this.pause}
-                    isPlaying={this.state.isPlaying}
-                    currentPosition={this.state.playbackPosition}
-                    userInput={this.state.userInput}
-                    onFirstUserInput={this.onFirstUserInput}
-                    isMobile={isMobile}
-                    isLoading={this.state.isLoading}
-                />
-                <AudioInfo
-                    duration={this.state.duration}
-                    currentPosition={this.state.playbackPosition}
-                    currentTrack={this.state.currentTrack}
-                    isMobile={isMobile}
-                />
-                <AudioVisualizer
-                    currentPosition={this.state.playbackPosition}
-                    analyzers={[this.analyzerL, this.analyzerR]}
-                    isPlaying={this.state.isPlaying}
-                    duration={this.state.duration}
-                    prevTimestamp={this.state.lastUpdateTimestamp}
-                    volume={this.state.volume}
-                    isMobile={isMobile}
-                />
-            </div>
+            <>
+                <Helmet>
+                    <meta name="description" content="Audio recordings of performances and compositions here on the music page of the official website of pianist, composer, and arranger Sean Chen." />
+                </Helmet>
+                <div className={musicStyle} onScroll={this.props.isMobile ? this.props.onScroll : null}>
+                    <audio
+                        id="audio"
+                        crossOrigin="anonymous"
+                        ref={this.audio}
+                        onLoadedData={this.audioOnLoad}
+                        onPlaying={this.onPlaying}
+                        onTimeUpdate={this.onTimeUpdate}
+                        onPause={this.onPause}
+                        onEnded={this.onEnded}
+                    />
+                    <MusicPlaylist
+                        audio={this.audio.current}
+                        onClick={this.loadTrack}
+                        currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
+                        baseRoute={this.props.baseRoute}
+                        userInput={this.state.userInput}
+                        onFirstUserInput={this.onFirstUserInput}
+                        isMobile={isMobile}
+                    />
+                    <AudioUI
+                        seekAudio={this.seekAudio}
+                        onStartDrag={this.onStartDrag}
+                        onDrag={this.onDrag}
+                        play={this.play}
+                        pause={this.pause}
+                        isPlaying={this.state.isPlaying}
+                        currentPosition={this.state.playbackPosition}
+                        userInput={this.state.userInput}
+                        onFirstUserInput={this.onFirstUserInput}
+                        isMobile={isMobile}
+                        isLoading={this.state.isLoading}
+                    />
+                    <AudioInfo
+                        duration={this.state.duration}
+                        currentPosition={this.state.playbackPosition}
+                        currentTrack={this.state.currentTrack}
+                        isMobile={isMobile}
+                    />
+                    <AudioVisualizer
+                        currentPosition={this.state.playbackPosition}
+                        analyzers={[this.analyzerL, this.analyzerR]}
+                        isPlaying={this.state.isPlaying}
+                        duration={this.state.duration}
+                        prevTimestamp={this.state.lastUpdateTimestamp}
+                        volume={this.state.volume}
+                        isMobile={isMobile}
+                    />
+                </div>
+            </>
         );
     }
 }

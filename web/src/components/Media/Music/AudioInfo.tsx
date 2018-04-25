@@ -4,9 +4,8 @@ import { connect } from 'react-redux';
 
 import TweenLite from 'gsap/TweenLite';
 
-import { formatTime } from 'src/utils';
-
 import { MusicItem } from 'src/components/Media/Music/types';
+import { formatTime } from 'src/components/Media/Music/utils';
 
 import { lato1 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';

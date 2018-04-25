@@ -27,6 +27,7 @@ const MusicFile = (sequelize: Sequelize, dataTypes: DataTypes) => {
             type: dataTypes.UUID,
             field: 'music_id',
         },
+        hash: dataTypes.STRING,
     }, { tableName: 'music_file' }) as MusicFileModel;
 
     musicfile.associate = (models) => {

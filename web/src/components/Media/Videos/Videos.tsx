@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from 'react-emotion';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router';
 import { Transition } from 'react-transition-group';
 
 import TweenLite from 'gsap/TweenLite';
@@ -10,7 +12,7 @@ import PreviewOverlay from 'src/components/Media/Videos/PreviewOverlay';
 import VideoPlaylist from 'src/components/Media/Videos/VideoPlaylist';
 
 import { setOnScroll } from 'src/components/App/NavBar/actions';
-import { createFetchPlaylistAction, initializeYoutubeElement, resetPlayer } from 'src/components/Media/Videos/actions';
+import { createFetchPlaylistAction, initializeYoutubeElement, playVideo, resetPlayer } from 'src/components/Media/Videos/actions';
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
@@ -28,15 +30,16 @@ interface VideosDispatchToProps {
     readonly initializeYoutubeElement: typeof initializeYoutubeElement;
     readonly resetPlayer: typeof resetPlayer;
     readonly setOnScroll: typeof setOnScroll;
+    readonly playVideo: typeof playVideo;
 }
 
 interface VideosOwnProps {
     readonly isMobile: boolean;
 }
 
-type VideosProps = VideosStateToProps & VideosDispatchToProps & VideosOwnProps;
+type VideosProps = VideosStateToProps & VideosDispatchToProps & VideosOwnProps & RouteComponentProps<{ videoId?: string; }>;
 
-const StyledVideos = styled('div')`
+const StyledVideos = styled('div') `
     ${pushed}
     width: 100%;
     background-color: black;
@@ -54,14 +57,16 @@ const StyledVideos = styled('div')`
         height: 100%;
 
         ${/* sc-selector */ screenXSorPortrait} {
-            position: absolute;
+            position: fixed;
             top: ${navBarHeight.mobile}px;
             height: 56.25vw;
+            z-index: 5;
+            box-shadow: 0 0 7px 2px rgba(0, 0, 0, 0.5);
         }
     }
 `;
 
-const LoadingOverlayDiv = styled('div')`
+const LoadingOverlayDiv = styled('div') `
     width: 100%;
     height: 100%;
     z-index: 11;
@@ -79,8 +84,7 @@ class Videos extends React.Component<VideosProps, any> {
 
     componentDidMount() {
         this.props.createFetchPlaylistAction();
-        this.props.initializeYoutubeElement(this.domElement.current);
-        this.props.setOnScroll(navBarHeight.mobile);
+        this.props.initializeYoutubeElement(this.domElement.current, this.props.match.params.videoId, this.props.isMobile);
     }
 
     componentWillUnmount() {
@@ -89,24 +93,28 @@ class Videos extends React.Component<VideosProps, any> {
 
     render() {
         return (
-            <StyledVideos
-                innerRef={this.domElement}
-                onScroll={this.props.isMobile ? this.props.onScroll : null}
-            >
-                <PreviewOverlay isMobile={this.props.isMobile}/>
-                <Transition
-                    in={!this.props.isPlayerReady}
-                    onExit={(el) => TweenLite.to(el, 0.3, { autoAlpha: 0 })}
-                    timeout={300}
-                    mountOnEnter={true}
-                    unmountOnExit={true}
+            <>
+                <Helmet>
+                    <meta name="description" content="YouTube playlist of Sean Chen's performance videos." />
+                </Helmet>
+                <StyledVideos
+                    innerRef={this.domElement}
                 >
-                    <LoadingOverlayDiv>
-                        <LoadingInstance width={120} height={120} />
-                    </LoadingOverlayDiv>
-                </Transition>
-                <VideoPlaylist isMobile={this.props.isMobile}/>
-            </StyledVideos>
+                    <PreviewOverlay isMobile={this.props.isMobile} />
+                    <Transition
+                        in={!this.props.isPlayerReady}
+                        onExit={(el) => TweenLite.to(el, 0.3, { autoAlpha: 0 })}
+                        timeout={300}
+                        mountOnEnter={true}
+                        unmountOnExit={true}
+                    >
+                        <LoadingOverlayDiv>
+                            <LoadingInstance width={120} height={120} />
+                        </LoadingOverlayDiv>
+                    </Transition>
+                    <VideoPlaylist isMobile={this.props.isMobile} />
+                </StyledVideos>
+            </>
         );
     }
 }
@@ -122,6 +130,7 @@ const mapDispatchToProps: VideosDispatchToProps = {
     createFetchPlaylistAction,
     resetPlayer,
     setOnScroll,
+    playVideo,
 };
 
 const ConnectedVideos = connect<VideosStateToProps, VideosDispatchToProps, VideosOwnProps>(
