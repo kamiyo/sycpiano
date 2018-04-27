@@ -83,6 +83,9 @@ export const togglePlaylistAction = (show: boolean = null): ThunkAction<void, Gl
 
 export const playVideo = (isMobile: boolean = false, videoId?: string): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
     const videoPlayerReducer = getState().video_player;
+    if (!getState().video_playlist.items.find((item) => item.id === videoId)) {
+        return;
+    }
     if (!isMobile) {
         setTimeout(() => dispatch(togglePlaylist(false, getState())), 500);
     }

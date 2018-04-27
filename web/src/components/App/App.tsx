@@ -25,6 +25,8 @@ import { reactMediaMobileQuery } from 'src/styles/screens';
 import { GlobalStateShape } from 'src/types';
 import { titleStringBase } from 'src/utils';
 
+import Page404 from 'src/components/Error/Page404';
+
 const register = extractModule(store);
 const About = () => register('about', import(/* webpackChunkName: 'about' */ 'src/components/About'));
 const Contact = () => register('contact', import(/* webpackChunkName: 'contact' */ 'src/components/Contact'));
@@ -170,6 +172,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
                                                 exact={true}
                                                 render={(childProps) => <AsyncComponent moduleProvider={Home} {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />}
                                             />
+                                            <Route component={Page404} />
                                         </Switch>
                                     </FadingContainer>
                                 </Transition>

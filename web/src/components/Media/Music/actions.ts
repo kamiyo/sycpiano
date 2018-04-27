@@ -6,8 +6,8 @@ import { ThunkAction } from 'redux-thunk';
 import AUDIO_ACTIONS from 'src/components/Media/Music/actionTypeKeys';
 import * as ActionTypes from 'src/components/Media/Music/actionTypes';
 import { isMusicItem, MusicCategories, MusicFileItem, MusicItem, MusicListItem, MusicResponse } from 'src/components/Media/Music/types';
-import { GlobalStateShape } from 'src/types';
 import { getLastName, normalizeString } from 'src/components/Media/Music/utils';
+import { GlobalStateShape } from 'src/types';
 
 export const storeRadii = (innerRadius: number, outerRadius: number, baseRadius: number): ThunkAction<void, GlobalStateShape, void> =>
     (dispatch) => dispatch({
@@ -70,6 +70,12 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
     try {
         dispatch(fetchPlaylistRequest());
         const { data: response }: { data: MusicResponse } = await axios.get('/api/music');
+        response.concerto.push({
+            composer: 'For more recordings of concerti, please contact Sean Chen directly',
+            piece: '',
+            id: 'more_concerti',
+            musicFiles: [],
+        } as MusicItem);
         const items: MusicListItem[] = compact([
             ...musicListIfExists(response, 'solo'),
             ...musicListIfExists(response, 'concerto'),

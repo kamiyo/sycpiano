@@ -76,7 +76,7 @@ const fullWidthHeight = css`
 
 class EventList extends React.Component<EventListProps, { updatedCurrent?: boolean; }> {
     private List: React.RefObject<List> = React.createRef();
-    private updatedCurrent = false;
+    private updatedCurrent = true;
 
     keyMapper = (rowIndex: number) => {
         return this.props.eventItems.length && this.props.eventItems[rowIndex] ? this.props.eventItems[rowIndex].dateTime.format() : '';
@@ -134,7 +134,7 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
             ) {
                 params = { date, scrollTo: true };
             } else {
-                this.updatedCurrent = false;
+                this.updatedCurrent = true;
                 this.List.current.recomputeRowHeights();
                 return;
             }
@@ -163,7 +163,7 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
     debouncedFetch = debounce(this.onScroll, 500, { leading: true });
 
     getScrollTarget = () => {
-        if (this.updatedCurrent) {
+        if (this.updatedCurrent && this.props.eventItems.length) {
             if (this.props.currentItem) {
                 this.updatedCurrent = false;
                 return this.getScrollIndex(this.props.currentItem);
@@ -239,7 +239,7 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
                 />
             );
         } else {
-            const permaLink = `${window.location.host}/schedule/${this.props.type}/${item.dateTime.format('YYYY-MM-DD')}`;
+            const permaLink = `/schedule/${this.props.type}/${item.dateTime.format('YYYY-MM-DD')}`;
             return (
                 <EventItem
                     measure={measure}

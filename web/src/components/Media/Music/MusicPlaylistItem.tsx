@@ -92,7 +92,7 @@ const StyledCollectionTitleContainer = styled('div') `
     position: relative;
     height: 100%;
     background-color: ${playlistBackground};
-    padding: 10px 0 10px 22px;
+    padding: 10px 10px 10px 22px;
 `;
 
 const StyledInfo = styled('div') `

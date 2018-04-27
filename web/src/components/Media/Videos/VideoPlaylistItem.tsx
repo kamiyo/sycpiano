@@ -14,7 +14,7 @@ type VideoPlaylistItemProps = RouteComponentProps<{}> & {
     readonly currentItemId: number | string;
     readonly onClick: (isMobile: boolean, id?: string) => void;
     readonly isMobile: boolean;
-}
+};
 
 const aspectRatio = 4 / 3;
 const thumbnailWidth = Math.floor(playlistWidth * 0.2);

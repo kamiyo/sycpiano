@@ -10,7 +10,7 @@ import { formatTime } from 'src/components/Media/Music/utils';
 import { lato1 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
 import { screenXSorPortrait } from 'src/styles/screens';
-import { navBarHeight, playlistWidth } from 'src/styles/variables';
+import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 interface AudioInfoProps {
     currentTrack: MusicItem;
@@ -22,7 +22,7 @@ interface AudioInfoProps {
 
 const AudioInfoContainer = styled('div') `
     ${noHighlight}
-    width: calc(100% - ${playlistWidth}px);
+    width: calc(100% - ${playlistContainerWidth}px);
     height: 100%;
     z-index: 10;
     position: absolute;
@@ -47,7 +47,7 @@ const AudioInfoContainer = styled('div') `
 `;
 
 const ComposerTitle = styled('div') `
-    padding: 0 10px;
+    padding: 0 20px;
     font-size: 2.2rem;
     line-height: 3.2rem;
 

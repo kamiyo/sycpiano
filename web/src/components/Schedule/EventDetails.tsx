@@ -4,6 +4,7 @@ import mix from 'polished/lib/color/mix';
 import * as React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled, { css, cx } from 'react-emotion';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 import { LinkIconInstance } from 'src/components/Schedule/LinkIconSVG';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
@@ -69,15 +70,16 @@ const eventNameStyle = css`
     }
 `;
 
-class EventName extends React.Component<EventNameProps> {
+class EventName extends React.Component<EventNameProps & RouteComponentProps<{}>> {
     copiedSpan: React.RefObject<HTMLSpanElement> = React.createRef();
     onCopy = () => {
+        this.props.history.push(this.props.permaLink);
         TweenLite.fromTo(this.copiedSpan.current, 0.2, { autoAlpha: 1 }, { autoAlpha: 0, delay: 0.5 });
     }
 
     render() {
         return (
-            <CopyToClipboard onCopy={this.onCopy} text={this.props.permaLink}>
+            <CopyToClipboard onCopy={this.onCopy} text={`${window.location.host}${this.props.permaLink}`}>
                 <div className={eventNameStyle}>
                     <span>{this.props.name}</span>
                     {this.props.eventType === 'masterclass' && <span>{`: Masterclass`}</span>}
@@ -96,6 +98,8 @@ class EventName extends React.Component<EventNameProps> {
         );
     }
 }
+
+const EventNameWithRouter = withRouter(EventName);
 
 let EventTime: React.SFC<EventDateTimeProps> = ({ className, dateTime }) => (
     <div className={className}>
@@ -235,7 +239,7 @@ export {
     EventCollaborators,
     EventDate,
     EventLocation,
-    EventName,
+    EventNameWithRouter,
     EventProgram,
     EventTime,
     EventWebsiteButton,

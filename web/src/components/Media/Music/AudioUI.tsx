@@ -6,12 +6,12 @@ import TweenLite from 'gsap/TweenLite';
 import { LoadingInstance } from 'src/components/LoadingSVG';
 import { setHoverPlaypause, setHoverSeekring, setMouseMove } from 'src/components/Media/Music/actions';
 import { PauseButton, PauseIcon, PlayButton, PlayIcon } from 'src/components/Media/Music/Buttons';
-import { GlobalStateShape } from 'src/types';
 import { cartesianToPolar } from 'src/components/Media/Music/utils';
+import { GlobalStateShape } from 'src/types';
 
 import { lightBlue } from 'src/styles/colors';
 import { screenXSorPortrait } from 'src/styles/screens';
-import { navBarHeight, playlistWidth } from 'src/styles/variables';
+import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
     readonly innerRadius: number;
@@ -63,7 +63,7 @@ const LoadingOverlay = styled('div') `
 
 const UIContainer = styled('div') `
     position: absolute;
-    width: calc(100% - ${playlistWidth}px);
+    width: calc(100% - ${playlistContainerWidth}px);
     height: 100%;
     left: 0;
     top: 0;

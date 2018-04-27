@@ -2,9 +2,9 @@ export interface MusicItem {
     readonly id: string;
     readonly piece: string;
     readonly composer: string;
-    readonly contributors: string;
+    readonly contributors?: string;
     readonly type: MusicCategories;
-    readonly year: number;
+    readonly year?: number;
     readonly musicFiles?: MusicFileItem[];
 }
 

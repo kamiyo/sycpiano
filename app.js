@@ -14,6 +14,9 @@ const pathToRegexp = require('path-to-regexp');
 const startCase = require('lodash').startCase;
 const moment = require('moment-timezone');
 const createHash = require('crypto').createHash;
+const axios = require('axios');
+
+const { gte, lt } = db.sequelize.Op;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -21,6 +24,8 @@ const port = isProduction ? process.env.PORT : 8000;
 const listenAddr = isProduction ? '0.0.0.0' : '127.0.0.1';
 
 const app = express();
+
+const YoutubeAPIKey = 'AIzaSyAD_AhLWUhbUCnLBu4VHZR3ecakL2IbhqU';
 
 // helmet will add HSTS to force HTTPS connections, remove x-powered-by non-standard header,
 // sets x-frame-options header to disallow our content to be rendered in iframes.
@@ -73,9 +78,8 @@ const descriptions = {
     photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images',
 };
 
-const getMetaFromPath = async (url) => {
+const getMetaFromPathAndSanitize = async (url) => {
     const parsed = regex.exec(url);
-    console.log(parsed);
     if (parsed === null) return {
         title: baseString + 'Home',
         description: descriptions.home,
@@ -90,30 +94,98 @@ const getMetaFromPath = async (url) => {
     };
     if (parsed[2] === 'music') {
         const hash = createHash('sha1').update('/' + parsed[3]).digest('base64');
-        console.log(hash);
-        const musicFile = (await db.models.musicFile.findAll({
-            where: { hash },
-            include: [
-                { model: db.models.music }
-            ]
-        }))[0];
-        const {
-            composer,
-            piece,
-        } = musicFile.music;
-        return {
-            title: baseString + startCase(parsed[2]) + ' | ' + composer + ' ' + piece + (musicFile.name ? ' - ' + musicFile.name : ''),
-            description: descriptions.music(composer + ' ' + piece + (musicFile.name ? ' - ' + musicFile.name : '')),
-        };
+        try {
+            const musicFile = (await db.models.musicFile.findAll({
+                where: { hash },
+                attributes: ['name'],
+                include: [
+                    {
+                        model: db.models.music,
+                        attributes: ['composer', 'piece'],
+                    },
+                ],
+            }))[0];
+            const {
+                composer,
+                piece,
+            } = musicFile.music;
+            return {
+                title: baseString + startCase(parsed[2]) + ' | ' + composer + ' ' + piece + (musicFile.name ? ' - ' + musicFile.name : ''),
+                description: descriptions.music(composer + ' ' + piece + (musicFile.name ? ' - ' + musicFile.name : '')),
+            };
+        } catch (e) {
+            return {
+                title: baseString + startCase(parsed[1]) + ' | ' + startCase(parsed[2]),
+                description: descriptions[parsed[2]],
+                sanitize: parsed[3]
+            };
+        }
+    }
+    if (parsed[2] === 'videos') {
+        const videoId = parsed[3];
+        try {
+            const playlistResponse = await axios.get('https://www.googleapis.com/youtube/v3/playlistItems', {
+                params: {
+                    key: YoutubeAPIKey,
+                    maxResults: 1,
+                    part: 'id, snippet',
+                    playlistId: 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9',
+                    videoId,
+                },
+            });
+            const video = playlistResponse.data.items[0];
+            return {
+                title: baseString + startCase(parsed[2]) + ' | ' + video.snippet.title,
+                description: video.snippet.description,
+            };
+        } catch (e) {
+            return {
+                title: baseString + startCase(parsed[1]) + ' | ' + startCase(parsed[2]),
+                description: descriptions[parsed[2]],
+                sanitize: videoId,
+            };
+        }
+    }
+    if (parsed[1] === 'schedule') {
+        try {
+            const date = moment(parsed[3]);
+            if (!date.isValid()) {
+                throw 'invalid date';
+            }
+            const event = (await db.models.calendar.findAll({
+                where: {
+                    dateTime: {
+                        [gte]: date.startOf('day').format('YYYY-MM-DD'),
+                        [lt]: date.add({ days: 1 }).format('YYYY-MM-DD'),
+                    },
+                },
+                attributes: ['dateTime', 'name', 'type'],
+            }))[0];
+            return {
+                title: baseString + moment(event.dateTime).format('MMM DD, YYYY, HH:mm zz'),
+                description: startCase(parsed[2]) + ' ' + event.type + ': ' + event.name,
+            };
+        } catch (e) {
+            return {
+                title: baseString + startCase(parsed[1]),
+                description: descriptions[parsed[1]],
+                sanitize: parsed[3],
+            };
+        }
     }
 }
 
 // We catch any route first, and then let our front-end routing do the work.
 app.get(/\//, async (req, res) => {
-    const twitter = await getMetaFromPath(req.url);
-    res.render('index', {
-        twitter,
-    });
+    const { sanitize, ...twitter } = await getMetaFromPathAndSanitize(req.url);
+    if (sanitize) {
+        res.redirect(req.url.replace(`/${sanitize}`, ''));
+        res.end();
+    } else {
+        res.render('index', {
+            twitter,
+        });
+    }
 });
 
 app.listen(port, listenAddr, () => console.log(`App listening on port ${port}.`));
