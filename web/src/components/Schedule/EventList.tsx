@@ -1,5 +1,7 @@
+import startCase from 'lodash-es/startCase';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
@@ -23,6 +25,7 @@ import {
 } from 'src/components/Schedule/types';
 import { lightBlue } from 'src/styles/colors';
 import { GlobalStateShape } from 'src/types';
+import { metaDescriptions, titleStringBase } from 'src/utils';
 
 interface EventListStateToProps {
     readonly eventItems: EventItemType[];
@@ -177,29 +180,47 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
     }
 
     render() {
+        const item: DayItem = this.props.eventItems.length && this.props.eventItems.find((event) =>
+            itemIsDay(event) && moment(this.props.match.params.date).isSame(event.dateTime, 'day'),
+        ) as DayItem;
+
+        const title = `${titleStringBase} | Schedule` + (item
+            ? ` | ${item.dateTime.format('dddd MMMM DD, YYYY, HH:mm zz')}`
+            : ` | ${this.props.type === 'upcoming' ? 'Upcoming' : 'Archived'} Events`);
+
+        const description = item
+            ? `${startCase(this.props.type)} ${startCase(item.eventType)}: ${item.name}`
+            : metaDescriptions[this.props.type];
+
         return (
-            <div className={fullWidthHeight}>
-                {
-                    <AutoSizer>
-                        {({ height, width }) => (
-                            <List
-                                ref={this.List}
-                                height={height}
-                                width={width}
-                                rowCount={this.props.eventItems.length + 1}
-                                rowHeight={this.cache.rowHeight}
-                                deferredMeasurementCache={this.cache}
-                                rowRenderer={this.rowItemRenderer}
-                                scrollToAlignment="center"
-                                noRowsRenderer={() => <div />}
-                                estimatedRowSize={200}
-                                onScroll={this.debouncedFetch}
-                                scrollToIndex={this.getScrollTarget()}
-                            />
-                        )}
-                    </AutoSizer>
-                }
-            </div>
+            <>
+                <Helmet>
+                    <title>{title}</title>
+                    <meta name="description" content={description} />
+                </Helmet>
+                <div className={fullWidthHeight}>
+                    {
+                        <AutoSizer>
+                            {({ height, width }) => (
+                                <List
+                                    ref={this.List}
+                                    height={height}
+                                    width={width}
+                                    rowCount={this.props.eventItems.length + 1}
+                                    rowHeight={this.cache.rowHeight}
+                                    deferredMeasurementCache={this.cache}
+                                    rowRenderer={this.rowItemRenderer}
+                                    scrollToAlignment="center"
+                                    noRowsRenderer={() => <div />}
+                                    estimatedRowSize={200}
+                                    onScroll={this.debouncedFetch}
+                                    scrollToIndex={this.getScrollTarget()}
+                                />
+                            )}
+                        </AutoSizer>
+                    }
+                </div>
+            </>
         );
     }
 

@@ -1,4 +1,4 @@
-import { startCase, toUpper } from 'lodash-es';
+import { startCase, toLower, toUpper } from 'lodash-es';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import { Helmet } from 'react-helmet';
@@ -23,9 +23,7 @@ import extractModule from 'src/module';
 import store from 'src/store';
 import { reactMediaMobileQuery } from 'src/styles/screens';
 import { GlobalStateShape } from 'src/types';
-import { titleStringBase } from 'src/utils';
-
-import Page404 from 'src/components/Error/Page404';
+import { metaDescriptions, titleStringBase } from 'src/utils';
 
 const register = extractModule(store);
 const About = () => register('about', import(/* webpackChunkName: 'about' */ 'src/components/About'));
@@ -34,6 +32,7 @@ const Home = () => register('home', import(/* webpackChunkName: 'home' */ 'src/c
 const Media = () => register('media', import(/* webpackChunkName: 'media' */ 'src/components/Media'));
 const Press = () => register('press', import(/* webpackChunkName: 'press' */ 'src/components/Press'));
 const Schedule = () => register('schedule', import(/* webpackChunkName: 'schedule' */ 'src/components/Schedule'));
+const Page404 = () => register('page404', import(/* webpackChunkName: 'page404' */ 'src/components/Error'));
 
 const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
     if (element) {
@@ -108,11 +107,12 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
     render() {
         let currentPage = this.getRouteBase();
         currentPage = currentPage === '/' ? 'Home' : startCase(currentPage.replace('/', ''));
+        const description = metaDescriptions[toLower(currentPage)] || 'Welcome to the official website of pianist, composer, and arranger Sean Chen';
         return (
             <>
                 <Helmet>
                     <title>{`${titleStringBase} | ${currentPage}`}</title>
-                    <meta name="description" content="The official website of pianist, composer, and arranger Sean Chen." />
+                    <meta name="description" content={description} />
                     <meta name="copyright" content={`copyright Sean Chen ${moment().format('YYYY')}.`} />
                 </Helmet>
                 <ReactMedia query={reactMediaMobileQuery}>
@@ -172,7 +172,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
                                                 exact={true}
                                                 render={(childProps) => <AsyncComponent moduleProvider={Home} {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />}
                                             />
-                                            <Route component={Page404} />
+                                            <Route render={() => <AsyncComponent moduleProvider={Page404} />} />
                                         </Switch>
                                     </FadingContainer>
                                 </Transition>

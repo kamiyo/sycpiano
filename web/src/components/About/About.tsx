@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
-import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
 import { setOnScroll } from 'src/components/App/NavBar/actions';
@@ -200,53 +199,48 @@ class About extends React.Component<AboutProps, AboutState> {
 
     render() {
         return (
-            <>
-                <Helmet>
-                    <meta name="description" content={`${blurbs[0].substring(0, blurbs[0].indexOf('.'))}...`} />
-                </Helmet>
-                <AboutContainer onScroll={this.props.isMobile ? this.props.onScroll : null}>
-                    <ImageContainer
-                        currScrollTop={this.props.scrollTop}
-                        bgImage={this.state.bgImage}
-                        innerRef={this.bgRef}
-                    >
-                        <LazyImage
-                            isMobile={this.props.isMobile}
-                            id="about_lazy_image"
-                            classNames={{
-                                mobile: imageLoaderStyle,
-                                desktop: imageLoaderStyle,
-                            }}
-                            mobileAttributes={{
-                                webp: {
-                                    srcset: generateSrcsetWidths(sycWithPianoBW('webp'), screenWidths),
-                                    sizes: '100vw',
-                                },
-                                jpg: {
-                                    srcset: generateSrcsetWidths(sycWithPianoBW(), screenWidths),
-                                    sizes: '100vw',
-                                },
-                                src: resizedImage(sycWithPianoBW(), { width: 640 }),
-                            }}
-                            desktopAttributes={{
-                                webp: {
-                                    srcset: generateSrcsetWidths(sycWithPianoBW('webp'), srcWidths),
-                                    sizes: '100vh',
-                                },
-                                jpg: {
-                                    srcset: generateSrcsetWidths(sycWithPianoBW(), srcWidths),
-                                    sizes: '100vh',
-                                },
-                                src: resizedImage(sycWithPianoBW(), { height: 1080 }),
-                            }}
-                            alt="about background"
-                            successCb={this.onImageLoad}
-                            destroyCb={this.onImageDestroy}
-                        />
-                    </ImageContainer>
-                    <TextContainer />
-                </AboutContainer>
-            </>
+            <AboutContainer onScroll={this.props.isMobile ? this.props.onScroll : null}>
+                <ImageContainer
+                    currScrollTop={this.props.scrollTop}
+                    bgImage={this.state.bgImage}
+                    innerRef={this.bgRef}
+                >
+                    <LazyImage
+                        isMobile={this.props.isMobile}
+                        id="about_lazy_image"
+                        classNames={{
+                            mobile: imageLoaderStyle,
+                            desktop: imageLoaderStyle,
+                        }}
+                        mobileAttributes={{
+                            webp: {
+                                srcset: generateSrcsetWidths(sycWithPianoBW('webp'), screenWidths),
+                                sizes: '100vw',
+                            },
+                            jpg: {
+                                srcset: generateSrcsetWidths(sycWithPianoBW(), screenWidths),
+                                sizes: '100vw',
+                            },
+                            src: resizedImage(sycWithPianoBW(), { width: 640 }),
+                        }}
+                        desktopAttributes={{
+                            webp: {
+                                srcset: generateSrcsetWidths(sycWithPianoBW('webp'), srcWidths),
+                                sizes: '100vh',
+                            },
+                            jpg: {
+                                srcset: generateSrcsetWidths(sycWithPianoBW(), srcWidths),
+                                sizes: '100vh',
+                            },
+                            src: resizedImage(sycWithPianoBW(), { height: 1080 }),
+                        }}
+                        alt="about background"
+                        successCb={this.onImageLoad}
+                        destroyCb={this.onImageDestroy}
+                    />
+                </ImageContainer>
+                <TextContainer />
+            </AboutContainer>
         );
     }
 }

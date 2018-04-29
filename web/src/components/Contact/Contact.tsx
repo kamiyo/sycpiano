@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from 'react-emotion';
-import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
 import { setOnScroll } from 'src/components/App/NavBar/actions';
@@ -33,19 +32,14 @@ class Contact extends React.Component<ContactProps> {
 
     render() {
         return (
-            <>
-                <Helmet>
-                    <meta name="description" content="Contact information for Sean Chen and for booking performances." />
-                </Helmet>
-                <div
-                    onScroll={this.props.isMobile ? this.props.onScroll : null}
-                    className={this.props.className}
-                >
-                    {contacts.map((contact, i) => (
-                        <StyledContactItem {...contact} key={i} />
-                    ))}
-                </div>
-            </>
+            <div
+                onScroll={this.props.isMobile ? this.props.onScroll : null}
+                className={this.props.className}
+            >
+                {contacts.map((contact, i) => (
+                    <StyledContactItem {...contact} key={i} />
+                ))}
+            </div>
         );
     }
 }

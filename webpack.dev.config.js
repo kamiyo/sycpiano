@@ -21,8 +21,8 @@ const config = () => {
         mode: 'development',
         devtool: 'inline-cheap-source-map',
         output: {
-            filename: '[name].[chunkhash].bundle.js',
-            chunkFilename: '[name].[chunkhash].chunk.js',
+            filename: '[name].bundle.js',
+            chunkFilename: '[name].chunk.js',
         },
         module: {
             rules: [{

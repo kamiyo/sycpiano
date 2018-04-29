@@ -1,7 +1,9 @@
 import * as React from 'react';
 import styled from 'react-emotion';
+import { Helmet } from 'react-helmet';
 
 import { lato2 } from 'src/styles/fonts';
+import { titleStringBase } from 'src/utils';
 
 const StyledDiv = styled('div') `
     height: 100%;
@@ -15,9 +17,14 @@ const StyledDiv = styled('div') `
 `;
 
 const Page404: React.SFC<{}> = () => (
-    <StyledDiv>
-        404: Page Not Found
-    </StyledDiv>
+    <>
+        <Helmet>
+            <title>{`${titleStringBase} | 404: Page Not Found`}</title>
+        </Helmet>
+        <StyledDiv>
+            404: Page Not Found
+        </StyledDiv>
+    </>
 );
 
 export default Page404;

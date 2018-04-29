@@ -18,7 +18,7 @@ const Photos = () => register('photos', import(/* webpackChunkName: 'photos' */ 
 const Videos = () => register('videos', import(/* webpackChunkName: 'videos' */ 'src/components/Media/Videos'));
 import { cliburn1 } from 'src/styles/imageUrls';
 import { container } from 'src/styles/mixins';
-import { titleStringBase } from 'src/utils';
+import { metaDescriptions, titleStringBase } from 'src/utils';
 
 const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
     if (element) {
@@ -51,7 +51,8 @@ const FadingContainer = styled('div') `
 const Media: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{ media: string; }>> = ({ isMobile, match, location }) => (
     <>
         <Helmet>
-            <title>{`${titleStringBase} | Media | ${startCase(match.params.media)}`}</title>
+            <title>{`${titleStringBase} | ${startCase(match.params.media)}`}</title>
+            <meta name="description" content={metaDescriptions[match.params.media]} />
         </Helmet>
         <MediaContainer>
             <TransitionGroup component={null}>
@@ -97,6 +98,9 @@ const Media: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{ media: str
                                 path="/media/photos"
                                 render={(childProps) => <AsyncComponent moduleProvider={Photos} {...childProps} isMobile={isMobile} />}
                                 exact={true}
+                            />
+                            <Route
+                                render={() => <Redirect to="/media/videos"/>}
                             />
                         </Switch>
                     </FadingContainer>

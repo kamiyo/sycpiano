@@ -13,14 +13,17 @@ import VideoPlaylist from 'src/components/Media/Videos/VideoPlaylist';
 
 import { setOnScroll } from 'src/components/App/NavBar/actions';
 import { createFetchPlaylistAction, initializeYoutubeElement, playVideo, resetPlayer } from 'src/components/Media/Videos/actions';
+import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
 import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
+import { titleStringBase } from 'src/utils';
 
 interface VideosStateToProps {
     readonly videoId: string;
+    readonly videos: VideoItemShape[];
     readonly isPlayerReady: boolean;
     readonly onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
 }
@@ -79,7 +82,7 @@ const LoadingOverlayDiv = styled('div') `
     justify-content: center;
 `;
 
-class Videos extends React.Component<VideosProps, any> {
+class Videos extends React.Component<VideosProps> {
     domElement: React.RefObject<HTMLDivElement> = React.createRef();
 
     componentDidMount() {
@@ -92,11 +95,16 @@ class Videos extends React.Component<VideosProps, any> {
     }
 
     render() {
+        const video = this.props.match.params.videoId && this.props.videos.find((item) => item.id === this.props.match.params.videoId);
+        const description = video && video.snippet.description;
         return (
             <>
-                <Helmet>
-                    <meta name="description" content="YouTube playlist of Sean Chen's performance videos." />
-                </Helmet>
+                {video &&
+                    <Helmet>
+                        <title>{`${titleStringBase} | Videos | ${video.snippet.title}`}</title>
+                        <meta name="description" content={description} />
+                    </Helmet>
+                }
                 <StyledVideos
                     innerRef={this.domElement}
                 >
@@ -119,7 +127,8 @@ class Videos extends React.Component<VideosProps, any> {
     }
 }
 
-const mapStateToProps = ({ video_player, navbar }: GlobalStateShape): VideosStateToProps => ({
+const mapStateToProps = ({ video_player, video_playlist, navbar }: GlobalStateShape): VideosStateToProps => ({
+    videos: video_playlist.items,
     videoId: video_player.videoId,
     isPlayerReady: video_player.isPlayerReady,
     onScroll: navbar.onScroll,

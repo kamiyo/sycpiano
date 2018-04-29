@@ -93,6 +93,7 @@ export interface MusicFileAttributes {
 export interface MusicFileInstance extends Sequelize.Instance<MusicFileAttributes>, MusicFileAttributes {
     readonly getMusics: Sequelize.BelongsToGetAssociationMixin<MusicInstance>;
     readonly setMusics: Sequelize.BelongsToSetAssociationMixin<MusicInstance, MusicAttributes['id']>;
+    readonly music: MusicInstance;
 }
 
 export interface MusicFileModel extends Model<MusicFileInstance, MusicFileAttributes> {}
