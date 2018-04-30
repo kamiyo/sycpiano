@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 global.Promise = bluebird;
+import 'babel-polyfill';
 
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route } from 'react-router-dom';

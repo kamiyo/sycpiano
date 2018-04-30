@@ -48,6 +48,26 @@ const config = () => {
                     },
                     {
                         loader: 'babel-loader',
+                        options: {
+                            presets: [
+                                ['env', {
+                                    target: {
+                                        chrome: 41,
+                                    },
+                                    modules: false,
+                                }],
+                            ],
+                            plugins: [
+                                ['emotion',
+                                    {
+                                        sourceMap: true,
+                                        hoist: true,
+                                        autoLabel: true,
+                                    },
+                                ],
+                                'syntax-dynamic-import',
+                            ],
+                        },
                     },
                     {
                         loader: 'ts-loader',

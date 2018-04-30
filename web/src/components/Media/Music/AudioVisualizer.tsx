@@ -169,7 +169,9 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             lowFreq: 0,
         });
         const resultR = constantQ.apply(normalizedDataR).reverse();
-        const result = Float32Array.from([...resultL, ...resultR]);
+        const result = new Float32Array(resultL.length + resultR.length);
+        result.set(resultL);
+        result.set(resultR, resultL.length);
 
         // Average left and right for each high and low accumulator, and divide by number of bins
         let highFreq = (accumulatorL.highFreq + accumulatorR.highFreq) / (2 * (this.MAX_BIN - this.HIGH_PASS_BIN));

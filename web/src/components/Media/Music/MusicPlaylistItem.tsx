@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled, { css } from 'react-emotion';
 
 import startCase from 'lodash-es/startCase';
-import path from 'path';
+import * as path from 'path';
 
 import { Link } from 'react-router-dom';
 
