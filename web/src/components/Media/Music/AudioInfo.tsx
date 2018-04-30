@@ -147,7 +147,7 @@ class AudioInfo extends React.Component<AudioInfoProps> {
                 {this.props.matchParams &&
                     <Helmet>
                         <title>{`${titleStringBase}${metaTitle}`}</title>
-                        <meta name="description" content={metaDescriptions.getMusic(composerTitleWithMovement)} />
+                        <meta name="description" content={metaDescriptions.getMusic(composerTitleWithMovement, contributors)} />
                     </Helmet>
                 }
                 <AudioInfoContainer>

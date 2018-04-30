@@ -102,6 +102,7 @@ export interface MusicAttributes {
     readonly id: DataTypeUUID;
     readonly composer: string;
     readonly piece: string;
+    readonly contributors: string;
     readonly type: string;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
