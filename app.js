@@ -8,6 +8,7 @@ const mustacheExpress = require('mustache-express');
 const ApiRouter = require('./server/build/api-router.js').ApiRouter;
 const AdminRest = require('./server/build/rest.js').AdminRest;
 const Resized = require('./server/build/resized.js').Resized;
+const getMetaFromPathAndSanitize = require('./server/build/meta.js').getMetaFromPathAndSanitize;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -54,6 +55,20 @@ Object.keys(oldRoutesToRedirectsMap).forEach(key => (
 ));
 
 // We catch any route first, and then let our front-end routing do the work.
-app.get(/\//, (req, res) => res.render('index'));
+app.get(/\//, async (req, res) => {
+    const { sanitize, ...meta } = await getMetaFromPathAndSanitize(req.url);
+    if (sanitize) {
+        res.redirect(req.url.replace(`/${sanitize}`, ''));
+        res.end();
+    } else {
+        if (!meta.image) {
+            meta.image = '/static/images/syc_chair_twitter.jpg';
+        }
+        res.render('index', {
+            twitter: meta,
+            facebook: { ...meta, url: req.protocol + '://' + req.get('host') + req.originalUrl },
+        });
+    }
+});
 
 app.listen(port, listenAddr, () => console.log(`App listening on port ${port}.`));

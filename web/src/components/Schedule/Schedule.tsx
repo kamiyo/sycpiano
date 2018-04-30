@@ -25,7 +25,7 @@ const scheduleStyles = css`
     }
 `;
 
-const Schedule: React.SFC<{ isMobile: boolean; }> = ({ isMobile }) => (
+const Schedule: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{ type: string; }>> = ({ isMobile }) => (
     <div className={scheduleStyles}>
         <div className={css` height: 100%; `}>
             <Switch>

@@ -1,17 +1,18 @@
 import * as React from 'react';
 import styled from 'react-emotion';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
 import TweenLite from 'gsap/TweenLite';
 
-import { formatTime } from 'src/utils';
-
 import { MusicItem } from 'src/components/Media/Music/types';
+import { formatTime } from 'src/components/Media/Music/utils';
 
 import { lato1 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
 import { screenXSorPortrait } from 'src/styles/screens';
-import { navBarHeight, playlistWidth } from 'src/styles/variables';
+import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
+import { metaDescriptions, titleStringBase } from 'src/utils';
 
 interface AudioInfoProps {
     currentTrack: MusicItem;
@@ -19,11 +20,12 @@ interface AudioInfoProps {
     currentPosition: number;
     isMobile: boolean;
     dispatch: any;
+    matchParams: boolean;
 }
 
 const AudioInfoContainer = styled('div') `
     ${noHighlight}
-    width: calc(100% - ${playlistWidth}px);
+    width: calc(100% - ${playlistContainerWidth}px);
     height: 100%;
     z-index: 10;
     position: absolute;
@@ -48,7 +50,7 @@ const AudioInfoContainer = styled('div') `
 `;
 
 const ComposerTitle = styled('div') `
-    padding: 0 10px;
+    padding: 0 20px;
     font-size: 2.2rem;
     line-height: 3.2rem;
 
@@ -122,6 +124,8 @@ class AudioInfo extends React.Component<AudioInfoProps> {
     }
 
     render() {
+        const { isMobile, currentPosition, duration } = this.props;
+
         const {
             piece = '',
             composer = '',
@@ -130,36 +134,51 @@ class AudioInfo extends React.Component<AudioInfoProps> {
             musicFiles = [],
         } = this.props.currentTrack || {};
 
+        const {
+            name: movement = '',
+        } = musicFiles[0] || {};
+
         const contribArray = contributors && contributors.split(', ');
-        const { name: movement = '' } = musicFiles[0] || {};
-        const { isMobile, currentPosition, duration } = this.props;
-        const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '') + (isMobile && movement ? ': ' + movement : '');
+        const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '');
+        const composerTitleWithMovement = composerTitle + (movement ? ': ' + movement : '');
+        const metaTitle = ' | Music | ' + composerTitleWithMovement;
         return (
-            <AudioInfoContainer>
-                <ComposerTitle innerRef={this.titleDiv}>
-                    {
-                        isMobile ? (
-                            <Marquee innerRef={this.marquee}>
-                                <span>{composerTitle}</span><span>{composerTitle}</span>
-                            </Marquee>
-                        ) : (
-                                composerTitle
-                            )
-                    }
-                </ComposerTitle>
-                {movement && !isMobile && <Movement>{movement}</Movement>}
-                {contributors &&
-                    (isMobile ? contribArray.map((contributor, index) => (
-                        <ContributingOrDuration key={index}>
-                            {contributor}
-                        </ContributingOrDuration>
-                    )) : <ContributingOrDuration>
-                            {contributors}
-                        </ContributingOrDuration>
-                    )
+            <>
+                {this.props.matchParams &&
+                    <Helmet>
+                        <title>{`${titleStringBase}${metaTitle}`}</title>
+                        <meta name="description" content={metaDescriptions.getMusic(composerTitleWithMovement)} />
+                    </Helmet>
                 }
-                <ContributingOrDuration>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</ContributingOrDuration>
-            </AudioInfoContainer>
+                <AudioInfoContainer>
+                    <ComposerTitle innerRef={this.titleDiv}>
+                        {
+                            isMobile ? (
+                                <Marquee innerRef={this.marquee}>
+                                    <span>{composerTitle}</span><span>{composerTitleWithMovement}</span>
+                                </Marquee>
+                            ) : (
+                                    composerTitle
+                                )
+                        }
+                    </ComposerTitle>
+                    {!isMobile && movement && <Movement>{movement}</Movement>}
+                    {contributors &&
+                        (isMobile ?
+                            contribArray.map((contributor, index) => (
+                                <ContributingOrDuration key={index}>
+                                    {contributor}
+                                </ContributingOrDuration>
+                            )) : (
+                                <ContributingOrDuration>
+                                    {contributors}
+                                </ContributingOrDuration>
+                            )
+                        )
+                    }
+                    <ContributingOrDuration>{`${formatTime(currentPosition)} / ${formatTime(duration)}`}</ContributingOrDuration>
+                </AudioInfoContainer>
+            </>
         );
     }
 }

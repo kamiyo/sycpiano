@@ -37,6 +37,7 @@ const StyledPreviewOverlay = styled<{ bgImage?: string; }, 'div'>('div') `
     ${/* sc-selector */ screenXS} {
         height: 56.25vw;
         top: ${navBarHeight.mobile}px;
+        position: fixed;
     }
 
     &:hover {
@@ -73,19 +74,11 @@ class PreviewOverlay extends React.Component<PreviewOverlayProps, { bgImage: str
 
     onImageLoad = (el: HTMLImageElement) => {
         this.setState({ bgImage: el.currentSrc }, () => {
-            TweenLite.to(
+            this.bgRef.current && TweenLite.to(
                 this.bgRef.current,
                 0.3,
                 { autoAlpha: 1, delay: 0.2, clearProps: 'opacity' });
         });
-    }
-
-    onImageDestroy = () => {
-        TweenLite.to(
-            this.bgRef.current,
-            0.1,
-            { autoAlpha: 0 },
-        );
     }
 
     render() {
@@ -140,7 +133,6 @@ class PreviewOverlay extends React.Component<PreviewOverlayProps, { bgImage: str
                         }}
                         alt="video preview"
                         successCb={this.onImageLoad}
-                        destroyCb={this.onImageDestroy}
                     />
                 </StyledPreviewOverlay>
             </Transition>

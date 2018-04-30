@@ -1,3 +1,4 @@
+import isEmpty from 'lodash-es/isEmpty';
 import * as React from 'react';
 import { css } from 'react-emotion';
 import { connect } from 'react-redux';
@@ -11,8 +12,8 @@ import AudioInfo from 'src/components/Media/Music/AudioInfo';
 import AudioUI from 'src/components/Media/Music/AudioUI';
 import AudioVisualizer from 'src/components/Media/Music/AudioVisualizer';
 import MusicPlaylist from 'src/components/Media/Music/MusicPlaylist';
+import { getAudioContext } from 'src/components/Media/Music/utils';
 import { constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
-import { getAudioContext } from 'src/utils';
 
 import { isMusicItem, MusicFileItem, MusicItem, MusicListItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
@@ -320,6 +321,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     currentPosition={this.state.playbackPosition}
                     currentTrack={this.state.currentTrack}
                     isMobile={isMobile}
+                    matchParams={!isEmpty(this.props.match.params)}
                 />
                 <AudioVisualizer
                     currentPosition={this.state.playbackPosition}

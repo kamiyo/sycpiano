@@ -10,8 +10,8 @@ const os = require('os');
 const config = merge(common.config, {
     mode: 'production',
     output: {
-        filename: '[name].bundle.js',
-        chunkFilename: '[name].chunk.js',
+        filename: '[name].[chunkhash:8].bundle.js',
+        chunkFilename: '[name].[chunkhash:8].chunk.js',
     },
     plugins: [
         new UglifyJsPlugin({

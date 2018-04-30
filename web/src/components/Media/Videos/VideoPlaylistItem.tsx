@@ -2,18 +2,19 @@ import moment from 'moment-timezone';
 import * as React from 'react';
 import ClampLines from 'react-clamp-lines';
 import styled, { css } from 'react-emotion';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 import { lato1, lato2 } from 'src/styles/fonts';
 import { playlistWidth } from 'src/styles/variables';
 
-interface VideoPlaylistItemProps {
+type VideoPlaylistItemProps = RouteComponentProps<{}> & {
     readonly item: VideoItemShape;
     readonly currentItemId: number | string;
     readonly onClick: (isMobile: boolean, id?: string) => void;
     readonly isMobile: boolean;
-}
+};
 
 const aspectRatio = 4 / 3;
 const thumbnailWidth = Math.floor(playlistWidth * 0.2);
@@ -107,10 +108,13 @@ const TextBottom = styled('h4') `
     font-size: 0.8rem;
 `;
 
-const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentItemId, onClick, isMobile }) => (
+const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentItemId, onClick, isMobile, history }) => (
     <StyledVideoItem
         active={currentItemId === item.id}
-        onClick={() => onClick(isMobile, item.id)}
+        onClick={() => {
+            history.push(`/media/videos/${item.id}`);
+            onClick(isMobile, item.id);
+        }}
     >
         <ImageContainer>
             <img alt="Sean Chen Piano Video" src={item.snippet.thumbnails.high.url} />
@@ -133,7 +137,7 @@ const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentIte
     </StyledVideoItem>
 );
 
-export default VideoPlaylistItem;
+export default withRouter(VideoPlaylistItem);
 
 // Helper functions
 

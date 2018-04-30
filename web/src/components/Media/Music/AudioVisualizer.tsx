@@ -3,12 +3,12 @@ import styled from 'react-emotion';
 import { connect } from 'react-redux';
 
 import { storeRadii, storeVerticalOffset } from 'src/components/Media/Music/actions';
+import { polarToCartesian } from 'src/components/Media/Music/utils';
 import { constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
-import { polarToCartesian } from 'src/utils';
 
 import { screenXSorPortrait } from 'src/styles/screens';
-import { navBarHeight, playlistWidth } from 'src/styles/variables';
+import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;
@@ -46,7 +46,7 @@ const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     position: absolute;
     left: 0;
     top: 0;
-    width: calc(100% - ${playlistWidth}px);
+    width: calc(100% - ${playlistContainerWidth}px);
     height: 100%;
 
     ${/* sc-selector */ screenXSorPortrait} {
@@ -112,9 +112,13 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.CQ_BINS = constantQ.numCols * 2;
             this.INV_CQ_BINS = 1 / this.CQ_BINS;
 
-            this.MAX_BIN = this.FFT_HALF_SIZE * 22050 / (constantQ.sampleRate / 2);
-            this.HIGH_PASS_BIN = constantQ.maxF * this.FFT_HALF_SIZE / (constantQ.sampleRate / 2);
-            this.LOW_PASS_BIN = constantQ.minF * this.FFT_HALF_SIZE / (constantQ.sampleRate / 2);
+            // set MaxDesiredFreq to 22050.
+            // Therefore the bin of MaxDesiredFreq must be 22050/(sr/2) percent of total bin_size.
+            // bin number of MaxFreq = numBins * MaxDesiredFreq / AbsMaxFreq
+            const sr2 = constantQ.sampleRate / 2;
+            this.MAX_BIN = Math.round(this.FFT_HALF_SIZE * 22050 / sr2);
+            this.HIGH_PASS_BIN = Math.round(constantQ.maxF * this.FFT_HALF_SIZE / sr2);
+            this.LOW_PASS_BIN = Math.round(constantQ.minF * this.FFT_HALF_SIZE / sr2);
 
             this.NUM_CROSSINGS = firLoader.numCrossings;
             this.SAMPLES_PER_CROSSING = firLoader.samplesPerCrossing;
@@ -131,11 +135,10 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     accumulateLowHighFreq = (acc: { highFreq: number; lowFreq: number }, value: number, index: number) => {
-        if (value !== 0) {
+        if (index !== 0 && value !== 0) {
             if (index >= this.HIGH_PASS_BIN) {
                 acc.highFreq += value;
-            }
-            if (index < this.LOW_PASS_BIN) {
+            } else {
                 acc.lowFreq += value;
             }
         }
@@ -168,8 +171,9 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         const resultR = constantQ.apply(normalizedDataR).reverse();
         const result = Float32Array.from([...resultL, ...resultR]);
 
+        // Average left and right for each high and low accumulator, and divide by number of bins
         let highFreq = (accumulatorL.highFreq + accumulatorR.highFreq) / (2 * (this.MAX_BIN - this.HIGH_PASS_BIN));
-        const lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.LOW_PASS_BIN);
+        const lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.HIGH_PASS_BIN);
         highFreq = HIGH_FREQ_SCALE * highFreq;
 
         this.drawVisualization(this.visualizationCtx, lowFreq, result, highFreq, timestamp);

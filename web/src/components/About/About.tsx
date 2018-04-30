@@ -1,4 +1,3 @@
-import * as moment from 'moment-timezone';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
@@ -58,8 +57,6 @@ const AboutText: React.SFC<{ className?: string }> = (props) => (
         <TextGroup>
             {blurbs.map((blurb, i) => {
                 if (i === 0) {
-                    const age = moment().diff('1988-08-27', 'year');
-                    blurb = blurb.replace(/##/, age.toString());
                     const nameLocation = blurb.indexOf('Sean Chen');
                     const name = blurb.slice(nameLocation, nameLocation + 9);
                     const beforeName = blurb.slice(0, nameLocation);

@@ -1,5 +1,7 @@
+import startCase from 'lodash-es/startCase';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
@@ -23,6 +25,7 @@ import {
 } from 'src/components/Schedule/types';
 import { lightBlue } from 'src/styles/colors';
 import { GlobalStateShape } from 'src/types';
+import { metaDescriptions, titleStringBase } from 'src/utils';
 
 interface EventListStateToProps {
     readonly eventItems: EventItemType[];
@@ -76,7 +79,7 @@ const fullWidthHeight = css`
 
 class EventList extends React.Component<EventListProps, { updatedCurrent?: boolean; }> {
     private List: React.RefObject<List> = React.createRef();
-    private updatedCurrent = false;
+    private updatedCurrent = true;
 
     keyMapper = (rowIndex: number) => {
         return this.props.eventItems.length && this.props.eventItems[rowIndex] ? this.props.eventItems[rowIndex].dateTime.format() : '';
@@ -134,7 +137,7 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
             ) {
                 params = { date, scrollTo: true };
             } else {
-                this.updatedCurrent = false;
+                this.updatedCurrent = true;
                 this.List.current.recomputeRowHeights();
                 return;
             }
@@ -163,7 +166,7 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
     debouncedFetch = debounce(this.onScroll, 500, { leading: true });
 
     getScrollTarget = () => {
-        if (this.updatedCurrent) {
+        if (this.updatedCurrent && this.props.eventItems.length) {
             if (this.props.currentItem) {
                 this.updatedCurrent = false;
                 return this.getScrollIndex(this.props.currentItem);
@@ -177,29 +180,47 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
     }
 
     render() {
+        const item: DayItem = this.props.eventItems.length && this.props.eventItems.find((event) =>
+            itemIsDay(event) && moment(this.props.match.params.date).isSame(event.dateTime, 'day'),
+        ) as DayItem;
+
+        const title = `${titleStringBase} | Schedule` + (item
+            ? ` | ${item.dateTime.format('dddd MMMM DD, YYYY, HH:mm zz')}`
+            : ` | ${this.props.type === 'upcoming' ? 'Upcoming' : 'Archived'} Events`);
+
+        const description = item
+            ? `${startCase(this.props.type)} ${startCase(item.eventType)}: ${item.name}`
+            : metaDescriptions[this.props.type];
+
         return (
-            <div className={fullWidthHeight}>
-                {
-                    <AutoSizer>
-                        {({ height, width }) => (
-                            <List
-                                ref={this.List}
-                                height={height}
-                                width={width}
-                                rowCount={this.props.eventItems.length + 1}
-                                rowHeight={this.cache.rowHeight}
-                                deferredMeasurementCache={this.cache}
-                                rowRenderer={this.rowItemRenderer}
-                                scrollToAlignment="center"
-                                noRowsRenderer={() => <div />}
-                                estimatedRowSize={200}
-                                onScroll={this.debouncedFetch}
-                                scrollToIndex={this.getScrollTarget()}
-                            />
-                        )}
-                    </AutoSizer>
-                }
-            </div>
+            <>
+                <Helmet>
+                    <title>{title}</title>
+                    <meta name="description" content={description} />
+                </Helmet>
+                <div className={fullWidthHeight}>
+                    {
+                        <AutoSizer>
+                            {({ height, width }) => (
+                                <List
+                                    ref={this.List}
+                                    height={height}
+                                    width={width}
+                                    rowCount={this.props.eventItems.length + 1}
+                                    rowHeight={this.cache.rowHeight}
+                                    deferredMeasurementCache={this.cache}
+                                    rowRenderer={this.rowItemRenderer}
+                                    scrollToAlignment="center"
+                                    noRowsRenderer={() => <div />}
+                                    estimatedRowSize={200}
+                                    onScroll={this.debouncedFetch}
+                                    scrollToIndex={this.getScrollTarget()}
+                                />
+                            )}
+                        </AutoSizer>
+                    }
+                </div>
+            </>
         );
     }
 
@@ -239,7 +260,7 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
                 />
             );
         } else {
-            const permaLink = `${window.location.host}/schedule/${this.props.type}/${item.dateTime.format('YYYY-MM-DD')}`;
+            const permaLink = `/schedule/${this.props.type}/${item.dateTime.format('YYYY-MM-DD')}`;
             return (
                 <EventItem
                     measure={measure}

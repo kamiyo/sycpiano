@@ -17,7 +17,7 @@ import { ThunkAction } from 'redux-thunk';
 
 import { EventListName } from 'src/components/Schedule/actionTypes';
 import { transformCachedEventsToListItems } from 'src/components/Schedule/utils';
-import { googleAPI } from 'src/services/GoogleAPI';
+import { geocode } from 'src/services/GoogleAPI';
 
 const FETCH_LIMIT = 10;
 
@@ -123,7 +123,7 @@ const shouldFetchLatLng = (state: GlobalStateShape) => {
 const fetchLatLng = (location: string): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
     try {
         dispatch(fetchLatLngRequest());
-        const geocodeResponse = await googleAPI.geocode(location);
+        const geocodeResponse = await geocode(location);
         const latlng: LatLng = geocodeResponse.data.results[0].geometry.location;
         dispatch(fetchLatLngSuccess(latlng));
     } catch (err) {

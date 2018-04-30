@@ -44,8 +44,9 @@ const playlistContainerStyle = css`
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         height: auto;
-        position: unset;
+        position: absolute;
         right: unset;
+        z-index: 0;
     }
 `;
 

@@ -85,11 +85,16 @@ export interface MusicFileAttributes {
     readonly waveformFile: string;
     readonly durationSeconds: number;
     readonly musicId?: DataTypeUUID;
+    readonly hash?: string;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
 }
 
-export interface MusicFileInstance extends Sequelize.Instance<MusicFileAttributes>, MusicFileAttributes {}
+export interface MusicFileInstance extends Sequelize.Instance<MusicFileAttributes>, MusicFileAttributes {
+    readonly getMusics: Sequelize.BelongsToGetAssociationMixin<MusicInstance>;
+    readonly setMusics: Sequelize.BelongsToSetAssociationMixin<MusicInstance, MusicAttributes['id']>;
+    readonly music: MusicInstance;
+}
 
 export interface MusicFileModel extends Model<MusicFileInstance, MusicFileAttributes> {}
 
@@ -102,7 +107,10 @@ export interface MusicAttributes {
     readonly updatedAt?: Date | string;
 }
 
-export interface MusicInstance extends Sequelize.Instance<MusicAttributes>, MusicAttributes {}
+export interface MusicInstance extends Sequelize.Instance<MusicAttributes>, MusicAttributes {
+    readonly getMusicFiles: Sequelize.HasManyGetAssociationsMixin<MusicFileInstance>;
+    readonly setMusicFiles: Sequelize.HasManySetAssociationsMixin<MusicFileInstance, MusicFileAttributes['id']>;
+}
 
 export interface MusicModel extends Model<MusicInstance, MusicAttributes> {}
 

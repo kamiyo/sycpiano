@@ -33,7 +33,7 @@ class Press extends React.Component<PressProps> {
     render() {
         return (
             <div className={this.props.className} onScroll={this.props.isMobile ? this.props.onScroll : null}>
-                <AcclaimsList className={css ` height: 100%; `} isMobile={this.props.isMobile} />
+                <AcclaimsList className={css` height: 100%; `} isMobile={this.props.isMobile} />
             </div>
         );
     }

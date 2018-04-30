@@ -7,11 +7,14 @@ import youTube from 'src/services/YouTube';
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { GlobalStateShape } from 'src/types';
 
-export const initializeYoutubeElement = (el: HTMLElement): ThunkAction<void, GlobalStateShape, void> => (dispatch) => {
+export const initializeYoutubeElement = (el: HTMLElement, videoId?: string, isMobile?: boolean): ThunkAction<void, GlobalStateShape, void> => (dispatch) => {
     youTube.initializePlayerOnElement(el);
-    youTube.executeWhenPlayerReady(() => dispatch<ActionTypes.PlayerIsReady>({
-        type: VIDEO_ACTIONS.PLAYER_IS_READY,
-    }));
+    youTube.executeWhenPlayerReady(() => {
+        dispatch<ActionTypes.PlayerIsReady>({
+            type: VIDEO_ACTIONS.PLAYER_IS_READY,
+        });
+        videoId && dispatch(playVideo(isMobile, videoId));
+    });
 };
 
 const fetchPlaylistRequest = (): ActionTypes.FetchPlaylistRequest => ({
@@ -80,6 +83,9 @@ export const togglePlaylistAction = (show: boolean = null): ThunkAction<void, Gl
 
 export const playVideo = (isMobile: boolean = false, videoId?: string): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
     const videoPlayerReducer = getState().video_player;
+    if (!getState().video_playlist.items.find((item) => item.id === videoId)) {
+        return;
+    }
     if (!isMobile) {
         setTimeout(() => dispatch(togglePlaylist(false, getState())), 500);
     }

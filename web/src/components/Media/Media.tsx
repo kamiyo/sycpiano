@@ -1,5 +1,7 @@
+import startCase from 'lodash-es/startCase';
 import * as React from 'react';
 import styled from 'react-emotion';
+import { Helmet } from 'react-helmet';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
 
@@ -16,6 +18,7 @@ const Photos = () => register('photos', import(/* webpackChunkName: 'photos' */ 
 const Videos = () => register('videos', import(/* webpackChunkName: 'videos' */ 'src/components/Media/Videos'));
 import { cliburn1 } from 'src/styles/imageUrls';
 import { container } from 'src/styles/mixins';
+import { metaDescriptions, titleStringBase } from 'src/utils';
 
 const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
     if (element) {
@@ -46,56 +49,65 @@ const FadingContainer = styled('div') `
 `;
 
 const Media: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{ media: string; }>> = ({ isMobile, match, location }) => (
-    <MediaContainer>
-        <TransitionGroup>
-            <Transition
-                key={match.params.media}
-                onEntering={fadeOnEnter(0.25)}
-                onExiting={fadeOnExit}
-                timeout={750}
-                appear={true}
-            >
-                <FadingContainer>
-                    <Switch location={location}>
-                        <Route
-                            path="/media/videos"
-                            render={(childProps) => <AsyncComponent moduleProvider={Videos} {...childProps} isMobile={isMobile} />}
-                            exact={true}
-                        />
-                        <Route
-                            path="/media/music"
-                            render={({ match: subMatch }) =>
-                                <Switch location={location}>
-                                    <Route
-                                        path="/media/music/:composer?/:piece?/:movement?"
-                                        render={(childProps) => (
-                                            <AsyncComponent moduleProvider={Music} {...childProps} baseRoute={subMatch.url} isMobile={isMobile} />
-                                        )}
-                                    />
-                                    <Route
-                                        path="/media/music/(.*)"
-                                        render={() => (
-                                            <Redirect to="/media/music" />
-                                        )}
-                                    />
-                                    <Route
-                                        path="/media/music"
-                                        render={(childProps) => (
-                                            <AsyncComponent moduleProvider={Music} {...childProps} baseRoute={subMatch.url} isMobile={isMobile} />
-                                        )}
-                                    />
-                                </Switch>}
-                        />
-                        <Route
-                            path="/media/photos"
-                            render={(childProps) => <AsyncComponent moduleProvider={Photos} {...childProps} isMobile={isMobile} />}
-                            exact={true}
-                        />
-                    </Switch>
-                </FadingContainer>
-            </Transition>
-        </TransitionGroup>
-    </MediaContainer>
+    <>
+        <Helmet>
+            <title>{`${titleStringBase} | ${startCase(match.params.media)}`}</title>
+            <meta name="description" content={metaDescriptions[match.params.media]} />
+        </Helmet>
+        <MediaContainer>
+            <TransitionGroup component={null}>
+                <Transition
+                    key={match.params.media}
+                    onEntering={fadeOnEnter(0.25)}
+                    onExiting={fadeOnExit}
+                    timeout={750}
+                    appear={true}
+                >
+                    <FadingContainer>
+                        <Switch location={location}>
+                            <Route
+                                path="/media/videos/:videoId?"
+                                render={(childProps) => <AsyncComponent moduleProvider={Videos} {...childProps} isMobile={isMobile} />}
+                                exact={true}
+                            />
+                            <Route
+                                path="/media/music"
+                                render={({ match: subMatch }) =>
+                                    <Switch location={location}>
+                                        <Route
+                                            path="/media/music/:composer?/:piece?/:movement?"
+                                            render={(childProps) => (
+                                                <AsyncComponent moduleProvider={Music} {...childProps} baseRoute={subMatch.url} isMobile={isMobile} />
+                                            )}
+                                        />
+                                        <Route
+                                            path="/media/music/(.*)"
+                                            render={() => (
+                                                <Redirect to="/media/music" />
+                                            )}
+                                        />
+                                        <Route
+                                            path="/media/music"
+                                            render={(childProps) => (
+                                                <AsyncComponent moduleProvider={Music} {...childProps} baseRoute={subMatch.url} isMobile={isMobile} />
+                                            )}
+                                        />
+                                    </Switch>}
+                            />
+                            <Route
+                                path="/media/photos"
+                                render={(childProps) => <AsyncComponent moduleProvider={Photos} {...childProps} isMobile={isMobile} />}
+                                exact={true}
+                            />
+                            <Route
+                                render={() => <Redirect to="/media/videos"/>}
+                            />
+                        </Switch>
+                    </FadingContainer>
+                </Transition>
+            </TransitionGroup>
+        </MediaContainer>
+    </>
 );
 
 export type MediaType = typeof Media;

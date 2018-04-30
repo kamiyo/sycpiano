@@ -1,38 +1,4 @@
-type PolarToCartesianShape = (
-    radius: number,
-    angle: number,
-    offset?: [number, number],
-) => [number, number];
-
-export const polarToCartesian: PolarToCartesianShape = (radius, angle, offset = [0, 0]) => (
-    [
-        radius * Math.cos(angle) + offset[0],
-        radius * Math.sin(angle) + offset[1],
-    ]
-);
-
-type CartesianToPolarShape = (
-    x: number,
-    y: number,
-) => { radius: number, angle: number };
-
-export const cartesianToPolar: CartesianToPolarShape = (x, y) => (
-    {
-        radius: Math.sqrt(x * x + y * y),
-        angle: Math.atan2(y, x),
-    }
-);
-
-export const formatTime = (current: number) => {
-    if (current === -1) {
-        return '--:--';
-    }
-    const minutes = Math.floor(current / 60);
-    const seconds = Math.floor(current - 60 * minutes);
-    const minutesDisplay = `${minutes < 10 ? '0' : ''}${minutes}`;
-    const secondsDisplay = `${seconds < 10 ? '0' : ''}${seconds}`;
-    return `${minutesDisplay}:${secondsDisplay}`;
-};
+import blurbs from 'src/components/About/blurbs';
 
 export interface FormattedLocationShape {
     venue: string;
@@ -49,24 +15,36 @@ export const formatLocation = (location: string): FormattedLocationShape => {
     return { venue, street, stateZipCountry };
 };
 
-const AudioContextFill = (window as any).AudioContext || (window as any).webkitAudioContext;
-const acx = new AudioContextFill();
-
-export const getAudioContext: any = () => {
-    return acx;
-};
-
-export const getLastName = (name: string) => {
-    return /([^\s]+)\s?(?:\(.*\))?$/.exec(name)[1];
-};
-
-export const normalizeString = (str: string) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f":()',\.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
-};
-
 export const getViewportSize = () => (
     {
         width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
         height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0),
     }
 );
+
+export const titleStringBase = 'Sean Chen: Pianist, Composer, Arranger';
+
+export const metaDescriptions: {
+    home: string;
+    about: string;
+    contact: string;
+    upcoming: string;
+    archive: string;
+    videos: string;
+    music: string;
+    photos: string;
+    press: string;
+    getMusic: (piece: string) => string;
+    [index: string]: any;
+} = {
+    home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
+    about: `${blurbs[0]}...`,
+    contact: `Contact information for Sean Chen and for booking performances.`,
+    upcoming: 'Upcoming recitals, concerti, and masterclasses.',
+    archive: 'Past recitals, concerti, and masterclasses.',
+    videos: 'A playlist of Sean Chen\'s YouTube clips.',
+    music: 'A playlist of Sean Chen\'s live concert recordings, and a link to his Spotify musician page.',
+    getMusic: (piece: string) => `Listen to Sean Chen's live performance of ${piece}.`,
+    photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
+    press: `Reviews of Sean Chen's performances.`,
+};

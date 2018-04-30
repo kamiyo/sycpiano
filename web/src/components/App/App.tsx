@@ -1,6 +1,7 @@
-import toUpper from 'lodash-es/toUpper';
+import { startCase, toLower, toUpper } from 'lodash-es';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
+import { Helmet } from 'react-helmet';
 import ReactMedia from 'react-media';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
@@ -12,6 +13,7 @@ import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 
 import 'gsap/CSSPlugin';
 import TweenLite from 'gsap/TweenLite';
+import moment from 'moment-timezone';
 
 import NavBar from 'src/components/App/NavBar/NavBar';
 import { LogoSVG } from 'src/components/LogoSVG';
@@ -21,6 +23,7 @@ import extractModule from 'src/module';
 import store from 'src/store';
 import { reactMediaMobileQuery } from 'src/styles/screens';
 import { GlobalStateShape } from 'src/types';
+import { metaDescriptions, titleStringBase } from 'src/utils';
 
 const register = extractModule(store);
 const About = () => register('about', import(/* webpackChunkName: 'about' */ 'src/components/About'));
@@ -29,6 +32,7 @@ const Home = () => register('home', import(/* webpackChunkName: 'home' */ 'src/c
 const Media = () => register('media', import(/* webpackChunkName: 'media' */ 'src/components/Media'));
 const Press = () => register('press', import(/* webpackChunkName: 'press' */ 'src/components/Press'));
 const Schedule = () => register('schedule', import(/* webpackChunkName: 'schedule' */ 'src/components/Schedule'));
+const Page404 = () => register('page404', import(/* webpackChunkName: 'page404' */ 'src/components/Error'));
 
 const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
     if (element) {
@@ -101,71 +105,82 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
     }
 
     render() {
+        let currentPage = this.getRouteBase();
+        currentPage = currentPage === '/' ? 'Home' : startCase(currentPage.replace('/', ''));
+        const description = metaDescriptions[toLower(currentPage)] || 'Welcome to the official website of pianist, composer, and arranger Sean Chen';
         return (
-            <ReactMedia query={reactMediaMobileQuery}>
-                {(matches: boolean) => (
-                    <RootContainer isHome={this.getRouteBase() === '/'}>
-                        <LogoSVG />
-                        <Transition
-                            in={this.state.homeBgLoaded && this.props.navbarVisible}
-                            onEntering={this.getRouteBase() === '/' ? fadeOnEnter(0) : slideOnEnter(0)}
-                            onExiting={slideOnExit(0)}
-                            timeout={250}
-                            appear={true}
-                        >
-                            <NavBar
-                                className={css` visibility: hidden; `}
-                                currentBasePath={this.getRouteBase()}
-                                specificRouteName={this.getMostSpecificRouteName()}
-                                isMobile={matches}
-                            />
-                        </Transition>
-                        <TransitionGroup>
+            <>
+                <Helmet>
+                    <title>{`${titleStringBase} | ${currentPage}`}</title>
+                    <meta name="description" content={description} />
+                    <meta name="copyright" content={`copyright Sean Chen ${moment().format('YYYY')}.`} />
+                </Helmet>
+                <ReactMedia query={reactMediaMobileQuery}>
+                    {(matches: boolean) => (
+                        <RootContainer isHome={this.getRouteBase() === '/'}>
+                            <LogoSVG />
                             <Transition
-                                key={this.getRouteBase()}
-                                onEntering={fadeOnEnter(0.25)}
-                                onExiting={fadeOnExit(0)}
-                                timeout={750}
+                                in={this.state.homeBgLoaded && this.props.navbarVisible}
+                                onEntering={this.getRouteBase() === '/' ? fadeOnEnter(0) : slideOnEnter(0)}
+                                onExiting={slideOnExit(0)}
+                                timeout={250}
                                 appear={true}
                             >
-                                <FadingContainer>
-                                    <Switch location={this.props.location}>
-                                        <Route
-                                            path="/about"
-                                            exact={true}
-                                            render={(childProps) => <AsyncComponent moduleProvider={About} {...childProps} isMobile={matches} />}
-                                        />
-                                        <Route
-                                            path="/contact"
-                                            exact={true}
-                                            render={(childProps) => <AsyncComponent moduleProvider={Contact} {...childProps} isMobile={matches} />}
-                                        />
-                                        <Route
-                                            path="/media/:media/:other*"
-                                            exact={true}
-                                            render={(childProps) => <AsyncComponent moduleProvider={Media} {...childProps} isMobile={matches} />}
-                                        />
-                                        <Route
-                                            path="/press"
-                                            exact={true}
-                                            render={(childProps) => <AsyncComponent moduleProvider={Press} {...childProps} isMobile={matches} />}
-                                        />
-                                        <Route
-                                            path="/schedule/:type?/:date?"
-                                            render={(childProps) => <AsyncComponent moduleProvider={Schedule} {...childProps} isMobile={matches} />}
-                                        />
-                                        <Route
-                                            path="/"
-                                            exact={true}
-                                            render={(childProps) => <AsyncComponent moduleProvider={Home} {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />}
-                                        />
-                                    </Switch>
-                                </FadingContainer>
+                                <NavBar
+                                    className={css` visibility: hidden; `}
+                                    currentBasePath={this.getRouteBase()}
+                                    specificRouteName={this.getMostSpecificRouteName()}
+                                    isMobile={matches}
+                                />
                             </Transition>
-                        </TransitionGroup>
-                    </RootContainer>
-                )}
-            </ReactMedia>
+                            <TransitionGroup component={null}>
+                                <Transition
+                                    key={this.getRouteBase()}
+                                    onEntering={fadeOnEnter(0.25)}
+                                    onExiting={fadeOnExit(0)}
+                                    timeout={750}
+                                    appear={true}
+                                >
+                                    <FadingContainer>
+                                        <Switch location={this.props.location}>
+                                            <Route
+                                                path="/about"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent moduleProvider={About} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/contact"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent moduleProvider={Contact} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/media/:media/:other*"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent moduleProvider={Media} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/press"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent moduleProvider={Press} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/schedule/:type?/:date?"
+                                                render={(childProps) => <AsyncComponent moduleProvider={Schedule} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent moduleProvider={Home} {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />}
+                                            />
+                                            <Route render={() => <AsyncComponent moduleProvider={Page404} />} />
+                                        </Switch>
+                                    </FadingContainer>
+                                </Transition>
+                            </TransitionGroup>
+                        </RootContainer>
+                    )}
+                </ReactMedia>
+            </>
         );
     }
 }
