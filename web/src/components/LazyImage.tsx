@@ -1,4 +1,4 @@
-import * as Blazy from 'blazy';
+import Blazy from 'blazy';
 import * as React from 'react';
 import styled from 'react-emotion';
 import { Transition } from 'react-transition-group';

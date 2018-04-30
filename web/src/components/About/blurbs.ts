@@ -1,4 +1,4 @@
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 
 const age = moment().diff('1988-08-27', 'year');
 

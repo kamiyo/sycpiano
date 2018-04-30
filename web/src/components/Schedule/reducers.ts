@@ -90,8 +90,8 @@ const eventItemsReducer = (
                 isFetchingList: false,
                 currentItem: action.currentItem ? action.currentItem : state.currentItem,
                 // because of sorting mechanism, reverse list has min and max reversed
-                minDate: moment.min(state.items.min().dateTime, state.items.max().dateTime),
-                maxDate: moment.max(state.items.min().dateTime, state.items.max().dateTime),
+                minDate: state.items.length ? moment.min(state.items.min().dateTime, state.items.max().dateTime) : moment(),
+                maxDate: state.items.length ? moment.max(state.items.min().dateTime, state.items.max().dateTime) : moment(),
                 hasMore: action.hasMore,
             };
         case SCHEDULE_ACTIONS.FETCH_EVENTS_REQUEST:

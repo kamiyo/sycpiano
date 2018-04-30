@@ -14,11 +14,7 @@ const config = merge(common.config, {
         chunkFilename: '[name].[chunkhash:8].chunk.js',
     },
     plugins: [
-        new UglifyJsPlugin({
-            uglifyOptions: {
-                ecma: 6,
-            },
-        }),
+        new UglifyJsPlugin(),
         new webpack.DefinePlugin({
             MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music'),
         }),
