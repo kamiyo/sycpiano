@@ -26,7 +26,7 @@ const descriptions: {
     music: string;
     photos: string;
     press: string;
-    getMusic: (piece: string) => string;
+    getMusic: (piece: string, contributors?: string) => string;
     [index: string]: any;
 } = {
         home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
@@ -36,7 +36,8 @@ const descriptions: {
         archive: 'Past recitals, concerti, and masterclasses.',
         videos: `A playlist of Sean Chen's YouTube clips.`,
         music: `A playlist of Sean Chen's live concert recordings, and a link to his Spotify musician page.`,
-        getMusic: (piece: string) => `Listen to Sean Chen's live performance of ${piece}.`,
+        getMusic: (piece: string, contributors?: string) =>
+            `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
         photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
         press: `Reviews of Sean Chen's performances.`,
     };
@@ -70,17 +71,18 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
                 include: [
                     {
                         model: db.models.music,
-                        attributes: ['composer', 'piece'],
+                        attributes: ['composer', 'piece', 'contributors'],
                     },
                 ],
             }))[0];
             const {
                 composer,
                 piece,
+                contributors,
             } = musicFile.music;
             return {
                 title: baseString + startCase(parsed[2]) + ' | ' + composer + ' ' + piece + (musicFile.name ? ' - ' + musicFile.name : ''),
-                description: descriptions.getMusic(composer + ' ' + piece + (musicFile.name ? ' - ' + musicFile.name : '')),
+                description: descriptions.getMusic(composer + ' ' + piece + (musicFile.name ? ' - ' + musicFile.name : ''), contributors),
             };
         } catch (e) {
             return {
