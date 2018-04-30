@@ -62,7 +62,7 @@ const config = () => {
                                     {
                                         sourceMap: true,
                                         hoist: true,
-                                        autoLabel: true,
+                                        autoLabel: isProd ? false : true,
                                     },
                                 ],
                                 'syntax-dynamic-import',
