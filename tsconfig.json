@@ -19,7 +19,7 @@
             "@types"
         ],
         "module": "esnext",
-        "target": "es2015",
+        "target": "es5",
         "jsx": "react",
         "allowJs": true,
         "moduleResolution": "node",
@@ -30,6 +30,7 @@
         "preserveConstEnums": true,
         "sourceMap": true,
         "allowSyntheticDefaultImports": true,
+        "downlevelIteration": true,
         "skipLibCheck": true,
         "outDir": "web/build",
         "baseUrl": "."
