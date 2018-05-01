@@ -80,6 +80,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     CQ_BINS: number;
     INV_CQ_BINS: number;
 
+    vizBins: Float32Array;
+
     MAX_BIN: number;
     HIGH_PASS_BIN: number;
     LOW_PASS_BIN: number;
@@ -127,6 +129,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.HALF_CROSSINGS = firLoader.halfCrossings;
             this.FILTER_SIZE = firLoader.filterSize;
             this.STEP_SIZE = this.CQ_BINS / CIRCLE_SAMPLES;
+            this.vizBins = new Float32Array(this.CQ_BINS);
 
             this.requestId = requestAnimationFrame(this.onAnalyze);
         } catch (err) {
@@ -169,16 +172,16 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             lowFreq: 0,
         });
         const resultR = constantQ.apply(normalizedDataR).reverse();
-        const result = new Float32Array(resultL.length + resultR.length);
-        result.set(resultL);
-        result.set(resultR, resultL.length);
+
+        this.vizBins.set(resultL);
+        this.vizBins.set(resultR, resultL.length);
 
         // Average left and right for each high and low accumulator, and divide by number of bins
         let highFreq = (accumulatorL.highFreq + accumulatorR.highFreq) / (2 * (this.MAX_BIN - this.HIGH_PASS_BIN));
         const lowFreq = (accumulatorL.lowFreq + accumulatorR.lowFreq) / (2 * this.HIGH_PASS_BIN);
         highFreq = HIGH_FREQ_SCALE * highFreq;
 
-        this.drawVisualization(this.visualizationCtx, lowFreq, result, highFreq, timestamp);
+        this.drawVisualization(this.visualizationCtx, lowFreq, this.vizBins, highFreq, timestamp);
         this.requestId = requestAnimationFrame(this.onAnalyze);
     }
 

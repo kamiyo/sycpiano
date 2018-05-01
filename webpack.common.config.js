@@ -49,14 +49,6 @@ const config = () => {
                     {
                         loader: 'babel-loader',
                         options: {
-                            presets: [
-                                ['env', {
-                                    target: {
-                                        chrome: 41,
-                                    },
-                                    modules: false,
-                                }],
-                            ],
                             plugins: [
                                 ['emotion',
                                     {
