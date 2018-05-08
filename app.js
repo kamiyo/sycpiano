@@ -62,7 +62,7 @@ app.get(/\//, async (req, res) => {
         res.end();
     } else {
         if (!meta.image) {
-            meta.image = '/static/images/syc_chair_twitter.jpg';
+            meta.image = 'https://www.seanchenpiano.com/static/images/syc_chair_meta.jpg';
         }
         res.render('index', {
             twitter: meta,
