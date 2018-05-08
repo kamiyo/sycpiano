@@ -172,6 +172,7 @@ export interface CalendarCollaboratorModel extends Model<CalendarCollaboratorIns
 export interface PhotoAttributes {
     readonly id?: DataTypeUUID;
     readonly file: DataTypeString;
+    readonly credit: DataTypeString;
     readonly width: DataTypeInteger;
     readonly height: DataTypeInteger;
     readonly thumbnailWidth: DataTypeInteger;

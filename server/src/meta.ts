@@ -8,6 +8,8 @@ import db from './models';
 import { CalendarInstance, MusicFileInstance } from './types';
 
 const YoutubeAPIKey = 'AIzaSyAD_AhLWUhbUCnLBu4VHZR3ecakL2IbhqU';
+const YoutubeVideoUrl = 'https://www.googleapis.com/youtube/v3/playlistItems';
+const playlistId = 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9';
 const models = db.models;
 const sequelize = db.sequelize;
 
@@ -95,12 +97,12 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
     if (parsed[2] === 'videos') {
         const videoId = parsed[3];
         try {
-            const playlistResponse = await axios.get('https://www.googleapis.com/youtube/v3/playlistItems', {
+            const playlistResponse = await axios.get(YoutubeVideoUrl, {
                 params: {
                     key: YoutubeAPIKey,
                     maxResults: 1,
                     part: 'id, snippet',
-                    playlistId: 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9',
+                    playlistId,
                     videoId,
                 },
             });
@@ -141,7 +143,7 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
             return {
                 title: baseString + startCase(parsed[1]),
                 description: descriptions[parsed[1]],
-                sanitize: parsed[3],
+                sanitize: e === 'invalid date' ? parsed[3] : undefined,
             };
         }
     }

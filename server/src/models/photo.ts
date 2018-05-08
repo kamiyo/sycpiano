@@ -10,7 +10,8 @@ const Photo = (sequelize: Sequelize, dataTypes: DataTypes) => (
             allowNull: false,
             unique: true,
         },
-        file: dataTypes.TEXT,
+        file: dataTypes.STRING,
+        credit: dataTypes.STRING,
         width: dataTypes.INTEGER,
         height: dataTypes.INTEGER,
         thumbnailWidth: {
