@@ -1,0 +1,13 @@
+{
+    "apps": [
+        {
+            "name": "sycpiano",
+            "script": "npm",
+            "args": "start",
+            "env": {
+	        "NODE_ENV": "production",
+		"PORT": 8080
+	    }
+	}
+    ]
+}
