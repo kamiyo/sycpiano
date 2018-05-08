@@ -9,13 +9,6 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const os = require('os');
 const threadLoader = require('thread-loader');
 
-const threadPoolSize = os.cpus().length - 1;
-
-const workerPool = {
-    workers: threadPoolSize,
-    poolTimeout: Infinity,
-};
-
 const config = () => {
     return merge(common.config, {
         mode: 'development',
