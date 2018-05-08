@@ -3,7 +3,7 @@ import styled, { css, cx } from 'react-emotion';
 import { connect } from 'react-redux';
 
 import mix from 'polished/lib/color/mix';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 
 import TweenLite from 'gsap/TweenLite';
@@ -165,62 +165,61 @@ const exitAnimation = (el: HTMLElement, isMobile: boolean) => {
         : TweenLite.to(el, 0.25, { autoAlpha: 0 });
 };
 
-let NavBarLink: React.SFC<NavBarLinkProps & NavBarLinkDispatchToProps & NavBarLinkStateToProps> = (props) => (
-    <li className={props.className}>
-        {
-            (props.subNavLinks) ?
-                <a
-                    onClick={() => props.toggleSubNav(props.link)}
-                    className={cx(
-                        linkStyle,
-                        { [linkActiveStyle]: props.active && !props.isHome && !props.isMobile },
-                        { [linkHomeStyle]: props.isHome && !props.isExpanded },
-                        { [linkHomeActiveStyle]: props.active && props.isHome && !props.isMobile },
-                    )}
+let NavBarLink: React.SFC<NavBarLinkProps & NavBarLinkDispatchToProps & NavBarLinkStateToProps> = (props) => {
+    // choose type of link based on whether there are subnavs, and whether it is blog (can extend later to maybe a isExternal prop)
+    const LLink = (props.subNavLinks || props.link === 'blog') ? 'a' : Link;
+    // className attr is common
+    const attr: React.LinkHTMLAttributes<HTMLElement> | LinkProps = {
+        className: cx(
+            linkStyle,
+            { [linkActiveStyle]: props.active && !props.isHome && !props.isMobile },
+            { [linkHomeStyle]: props.isHome && !props.isExpanded },
+            { [linkHomeActiveStyle]: props.active && props.isHome && !props.isMobile },
+        ),
+    };
+    // add attr's conditionally
+    if (props.link === 'blog') {
+        attr.href = props.to;
+    } else if (props.subNavLinks) {
+        attr.onClick = () => props.toggleSubNav(props.link);
+    } else {
+        (attr as LinkProps).to = props.to;
+        attr.onClick = () => {
+            props.toggleSubNav('');
+            props.isMobile && props.toggleExpanded(false);
+        };
+    }
+    return (
+        <li className={props.className}>
+            <LLink {...attr}>
+                <Highlight active={props.active} isHome={props.isHome} link={props.link} isMobile={props.isMobile} />
+            </LLink>
+            {
+                props.subNavLinks &&
+                <Transition
+                    in={props.showSubs.includes(props.link)}
+                    onEnter={(el, isAppearing) => enterAnimation(el, isAppearing, props.isMobile)}
+                    onExit={(el) => exitAnimation(el, props.isMobile)}
+                    timeout={250}
+                    appear={true}
                 >
-                    <Highlight active={props.active} isHome={props.isHome} link={props.link} isMobile={props.isMobile} />
-                </a> :
-                <Link
-                    to={props.to}
-                    onClick={() => {
-                        props.toggleSubNav('');
-                        props.isMobile && props.toggleExpanded(false);
-                    }}
-                    className={cx(
-                        linkStyle,
-                        { [linkActiveStyle]: props.active && !props.isHome && !props.isMobile },
-                        { [linkHomeStyle]: props.isHome && !props.isExpanded },
-                        { [linkHomeActiveStyle]: props.active && props.isHome && !props.isMobile },
-                    )}
-                >
-                    <Highlight active={props.active} isHome={props.isHome} link={props.link} isMobile={props.isMobile} />
-                </Link>
-        }
-        {
-            props.subNavLinks &&
-            <Transition
-                in={props.showSubs.includes(props.link)}
-                onEnter={(el, isAppearing) => enterAnimation(el, isAppearing, props.isMobile)}
-                onExit={(el) => exitAnimation(el, props.isMobile)}
-                timeout={250}
-                appear={true}
-            >
-                <div className={getSubNavContainer}>
-                    <SubNav
-                        basePath={props.to}
-                        links={props.subNavLinks}
-                        onClick={() => {
-                            props.toggleSubNav('');
-                            props.isMobile && props.toggleExpanded(false);
-                        }}
-                        isHome={props.isHome}
-                        isMobile={props.isMobile}
-                    />
-                </div>
-            </Transition>
-        }
-    </li>
-);
+                    <div className={getSubNavContainer}>
+                        <SubNav
+                            basePath={props.to}
+                            links={props.subNavLinks}
+                            onClick={() => {
+                                props.toggleSubNav('');
+                                props.isMobile && props.toggleExpanded(false);
+                            }}
+                            isHome={props.isHome}
+                            isMobile={props.isMobile}
+                        />
+                    </div>
+                </Transition>
+            }
+        </li>
+    );
+};
 
 NavBarLink = styled(NavBarLink) `
     font-size: 1.4rem;
