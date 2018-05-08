@@ -5,7 +5,16 @@ export const navBarHeight = {
 
 export const navBarMarginTop = 18;
 
-export const playlistContainerWidth = 550;
+// be sure to use vw for tablet and px for desktop
+const desktopPlaylistWidth = 550;
+
+export const playlistContainerWidth = {
+    desktop: '550px',
+    tablet: '45vw',
+};
 export const playlistTogglerWidth = 20;
-export const playlistWidth = playlistContainerWidth - playlistTogglerWidth;
+export const playlistWidth = {
+    desktop: `${desktopPlaylistWidth - playlistTogglerWidth}px`,
+    tablet: `calc(${playlistContainerWidth.tablet} - ${playlistTogglerWidth}px)`,
+};
 export const playlistPadding = 10;

@@ -19,8 +19,8 @@ interface MusicPlaylistStateToProps {
 interface MusicPlaylistOwnProps {
     readonly baseRoute: string;
     readonly currentTrackId: string;
-    readonly onClick: (item: MusicFileItem, autoPlay: boolean) => void;
-    readonly audio: HTMLAudioElement;
+    readonly onClick: (item: MusicFileItem) => void;
+    readonly play: () => void;
     readonly userInput: boolean;
     readonly onFirstUserInput: () => void;
     readonly isMobile: boolean;
@@ -66,7 +66,7 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
     items,
     onClick,
     currentTrackId,
-    audio,
+    play,
     baseRoute,
     userInput,
     onFirstUserInput,
@@ -85,7 +85,7 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
                         item={item}
                         onClick={onClick}
                         currentItemId={currentTrackId}
-                        audio={audio}
+                        play={play}
                         baseRoute={baseRoute}
                         userInput={userInput}
                         onFirstUserInput={onFirstUserInput}

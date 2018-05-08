@@ -5,7 +5,7 @@ import tint from 'polished/lib/color/tint';
 
 import SubNavLink from 'src/components/App/NavBar/SubNav/SubNavLink';
 import { logoBlue } from 'src/styles/colors';
-import { screenXSorPortrait } from 'src/styles/screens';
+import { screenMorPortrait } from 'src/styles/screens';
 
 interface SubNavProps {
     readonly className?: string;
@@ -35,7 +35,7 @@ SubNav = styled<SubNavProps, 'SubNav'>(SubNav)`
     transform: translateX(-50%);
     overflow: visible;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${/* sc-selector */ screenMorPortrait} {
         width: 100%;
         padding: 10px 0;
         background-color: ${tint(0.2, logoBlue)};

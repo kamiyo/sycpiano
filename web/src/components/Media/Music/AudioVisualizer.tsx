@@ -7,7 +7,7 @@ import { polarToCartesian } from 'src/components/Media/Music/utils';
 import { constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
 
-import { screenXSorPortrait } from 'src/styles/screens';
+import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 const TWO_PI = 2 * Math.PI;
@@ -46,8 +46,12 @@ const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     position: absolute;
     left: 0;
     top: 0;
-    width: calc(100% - ${playlistContainerWidth}px);
+    width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
+
+    ${/* sc-selector */ screenM} {
+        width: calc(100% - ${playlistContainerWidth.tablet});
+    }
 
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
@@ -94,6 +98,9 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     firDeltas: Float32Array;
 
     STEP_SIZE: number;
+    lastHover: boolean = false;
+    lastCurrentPosition: number = 0;
+    idleStart: number = 0;
     requestId: number;
 
     adjustHeight = () => {
@@ -153,6 +160,24 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         if (!this.props.analyzers[0] || !this.props.analyzers[1]) {
             this.requestId = requestAnimationFrame(this.onAnalyze);
             return;
+        }
+
+        if (!this.props.isPlaying) {
+            // reset idleStart time if either hover or currPos changes
+            if (this.lastHover !== this.props.isHoverSeekring ||
+                this.lastCurrentPosition !== this.props.currentPosition
+            ) {
+                this.idleStart = timestamp;
+            }
+            // update hover and currPos (no effect obviously if no change)
+            this.lastHover = this.props.isHoverSeekring;
+            this.lastCurrentPosition = this.props.currentPosition;
+            // if has been idle for over 3.5 seconds, cancel animation
+            if (this.idleStart !== 0 && (timestamp - this.idleStart > 3500)) {
+                cancelAnimationFrame(this.requestId);
+                this.requestId = 0;
+                return;
+            }
         }
 
         this.props.analyzers[0].getByteFrequencyData(this.frequencyData);
@@ -345,6 +370,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
         cancelAnimationFrame(this.requestId);
+        this.requestId = 0;
     }
 
     // dunno why it doens't work without this. onResize should be called anyways
@@ -353,10 +379,17 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.adjustHeight();
             this.onResize();
         }
+        if (!this.requestId) {
+            this.requestId = requestAnimationFrame(this.onAnalyze);
+        }
     }
 
     shouldComponentUpdate(nextProps: AudioVisualizerProps) {
-        if (nextProps.isMobile !== this.props.isMobile) {
+        if (nextProps.isMobile !== this.props.isMobile ||
+            nextProps.currentPosition !== this.props.currentPosition ||
+            nextProps.isPlaying && !this.props.isPlaying ||
+            nextProps.isHoverSeekring !== this.props.isHoverSeekring
+        ) {
             return true;
         }
         return false;

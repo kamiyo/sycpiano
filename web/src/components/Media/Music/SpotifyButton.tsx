@@ -3,7 +3,7 @@ import styled from 'react-emotion';
 import { Link } from 'react-router-dom';
 
 import { staticImage } from 'src/styles/imageUrls';
-import { screenXSorPortrait } from 'src/styles/screens';
+import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { playlistWidth } from 'src/styles/variables';
 
 interface SpotifyButtonProps {
@@ -24,7 +24,7 @@ let SpotifyButton: React.SFC<SpotifyButtonProps> = ({ className }) => {
 SpotifyButton = styled<SpotifyButtonProps, typeof SpotifyButton>(SpotifyButton) `
     position: fixed;
     bottom: 25px;
-    right: ${playlistWidth / 2}px;
+    right: calc(${playlistWidth.desktop} / 2);
     transform: translateX(50%);
     z-index: 50;
     filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
@@ -38,6 +38,10 @@ SpotifyButton = styled<SpotifyButtonProps, typeof SpotifyButton>(SpotifyButton) 
 
     a img {
         display: block;
+    }
+
+    ${/* sc-selector */ screenM} {
+        right: calc(${playlistWidth.tablet} / 2);
     }
 
     ${/* sc-selector */ screenXSorPortrait} {

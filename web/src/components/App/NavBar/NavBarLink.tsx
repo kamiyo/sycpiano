@@ -9,13 +9,14 @@ import { Transition } from 'react-transition-group';
 import TweenLite from 'gsap/TweenLite';
 
 import { toggleExpanded, toggleSubNav } from 'src/components/App/NavBar/actions';
+import { links } from 'src/components/App/NavBar/links';
 import SubNav from 'src/components/App/NavBar/SubNav/SubNav';
 import { GlobalStateShape } from 'src/types';
 
 import { lightBlue, logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { screenXSorPortrait } from 'src/styles/screens';
+import { screenM, screenMorPortrait, screenXS } from 'src/styles/screens';
 import { navBarHeight, navBarMarginTop } from 'src/styles/variables';
 
 interface HighlightProps {
@@ -24,12 +25,6 @@ interface HighlightProps {
     readonly isHome: boolean;
     readonly link: string;
 }
-
-const getHighlightStyles = (isMobile: boolean) => css`
-    height: ${isMobile ? 'unset' : `${navBarHeight.desktop - navBarMarginTop}px`};
-    padding: ${isMobile ? '1.8rem 0' : '20px 10px 0 10px'};
-    margin-top: ${navBarMarginTop}px;
-`;
 
 const getHighlightDefaultStyle = css`
     width: 100%;
@@ -55,8 +50,24 @@ const highlightHomeActivestyle = css`
     height: 5px;
 `;
 
-const HyperlinkText = styled<{ isMobile: boolean }, 'div'>('div') `
-    ${props => getHighlightStyles(props.isMobile)}
+const HyperlinkText = styled('div') `
+    height: ${navBarHeight.desktop - navBarMarginTop}px;
+    padding: 20px 10px 0 10px;
+    margin-top: ${navBarMarginTop}px;
+
+    ${/* sc-selector */ screenMorPortrait} {
+        margin-top: unset;
+        height: unset;
+        line-height: 1.5rem;
+    }
+
+    ${/* sc-selector */ screenXS} {
+        padding: calc((((100vh - ${navBarHeight.mobile}px - 1.8rem) / ${links.length}) - 1.6rem) / 2) 0;
+    }
+
+    ${/* sc-selector */ screenM} {
+        padding: calc((((100vh - ${navBarHeight.desktop}px - 1.8rem) / ${links.length}) - 1.6rem) / 2) 0;
+    }
 `;
 
 const Highlight: React.SFC<HighlightProps> = ({ active, isHome, link, isMobile }) => (
@@ -69,7 +80,7 @@ const Highlight: React.SFC<HighlightProps> = ({ active, isHome, link, isMobile }
                 { [highlightHomeActivestyle]: active && isHome },
             )}
         />}
-        <HyperlinkText isMobile={isMobile}>{link}</HyperlinkText>
+        <HyperlinkText>{link}</HyperlinkText>
     </>
 );
 
@@ -128,7 +139,7 @@ const linkHomeActiveStyle = css`
 const getSubNavContainer = css`
     visibility: hidden;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${/* sc-selector */ screenMorPortrait} {
         visibility: unset;
         height: 0;
         overflow: hidden;

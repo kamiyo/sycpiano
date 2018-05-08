@@ -9,7 +9,7 @@ import { PlaylistProps } from 'src/components/Media/types';
 import { playlistBackground } from 'src/styles/colors';
 import { lato1 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { screenXSorPortrait } from 'src/styles/screens';
+import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { playlistContainerWidth, playlistWidth } from 'src/styles/variables';
 
 const slideLeft = (element: HTMLElement, amount: number, delay = 0) => {
@@ -25,12 +25,17 @@ const playlistContainerStyle = css`
     position: absolute;
     height: 100%;
     right: 0;
-    width: ${playlistContainerWidth}px;
-    transform: translateX(${playlistWidth}px);
+    width: ${playlistContainerWidth.desktop};
+    transform: translateX(${playlistWidth.desktop});
     font-family: ${lato1};
     z-index: 50;
     display: flex;
     ${noHighlight}
+
+    ${/* sc-selector */ screenM} {
+        width: ${playlistContainerWidth.tablet};
+        transform: translateX(${playlistWidth.tablet});
+    }
 
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;

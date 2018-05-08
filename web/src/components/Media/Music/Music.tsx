@@ -70,9 +70,7 @@ const musicStyle = css`
 `;
 
 class Music extends React.Component<MusicProps, MusicState> {
-    autoPlay = false;
     wasPlaying = false;
-    loaded = false;
     audio: React.RefObject<HTMLAudioElement> = React.createRef();
     state: MusicState = {
         isPlaying: false,
@@ -96,9 +94,6 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     play = () => {
-        if (!this.loaded) {
-            this.autoPlay = false;
-        }
         this.audio.current.play();
     }
 
@@ -149,15 +144,18 @@ class Music extends React.Component<MusicProps, MusicState> {
         try {
             const { composer, piece, movement } = this.props.match.params;
             const firstTrack = await this.props.fetchPlaylistAction(composer, piece, movement) as any;
-            this.loadTrack(firstTrack, false);
+            this.loadTrack(firstTrack);
         } catch (err) {
             console.error('playlist init failed.', err);
         }
     }
 
-    loadTrack = async (track: MusicFileItem, autoPlay: boolean) => {
-        this.loaded = false;
-        this.autoPlay = autoPlay;
+    loadTrack = async (track: MusicFileItem) => {
+        if (this.state.currentTrack && this.state.currentTrack.musicFiles[0] &&
+            this.state.currentTrack.musicFiles[0].id === track.id
+        ) {
+            return Promise.reject(new Error('no clicky'));
+        }
         await new Promise((resolve) => {
             TweenLite.fromTo(this.audio.current, 0.3, { volume: this.audio.current.volume }, {
                 volume: 0,
@@ -178,14 +176,11 @@ class Music extends React.Component<MusicProps, MusicState> {
                 musicFiles: [track],
             } as MusicItem,
             duration: -1,
-            isLoading: true,
+            isLoading: this.state.userInput ? true : false,
         });
         waveformLoader.loadWaveformFile(`${MUSIC_PATH}/waveforms/${track.waveformFile}`);
         this.audio.current.src = `${MUSIC_PATH}/${track.audioFile}`;
         await waveformLoader.loaded;
-        this.setState({
-            isLoading: false,
-        });
         TweenLite.fromTo(this.audio.current, 0.3, { volume: 0 }, {
             volume: 1,
             onUpdate: () => {
@@ -211,7 +206,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         });
         const next = this.getNextMovement();
         if (next) {
-            this.loadTrack(next, true);
+            this.loadTrack(next);
         }
     }
 
@@ -242,13 +237,12 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     audioOnLoad = async () => {
-        this.setState({ duration: this.audio.current.duration });
-        this.loaded = true;
+        this.setState({
+            duration: this.audio.current.duration,
+            isLoading: false,
+        });
         try {
             await Promise.all([constantQ.loaded, firLoader.loaded, waveformLoader.loaded]);
-            if (this.autoPlay) {
-                this.audio.current.play();
-            }
         } catch (err) {
             console.error('music component init failed.', err);
         }
@@ -289,13 +283,14 @@ class Music extends React.Component<MusicProps, MusicState> {
                     crossOrigin="anonymous"
                     ref={this.audio}
                     onLoadedData={this.audioOnLoad}
+                    onCanPlayThrough={this.audioOnLoad}
                     onPlaying={this.onPlaying}
                     onTimeUpdate={this.onTimeUpdate}
                     onPause={this.onPause}
                     onEnded={this.onEnded}
                 />
                 <MusicPlaylist
-                    audio={this.audio.current}
+                    play={this.play}
                     onClick={this.loadTrack}
                     currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
                     baseRoute={this.props.baseRoute}

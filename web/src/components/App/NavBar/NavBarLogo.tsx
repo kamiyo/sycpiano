@@ -8,7 +8,7 @@ import { SycLogo } from 'src/components/App/NavBar/SycLogo';
 import { logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { reactMediaMobileQuery, screenXSorPortrait } from 'src/styles/screens';
+import { reactMediaMediumQuery, reactMediaMobileQuery, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
 const navBarFontSizeREM = 2.5;
@@ -19,23 +19,18 @@ interface NavBarLogoProps {
     specificRouteName: string;
 }
 
-const LogoText = styled<{ isMobile: boolean }, 'div'>('div')`
+const LogoText = styled<{ isMobile: boolean }, 'div'>('div') `
     ${noHighlight}
     display: inline-block;
-    margin-left: ${({ isMobile }) => isMobile ? 0 : '20px'};
+    margin-left: 20px;
     vertical-align: middle;
     line-height: ${navBarHeight.desktop}px;
-
-    span {
-        vertical-align: -3px;
-    }
+    height: ${navBarHeight.desktop}px;
 
     ${/* sc-selector */ screenXSorPortrait} {
-        span {
-            vertical-align: initial;
-            margin-left: 10px;
-            line-height: ${navBarHeight.mobile}px;
-        }
+        margin-left: 0;
+        line-height: ${navBarHeight.mobile}px;
+        height: ${navBarHeight.mobile}px;
     }
 `;
 
@@ -53,8 +48,18 @@ const logoStyle = css`
     align-items: center;
 
     ${/* sc-selector */ screenXSorPortrait} {
-        font-size: ${navBarFontSizeREM * 0.6}rem;
+        font-size: ${navBarFontSizeREM * 0.75}rem;
     }
+`;
+
+const SeanChenText = styled('span')`
+    vertical-align: middle;
+`;
+
+const RouteText = styled('span')`
+    font-size: ${navBarFontSizeREM * 0.8}rem;
+    vertical-align: middle;
+    margin-left: 10px;
 `;
 
 const NavBarLogo: React.SFC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProps> = ({
@@ -62,30 +67,23 @@ const NavBarLogo: React.SFC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoPro
     isExpanded,
     specificRouteName,
 }) => (
-    <Link to="/" className={cx(logoStyle, { [css` fill: white; `]: isHome && !isExpanded })}>
-        <ReactMedia query={reactMediaMobileQuery}>
-            {(matches: boolean) => matches
-                ? (
-                    <>
-                        <SycLogo />
-                        <LogoText isMobile={matches}>
-                            <span>{isHome ? '' : specificRouteName}</span>
-                        </LogoText>
-                    </>
-                )
-                : (
-                    <>
-                        <SycLogo />
-                        {!isHome &&
-                            <LogoText isMobile={matches}>
-                                <span>SEAN CHEN</span>
-                            </LogoText>
+        <Link to="/" className={cx(logoStyle, { [css` fill: white; `]: isHome && !isExpanded })}>
+            <ReactMedia query={reactMediaMobileQuery}>
+                {(xs: boolean) =>
+                    <ReactMedia query={reactMediaMediumQuery}>
+                        {(medium: boolean) =>
+                            <>
+                                <SycLogo />
+                                <LogoText isMobile={xs}>
+                                    {!isHome && !xs && <SeanChenText>{'SEAN CHEN' + (medium ? ' |' : '')}</SeanChenText>}
+                                    {!isHome && (xs || medium) && <RouteText>{specificRouteName}</RouteText>}
+                                </LogoText>
+                            </>
                         }
-                    </>
-                )
-            }
-        </ReactMedia>
-    </Link>
-);
+                    </ReactMedia>
+                }
+            </ReactMedia>
+        </Link>
+    );
 
 export default NavBarLogo;

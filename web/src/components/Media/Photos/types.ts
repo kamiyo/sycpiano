@@ -10,6 +10,7 @@ export interface PhotoViewerReducerShape {
 
 export interface PhotoItem {
     file: string;
+    credit: string;
     width: number;
     height: number;
     thumbnailWidth: number;

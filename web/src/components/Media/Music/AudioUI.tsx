@@ -10,7 +10,7 @@ import { cartesianToPolar } from 'src/components/Media/Music/utils';
 import { GlobalStateShape } from 'src/types';
 
 import { lightBlue } from 'src/styles/colors';
-import { screenXSorPortrait } from 'src/styles/screens';
+import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
@@ -63,7 +63,7 @@ const LoadingOverlay = styled('div') `
 
 const UIContainer = styled('div') `
     position: absolute;
-    width: calc(100% - ${playlistContainerWidth}px);
+    width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
     left: 0;
     top: 0;
@@ -71,6 +71,10 @@ const UIContainer = styled('div') `
     display: flex;
     align-items: center;
     justify-content: center;
+
+    ${/* sc-selector */ screenM} {
+        width: calc(100% - ${playlistContainerWidth.tablet});
+    }
 
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
@@ -245,7 +249,9 @@ class AudioUI extends React.Component<AudioUIProps> {
 
     handleMouseover = () => {
         this.props.setHoverPlaypause(true);
-        setTimeout(() => this.props.setHoverPlaypause(false), 1000);
+        if (this.props.isMobile) {
+            setTimeout(() => this.props.setHoverPlaypause(false), 1000);
+        }
     }
 
     handleMouseout = () => {

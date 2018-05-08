@@ -7,7 +7,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 import { lato1, lato2 } from 'src/styles/fonts';
-import { playlistWidth } from 'src/styles/variables';
+import { screenXSorPortrait } from 'src/styles/screens';
 
 type VideoPlaylistItemProps = RouteComponentProps<{}> & {
     readonly item: VideoItemShape;
@@ -16,11 +16,11 @@ type VideoPlaylistItemProps = RouteComponentProps<{}> & {
     readonly isMobile: boolean;
 };
 
-const aspectRatio = 4 / 3;
-const thumbnailWidth = Math.floor(playlistWidth * 0.2);
-const itemHeight = thumbnailWidth / aspectRatio;
-
 const padding = 10;
+
+const itemHeight = 100;
+const aspectRatio = 4 / 3;
+const thumbnailWidth = (itemHeight - padding * 2) * aspectRatio;
 
 const section = css`
     vertical-align: middle;
@@ -31,6 +31,10 @@ const ImageContainer = styled('div') `
     height: 100%;
     width: ${thumbnailWidth}px;
     position: relative;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        width:
+    }
 
     img {
         width: 100%;
@@ -44,7 +48,7 @@ const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li') `
     list-style: none;
     cursor: pointer;
     width: 100%;
-    height: ${itemHeight + padding * 2}px;
+    height: ${itemHeight}px;
     padding: ${padding}px 0 ${padding}px 15px;
     border-left: 7px solid transparent;
     border-bottom: 1px solid rgba(120, 120, 120, 0.3);
