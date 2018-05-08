@@ -10,7 +10,7 @@ import { formatTime } from 'src/components/Media/Music/utils';
 
 import { lato1 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { screenXSorPortrait } from 'src/styles/screens';
+import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 import { metaDescriptions, titleStringBase } from 'src/utils';
 
@@ -25,7 +25,7 @@ interface AudioInfoProps {
 
 const AudioInfoContainer = styled('div') `
     ${noHighlight}
-    width: calc(100% - ${playlistContainerWidth}px);
+    width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
     z-index: 10;
     position: absolute;
@@ -40,6 +40,10 @@ const AudioInfoContainer = styled('div') `
     letter-spacing: 2px;
     color: white;
     padding-bottom: 3rem;
+
+    ${/* sc-selector */ screenM} {
+        width: calc(100% - ${playlistContainerWidth.tablet});
+    }
 
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;

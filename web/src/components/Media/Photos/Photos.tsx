@@ -10,9 +10,10 @@ import { PhotoItem } from 'src/components/Media/Photos/types';
 import { idFromItem } from 'src/components/Media/Photos/utils';
 import { GlobalStateShape } from 'src/types';
 
+import { lato1 } from 'src/styles/fonts';
 import { pushed } from 'src/styles/mixins';
 import { screenXSorPortrait } from 'src/styles/screens';
-import { playlistWidth } from 'src/styles/variables';
+import { playlistContainerWidth } from 'src/styles/variables';
 
 interface PhotosStateToProps {
     readonly items: PhotoItem[];
@@ -44,7 +45,7 @@ const StyledPhotos = styled('div') `
 
 const StyledPhotoViewer = styled('div') `
     position: relative;
-    width: calc(100% - ${playlistWidth}px);
+    width: calc(100% - ${playlistContainerWidth}px);
     height: 100%;
 
     img {
@@ -55,6 +56,15 @@ const StyledPhotoViewer = styled('div') `
         top: 50%;
         transform: translate3d(-50%, -50%, 0);
     }
+`;
+
+const StyledCredit = styled('div') `
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-family: ${lato1};
+    color: white;
+    padding: 20px;
 `;
 
 class Photos extends React.Component<PhotosProps> {
@@ -76,6 +86,7 @@ class Photos extends React.Component<PhotosProps> {
                             const isCurrent = this.isCurrentItem(item);
                             return <PhotoFader key={idx} item={item} isCurrent={isCurrent} />;
                         })}
+                        {this.props.currentItem && <StyledCredit>{`credit: ${this.props.currentItem.credit}`}</StyledCredit>}
                     </StyledPhotoViewer>
                 }
                 <PhotoList

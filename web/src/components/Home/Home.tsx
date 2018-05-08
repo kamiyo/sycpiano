@@ -1,14 +1,15 @@
+import * as moment from 'moment-timezone';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 
-import { lato2, lato2i } from 'src/styles/fonts';
+import { lato1, lato2, lato2i } from 'src/styles/fonts';
 import { generateSrcsetWidths, homeBackground, resizedImage, sycChairVertical } from 'src/styles/imageUrls';
 import { container } from 'src/styles/mixins';
 import { navBarHeight } from 'src/styles/variables';
 
 import { DesktopBackgroundPreview, MobileBackgroundPreview } from 'src/components/Home/PreviewSVGs';
 import { LazyImage } from 'src/components/LazyImage';
-import { screenLengths, screenXSorPortrait } from 'src/styles/screens';
+import { screenLengths, screenXSandPortrait, screenXSorPortrait } from 'src/styles/screens';
 
 const textShadowColor = 'rgba(0, 0, 0, 0.75)';
 
@@ -33,32 +34,34 @@ const Content = styled('div') `
     }
 `;
 
-const Name = styled<{ isMobile: boolean; }, 'div'>('div') `
+const Name = styled('div') `
     font-family: ${lato2};
-    font-size: ${props => props.isMobile ? 'calc(100vw / 6.2)' : 'calc(100vh / 8)'};
+    font-size: calc(100vh / 8);
     text-transform: uppercase;
 
     ${/* sc-selector */ screenXSorPortrait} {
+        font-size: calc(100vw / 6.2);
         width: 100%;
         position: absolute;
         bottom: 63%;
     }
 `;
 
-const Skills = styled<{ isMobile: boolean; }, 'div'>('div') `
+const Skills = styled('div') `
     font-family: ${lato2};
-    font-size: ${props => props.isMobile ? `calc(100vw / 16)` : `calc(100vh / 16)`};
+    font-size: calc(100vh / 16);
     color: #fff6b0;
     text-shadow: 0 0 6px ${textShadowColor};
 
     ${/* sc-selector */ screenXSorPortrait} {
+        font-size: calc(100vw / 16);
         width: 100%;
         position: absolute;
         bottom: 58%;
     }
 `;
 
-const Handle = styled<{ isMobile: boolean; }, 'div'>('div') `
+const Handle = styled('div') `
     margin-top: 15px;
     font-family: ${lato2i};
     font-size: 30px;
@@ -68,7 +71,7 @@ const Handle = styled<{ isMobile: boolean; }, 'div'>('div') `
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         position: absolute;
-        bottom: 5%;
+        bottom: 15%;
     }
 `;
 
@@ -107,7 +110,7 @@ const loadingStyle = css`
     z-index: 10;
 `;
 
-const BackgroundCover = styled<{ isMobile: boolean; }, 'div'>('div') `
+const BackgroundCover = styled('div') `
     width: 100%;
     height: 100%;
     position: absolute;
@@ -131,8 +134,8 @@ const BackgroundCover = styled<{ isMobile: boolean; }, 'div'>('div') `
     }
 `;
 
-const NavBarGradient = styled<{ isMobile: boolean; }, 'div'>('div') `
-    height: ${props => props.isMobile ? navBarHeight.mobile : navBarHeight.desktop}px;
+const NavBarGradient = styled('div') `
+    height: ${navBarHeight.desktop}px;
     padding: 0 30px 0 0;
     position: fixed;
     top: 0;
@@ -150,6 +153,7 @@ const NavBarGradient = styled<{ isMobile: boolean; }, 'div'>('div') `
         );
 
     ${/* sc-selector */ screenXSorPortrait} {
+        height: ${navBarHeight.mobile}px;
         background-image:
             linear-gradient(
                 122deg,
@@ -235,6 +239,23 @@ const EventLocation = styled('div')`
 `;
 */
 
+const StyledCopyright = styled('div') `
+    position: absolute;
+    width: fit-content;
+    bottom: 0;
+    right: 0;
+    font-family: ${lato1};
+    font-weight: bold;
+    color: white;
+    padding: 20px 30px;
+
+    ${/* sc-selector */ screenXSandPortrait} {
+        right: 50%;
+        transform: translateX(50%);
+        font-size: 0.8rem;
+    }
+`;
+
 const srcWidths = screenLengths.map((value) => (
     Math.round(value * 1779 / 2560)
 ));
@@ -281,14 +302,15 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }>
                         alt="home background"
                         successCb={this.onImageLoaded}
                     />
-                    <BackgroundCover isMobile={this.props.isMobile} />
-                    <NavBarGradient isMobile={this.props.isMobile} />
+                    <BackgroundCover />
+                    <NavBarGradient />
                 </BackgroundContainer>
                 <Content>
-                    <Name isMobile={this.props.isMobile}>Sean Chen</Name>
-                    <Skills isMobile={this.props.isMobile}>pianist / composer / arranger</Skills>
-                    <Handle isMobile={this.props.isMobile}>@seanchenpiano</Handle>
+                    <Name>Sean Chen</Name>
+                    <Skills>pianist / composer / arranger</Skills>
+                    <Handle>@seanchenpiano</Handle>
                 </Content>
+                <StyledCopyright>Copyright © {moment().format('YYYY')} Sean Chen</StyledCopyright>
             </HomeContainer>
         );
     }

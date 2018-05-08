@@ -130,7 +130,6 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
                                     className={css` visibility: hidden; `}
                                     currentBasePath={this.getRouteBase()}
                                     specificRouteName={this.getMostSpecificRouteName()}
-                                    isMobile={matches}
                                 />
                             </Transition>
                             <TransitionGroup component={null}>

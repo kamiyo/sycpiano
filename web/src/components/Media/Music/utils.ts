@@ -35,9 +35,19 @@ export const formatTime = (current: number) => {
 };
 
 const AudioContextFill = (window as any).AudioContext || (window as any).webkitAudioContext;
-const acx = new AudioContextFill();
+const acx: AudioContext = new AudioContextFill();
 
 export const getAudioContext: any = () => {
+    if (acx.state === 'suspended') {
+        const resume = async () => {
+            await acx.resume();
+            if (acx.state === 'running') {
+                document.body.removeEventListener('touchend', resume, false);
+            }
+        };
+
+        document.body.addEventListener('touchend', resume, false);
+    }
     return acx;
 };
 

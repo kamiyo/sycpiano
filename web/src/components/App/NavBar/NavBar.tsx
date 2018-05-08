@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
+import ReactMedia from 'react-media';
 import { connect } from 'react-redux';
 
 import HamburgerNav from 'src/components/App/NavBar/HamburgerNav';
@@ -7,7 +8,7 @@ import { links } from 'src/components/App/NavBar/links';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import NavBarLogo from 'src/components/App/NavBar/NavBarLogo';
 
-import { screenXSorPortrait } from 'src/styles/screens';
+import { reactMediaMediumQuery, screenMandPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
 
@@ -15,7 +16,6 @@ interface NavBarProps {
     readonly currentBasePath: string;
     readonly className?: string;
     readonly specificRouteName: string;
-    readonly isMobile: boolean;
 }
 
 interface NavBarStateToProps {
@@ -26,7 +26,7 @@ const navBarStyle = css`
     height: ${navBarHeight.desktop}px;
     padding: 0 30px 0 0;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${/* sc-selector */ screenMandPortrait}, {
         height: ${navBarHeight.mobile}px;
         padding-right: 15px;
     }
@@ -53,33 +53,42 @@ const StyledNavBarLogo = styled(NavBarLogo) `
 `;
 
 const NavBar: React.SFC<NavBarProps & NavBarStateToProps> = ({
-    isMobile,
     currentBasePath,
     isExpanded,
     specificRouteName,
     className,
 }) => {
-    const NavComponent = isMobile ? HamburgerNav : NavBarLinks;
     const isHome = currentBasePath === '/';
     return (
-        <div
-            className={cx(
-                className,
-                navBarStyle,
-                { [homeNavBarStyle(isExpanded)]: isHome },
-            )}
-        >
-            <StyledNavBarLogo
-                isHome={isHome}
-                isExpanded={isExpanded}
-                specificRouteName={specificRouteName}
-            />
-            <NavComponent
-                links={links}
-                currentBasePath={currentBasePath}
-                isMobile={isMobile}
-            />
-        </div >
+        <ReactMedia query={reactMediaMediumQuery}>
+            {(matches: boolean) =>
+                <div
+                    className={cx(
+                        className,
+                        navBarStyle,
+                        { [homeNavBarStyle(isExpanded)]: isHome },
+                    )}
+                >
+                    <StyledNavBarLogo
+                        isHome={isHome}
+                        isExpanded={isExpanded}
+                        specificRouteName={specificRouteName}
+                    />
+                    {matches ?
+                        <HamburgerNav
+                            links={links}
+                            currentBasePath={currentBasePath}
+                            isMobile={true}
+                        /> :
+                        <NavBarLinks
+                            links={links}
+                            currentBasePath={currentBasePath}
+                            isMobile={false}
+                        />
+                    }
+                </div >
+            }
+        </ReactMedia>
     );
 };
 

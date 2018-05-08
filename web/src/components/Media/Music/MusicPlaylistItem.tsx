@@ -12,12 +12,12 @@ import { formatTime, getLastName, normalizeString } from 'src/components/Media/M
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 
 interface MusicPlaylistItemProps {
-    readonly audio: HTMLAudioElement;
+    readonly play: () => void;
     readonly userInput: boolean;
     readonly item: MusicListItem;
     readonly currentItemId: number | string;
     readonly baseRoute: string;
-    readonly onClick: (item: MusicFileItem, autoPlay: boolean) => void;
+    readonly onClick: (item: MusicFileItem) => void;
     readonly onFirstUserInput: () => void;
 }
 
@@ -124,7 +124,7 @@ const getComposerTitleYear = (composer: string, piece: string, year: number) => 
 };
 
 const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
-    audio,
+    play,
     item,
     currentItemId,
     onClick,
@@ -143,13 +143,17 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
                 <StyledMusicItem>
                     <Link
                         to={path.normalize(`${baseRoute}/${getLastName(item.composer)}/${normalizeString(item.piece)}`)}
-                        onClick={() => {
-                            // mobile: play needs to be called by user interaction at least once
+                        onClick={async () => {
                             if (!userInput) {
-                                audio.play();
+                                play();
                                 onFirstUserInput();
                             }
-                            onClick(musicFile, true);
+                            try {
+                                await onClick(musicFile);
+                                play();
+                            } catch (e) {
+                                // already loading track;
+                            }
                         }}
                     >
                         <Highlight active={currentItemId === musicFile.id}>
@@ -180,13 +184,17 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
                             >
                                 <Link
                                     to={path.normalize(`${baseRoute}/${getLastName(item.composer)}/${normalizeString(item.piece)}/${normalizeString(musicFile.name)}`)}
-                                    onClick={() => {
+                                    onClick={async () => {
                                         if (!userInput) {
-                                            audio.play();
+                                            play();
                                             onFirstUserInput();
                                         }
-                                        onClick(musicFile, true);
-                                        // mobile: play needs to be called by user interaction at least once
+                                        try {
+                                            await onClick(musicFile);
+                                            play();
+                                        } catch (e) {
+                                            console.debug('onClick no effect because already loading track');
+                                        }
                                     }}
                                 >
                                     <Highlight active={currentItemId === musicFile.id}>
