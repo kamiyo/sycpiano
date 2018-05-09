@@ -36,8 +36,6 @@ interface AudioUIOwnProps {
     readonly pause: () => void;
     readonly play: () => void;
     readonly seekAudio: (percent: number) => void;
-    readonly userInput: boolean;
-    readonly onFirstUserInput: () => void;
     readonly isMobile: boolean;
     readonly isLoading: boolean;
 }
@@ -117,9 +115,6 @@ class AudioUI extends React.Component<AudioUIProps> {
     }
 
     togglePlaying = (event: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement> | KeyboardEvent | MouseEvent) => {
-        if (!this.props.userInput) {
-            this.props.onFirstUserInput();
-        }
         if ((event as React.KeyboardEvent<HTMLElement> | KeyboardEvent).key === ' ' || (event as React.MouseEvent<HTMLElement> | MouseEvent).button === 0) {
             if (this.props.isPlaying) {
                 this.props.pause();

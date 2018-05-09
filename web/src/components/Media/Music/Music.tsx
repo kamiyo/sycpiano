@@ -24,7 +24,6 @@ import { navBarHeight } from 'src/styles/variables';
 
 interface MusicState {
     readonly isPlaying: boolean;
-    readonly userInput: boolean;
     readonly volume: number;
     readonly playbackPosition: number;
     readonly lastUpdateTimestamp: number;
@@ -74,7 +73,6 @@ class Music extends React.Component<MusicProps, MusicState> {
     audio: React.RefObject<HTMLAudioElement> = React.createRef();
     state: MusicState = {
         isPlaying: false,
-        userInput: false,
         volume: 0.0,
         playbackPosition: 0.0,
         lastUpdateTimestamp: 0,
@@ -83,6 +81,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         isLoading: false,
     };
 
+    audioCtx: AudioContext;
     analyzerL: AnalyserNode;
     analyzerR: AnalyserNode;
 
@@ -94,6 +93,9 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     play = () => {
+        if (this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+        }
         this.audio.current.play();
     }
 
@@ -101,52 +103,41 @@ class Music extends React.Component<MusicProps, MusicState> {
         this.audio.current.pause();
     }
 
-    onFirstUserInput = () => {
-        this.setState({ userInput: true });
-    }
-
     initializeAudioPlayer = async () => {
-        const audioCtx = getAudioContext();
-        const audioSrc = audioCtx.createMediaElementSource(this.audio.current);
+        this.audioCtx = getAudioContext();
+        const audioSrc = this.audioCtx.createMediaElementSource(this.audio.current);
 
-        this.analyzerL = audioCtx.createAnalyser();
-        this.analyzerR = audioCtx.createAnalyser();
+        this.analyzerL = this.audioCtx.createAnalyser();
+        this.analyzerR = this.audioCtx.createAnalyser();
 
-        const splitter = audioCtx.createChannelSplitter(2);
-        const merger = audioCtx.createChannelMerger(2);
+        const splitter = this.audioCtx.createChannelSplitter(2);
+        const merger = this.audioCtx.createChannelMerger(2);
         audioSrc.connect(splitter);
         splitter.connect(this.analyzerL, 0);
         splitter.connect(this.analyzerR, 1);
         this.analyzerL.connect(merger, 0, 0);
         this.analyzerR.connect(merger, 0, 1);
-        merger.connect(audioCtx.destination);
+        merger.connect(this.audioCtx.destination);
 
-        this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(audioCtx.sampleRate / 192000, 2);
+        const sampleRate = this.audioCtx.sampleRate;
+        this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(sampleRate / 192000, 2);
 
         this.audio.current.volume = 0;
 
         this.setState({ isLoading: true });
-        this.waitForConstantQ();
-        this.waitForPlaylist();
-        this.setState({ isLoading: false });
+        this.waitForFilterAndPlaylist();
     }
 
-    waitForConstantQ = async () => {
-        try {
-            await constantQ.loaded;
-            this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
-        } catch (err) {
-            console.error('constantQ init failed.', err);
-        }
-    }
-
-    waitForPlaylist = async () => {
+    waitForFilterAndPlaylist = async () => {
         try {
             const { composer, piece, movement } = this.props.match.params;
-            const firstTrack = await this.props.fetchPlaylistAction(composer, piece, movement) as any;
-            this.loadTrack(firstTrack);
+
+            const [, firstTrack] = await Promise.all([constantQ.loaded, this.props.fetchPlaylistAction(composer, piece, movement)]);
+
+            this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
+            this.loadTrack(firstTrack as any);
         } catch (err) {
-            console.error('playlist init failed.', err);
+            console.error('constantQ or playlist init failed.', err);
         }
     }
 
@@ -176,7 +167,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                 musicFiles: [track],
             } as MusicItem,
             duration: -1,
-            isLoading: this.state.userInput ? true : false,
+            isLoading: this.audioCtx.state === 'suspended' ? false : true,
         });
         waveformLoader.loadWaveformFile(`${MUSIC_PATH}/waveforms/${track.waveformFile}`);
         this.audio.current.src = `${MUSIC_PATH}/${track.audioFile}`;
@@ -294,8 +285,6 @@ class Music extends React.Component<MusicProps, MusicState> {
                     onClick={this.loadTrack}
                     currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
                     baseRoute={this.props.baseRoute}
-                    userInput={this.state.userInput}
-                    onFirstUserInput={this.onFirstUserInput}
                     isMobile={isMobile}
                 />
                 <AudioUI
@@ -306,8 +295,6 @@ class Music extends React.Component<MusicProps, MusicState> {
                     pause={this.pause}
                     isPlaying={this.state.isPlaying}
                     currentPosition={this.state.playbackPosition}
-                    userInput={this.state.userInput}
-                    onFirstUserInput={this.onFirstUserInput}
                     isMobile={isMobile}
                     isLoading={this.state.isLoading}
                 />

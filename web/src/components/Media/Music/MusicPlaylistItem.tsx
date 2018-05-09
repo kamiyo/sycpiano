@@ -13,12 +13,10 @@ import { lightBlue, playlistBackground } from 'src/styles/colors';
 
 interface MusicPlaylistItemProps {
     readonly play: () => void;
-    readonly userInput: boolean;
     readonly item: MusicListItem;
     readonly currentItemId: number | string;
     readonly baseRoute: string;
     readonly onClick: (item: MusicFileItem) => void;
-    readonly onFirstUserInput: () => void;
 }
 
 const baseItemStyle = css`
@@ -129,8 +127,6 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
     currentItemId,
     onClick,
     baseRoute,
-    userInput,
-    onFirstUserInput,
 }) => {
     if (!isMusicItem(item)) {
         return (
@@ -142,12 +138,8 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
             return (
                 <StyledMusicItem>
                     <Link
-                        to={path.normalize(`${baseRoute}/${getLastName(item.composer)}/${normalizeString(item.piece)}`)}
+                        to={path.normalize(`${baseRoute}/${getLastName(item.composer)}/${normalizeString(item.piece)}${musicFile.name ? '/' + normalizeString(musicFile.name) : ''}`)}
                         onClick={async () => {
-                            if (!userInput) {
-                                play();
-                                onFirstUserInput();
-                            }
                             try {
                                 await onClick(musicFile);
                                 play();
@@ -185,10 +177,6 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
                                 <Link
                                     to={path.normalize(`${baseRoute}/${getLastName(item.composer)}/${normalizeString(item.piece)}/${normalizeString(musicFile.name)}`)}
                                     onClick={async () => {
-                                        if (!userInput) {
-                                            play();
-                                            onFirstUserInput();
-                                        }
                                         try {
                                             await onClick(musicFile);
                                             play();

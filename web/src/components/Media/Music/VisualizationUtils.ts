@@ -13,17 +13,17 @@ import { getAudioContext } from 'src/components/Media/Music/utils';
 type DrawCircleMaskShape = (
     context: CanvasRenderingContext2D,
     radius: number,
-    center: [number, number],
     dimensions: [number, number],
+    center?: [number, number],
 ) => void;
 
-export const drawCircleMask: DrawCircleMaskShape = (context, radius, center, dimensions) => {
+export const drawCircleMask: DrawCircleMaskShape = (context, radius, dimensions, center = [0, 0]) => {
     context.save();
     context.beginPath();
     context.arc(center[0], center[1], radius, 0, 2 * Math.PI);
     context.closePath();
     context.clip();
-    context.clearRect(0, 0, dimensions[0], dimensions[1]);
+    context.clearRect(center[0] - dimensions[0] / 2, center[1] - dimensions[1] / 2, dimensions[0], dimensions[1]);
     context.restore();
 };
 
