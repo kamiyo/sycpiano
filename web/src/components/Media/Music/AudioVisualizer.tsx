@@ -336,7 +336,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     drawVisualization = (context: CanvasRenderingContext2D, lowFreq: number, values: Float32Array, lightness: number, timestamp: number) => {
-        context.clearRect(-this.width / 2, -this.height / 2 - this.HEIGHT_ADJUST, this.width * 2, this.height * 2);
+        context.clearRect(-this.width / 2, -this.height / 2 - this.HEIGHT_ADJUST, this.width, this.height);
 
         // hsl derived from @light-blue: #4E86A4;
         const color = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
