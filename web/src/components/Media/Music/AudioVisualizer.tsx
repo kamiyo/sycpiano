@@ -3,7 +3,7 @@ import styled from 'react-emotion';
 import { connect } from 'react-redux';
 
 import { storeVerticalOffset } from 'src/components/Media/Music/actions';
-import { polarToCartesian } from 'src/components/Media/Music/utils';
+import { polarToCartesian, visibilityChangeApi } from 'src/components/Media/Music/utils';
 import { constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
 
@@ -72,6 +72,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     height: number;
     width: number;
     visualization: React.RefObject<HTMLCanvasElement> = React.createRef();
+    container: React.RefObject<HTMLDivElement> = React.createRef();
     SCALE: number;
     RADIUS_SCALE: number;
     RADIUS_BASE: number;
@@ -105,6 +106,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     lastCurrentPosition: number = 0;
     idleStart: number = 0;
     requestId: number = -1;
+    lastCallback: number;
 
     adjustHeight = () => {
         this.HEIGHT_ADJUST = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
@@ -155,10 +157,15 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
     onAnalyze = (timestamp = 0) => {
         // don't render anything if analyzers are null, i.e. audio not set up yet
-        if (!this.props.analyzers[0] || !this.props.analyzers[1]) {
+        // also limit 30fps on mobile =).
+        if (!this.props.analyzers[0] || !this.props.analyzers[1] ||
+            this.props.isMobile && this.lastCallback && (timestamp - this.lastCallback) < (1000 / 30)
+        ) {
             this.requestId = requestAnimationFrame(this.onAnalyze);
             return;
         }
+
+        this.lastCallback = timestamp;
 
         if (!this.props.isPlaying) {
             // reset idleStart time if either hover, hoverangle, or currPos changes
@@ -389,8 +396,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
         const ratio = devicePixelRatio / backingStoreRatio;
 
-        this.height = this.visualization.current.offsetHeight;
-        this.width = this.visualization.current.offsetWidth;
+        this.height = this.container.current.offsetHeight;
+        this.width = this.container.current.offsetWidth;
         if (devicePixelRatio !== backingStoreRatio) {
             this.visualization.current.height = this.height * ratio;
             this.visualization.current.width = this.width * ratio;
@@ -418,13 +425,23 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.WAVEFORM_HALF_HEIGHT = Math.min(50, this.RADIUS_BASE / 4);
     }
 
+    onVisibilityChange = () => {
+        if ((document as any)[visibilityChangeApi.hidden]) {
+            cancelAnimationFrame(this.requestId);
+        } else {
+            this.requestId = requestAnimationFrame(this.onAnalyze);
+        }
+    }
+
     componentDidMount() {
         window.addEventListener('resize', this.onResize);
+        document.addEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange, false);
         this.initializeVisualizer();
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
+        document.removeEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange);
         cancelAnimationFrame(this.requestId);
         this.requestId = 0;
     }
@@ -454,7 +471,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
     render() {
         return (
-            <VisualizerContainer isMobile={this.props.isMobile}>
+            <VisualizerContainer innerRef={this.container} isMobile={this.props.isMobile}>
                 <VisualizerCanvas innerRef={this.visualization} />
             </VisualizerContainer>
         );

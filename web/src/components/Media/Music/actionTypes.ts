@@ -1,13 +1,6 @@
 import AUDIO_ACTIONS from 'src/components/Media/Music/actionTypeKeys';
 import { MusicListItem } from 'src/components/Media/Music/types';
 
-export interface StoreRadii {
-    readonly type: typeof AUDIO_ACTIONS.STORE_RADII;
-    readonly innerRadius: number;
-    readonly outerRadius: number;
-    readonly baseRadius: number;
-}
-
 export interface StoreVerticalOffset {
     readonly type: typeof AUDIO_ACTIONS.STORE_VERTICAL_OFFSET;
     readonly offset: number;
@@ -46,7 +39,7 @@ export interface OtherActions {
     readonly type: typeof AUDIO_ACTIONS.OTHER_ACTIONS;
 }
 
-type ActionTypes = StoreRadii | SetHoverPlaypause | SetHoverSeekring | SetMouseMove |
+type ActionTypes = SetHoverPlaypause | SetHoverSeekring | SetMouseMove |
     FetchPlaylistError | FetchPlaylistRequest | FetchPlaylistSuccess | StoreVerticalOffset |
     OtherActions;
 
