@@ -42,7 +42,7 @@ interface AudioVisualizerOwnProps {
 
 type AudioVisualizerProps = AudioVisualizerStateToProps & AudioVisualizerDispatchToProps & AudioVisualizerOwnProps;
 
-const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
+const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div')`
     position: absolute;
     left: 0;
     top: 0;
@@ -60,7 +60,7 @@ const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div') `
     }
 `;
 
-const VisualizerCanvas = styled('canvas') `
+const VisualizerCanvas = styled('canvas')`
     position: absolute;
     width: 100%;
     height: 100%;
@@ -71,8 +71,6 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     height: number;
     width: number;
     visualization: React.RefObject<HTMLCanvasElement> = React.createRef();
-    centerX: number;
-    centerY: number;
     RADIUS_SCALE: number;
     RADIUS_BASE: number;
     WAVEFORM_HALF_HEIGHT: number;
@@ -109,9 +107,10 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     initializeVisualizer = async () => {
+        this.visualizationCtx = this.visualization.current.getContext('2d');
+        this.visualizationCtx.save();
         this.adjustHeight();
         this.onResize();
-        this.visualizationCtx = this.visualization.current.getContext('2d');
 
         try {
             await Promise.all([constantQ.loaded, firLoader.loaded]);
@@ -237,7 +236,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             // second term is adjusting so that the visualization is symmetric
             // third term is adjusting so it starts at the bottom of the screen.
             const angle = (currentSample * TWO_PI_PER_CIRCLE_SAMPLES) + (TWO_PI * this.INV_CQ_BINS) + HALF_PI;
-            const [x, y] = polarToCartesian((radius + result), angle, [this.centerX, this.centerY]);
+            const [x, y] = polarToCartesian((radius + result), angle);
 
             // if first sample, use moveTo instead of lineTo
             if (currentSample === 0) {
@@ -271,7 +270,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         for (let j = 0; j < waveformLength; j++) {
             const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
             const scale = centerAxis + waveform[j * 2] * this.props.volume * this.WAVEFORM_HALF_HEIGHT;
-            const [x, y] = polarToCartesian(scale, angle, [this.centerX, this.centerY]);
+            const [x, y] = polarToCartesian(scale, angle);
 
             if (j === 0) {
                 context.moveTo(x, y);
@@ -284,7 +283,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         for (let j = waveformLength - 1; j >= 0; j--) {
             const angle = -HALF_PI + ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
             const scale = centerAxis + waveform[j * 2 + 1] * this.props.volume * this.WAVEFORM_HALF_HEIGHT;
-            const [x, y] = polarToCartesian(scale, angle, [this.centerX, this.centerY]);
+            const [x, y] = polarToCartesian(scale, angle);
 
             context.lineTo(x, y);
         }
@@ -293,8 +292,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     drawPlaybackHead = (context: CanvasRenderingContext2D, angle: number, minRad: number, maxRad: number, color: string) => {
-        const [xStart, yStart] = polarToCartesian(minRad, angle, [this.centerX, this.centerY]);
-        const [xEnd, yEnd] = polarToCartesian(maxRad, angle, [this.centerX, this.centerY]);
+        const [xStart, yStart] = polarToCartesian(minRad, angle);
+        const [xEnd, yEnd] = polarToCartesian(maxRad, angle);
         context.beginPath();
         context.moveTo(xStart, yStart);
         context.lineTo(xEnd, yEnd);
@@ -337,7 +336,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     drawVisualization = (context: CanvasRenderingContext2D, lowFreq: number, values: Float32Array, lightness: number, timestamp: number) => {
-        context.clearRect(0, 0, this.width, this.height);
+        context.clearRect(-this.width / 2, -this.height / 2 - this.HEIGHT_ADJUST, this.width * 2, this.height * 2);
 
         // hsl derived from @light-blue: #4E86A4;
         const color = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
@@ -346,19 +345,26 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.props.storeRadii(radius - 2 * this.WAVEFORM_HALF_HEIGHT, radius, this.RADIUS_BASE);
 
         this.drawConstantQBins(context, values, radius, color);
-        drawCircleMask(context, radius, [this.centerX, this.centerY], [this.width, this.height]);
+        drawCircleMask(context, radius, [this.width, this.height]);
         this.drawSeekArea(context, radius, color, timestamp);
     }
 
     onResize = () => {
+        this.visualizationCtx.restore();
+        this.visualizationCtx.save();
+
         this.height = this.visualization.current.offsetHeight;
         this.width = this.visualization.current.offsetWidth;
         this.visualization.current.height = this.height;
         this.visualization.current.width = this.width;
-        this.centerX = this.width / 2;
-        this.centerY = this.height / 2 + this.HEIGHT_ADJUST;
+
+        const centerX = this.width / 2;
+        const centerY = this.height / 2 + this.HEIGHT_ADJUST;
+
+        this.visualizationCtx.translate(centerX, centerY);
+
         this.RADIUS_SCALE = Math.min(this.width, this.height) / 12;
-        this.RADIUS_BASE = Math.min(this.centerX, this.centerY) - this.RADIUS_SCALE;
+        this.RADIUS_BASE = Math.min(centerX, centerY) - this.RADIUS_SCALE;
         this.WAVEFORM_HALF_HEIGHT = Math.min(50, this.RADIUS_BASE / 4);
     }
 

@@ -11,16 +11,16 @@ const normalizeString = (str: string) => {
 };
 
 export const up = async (models: ModelMap) => {
-    const model: MusicModel = models.music;
+    const model: MusicModel = models.music as MusicModel;
     const musics = await model.findAll({
-        attributes: ['composer', 'piece'],
+        attributes: ['id', 'composer', 'piece'],
     });
     await Promise.each(musics, async (music) => {
         const {
             composer,
             piece,
         } = music;
-        const musicFiles = await music.getMusicFiles();
+        const musicFiles = await music.getMusicFiles({ attributes: ['name'] });
         await Promise.each(musicFiles, async (musicFile) => {
             const str = `/${getLastName(composer)}/${normalizeString(piece)}${musicFile.name ? '/' + normalizeString(musicFile.name) : ''}`;
             const hash = createHash('sha1').update(str).digest('base64');

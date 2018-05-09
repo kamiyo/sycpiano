@@ -104,16 +104,23 @@ export interface MusicAttributes {
     readonly piece: string;
     readonly contributors: string;
     readonly type: string;
+    readonly musicFiles: MusicFileAttributes[];
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
 }
 
+interface HasManyGetAssociationsMixin<T, U> extends Sequelize.HasManyGetAssociationsMixin<T> {
+    (options?: Sequelize.HasManyGetAssociationsMixinOptions | Sequelize.FindOptions<U>): Promise<T[]>;
+}
+
 export interface MusicInstance extends Sequelize.Instance<MusicAttributes>, MusicAttributes {
-    readonly getMusicFiles: Sequelize.HasManyGetAssociationsMixin<MusicFileInstance>;
+    readonly getMusicFiles: HasManyGetAssociationsMixin<MusicFileInstance, MusicFileAttributes>;
     readonly setMusicFiles: Sequelize.HasManySetAssociationsMixin<MusicFileInstance, MusicFileAttributes['id']>;
 }
 
-export interface MusicModel extends Model<MusicInstance, MusicAttributes> {}
+export interface MusicModel extends Model<MusicInstance, MusicAttributes> {
+    readonly musicFile: MusicFileModel;
+}
 
 export interface CollaboratorAttributes {
     readonly id: DataTypeUUID;

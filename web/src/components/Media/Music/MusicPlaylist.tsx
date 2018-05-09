@@ -21,8 +21,6 @@ interface MusicPlaylistOwnProps {
     readonly currentTrackId: string;
     readonly onClick: (item: MusicFileItem) => void;
     readonly play: () => void;
-    readonly userInput: boolean;
-    readonly onFirstUserInput: () => void;
     readonly isMobile: boolean;
 }
 
@@ -68,8 +66,6 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
     currentTrackId,
     play,
     baseRoute,
-    userInput,
-    onFirstUserInput,
 }) => (
         <div className={playlistContainerStyle}>
             <Playlist
@@ -87,8 +83,6 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
                         currentItemId={currentTrackId}
                         play={play}
                         baseRoute={baseRoute}
-                        userInput={userInput}
-                        onFirstUserInput={onFirstUserInput}
                     />
                 ))}
             </Playlist>
