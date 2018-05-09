@@ -20,7 +20,7 @@ export const up = async (models: ModelMap) => {
             composer,
             piece,
         } = music;
-        const musicFiles = await music.getMusicFiles({ attributes: ['name'] });
+        const musicFiles = await music.getMusicFiles({ attributes: ['id', 'name'] });
         await Promise.each(musicFiles, async (musicFile) => {
             const str = `/${getLastName(composer)}/${normalizeString(piece)}${musicFile.name ? '/' + normalizeString(musicFile.name) : ''}`;
             const hash = createHash('sha1').update(str).digest('base64');
