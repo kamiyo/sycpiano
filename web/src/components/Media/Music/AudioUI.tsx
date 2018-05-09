@@ -14,11 +14,8 @@ import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
-    readonly innerRadius: number;
     readonly isHoverPlaypause: boolean;
     readonly isMouseMove: boolean;
-    readonly outerRadius: number;
-    readonly baseRadius: number;
     readonly verticalOffset: number;
 }
 
@@ -38,6 +35,11 @@ interface AudioUIOwnProps {
     readonly seekAudio: (percent: number) => void;
     readonly isMobile: boolean;
     readonly isLoading: boolean;
+    readonly getRadii: () => {
+        inner: number;
+        outer: number;
+        base: number;
+    };
 }
 
 type AudioUIProps = AudioUIOwnProps & AudioUIStateToProps & AudioUIDispatchToProps;
@@ -165,8 +167,9 @@ class AudioUI extends React.Component<AudioUIProps> {
 
     isEventInSeekRing = (event: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => {
         const canvasPos = this.getMousePositionInCanvas(event);
-        const isInOuter = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.outerRadius, [this.centerX, this.centerY]);
-        const isInInner = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.innerRadius, [this.centerX, this.centerY]);
+        const { inner, outer } = this.props.getRadii();
+        const isInOuter = this.isPointInCircle([canvasPos.x, canvasPos.y], outer, [this.centerX, this.centerY]);
+        const isInInner = this.isPointInCircle([canvasPos.x, canvasPos.y], inner, [this.centerX, this.centerY]);
         return isInOuter && !isInInner;
     }
 
@@ -178,7 +181,7 @@ class AudioUI extends React.Component<AudioUIProps> {
             this.seekRing.style.cursor = this.isMouseEvent(event) ? 'pointer' : 'default';
             this.props.setMouseMove(false);
         } else {
-            if (this.isEventInSeekRing(event)) {
+            if (this.isEventInSeekRing(event) && !this.props.isMobile) {
                 this.seekRing.style.cursor = 'pointer';
                 this.props.setHoverSeekring(true, this.mousePositionToAngle(event));
                 if (!prevMoving) {
@@ -288,7 +291,7 @@ class AudioUI extends React.Component<AudioUIProps> {
     }
 
     render() {
-        const buttonLength = this.props.baseRadius * Math.SQRT1_2;
+        const buttonLength = this.props.getRadii().base * Math.SQRT1_2;
         return (
             <UIContainer>
                 {this.props.isLoading &&
@@ -350,11 +353,8 @@ class AudioUI extends React.Component<AudioUIProps> {
 }
 
 const mapStateToProps = (state: GlobalStateShape) => ({
-    innerRadius: state.audio_visualizer.innerRadius,
     isHoverPlaypause: state.audio_ui.isHoverPlaypause,
     isMouseMove: state.audio_ui.isMouseMove,
-    outerRadius: state.audio_visualizer.outerRadius,
-    baseRadius: state.audio_visualizer.baseRadius,
     verticalOffset: state.audio_visualizer.verticalOffset,
 });
 

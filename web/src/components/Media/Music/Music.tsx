@@ -85,6 +85,22 @@ class Music extends React.Component<MusicProps, MusicState> {
     analyzerL: AnalyserNode;
     analyzerR: AnalyserNode;
 
+    circleRadii: {
+        inner: number;
+        outer: number;
+        base: number;
+    } = {
+        inner: 0,
+        outer: 0,
+        base: 0,
+    };
+
+    storeRadii = (inner: number, outer: number, base: number) => {
+        this.circleRadii = { inner, outer, base };
+    }
+
+    getRadii = () => this.circleRadii;
+
     getNextMovement = () => {
         const curr = this.props.items.find((item) => isMusicItem(item) && item.id === this.state.currentTrack.id) as MusicItem;
         const trackNo = curr.musicFiles.findIndex((file) => file.id === this.state.currentTrack.musicFiles[0].id);
@@ -297,6 +313,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     currentPosition={this.state.playbackPosition}
                     isMobile={isMobile}
                     isLoading={this.state.isLoading}
+                    getRadii={this.getRadii}
                 />
                 <AudioInfo
                     duration={this.state.duration}
@@ -313,6 +330,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     prevTimestamp={this.state.lastUpdateTimestamp}
                     volume={this.state.volume}
                     isMobile={isMobile}
+                    storeRadii={this.storeRadii}
                 />
             </div>
         );
