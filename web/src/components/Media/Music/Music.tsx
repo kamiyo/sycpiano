@@ -119,7 +119,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         this.analyzerR.connect(merger, 0, 1);
         merger.connect(this.audioCtx.destination);
 
-        const sampleRate = this.audioCtx.sampleRate
+        const sampleRate = this.audioCtx.sampleRate;
         this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(sampleRate / 192000, 2);
 
         this.audio.current.volume = 0;

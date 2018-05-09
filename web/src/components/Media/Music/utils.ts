@@ -4,17 +4,11 @@ type PolarToCartesianShape = (
     offset?: [number, number],
 ) => [number, number];
 
-export const polarToCartesian: PolarToCartesianShape = (radius, angle, offset) => (
-    offset ? (
+export const polarToCartesian: PolarToCartesianShape = (radius, angle, offset = [0, 0]) => (
     [
         radius * Math.cos(angle) + offset[0],
         radius * Math.sin(angle) + offset[1],
-    ])
-    :
-    ([
-        radius * Math.cos(angle),
-        radius * Math.sin(angle),
-    ])
+    ]
 );
 
 type CartesianToPolarShape = (
