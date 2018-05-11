@@ -9,14 +9,13 @@ import { Transition } from 'react-transition-group';
 import TweenLite from 'gsap/TweenLite';
 
 import { toggleExpanded, toggleSubNav } from 'src/components/App/NavBar/actions';
-import { links } from 'src/components/App/NavBar/links';
 import SubNav from 'src/components/App/NavBar/SubNav/SubNav';
 import { GlobalStateShape } from 'src/types';
 
 import { lightBlue, logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { screenM, screenMorPortrait, screenXS } from 'src/styles/screens';
+import { screenM, screenMorPortrait } from 'src/styles/screens';
 import { navBarHeight, navBarMarginTop } from 'src/styles/variables';
 
 interface HighlightProps {
@@ -61,12 +60,8 @@ const HyperlinkText = styled('div') `
         line-height: 1.5rem;
     }
 
-    ${/* sc-selector */ screenXS} {
-        padding: calc((((100vh - ${navBarHeight.mobile}px - 1.8rem) / ${links.length}) - 1.6rem) / 2) 0;
-    }
-
     ${/* sc-selector */ screenM} {
-        padding: calc((((100vh - ${navBarHeight.desktop}px - 1.8rem) / ${links.length}) - 1.6rem) / 2) 0;
+        padding: 1.5rem 0;
     }
 `;
 
