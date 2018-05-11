@@ -35,9 +35,6 @@ export const isMusicItem = (item: MusicListItem): item is MusicItem => {
 };
 
 export interface AudioVisualizerStateShape {
-    readonly innerRadius: number;
-    readonly outerRadius: number;
-    readonly baseRadius: number;
     readonly verticalOffset: number;
 }
 

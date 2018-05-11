@@ -3,19 +3,9 @@ import ActionTypes from 'src/components/Media/Music/actionTypes';
 import { AudioPlaylistStateShape, AudioUIStateShape, AudioVisualizerStateShape } from 'src/components/Media/Music/types';
 
 export const audioVisualizerReducer = (state: AudioVisualizerStateShape = {
-    innerRadius: 0,
-    outerRadius: 0,
-    baseRadius: 0,
     verticalOffset: 0,
 }, action: ActionTypes) => {
     switch (action.type) {
-        case AUDIO_ACTIONS.STORE_RADII:
-            return {
-                ...state,
-                innerRadius: action.innerRadius,
-                outerRadius: action.outerRadius,
-                baseRadius: action.baseRadius,
-            };
         case AUDIO_ACTIONS.STORE_VERTICAL_OFFSET:
             return {
                 ...state,

@@ -123,6 +123,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         this.audioCtx = getAudioContext();
         const audioSrc = this.audioCtx.createMediaElementSource(this.audio.current);
 
+        // source -> split(L, R) => analyzer(L, R) => merge -> dest
         this.analyzerL = this.audioCtx.createAnalyser();
         this.analyzerR = this.audioCtx.createAnalyser();
 
@@ -136,6 +137,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         merger.connect(this.audioCtx.destination);
 
         const sampleRate = this.audioCtx.sampleRate;
+        // smooth more when sampleRate is higher
         this.analyzerL.smoothingTimeConstant = this.analyzerR.smoothingTimeConstant = 0.9 * Math.pow(sampleRate / 192000, 2);
 
         this.audio.current.volume = 0;
@@ -148,9 +150,13 @@ class Music extends React.Component<MusicProps, MusicState> {
         try {
             const { composer, piece, movement } = this.props.match.params;
 
-            const [, firstTrack] = await Promise.all([constantQ.loaded, this.props.fetchPlaylistAction(composer, piece, movement)]);
+            const [, firstTrack] = await Promise.all([
+                constantQ.loaded,
+                this.props.fetchPlaylistAction(composer, piece, movement),
+            ]);
 
             this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
+
             this.loadTrack(firstTrack as any);
         } catch (err) {
             console.error('constantQ or playlist init failed.', err);
