@@ -1,6 +1,6 @@
 import { ContactItemShape } from 'src/components/Contact/types';
 
-const managers: ContactItemShape[] = [
+const contacts: ContactItemShape[] = [
     {
         name: 'Sean Chen',
         className: 'seanChen',
@@ -30,4 +30,4 @@ const managers: ContactItemShape[] = [
     },
 ];
 
-export default managers;
+export default contacts;
