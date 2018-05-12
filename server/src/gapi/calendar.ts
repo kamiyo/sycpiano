@@ -90,16 +90,17 @@ export const updateCalendar = async ({
     location,
     startDatetime,
     timeZone,
+    allDay,
+    endDate,
 }: GoogleCalendarParams) => {
     const token = await getToken();
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${id}`;
     const eventResource = {
-        id,
         summary,
         description,
         location,
-        start: { dateTime: moment(startDatetime).format(), timeZone },
-        end: { dateTime: moment(startDatetime).add({ hours: 2 }).format(), timeZone },
+        start: (allDay ? { date: startDatetime.format('YYYY-MM-DD') } : { dateTime: startDatetime.format(), timeZone }),
+        end: (endDate ? { date: endDate.format('YYYY-MM-DD') } : { dateTime: startDatetime.add({ hours: 2 }).format(), timeZone }),
     };
     return axios.put(url, eventResource, {
         headers: {
