@@ -1,6 +1,6 @@
 import { default as moment } from 'moment-timezone';
 
-import { CachedEvent, EventItemType } from 'src/components/Schedule/types';
+import { CachedEvent, EventItemType, MonthItem } from 'src/components/Schedule/types';
 
 const GOOGLE_MAPS_SEARCH_URL = 'https://www.google.com/maps/search/?api=1';
 
@@ -8,7 +8,7 @@ export const transformCachedEventsToListItems = (
     events: CachedEvent[],
     monthsSeen: Set<string>,
 ): EventItemType[] => (
-    events.reduce((runningEventsArr, event) => {
+    events.reduce((runningEventsArr: EventItemType[], event) => {
         let eventDateTime = moment(event.dateTime);
         if (event.timezone) {
             eventDateTime = eventDateTime.tz(event.timezone);
@@ -17,7 +17,7 @@ export const transformCachedEventsToListItems = (
         const month = eventDateTime.format('MMMM');
         const year = eventDateTime.year();
 
-        const nextEventsArr = [];
+        const nextEventsArr: EventItemType[] = [];
         const monthYearString = `${month} ${year}`;
         if (!monthsSeen.has(monthYearString)) {
             monthsSeen.add(monthYearString);
@@ -27,14 +27,18 @@ export const transformCachedEventsToListItems = (
                 dateTime: monthMoment,
                 month,
                 year,
-            });
+            } as MonthItem);
         }
+
+        const endDate = moment(event.endDate).isValid() ? moment(event.endDate) : undefined;
 
         nextEventsArr.push({
             type: 'day',
             id: event.id,
             name: event.name,
             dateTime: eventDateTime,
+            endDate,
+            allDay: event.allDay,
             collaborators: event.collaborators,
             eventType: event.type,
             location: event.location,

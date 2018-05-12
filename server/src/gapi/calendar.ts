@@ -50,8 +50,10 @@ export interface GoogleCalendarParams {
     summary: string;
     description: string;
     location: string;
-    startDatetime: Date | moment.Moment;
+    startDatetime: moment.Moment;
     timeZone: string;
+    allDay: boolean;
+    endDate: moment.Moment;
 }
 
 export const createCalendarEvent = async ({
@@ -61,6 +63,8 @@ export const createCalendarEvent = async ({
     location,
     startDatetime,
     timeZone,
+    allDay,
+    endDate,
 }: GoogleCalendarParams) => {
     const token = await getToken();
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
@@ -69,8 +73,8 @@ export const createCalendarEvent = async ({
         summary,
         description,
         location,
-        start: { dateTime: moment(startDatetime).format(), timeZone },
-        end: { dateTime: moment(startDatetime).add({ hours: 2 }).format(), timeZone },
+        start: (allDay ? { date: startDatetime.format('YYYY-MM-DD') } : { dateTime: startDatetime.format(), timeZone }),
+        end: (endDate ? { date: endDate.format('YYYY-MM-DD') } : { dateTime: startDatetime.add({ hours: 2 }).format(), timeZone }),
     };
     return axios.post(url, eventResource, {
         headers: {

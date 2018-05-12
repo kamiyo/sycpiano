@@ -15,6 +15,14 @@ const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
             type: dataTypes.DATE,
             field: 'date_time',
         },
+        allDay: {
+            type: dataTypes.BOOLEAN,
+            field: 'all_day',
+        },
+        endDate: {
+            type: dataTypes.DATE,
+            field: 'end_date',
+        },
         timezone: dataTypes.STRING,
         location: dataTypes.STRING,
         type: dataTypes.STRING,
