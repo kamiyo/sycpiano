@@ -20,7 +20,7 @@ const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
             field: 'all_day',
         },
         endDate: {
-            type: dataTypes.DATE,
+            type: dataTypes.DATEONLY,
             field: 'end_date',
         },
         timezone: dataTypes.STRING,
