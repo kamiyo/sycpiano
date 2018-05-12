@@ -24,9 +24,13 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res
     let events: CalendarInstance[];
     const limit = 10;
     let offset = 0;
+
+    let updated = 0;
+    let created = 0;
+    let errored = 0;
+
     do {
-        res.write('Getting local events from db...\n');
-        const waitingNotification = setInterval(() => res.write('...still waiting for local events...\n'), 10000);
+        console.log('Getting local events from db...\n');
         const models = db.models;
         events = await models.calendar.findAll({
             attributes: {
@@ -69,8 +73,7 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res
             offset,
         });
         offset += limit;
-        clearInterval(waitingNotification);
-        res.write('Local events fetched from db.');
+        console.log('Local events fetched from db.');
         const prunedEvents = events.map((cal) => {
             return {
                 id: cal.id,
@@ -99,42 +102,40 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res
             };
         });
 
-        let updated = 0;
-        let created = 0;
-        let errored = 0;
-
         await Promise.each(prunedEvents, async (item) => {
             try {
                 await getCalendarSingleEvent(item.id);
 
                 // if error not thrown, then event exists, update it
                 await updateCalendar(item);
-                res.write(`updated: ${item.id}\n`);
+                console.log(`updated: ${item.id}\n`);
                 updated++;
             } catch (e) {
                 if (e.response.status === 404) {
                     try {
                         await createCalendarEvent(item);
-                        res.write(`created: ${item.id}\n`);
+                        console.log(`created: ${item.id}\n`);
                         created++;
                     } catch (e) {
-                        res.write(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
+                        console.log(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
                         errored++;
                     }
                 } else {
-                    res.write(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
+                    console.log(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
                     errored++;
                 }
             }
         });
 
-        res.write(`
-            updating finished.
-            created: ${created}
-            updated: ${updated}
-            errored: ${errored}
-        `);
     } while (events.length !== 0);
+    const result = `
+        updating finished.
+        created: ${created}
+        updated: ${updated}
+        errored: ${errored}
+    `;
+    console.log(result);
+    res.status(200).write({ success: result });
     res.end();
 });
 
