@@ -20,9 +20,123 @@ const adminRest = express();
 adminRest.use(express.json());
 adminRest.use(express.urlencoded({ extended: true }));
 
+adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, async (req, res) => {
+    res.sendStatus(200);
+    let updated = 0;
+    let created = 0;
+    let errored = 0;
+
+    const ids: string[] = req.body.data.attributes.ids;
+    console.log(`ids: ${ids.toString()}`);
+    console.log('Getting local events from db...\n');
+    const models = db.models;
+    const events: CalendarInstance[] = await models.calendar.findAll({
+        where: {
+            id: ids,
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'calendarCollaborator', 'calendarPiece'],
+        },
+        include: [
+            {
+                model: models.collaborator,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt', 'calendarCollaborator'],
+                },
+                through: {
+                    attributes: ['order'],
+                },
+                include: [{
+                    model: models.calendarCollaborator,
+                    attributes: ['order'],
+                }],
+            },
+            {
+                model: models.piece,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt', 'calendarPiece'],
+                },
+                through: {
+                    attributes: ['order'],
+                },
+                include: [{
+                    model: models.calendarPiece,
+                    attributes: ['order'],
+                }],
+            },
+        ],
+        order: [
+            ['dateTime', 'DESC'],
+            [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
+            [models.piece, models.calendarPiece, 'order', 'ASC'],
+        ],
+    });
+    console.log('Local events fetched from db.');
+    const prunedEvents = events.map((cal) => {
+        return {
+            id: cal.id,
+            summary: cal.name,
+            location: cal.location,
+            startDatetime: moment(cal.dateTime),
+            endDate: moment(cal.endDate),
+            allDay: cal.allDay,
+            timeZone: cal.timezone,
+            description: JSON.stringify({
+                collaborators: cal.collaborators.map((collab) => {
+                    return {
+                        name: collab.name,
+                        instrument: collab.instrument,
+                    };
+                }),
+                pieces: cal.pieces.map((piece) => {
+                    return {
+                        composer: piece.composer,
+                        piece: piece.piece,
+                    };
+                }),
+                type: cal.type,
+                website: cal.website,
+            }),
+        };
+    });
+
+    await Promise.each(prunedEvents, async (item) => {
+        try {
+            await getCalendarSingleEvent(item.id);
+
+            // if error not thrown, then event exists, update it
+            await updateCalendar(item);
+            console.log(`updated: ${item.id}\n`);
+            updated++;
+        } catch (e) {
+            if (e.response.status === 404) {
+                try {
+                    await createCalendarEvent(item);
+                    console.log(`created: ${item.id}\n`);
+                    created++;
+                } catch (e) {
+                    console.log(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
+                    errored++;
+                }
+            } else {
+                console.log(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
+                errored++;
+            }
+        }
+    });
+
+    const result = `
+        updating finished.
+        created: ${created}
+        updated: ${updated}
+        errored: ${errored}
+    `;
+    console.log(result);
+
+});
+
 adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res) => {
-    res.status(200);
-    res.end();
+    res.sendStatus(200);
 
     let events: CalendarInstance[];
     const limit = 10;

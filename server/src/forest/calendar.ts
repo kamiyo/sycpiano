@@ -3,7 +3,10 @@
 const forest = require('forest-express-sequelize');
 
 forest.collection('calendar', {
-    actions: [{ name: 'sync', type: 'global' }],
+    actions: [
+        { name: 'Sync', type: 'global' },
+        { name: 'Sync Selected', type: 'bulk' },
+    ],
 });
 
 export {};
