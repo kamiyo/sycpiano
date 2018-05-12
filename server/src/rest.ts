@@ -21,6 +21,9 @@ adminRest.use(express.json());
 adminRest.use(express.urlencoded({ extended: true }));
 
 adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res) => {
+    res.status(200);
+    res.end();
+
     let events: CalendarInstance[];
     const limit = 10;
     let offset = 0;
@@ -135,8 +138,6 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res
         errored: ${errored}
     `;
     console.log(result);
-    res.status(200).write({ success: result });
-    res.end();
 });
 
 // adminRest.get('/test', async (_, res) => {

@@ -56,7 +56,7 @@ Object.keys(oldRoutesToRedirectsMap).forEach(key => (
 
 // We catch any route first, and then let our front-end routing do the work.
 app.get(/\//, async (req, res) => {
-    const { sanitize, ...meta } = await getMetaFromPathAndSanitize(req.url);
+    const { sanitize = '', ...meta } = await getMetaFromPathAndSanitize(req.url);
     if (sanitize) {
         res.redirect(req.url.replace(`/${sanitize}`, ''));
         res.end();
