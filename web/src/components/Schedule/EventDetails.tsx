@@ -19,7 +19,12 @@ import { screenXSorPortrait } from 'src/styles/screens';
 
 const locationIconDimension = '30px';
 
-interface EventDateTimeProps { dateTime: Moment; className?: string; isMobile?: boolean; }
+interface EventDateTimeProps {
+    dateTime: Moment;
+    className?: string;
+    isMobile?: boolean;
+    rounded?: string;
+}
 
 let EventDate: React.SFC<EventDateTimeProps> = (props) => (
     <div className={props.className}>
@@ -32,14 +37,23 @@ let EventDate: React.SFC<EventDateTimeProps> = (props) => (
     </div>
 );
 
-EventDate = styled<EventDateTimeProps, typeof EventDate>(EventDate) `
+EventDate = styled<EventDateTimeProps, typeof EventDate>(EventDate)`
     text-align: center;
     background-color: ${lightBlue};
     color: white;
     height: 6.7em;
     width: 6.7em;
     line-height: 2.5em;
-    border-radius: 50%;
+    ${props => {
+        switch (props.rounded) {
+            case 'top':
+                return 'border-radius: 50% 50% 0 0;';
+            case 'bottom':
+                return 'border-radius: 0 0 50% 50%;';
+            default:
+                return 'border-radius: 50%;';
+        }
+    }}
     padding: 0.8em;
 `;
 
@@ -107,7 +121,7 @@ let EventTime: React.SFC<EventDateTimeProps> = ({ className, dateTime }) => (
     </div>
 );
 
-EventTime = styled(EventTime) ` font-size: 1.5em; `;
+EventTime = styled(EventTime)` font-size: 1.5em; `;
 
 interface EventLocationProps { location: string; className?: string; isMobile?: boolean; }
 
@@ -143,7 +157,7 @@ let EventLocation: React.SFC<EventLocationProps> = ({ location, className, isMob
     );
 };
 
-EventLocation = styled<EventLocationProps, typeof EventLocation>(EventLocation) `
+EventLocation = styled<EventLocationProps, typeof EventLocation>(EventLocation)`
     font-size: 1.2em;
     display: flex;
     flex-direction: row;
@@ -176,7 +190,7 @@ let EventCollaborators: React.SFC<EventCollaboratorsProps> = ({ className, colla
     </div>
 );
 
-EventCollaborators = styled(EventCollaborators) `
+EventCollaborators = styled(EventCollaborators)`
     list-style: none;
     padding: 0;
     font-size: 1.2em;
@@ -198,7 +212,7 @@ let EventProgram: React.SFC<EventProgramProps> = ({ program, className }) => (
     </div>
 );
 
-EventProgram = styled(EventProgram) `
+EventProgram = styled(EventProgram)`
     list-style: none;
     padding: 0;
     font-size: 1.2em;
@@ -216,7 +230,7 @@ let EventWebsiteButton: React.SFC<EventWebsiteButtonProps> = ({ website, classNa
     </a>
 );
 
-EventWebsiteButton = styled(EventWebsiteButton) `
+EventWebsiteButton = styled(EventWebsiteButton)`
     display: block;
     font-size: 1.2em;
     width: 150px;

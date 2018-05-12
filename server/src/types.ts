@@ -35,6 +35,8 @@ export interface CalendarAttributes {
     readonly id?: string;
     readonly name: string;
     readonly dateTime: Date | string;
+    readonly allDay: boolean;
+    readonly endDate: Date | string;
     readonly timezone: string;
     readonly location: string;
     readonly type: string;

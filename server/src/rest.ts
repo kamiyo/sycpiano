@@ -20,7 +20,7 @@ const adminRest = express();
 adminRest.use(express.json());
 adminRest.use(express.urlencoded({ extended: true }));
 
-adminRest.get('/sync', async (_, res) => {
+adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res) => {
     let events: CalendarInstance[];
     const limit = 10;
     let offset = 0;
@@ -77,6 +77,8 @@ adminRest.get('/sync', async (_, res) => {
                 summary: cal.name,
                 location: cal.location,
                 startDatetime: moment(cal.dateTime),
+                endDate: moment(cal.endDate),
+                allDay: cal.allDay,
                 timeZone: cal.timezone,
                 description: JSON.stringify({
                     collaborators: cal.collaborators.map((collab) => {
@@ -126,11 +128,12 @@ adminRest.get('/sync', async (_, res) => {
             }
         });
 
-        res.write(`updating finished.
-        created: ${created}
-        updated: ${updated}
-        errored: ${errored}
-    `);
+        res.write(`
+            updating finished.
+            created: ${created}
+            updated: ${updated}
+            errored: ${errored}
+        `);
     } while (events.length !== 0);
     res.end();
 });
@@ -190,6 +193,8 @@ adminRest.post('/forest/calendar', async (req, _, next) => {
         const {
             location,
             dateTime,
+            allDay,
+            endDate,
             name,
             type,
             website,
@@ -212,6 +217,8 @@ adminRest.post('/forest/calendar', async (req, _, next) => {
             description,
             location,
             startDatetime: dateTime,
+            endDate,
+            allDay,
             timeZone: timezone,
         });
         const id = createResponse.data.id;
@@ -228,7 +235,7 @@ adminRest.post('/forest/calendar', async (req, _, next) => {
     next();
 });
 
-adminRest.delete('/forest/calendar/:id', async (req, _, next) => {
+adminRest.delete('/forest/calendar/:id', forest.ensureAuthenticated, async (req, _, next) => {
     const id = req.params.id;
     try {
         await deleteCalendarEvent(id);
@@ -240,6 +247,7 @@ adminRest.delete('/forest/calendar/:id', async (req, _, next) => {
 
 adminRest.use(forest.init({
     modelsDir: path.join(__dirname, './models'), // Your models directory.
+    configDir: path.join(__dirname, './forest'),
     envSecret: process.env.FOREST_ENV_SECRET,
     authSecret: process.env.FOREST_AUTH_SECRET,
     sequelize: db.sequelize,

@@ -22,6 +22,8 @@ export interface CachedEvent {
     readonly id: string;
     readonly location: string;
     readonly dateTime: string;
+    readonly allDay: boolean;
+    readonly endDate: string;
     readonly timezone: string;
     readonly name: string;
     readonly collaborators: Collaborators;
@@ -37,6 +39,8 @@ export interface DayItem {
     readonly collaborators: Collaborators;
     readonly eventType: EventType;
     readonly dateTime: Moment;
+    readonly endDate: Moment;
+    readonly allDay: boolean;
     readonly location: string;
     readonly program: Pieces;
     readonly website?: string;
