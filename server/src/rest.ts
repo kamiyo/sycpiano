@@ -10,9 +10,10 @@ dotenv.config();
 const forest = require('forest-express-sequelize');
 
 import { createCalendarEvent, deleteCalendarEvent, getCalendarSingleEvent, getLatLng, getTimeZone, updateCalendar } from './gapi/calendar';
+import { getHash } from './hash';
 import db from './models';
 
-import { CalendarInstance } from 'types';
+import { CalendarAttributes, CalendarInstance, MusicAttributes, MusicFileAttributes, MusicFileInstance, MusicFileModel, MusicInstance } from 'types';
 
 const adminRest = express();
 
@@ -254,57 +255,59 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res
     console.log(result);
 });
 
-// adminRest.get('/test', async (_, res) => {
-//     const out: string[] = [];
-//     for (let i = 0; i < 20; i++) {
-//         out.push(randomBase32Str(26));
-//     }
-//     res.json(out);
-// })
+const updateMusicFileHash = async (req: express.Request, _: express.Response, next: () => any) => {
+    try {
+        const {
+            name,
+            musicId,
+        }: MusicFileAttributes = req.body.data.attributes;
 
-// adminRest.get('/fixIds', async (_, res) => {
-//     const models = db.models;
-//     const events: CalendarInstance[] = await models.calendar.findAll({
-//         where: {
-//             id: {
-//                 [Op.regexp]: '.*_.*'
-//             }
-//         }
-//     });
+        const music: MusicInstance = await db.models.music.findOne({
+            where: {
+                id: musicId,
+            },
+        });
+        const hash = getHash(music.composer, music.piece, name);
+        req.body.data.attributes.hash = hash;
 
-//     const output: Array<{
-//         old: string;
-//         new: string;
-//     }> = [];
+        next();
+    } catch (e) {
+        console.log(e);
+    }
+};
 
-//     try {
-//         await Promise.each(events, async (event) => {
-//             const collabs = await event.getCollaborators();
-//             const pieces = await event.getPieces();
-//             console.log('here');
-//             const newId = randomBase32Str(26);
-//             const newCalendar: CalendarInstance = await models.calendar.create({
-//                 id: newId,
-//                 name: event.name,
-//                 location: event.location,
-//                 dateTime: event.dateTime,
-//                 timezone: event.timezone,
-//                 type: event.type,
-//                 website: event.website,
-//             } as CalendarAttributes);
-//             output.push({ old: event.id, new: newId });
-//             await newCalendar.setCollaborators(collabs);
-//             await newCalendar.setPieces(pieces);
-//             await event.destroy();
-//         });
-//     } catch (e) {
-//         console.log(e);
-//     }
+adminRest.post('/forest/musicfile', forest.ensureAuthenticated, updateMusicFileHash);
 
-//     res.json(output);
-// })
+adminRest.put('/forest/musicfile', forest.ensureAuthenticated, updateMusicFileHash);
 
-adminRest.post('/forest/calendar', async (req, _, next) => {
+adminRest.put('/forest/music', forest.ensureAuthenticated, async (req, _, next) => {
+    try {
+        const {
+            id,
+            composer,
+            piece,
+        }: MusicAttributes = req.body.data.attributes;
+
+        const musicFiles: MusicFileInstance[] = await (db.models.musicFile as MusicFileModel).findAll({
+            where: {
+                musicId: id,
+            },
+        });
+        await Promise.each(musicFiles, async (musicFile) => {
+            const {
+                name,
+            } = musicFile;
+            const hash = getHash(composer, piece, name);
+            await musicFile.update({ hash });
+        });
+
+        next();
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+adminRest.post('/forest/calendar', forest.ensureAuthenticated, async (req, _, next) => {
     try {
         const {
             location,
@@ -314,7 +317,7 @@ adminRest.post('/forest/calendar', async (req, _, next) => {
             name,
             type,
             website,
-        } = req.body.data.attributes;
+        }: CalendarAttributes = req.body.data.attributes;
         let timezone = null;
         if (location) {
             const { latlng } = await getLatLng(location);

@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { DataTypeInteger, DataTypeString, DataTypeUUID, default as Sequelize } from 'sequelize';
+import { default as Sequelize } from 'sequelize';
 
 type Moment = moment.Moment;
 
@@ -68,7 +68,7 @@ export interface CalendarInstance extends Sequelize.Instance<CalendarAttributes>
 export interface CalendarModel extends Model<CalendarInstance, CalendarAttributes> {}
 
 export interface AcclaimAttributes {
-    readonly id?: DataTypeUUID;
+    readonly id?: string;
     readonly quote: string;
     readonly short: string;
     readonly author: string;
@@ -84,12 +84,12 @@ export interface AcclaimInstance extends Sequelize.Instance<AcclaimAttributes>, 
 export interface AcclaimModel extends Model<AcclaimInstance, AcclaimAttributes> {}
 
 export interface MusicFileAttributes {
-    readonly id?: DataTypeUUID;
+    readonly id?: string;
     readonly name: string;
     readonly audioFile: string;
     readonly waveformFile: string;
     readonly durationSeconds: number;
-    readonly musicId?: DataTypeUUID;
+    readonly musicId?: string;
     readonly hash?: string;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
@@ -104,7 +104,7 @@ export interface MusicFileInstance extends Sequelize.Instance<MusicFileAttribute
 export interface MusicFileModel extends Model<MusicFileInstance, MusicFileAttributes> {}
 
 export interface MusicAttributes {
-    readonly id: DataTypeUUID;
+    readonly id: string;
     readonly composer: string;
     readonly piece: string;
     readonly contributors: string;
@@ -128,7 +128,7 @@ export interface MusicModel extends Model<MusicInstance, MusicAttributes> {
 }
 
 export interface CollaboratorAttributes {
-    readonly id: DataTypeUUID;
+    readonly id: string;
     readonly name: string;
     readonly instrument: string;
     readonly createdAt?: Date | string;
@@ -142,7 +142,7 @@ export interface CollaboratorInstance extends Sequelize.Instance<CollaboratorAtt
 export interface CollaboratorModel extends Model<CollaboratorInstance, CollaboratorAttributes> {}
 
 export interface PieceAttributes {
-    readonly id: DataTypeUUID;
+    readonly id: string;
     readonly composer: string;
     readonly piece: string;
     readonly createdAt?: Date | string;
@@ -156,9 +156,9 @@ export interface PieceInstance extends Sequelize.Instance<PieceAttributes>, Piec
 export interface PieceModel extends Model<PieceInstance, PieceAttributes> {}
 
 export interface CalendarPieceAttributes {
-    readonly id?: DataTypeUUID;
-    readonly calendarId?: DataTypeString;
-    readonly programId?: DataTypeUUID;
+    readonly id?: string;
+    readonly calendarId?: string;
+    readonly programId?: string;
     readonly order?: number;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
@@ -169,9 +169,9 @@ export interface CalendarPieceInstance extends Sequelize.Instance<CalendarPieceA
 export interface CalendarPieceModel extends Model<CalendarPieceInstance, CalendarPieceAttributes> {}
 
 export interface CalendarCollaboratorAttributes {
-    readonly id?: DataTypeUUID;
-    readonly calendarId?: DataTypeString;
-    readonly collaboratorId?: DataTypeUUID;
+    readonly id?: string;
+    readonly calendarId?: string;
+    readonly collaboratorId?: string;
     readonly order?: number;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
@@ -182,13 +182,13 @@ export interface CalendarCollaboratorInstance extends Sequelize.Instance<Calenda
 export interface CalendarCollaboratorModel extends Model<CalendarCollaboratorInstance, CalendarCollaboratorAttributes> {}
 
 export interface PhotoAttributes {
-    readonly id?: DataTypeUUID;
-    readonly file: DataTypeString;
-    readonly credit: DataTypeString;
-    readonly width: DataTypeInteger;
-    readonly height: DataTypeInteger;
-    readonly thumbnailWidth: DataTypeInteger;
-    readonly thumbnailHeight: DataTypeInteger;
+    readonly id?: string;
+    readonly file: string;
+    readonly credit: string;
+    readonly width: number;
+    readonly height: number;
+    readonly thumbnailWidth: number;
+    readonly thumbnailHeight: number;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
 }
