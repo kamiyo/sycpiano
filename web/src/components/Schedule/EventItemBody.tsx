@@ -16,10 +16,10 @@ import { lightBlue } from 'src/styles/colors';
 import { lato1 } from 'src/styles/fonts';
 import { screenXSorPortrait } from 'src/styles/screens';
 
-const FlexEventDate = styled(EventDate)` flex: 0 0 100px; `;
+const FlexEventDate = styled(EventDate)` flex: 0 0 auto; `;
 
 const FlexEventInfoContainer = styled('div')`
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     padding: 0 0 0 35px;
 `;
 
