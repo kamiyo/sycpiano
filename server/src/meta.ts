@@ -44,12 +44,21 @@ const descriptions: {
         press: `Reviews of Sean Chen's performances.`,
     };
 
+const validFirst = [ '', 'about', 'contact', 'schedule', 'media', 'press' ];
+
 export const getMetaFromPathAndSanitize = async (url: string) => {
     const parsed = regex.exec(url);
     if (parsed === null) {
         return {
             title: baseString + 'Home',
             description: descriptions.home,
+        };
+    }
+    if (!validFirst.includes(parsed[1])) {
+        return {
+            title: baseString + '404: Not Found',
+            description: descriptions.home,
+            notFound: true,
         };
     }
     if (parsed[2] === undefined) {
