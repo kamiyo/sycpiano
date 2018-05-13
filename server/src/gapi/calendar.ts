@@ -50,10 +50,10 @@ export interface GoogleCalendarParams {
     summary: string;
     description: string;
     location: string;
-    startDatetime: moment.Moment;
+    startDatetime: Date | string;
     timeZone: string;
     allDay: boolean;
-    endDate: moment.Moment;
+    endDate: Date | string;
 }
 
 export const createCalendarEvent = async ({
@@ -67,12 +67,20 @@ export const createCalendarEvent = async ({
 }: GoogleCalendarParams) => {
     const token = await getToken();
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
+    const startMoment = moment(startDatetime);
+    const endMoment = moment(endDate);
     const eventResource = {
         summary,
         description,
         location,
-        start: (allDay ? { date: startDatetime.format('YYYY-MM-DD') } : { dateTime: startDatetime.format(), timeZone }),
-        end: (endDate ? { date: endDate.format('YYYY-MM-DD') } : { dateTime: startDatetime.add({ hours: 2 }).format(), timeZone }),
+        start: (allDay ? { date: startMoment.format('YYYY-MM-DD') } : { dateTime: startMoment.format(), timeZone }),
+        end: (endDate ?
+            { date: endMoment.format('YYYY-MM-DD') } :
+            (allDay ?
+                { date: startMoment.add({ day: 1 }).format('YYYY-MM-DD') } :
+                { dateTime: startMoment.add({ hours: 2 }).format(), timeZone }
+            )
+        ),
     };
     return axios.post(url, eventResource, {
         headers: {
@@ -93,12 +101,20 @@ export const updateCalendar = async ({
 }: GoogleCalendarParams) => {
     const token = await getToken();
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${id}`;
+    const startMoment = moment(startDatetime);
+    const endMoment = moment(endDate);
     const eventResource = {
         summary,
         description,
         location,
-        start: (allDay ? { date: startDatetime.format('YYYY-MM-DD') } : { dateTime: startDatetime.format(), timeZone }),
-        end: (endDate ? { date: endDate.format('YYYY-MM-DD') } : { dateTime: startDatetime.add({ hours: 2 }).format(), timeZone }),
+        start: (allDay ? { date: startMoment.format('YYYY-MM-DD') } : { dateTime: startMoment.format(), timeZone }),
+        end: (endDate ?
+            { date: endMoment.format('YYYY-MM-DD') } :
+            (allDay ?
+                { date: startMoment.add({ day: 1 }).format('YYYY-MM-DD') } :
+                { dateTime: startMoment.add({ hours: 2 }).format(), timeZone }
+            )
+        ),
     };
     return axios.put(url, eventResource, {
         headers: {
@@ -168,14 +184,14 @@ export const getLatLng = async (address: string) => {
     }
 };
 
-export const getTimeZone = async (lat: number, lng: number, timestamp: moment.Moment = moment()) => {
+export const getTimeZone = async (lat: number, lng: number, timestamp?: string) => {
     const loc = `${lat.toString()},${lng.toString()}`;
     const url = `https://maps.googleapis.com/maps/api/timezone/json`;
     try {
         const response = await axios.get(url, {
             params: {
                 location: loc,
-                timestamp: timestamp.unix(),
+                timestamp: moment(timestamp).unix(),
                 key: timeZoneKey,
             },
         });
