@@ -12,7 +12,7 @@ import { GlobalStateShape } from 'src/types';
 
 import { lato1 } from 'src/styles/fonts';
 import { pushed } from 'src/styles/mixins';
-import { screenXSorPortrait } from 'src/styles/screens';
+import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { playlistContainerWidth } from 'src/styles/variables';
 
 interface PhotosStateToProps {
@@ -45,8 +45,12 @@ const StyledPhotos = styled('div') `
 
 const StyledPhotoViewer = styled('div') `
     position: relative;
-    width: calc(100% - ${playlistContainerWidth}px);
+    width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
+
+    ${/* sc-selector */ screenM} {
+        width: calc(100% - ${playlistContainerWidth.tablet});
+    }
 
     img {
         position: absolute;

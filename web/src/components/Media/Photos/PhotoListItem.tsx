@@ -24,7 +24,9 @@ const PhotoRow = styled<{ isMobile: boolean; isLoaded: boolean }, 'div'>('div') 
 
     img {
         width: 100%;
+        height: 100%;
         position: absolute;
+        object-fit: cover;
     }
 
     &:hover {
