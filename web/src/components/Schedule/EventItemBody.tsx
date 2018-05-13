@@ -31,6 +31,7 @@ const DateContainer = styled('div')`
 
 const Connector = styled('div')`
     flex: 1 1 auto;
+    min-height: 2rem;
     background: linear-gradient(
         to right,
         ${lightBlue} 0%,
@@ -85,20 +86,20 @@ let EventItemBody: React.SFC<EventItemBodyProps> = ({
     );
 
 EventItemBody = styled<EventItemBodyProps, typeof EventItemBody>(EventItemBody)`
-                display: flex;
-                padding: 30px 0 30px 30px;
+    display: flex;
+    padding: 30px 0 30px 30px;
     font-family: ${lato1};
-            align-items: top;
-            color: black;
-            transition: 0.2s all;
-            width: 80%;
-            max-width: 1240px;
-            margin: 0 auto;
+    align-items: top;
+    color: black;
+    transition: 0.2s all;
+    width: 80%;
+    max-width: 1240px;
+    margin: 0 auto;
 
     ${/* sc-selector */ screenXSorPortrait} {
-                padding: 30px 0;
-            width: 90%;
-        }
-    `;
+        padding: 30px 0;
+        width: 90%;
+    }
+`;
 
 export { EventItemBody };

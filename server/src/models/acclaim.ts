@@ -17,7 +17,16 @@ const Acclaim = (sequelize: Sequelize, dataTypes: DataTypes) => (
             type: dataTypes.STRING,
             field: 'short_author',
         },
-        date: dataTypes.STRING,
+        website: dataTypes.STRING,
+        date: dataTypes.DATEONLY,
+        oldDate: {
+            type: dataTypes.STRING,
+            field: 'old_date',
+        },
+        hasFullDate: {
+            type: dataTypes.BOOLEAN,
+            field: 'has_full_date',
+        },
     }) as AcclaimModel
 );
 

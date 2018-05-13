@@ -57,7 +57,6 @@ export interface GoogleCalendarParams {
 }
 
 export const createCalendarEvent = async ({
-    id,
     summary,
     description,
     location,
@@ -69,7 +68,6 @@ export const createCalendarEvent = async ({
     const token = await getToken();
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
     const eventResource = {
-        id,
         summary,
         description,
         location,
