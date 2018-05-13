@@ -32,6 +32,7 @@ const DateContainer = styled('div')`
 const Connector = styled('div')`
     flex: 1 1 auto;
     min-height: 2rem;
+    transform: scaleY(1.2);
     background: linear-gradient(
         to right,
         ${lightBlue} 0%,
