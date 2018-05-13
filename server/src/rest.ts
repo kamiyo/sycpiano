@@ -1,5 +1,4 @@
 import * as express from 'express';
-import * as moment from 'moment';
 import * as path from 'path';
 
 import * as Promise from 'bluebird';
@@ -77,8 +76,8 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, asyn
             id: cal.id,
             summary: cal.name,
             location: cal.location,
-            startDatetime: moment(cal.dateTime),
-            endDate: moment(cal.endDate),
+            startDatetime: cal.dateTime,
+            endDate: cal.endDate,
             allDay: cal.allDay,
             timeZone: cal.timezone,
             description: JSON.stringify({
@@ -196,8 +195,8 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res
                 id: cal.id,
                 summary: cal.name,
                 location: cal.location,
-                startDatetime: moment(cal.dateTime),
-                endDate: moment(cal.endDate),
+                startDatetime: cal.dateTime,
+                endDate: cal.endDate,
                 allDay: cal.allDay,
                 timeZone: cal.timezone,
                 description: JSON.stringify({
@@ -318,7 +317,7 @@ adminRest.post('/forest/calendar', async (req, _, next) => {
         let timezone = null;
         if (location) {
             const { latlng } = await getLatLng(location);
-            timezone = await getTimeZone(latlng.lat, latlng.lng, moment(dateTime));
+            timezone = await getTimeZone(latlng.lat, latlng.lng, dateTime);
         }
 
         const description = JSON.stringify({
@@ -345,10 +344,10 @@ adminRest.post('/forest/calendar', async (req, _, next) => {
             location,
             timezone,
         };
+        next();
     } catch (e) {
         console.log(e.response.data.error);
     }
-    next();
 });
 
 adminRest.delete('/forest/calendar/:id', forest.ensureAuthenticated, async (req, _, next) => {

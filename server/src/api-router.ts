@@ -16,7 +16,7 @@ apiRouter.get('/acclaims', (req, res) => {
             exclude: ['short', 'shortAuthor', 'createdAt', 'updatedAt'],
         },
         order: [
-            ['id', 'ASC'],
+            ['date', 'DESC'],
         ],
     };
     if (req.query.hasOwnProperty('count')) {
