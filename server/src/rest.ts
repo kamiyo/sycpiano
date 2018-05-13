@@ -278,12 +278,14 @@ const updateMusicFileHash = async (req: express.Request, _: express.Response, ne
 
 adminRest.post('/forest/musicfile', forest.ensureAuthenticated, updateMusicFileHash);
 
-adminRest.put('/forest/musicfile', forest.ensureAuthenticated, updateMusicFileHash);
+adminRest.put('/forest/musicfile/:id', forest.ensureAuthenticated, updateMusicFileHash);
 
-adminRest.put('/forest/music', forest.ensureAuthenticated, async (req, _, next) => {
+adminRest.put('/forest/music/:id', forest.ensureAuthenticated, async (req, _, next) => {
     try {
         const {
             id,
+        }: MusicAttributes = req.params.id;
+        const {
             composer,
             piece,
         }: MusicAttributes = req.body.data.attributes;
