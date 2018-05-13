@@ -180,79 +180,6 @@ const NavBarGradient = styled('div')`
     }
 `;
 
-/*
-from original CSS file, feel free to convert to css object instead of using styled
-
-const Quote = styled('div')`
-    font-family: ${lato2i};
-    font-size: 40px;
-    position: absolute;
-    color: white;
-    bottom: 50px;
-    right: 50px;
-    text-shadow: 2px 2px 4px ${textShadowColor};
-    opacity: 0;
-`;
-
-const doubleQuote = css`
-    font-size: 95px;
-    position: absolute;
-`;
-
-const OpenQuote = styled('div')`
-    ${doubleQuote}
-    top: -13px;
-    left: -35px;
-`;
-
-const CloseQuote = styled('div')`
-    ${doubleQuote}
-    bottom: -10px;
-    right: 86px;
-`;
-
-const QuoteAuthor = styled('div')`
-    float: right;
-`;
-
-const NextEvent = styled('div')`
-    position: absolute;
-    ${pushed}
-    margin-top: 50px;
-    left: 0;
-    color: black;
-    font-family:${lato2i};
-    background-color: rgba(248, 248, 248, .8);
-    padding: 10px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-`;
-
-const EventLabel = styled('div')`
-    font-size: 35px;
-`;
-
-const EventDate = styled('div')`
-    font-size: 25px;
-    span {
-        display: inline-block;
-    }
-`;
-
-const Separator = styled('div')`
-    margin: 0 12px;
-`;
-
-const EventName = styled('div')`
-    font-size: 40px;
-    font-family: ${lato2}
-`;
-
-const EventLocation = styled('div')`
-    font-size: 17px;
-`;
-*/
-
 const SocialContainer = styled('div')`
     position: absolute;
     width: fit-content;
@@ -363,12 +290,12 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; },
 
     onSocialEnter = (id: number) => (el: HTMLLinkElement) => {
         const relative = id - (Object.keys(socials).length / 2 - 0.5);
-        TweenLite.fromTo(el, 0.2, { opacity: 0, y: `-50%`, x: `${relative * -100}%` }, { opacity: 1, y: `0%`, x: `0%`, delay: .05 * id, ease: Ease.Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
+        TweenLite.fromTo(el, 0.25, { opacity: 0, y: `-50%`, x: `${relative * -100}%` }, { opacity: 1, y: `0%`, x: `0%`, delay: .05 * id, ease: Ease.Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
     }
 
     onSocialExit = (id: number) => (el: HTMLLinkElement) => {
         const relative = id - Math.floor(Object.keys(socials).length / 2);
-        TweenLite.fromTo(el, 0.2, { opacity: 1, y: `0%`, x: `0%` }, { opacity: 0, y: `-50%`, x: `${relative * -100}%` , delay: .05 * id, ease: Ease.Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
+        TweenLite.fromTo(el, 0.25, { opacity: 1, y: `0%`, x: `0%` }, { opacity: 0, y: `-50%`, x: `${relative * -100}%` , delay: .05 * id, ease: Ease.Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
         this.setState({ canHover: this.defaultCanHover });
     }
 
@@ -428,7 +355,7 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; },
                                         in={this.state.showSocial}
                                         onEnter={this.onSocialEnter(idx)}
                                         onExit={this.onSocialExit(idx)}
-                                        timeout={200 + 50 * idx}
+                                        timeout={250 + 50 * idx}
                                         onEntered={() => this.setState({ canHover: { ...this.state.canHover, [key]: true }})}
                                     >
                                         <SocialMediaLink canHover={this.state.canHover[key]} show={this.state.showSocial} url={socials[key]} social={key} />
