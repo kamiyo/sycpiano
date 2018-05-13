@@ -20,7 +20,8 @@ adminRest.use(express.json());
 adminRest.use(express.urlencoded({ extended: true }));
 
 adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, async (req, res) => {
-    res.sendStatus(200);
+    res.status(200).json({ success: 'successfully queued' });
+    res.end();
     let updated = 0;
     let created = 0;
     let errored = 0;
