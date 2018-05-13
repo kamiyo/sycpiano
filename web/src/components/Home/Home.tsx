@@ -32,6 +32,7 @@ const Content = styled('div')`
     color: white;
     text-shadow: 0 0 8px ${textShadowColor};
     z-index: 100;
+    overflow: hidden;
 
     ${/* sc-selector */ screenXSorPortrait} {
         height: calc(100% - ${navBarHeight.mobile}px);
@@ -71,7 +72,7 @@ const Skills = styled('div')`
 
 const Handle = styled('div')`
     ${noHighlight}
-    margin-top: 15px;
+    margin: 15px 0;
     font-family: ${lato2i};
     font-size: 30px;
     color: white;
