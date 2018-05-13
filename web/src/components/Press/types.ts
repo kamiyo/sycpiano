@@ -5,6 +5,8 @@ export interface AcclaimItemShape {
     readonly author: string;
     readonly shortAuthor: string;
     readonly date: string;
+    readonly hasFullDate: boolean;
+    readonly website?: string;
 }
 
 export interface AcclaimsListStateShape {

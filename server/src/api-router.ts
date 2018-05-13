@@ -11,11 +11,13 @@ import Sequelize from 'sequelize';
 const { gt, lt } = Sequelize.Op;
 
 apiRouter.get('/acclaims', (req, res) => {
-    // TODO: add order-by http://docs.sequelizejs.com/en/v3/docs/querying/
     const params: Sequelize.FindOptions<{}> = {
         attributes: {
-            exclude: ['createdAt', 'updatedAt'],
+            exclude: ['short', 'shortAuthor', 'createdAt', 'updatedAt'],
         },
+        order: [
+            ['id', 'ASC'],
+        ],
     };
     if (req.query.hasOwnProperty('count')) {
         params.limit = req.params.count;

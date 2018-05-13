@@ -73,12 +73,15 @@ export interface AcclaimAttributes {
     readonly short: string;
     readonly author: string;
     readonly shortAuthor: string;
-    readonly date: string;
+    readonly date: Date | string;
+    readonly oldDate?: string;
+    readonly hasFullDate?: boolean;
+    readonly website: string;
 }
 
 export interface AcclaimInstance extends Sequelize.Instance<AcclaimAttributes>, AcclaimAttributes {}
 
-export interface AcclaimModel extends Model<AcclaimAttributes, AcclaimInstance> {}
+export interface AcclaimModel extends Model<AcclaimInstance, AcclaimAttributes> {}
 
 export interface MusicFileAttributes {
     readonly id?: DataTypeUUID;
