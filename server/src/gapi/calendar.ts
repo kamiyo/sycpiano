@@ -184,7 +184,7 @@ export const getLatLng = async (address: string) => {
     }
 };
 
-export const getTimeZone = async (lat: number, lng: number, timestamp?: string) => {
+export const getTimeZone = async (lat: number, lng: number, timestamp?: string | Date) => {
     const loc = `${lat.toString()},${lng.toString()}`;
     const url = `https://maps.googleapis.com/maps/api/timezone/json`;
     try {
