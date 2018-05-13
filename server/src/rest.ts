@@ -257,10 +257,20 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res
 
 const updateMusicFileHash = async (req: express.Request, _: express.Response, next: () => any) => {
     try {
-        const {
+        let {
             name,
             musicId,
         }: MusicFileAttributes = req.body.data.attributes;
+
+        if (!name || !musicId) {
+            const musicFile: MusicFileInstance = await db.models.musicFile.findOne({
+                where: {
+                    id: req.params.id,
+                },
+            });
+            name = (name) ? name : musicFile.name;
+            musicId = (musicId) ? musicId : musicFile.musicId;
+        }
 
         const music: MusicInstance = await db.models.music.findOne({
             where: {
@@ -284,11 +294,22 @@ adminRest.put('/forest/music/:id', forest.ensureAuthenticated, async (req, _, ne
     try {
         const {
             id,
-        }: MusicAttributes = req.params.id;
-        const {
+        }: MusicAttributes = req.params;
+
+        let {
             composer,
             piece,
         }: MusicAttributes = req.body.data.attributes;
+
+        if (!composer || !piece) {
+            const music: MusicInstance = await db.models.music.findOne({
+                where: {
+                    id,
+                },
+            });
+            composer = (composer) ? composer : music.composer;
+            piece = (piece) ? piece : music.piece;
+        }
 
         const musicFiles: MusicFileInstance[] = await (db.models.musicFile as MusicFileModel).findAll({
             where: {
