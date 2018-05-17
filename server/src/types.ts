@@ -31,6 +31,17 @@ export interface DB {
     readonly models: ModelMap;
 }
 
+export interface BioAttributes {
+    readonly paragraph: number;
+    readonly text: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+}
+
+export interface BioInstance extends Sequelize.Instance<BioAttributes>, BioAttributes {}
+
+export interface BioModel extends Sequelize.Model<BioInstance, BioAttributes> {}
+
 export interface CalendarAttributes {
     readonly id?: string;
     readonly name: string;

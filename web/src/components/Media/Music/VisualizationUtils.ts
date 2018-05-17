@@ -47,6 +47,7 @@ export class WaveformLoader {
         length: number;
     } = undefined;
     waveform: Float32Array = undefined;
+
     loaded: Promise<any>;
 
     reset = () => {

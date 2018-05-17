@@ -1,9 +1,11 @@
+import { AboutStateShape } from 'src/components/About/types';
 import { AudioPlaylistStateShape, AudioUIStateShape, AudioVisualizerStateShape } from 'src/components/Media/Music/types';
 import { PhotoListReducerShape, PhotoViewerReducerShape } from 'src/components/Media/Photos/types';
 import { VideoPlayerStateShape, VideoPlaylistStateShape } from 'src/components/Media/Videos/types';
 import { AcclaimsListStateShape } from 'src/components/Press/types';
 import { ScheduleStateShape } from 'src/components/Schedule/types';
 
+import { aboutReducer } from 'src/components/About/reducers';
 import { audioPlaylistReducer, audioUIReducer, audioVisualizerReducer } from 'src/components/Media/Music/reducers';
 import { photoListReducer, photoViewerReducer } from 'src/components/Media/Photos/reducers';
 import { videoPlayerReducer, videoPlaylistReducer } from 'src/components/Media/Videos/reducers';
@@ -24,6 +26,7 @@ import { PressType } from 'src/components/Press/Press';
 import { ScheduleType } from 'src/components/Schedule/Schedule';
 
 export interface GlobalStateShape {
+    readonly about?: AboutStateShape;
     readonly audio_playlist?: AudioPlaylistStateShape;
     readonly audio_ui?: AudioUIStateShape;
     readonly audio_visualizer?: AudioVisualizerStateShape;
@@ -36,11 +39,12 @@ export interface GlobalStateShape {
     readonly navbar: NavBarStateShape;
 }
 
-export type AnyReducerType = typeof audioPlaylistReducer | typeof audioUIReducer | typeof audioVisualizerReducer |
+export type AnyReducerType = typeof aboutReducer | typeof audioPlaylistReducer | typeof audioUIReducer | typeof audioVisualizerReducer |
     typeof photoListReducer | typeof photoViewerReducer | typeof acclaimsListReducer |
     typeof scheduleReducer | typeof videoPlayerReducer | typeof videoPlaylistReducer;
 
 export interface Reducers {
+    readonly about?: typeof aboutReducer;
     readonly audio_playlist?: typeof audioPlaylistReducer;
     readonly audio_ui?: typeof audioUIReducer;
     readonly audio_visualizer?: typeof audioVisualizerReducer;
@@ -56,7 +60,7 @@ export interface Reducers {
 export type AnyComponentType = AboutType | PressType | ScheduleType | HomeType | MediaType | ContactType |
                                 MusicType | PhotosType | VideosType;
 
-export type AsyncStore = Store<GlobalStateShape | void> & { async?: Reducers };
+export type AsyncStore = Store<GlobalStateShape | {}> & { async?: Reducers };
 
 export interface AsyncModule {
     Component: AnyComponentType;
