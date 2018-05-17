@@ -1,7 +1,7 @@
 import { DataTypes, Sequelize } from 'sequelize';
 import { BioModel } from 'types';
 
-const Acclaim = (sequelize: Sequelize, dataTypes: DataTypes) => (
+const Bio = (sequelize: Sequelize, dataTypes: DataTypes) => (
     sequelize.define('bio', {
         paragraph: {
             type: dataTypes.INTEGER,
@@ -23,4 +23,4 @@ const Acclaim = (sequelize: Sequelize, dataTypes: DataTypes) => (
     }) as BioModel
 );
 
-export default Acclaim;
+export default Bio;
