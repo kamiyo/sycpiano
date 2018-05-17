@@ -2,12 +2,14 @@ import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
 
+import { fetchBioAction } from 'src/components/About/actions';
+import { Blurb } from 'src/components/About/types';
 import { setOnScroll } from 'src/components/App/NavBar/actions';
 
 import { easeQuadOut } from 'd3-ease';
 import TweenLite from 'gsap/TweenLite';
 
-import blurbs from 'src/components/About/blurbs';
+// import blurbs from 'src/components/About/blurbs';
 import { LazyImage } from 'src/components/LazyImage';
 
 import { offWhite } from 'src/styles/colors';
@@ -20,7 +22,7 @@ import { GlobalStateShape } from 'src/types';
 
 const pictureHeight = 250;
 
-const Paragraph = styled('p') `
+const Paragraph = styled('p')`
     font-family: ${lato2};
     font-size: 1.2em;
     line-height: 2em;
@@ -33,7 +35,7 @@ const Paragraph = styled('p') `
     }
 `;
 
-const SpaceFiller = styled('div') `
+const SpaceFiller = styled('div')`
     display: none;
 
     ${/*sc-selector*/ screenXSorPortrait} {
@@ -44,23 +46,23 @@ const SpaceFiller = styled('div') `
     }
 `;
 
-const TextGroup = styled('div') `
+const TextGroup = styled('div')`
     ${/*sc-selector*/ screenXSorPortrait} {
         background-color: white;
         padding: 20px 20px;
     }
 `;
 
-const AboutText: React.SFC<{ className?: string }> = (props) => (
+const AboutText: React.SFC<{ className?: string, bio?: Blurb[] }> = (props) => (
     <div className={props.className}>
         <SpaceFiller />
         <TextGroup>
-            {blurbs.map((blurb, i) => {
+            {props.bio.map(({ text }, i) => {
                 if (i === 0) {
-                    const nameLocation = blurb.indexOf('Sean Chen');
-                    const name = blurb.slice(nameLocation, nameLocation + 9);
-                    const beforeName = blurb.slice(0, nameLocation);
-                    const afterName = blurb.slice(nameLocation + 9);
+                    const nameLocation = text.indexOf('Sean Chen');
+                    const name = text.slice(nameLocation, nameLocation + 9);
+                    const beforeName = text.slice(0, nameLocation);
+                    const afterName = text.slice(nameLocation + 9);
                     return (
                         <Paragraph key={i}>
                             {beforeName}
@@ -71,7 +73,7 @@ const AboutText: React.SFC<{ className?: string }> = (props) => (
                         </Paragraph>
                     );
                 }
-                return <Paragraph key={i}>{blurb}</Paragraph>;
+                return <Paragraph key={i}>{text}</Paragraph>;
             })}
         </TextGroup>
     </div>
@@ -79,7 +81,7 @@ const AboutText: React.SFC<{ className?: string }> = (props) => (
 
 interface ImageContainerProps { currScrollTop: number; bgImage?: string; }
 
-const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
+const ImageContainer = styled<ImageContainerProps, 'div'>('div')`
     flex: 1;
     ${props => props.bgImage && `background-image: url(${props.bgImage});`}
     background-size: cover;
@@ -107,7 +109,7 @@ const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
     }
 `;
 
-const TextContainer = styled(AboutText) `
+const TextContainer = styled(AboutText)`
     box-sizing: border-box;
     flex: 0 0 45%;
     height: auto;
@@ -128,7 +130,7 @@ const TextContainer = styled(AboutText) `
     }
 `;
 
-const AboutContainer = styled('div') `
+const AboutContainer = styled('div')`
     ${pushed};
     width: 100%;
     background-color: black;
@@ -159,10 +161,12 @@ interface AboutState {
 interface AboutStateToProps {
     readonly scrollTop: number;
     readonly onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
+    readonly bio: Blurb[];
 }
 
 interface AboutDispatchToProps {
     readonly setOnScroll: typeof setOnScroll;
+    readonly fetchBioAction: typeof fetchBioAction;
 }
 
 const imageLoaderStyle = css`
@@ -177,6 +181,7 @@ class About extends React.Component<AboutProps, AboutState> {
     private bgRef: React.RefObject<HTMLDivElement> = React.createRef();
 
     componentDidMount() {
+        this.props.fetchBioAction();
         this.props.setOnScroll(pictureHeight + navBarHeight.mobile);
     }
 
@@ -239,20 +244,24 @@ class About extends React.Component<AboutProps, AboutState> {
                         destroyCb={this.onImageDestroy}
                     />
                 </ImageContainer>
-                <TextContainer />
+                <TextContainer bio={this.props.bio} />
             </AboutContainer>
         );
     }
 }
 
-const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
+const mapStateToProps = ({ about, navbar }: GlobalStateShape) => ({
     onScroll: navbar.onScroll,
     scrollTop: navbar.lastScrollTop,
+    bio: about.bio,
 });
 
 const connectedAbout = connect<AboutStateToProps, AboutDispatchToProps, AboutProps>(
     mapStateToProps,
-    { setOnScroll },
+    {
+        setOnScroll,
+        fetchBioAction,
+    },
 )(About);
 
 export type AboutType = typeof connectedAbout;
