@@ -6,6 +6,7 @@ const path = require('path');
 const webpack = require('webpack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const PreloadPlugin = require('preload-webpack-plugin');
 const os = require('os');
 const threadLoader = require('thread-loader');
 
@@ -102,7 +103,10 @@ const config = () => {
             new CleanWebpackPlugin([path.resolve(__dirname, 'web/build/*')]),
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, 'web/partials/index.html'),
-                inject: false,
+                inject: true,
+            }),
+            new PreloadPlugin({
+                include: 'initial',
             }),
             new ProgressBarPlugin({
                 format: '[:percent] webpack: :msg... :elapseds \n',

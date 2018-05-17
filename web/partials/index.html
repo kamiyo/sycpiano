@@ -31,9 +31,6 @@
 
 <body>
   <div id="hero-container"></div>
-  <% _.each(Object.keys(htmlWebpackPlugin.files.chunks), function(name, key) { %>
-    <script defer src="<%= htmlWebpackPlugin.files.chunks[name].entry %>"></script>
-    <% })%>
 </body>
 
 </html>
