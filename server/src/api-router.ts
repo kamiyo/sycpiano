@@ -1,6 +1,8 @@
 import * as express from 'express';
 import * as moment from 'moment-timezone';
 
+import { uniqBy } from 'lodash';
+
 import db from './models';
 const models = db.models;
 const sequelize = db.sequelize;
@@ -8,6 +10,7 @@ const sequelize = db.sequelize;
 const apiRouter = express.Router();
 
 import Sequelize from 'sequelize';
+// const { and, eq, or } = Sequelize.Op;
 const { gt, lt } = Sequelize.Op;
 
 apiRouter.get('/acclaims', (req, res) => {
@@ -121,7 +124,7 @@ function getEventsAfter(after: string, limit: number) {
     });
 }
 
-// The interval is open on the less-than side.
+// The interval is open side.
 function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC') {
     return models.calendar.findAll({
         attributes: {
@@ -177,6 +180,119 @@ const BEFORE = -2;
 
 const calendarRouter = express.Router({ mergeParams: true });
 
+const getSqlFromFindAll = <T>(Model: any, options: Sequelize.FindOptions<T>): Promise<string> => {
+    const id = 234729387;
+
+    return new Promise((resolve, reject) => {
+        Model.addHook('beforeFindAfterOptions', id, (opts: Sequelize.FindOptions<T>) => {
+            Model.removeHook('beforeFindAfterOptions', id);
+
+            resolve(Model.sequelize.dialect.QueryGenerator.selectQuery(Model.getTableName(), opts, Model).slice(0, -1));
+
+            /* tslint:disable-next-line:no_empty */
+            return new Promise(() => {});
+        });
+
+        return Model.findAll(options).catch(reject);
+    });
+};
+
+// implement date filtering on search later
+calendarRouter.get('/search', async (req, res) => {
+    const str: string = req.query.string;
+    // const before = moment(req.query.before);
+    // const after = moment(req.query.after);
+    // const date = moment(req.query.date);
+
+    const tokens = str ? str.split(' ').join(' | ') : '';
+
+    // let where;
+    // if (date.isValid()) {
+    //     where = {
+    //         dateTime: {
+    //             [eq]: date,
+    //         },
+    //     };
+    // } else if (before.isValid() && after.isValid()) {
+    //     const arr = [
+    //         { [lt]: before },
+    //         { [gt]: after },
+    //     ];
+    //     let op;
+    //     if (before.isBefore(after)) {
+    //         op = or;
+    //     } else {
+    //         op = and;
+    //     }
+    //     where = {
+    //         dateTime: {
+    //             [op]: arr,
+    //         },
+    //     };
+    // } else if (before.isValid()) {
+    //     where = {
+    //         dateTime: {
+    //             [lt]: before,
+    //         },
+    //     };
+    // } else if (after.isValid()) {
+    //     where = {
+    //         dateTime: {
+    //             [gt]: after,
+    //         },
+    //     };
+    // }
+
+    const raw = await getSqlFromFindAll(db.models.calendar, {
+        attributes: {
+            exclude: ['createdAt', 'updatedAt'],
+        },
+        // where,
+        include: [
+            {
+                model: models.collaborator,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt'],
+                },
+                through: {
+                    attributes: ['order'],
+                },
+                include: [{
+                    model: models.calendarCollaborator,
+                    attributes: ['order'],
+                }],
+            },
+            {
+                model: models.piece,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt'],
+                },
+                through: {
+                    attributes: ['order'],
+                },
+                include: [{
+                    model: models.calendarPiece,
+                    attributes: ['order'],
+                }],
+            },
+        ],
+    });
+
+    const searchResults = await db.sequelize.query(`
+        ${raw}
+        WHERE (calendar._search @@ to_tsquery('english', :query)
+            OR collaborators._search @@ to_tsquery('english', :query)
+            OR pieces._search @@ to_tsquery('english', :query));
+    `, {
+            model: db.models.calendar,
+            replacements: { query: tokens },
+        });
+
+    res.json(uniqBy(searchResults, (data: any) => {
+        return data.id;
+    }));
+});
+
 calendarRouter.get('/', async (req, res) => {
     const model = models.calendar;
 
@@ -211,14 +327,14 @@ calendarRouter.get('/', async (req, res) => {
         case FUTURE:
             [betweenEvents, futureEvents] = await Promise.all([
                 getEventsBetween(nowMoment.format(), date, 'ASC'),
-                getEventsAfter(date, 5),
+                getEventsAfter(date, 25),
             ]);
             response = [...betweenEvents, ...futureEvents];
             break;
         case PAST:
             [betweenEvents, pastEvents] = await Promise.all([
                 getEventsBetween(date, nowMoment.format(), 'DESC'),
-                getEventsBefore(date, 5),
+                getEventsBefore(date, 25),
             ]);
             response = [...betweenEvents.reverse(), ...pastEvents];
             break;
@@ -244,11 +360,11 @@ const getMusicInstancesOfType = (type: string) => {
     const order = (type === 'videogame' || type === 'composition') ?
         [
             ['year', 'DESC'],
-            [ models.musicFile, 'name', 'ASC'],
+            [models.musicFile, 'name', 'ASC'],
         ] :
         [
             [sequelize.fn('substring', sequelize.col('composer'), '([^\\s]+)\\s?(?:\\(.*\\))?$'), 'ASC'] as any,
-            [ models.musicFile, 'name', 'ASC'],
+            [models.musicFile, 'name', 'ASC'],
         ];
 
     return models.music.findAll({
