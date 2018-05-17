@@ -103,7 +103,7 @@ const config = () => {
             new CleanWebpackPlugin([path.resolve(__dirname, 'web/build/*')]),
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, 'web/partials/index.html'),
-                inject: true,
+                inject: false,
             }),
             new PreloadPlugin({
                 include: 'initial',
