@@ -19,7 +19,15 @@
         "no-unused-expression": [true, "allow-fast-null-checks"],
         "no-var-requires": false,
         "semicolon": [true, "always", "ignore-bound-class-methods"],
-        "arrow-parens": false
+        "arrow-parens": false,
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "always",
+                "singleline": "never",
+                "esSpecCompliant": true
+            }
+        ]
     },
     "jsRules": {
         "no-console": false,
@@ -35,7 +43,15 @@
         "no-unused-expression": [true, "allow-fast-null-checks"],
         "no-var-requires": false,
         "semicolon": [true, "always", "ignore-bound-class-methods"],
-        "arrow-parens": false
+        "arrow-parens": false,
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "always",
+                "singleline": "never",
+                "esSpecCompliant": true
+            }
+        ]
     },
     "linterOptions": {
         "exclude": "**/node_modules/**/*"

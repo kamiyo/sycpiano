@@ -10,10 +10,24 @@ const sequelize = db.sequelize;
 const apiRouter = express.Router();
 
 import Sequelize from 'sequelize';
-// const { and, eq, or } = Sequelize.Op;
+import { BioInstance } from 'types';
 const { gt, lt } = Sequelize.Op;
 
-apiRouter.get('/acclaims', (req, res) => {
+apiRouter.get('/bio', async (_, res) => {
+    const bio: BioInstance[] = await models.bio.findAll({
+        attributes: ['paragraph', 'text'],
+        order: [['paragraph', 'ASC']],
+    });
+
+    const age = moment().diff('1988-08-27', 'year');
+
+    const [, ...rest] = bio;
+    const first = { paragraph: bio[0].paragraph, text: bio[0].text.replace('##', age.toString()) };
+    const bioWithAge = [first, ...rest];
+    res.json(bioWithAge);
+});
+
+apiRouter.get('/acclaims', async (req, res) => {
     const params: Sequelize.FindOptions<{}> = {
         attributes: {
             exclude: ['short', 'shortAuthor', 'createdAt', 'updatedAt'],
@@ -25,7 +39,8 @@ apiRouter.get('/acclaims', (req, res) => {
     if (req.query.hasOwnProperty('count')) {
         params.limit = req.params.count;
     }
-    models.acclaim.findAll(params).then((object) => res.json(object));
+    const acclaims = await models.acclaim.findAll(params);
+    res.json(acclaims);
 });
 
 // Excludes the date specified (less than)

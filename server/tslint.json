@@ -16,7 +16,15 @@
         "align": [true, "statements", "members", "elements"],
         "max-classes-per-file": false,
         "member-ordering": false,
-        "no-unused-expression": [true, "allow-fast-null-checks"]
+        "no-unused-expression": [true, "allow-fast-null-checks"],
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "always",
+                "singleline": "never",
+                "esSpecCompliant": true
+            }
+        ]
     },
     "jsRules": {
         "no-console": false,
@@ -29,7 +37,15 @@
         "align": [true, "statements", "members", "elements"],
         "max-classes-per-file": false,
         "member-ordering": false,
-        "no-unused-expression": [true, "allow-fast-null-checks"]
+        "no-unused-expression": [true, "allow-fast-null-checks"],
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "always",
+                "singleline": "never",
+                "esSpecCompliant": true
+            }
+        ]
     },
     "linterOptions": {
         "exclude": "**/node_modules/**/*"
