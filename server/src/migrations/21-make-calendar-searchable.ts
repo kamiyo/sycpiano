@@ -10,15 +10,22 @@ const searchObjects: {
     collaborator: ['name', 'instrument'],
 };
 
-export const up = (queryInterface: QueryInterface) => (
-    queryInterface.sequelize.transaction(async (t) => {
+// CREATE EXTENSION unaccent <= must run as root
+export const up = async (queryInterface: QueryInterface) => {
+    await queryInterface.sequelize.transaction(async (t) => {
         try {
+            await queryInterface.sequelize.query(`
+                CREATE TEXT SEARCH CONFIGURATION en ( COPY = english );
+                ALTER TEXT SEARCH CONFIGURATION en
+                ALTER MAPPING FOR hword, hword_part, word
+                WITH unaccent, english_stem;
+            `, { transaction: t });
             await Promise.all(Object.keys(searchObjects).map(async (table) => {
                 await queryInterface.sequelize.query(`
                     ALTER TABLE ${table} ADD COLUMN ${vectorName} TSVECTOR;
                 `, { transaction: t });
                 await queryInterface.sequelize.query(`
-                    UPDATE ${table} SET ${vectorName} = to_tsvector('english', ${searchObjects[table].join(` || ' ' || `)});
+                    UPDATE ${table} SET ${vectorName} = to_tsvector('en', ${searchObjects[table].join(` || ' ' || `)});
                 `, { transaction: t });
                 await queryInterface.sequelize.query(`
                     CREATE INDEX ${table}_search ON ${table} USING gin(${vectorName});
@@ -26,31 +33,34 @@ export const up = (queryInterface: QueryInterface) => (
                 await queryInterface.sequelize.query(`
                     CREATE TRIGGER ${table}_vector_update
                     BEFORE INSERT OR UPDATE ON ${table}
-                    FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger(${vectorName}, 'pg_catalog.english', ${searchObjects[table].join(', ')});
+                    FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger(${vectorName}, 'public.en', ${searchObjects[table].join(', ')});
                 `, { transaction: t });
             }));
         } catch (e) {
             console.log(e);
         }
-    })
-);
+    });
+};
 
-export const down = (queryInterface: QueryInterface) => (
-    queryInterface.sequelize.transaction(async (t) => {
+export const down = async (queryInterface: QueryInterface) => {
+    await queryInterface.sequelize.transaction(async (t) => {
         try {
-            Promise.all(Object.keys(searchObjects).map(async (table) => {
+            await queryInterface.sequelize.query(`
+                DROP TEXT SEARCH CONFIGURATION IF EXISTS en
+            `, { transaction: t });
+            await Promise.all(Object.keys(searchObjects).map(async (table) => {
                 await queryInterface.sequelize.query(`
-                    DROP TRIGGER ${table}_vector_update ON ${table};
+                    DROP TRIGGER IF EXISTS ${table}_vector_update ON ${table};
                 `, { transaction: t });
                 await queryInterface.sequelize.query(`
-                    DROP INDEX ${table}_search;
+                    DROP INDEX IF EXISTS ${table}_search;
                 `, { transaction: t });
                 await queryInterface.sequelize.query(`
-                    ALTER TABLE ${table} DROP COLUMN ${vectorName};
+                    ALTER TABLE ${table} DROP COLUMN IF EXISTS ${vectorName};
                 `, { transaction: t });
             }));
         } catch (e) {
             console.log(e);
         }
-    })
-);
+    });
+};

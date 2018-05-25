@@ -4,10 +4,12 @@ import {
     CachedEvent,
     DayItem,
     EventItemType,
+    EventListName,
     FetchEventsAPIParams,
     FetchEventsArguments,
     itemIsDay,
     LatLng,
+    SearchEventsArguments,
 } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
 
@@ -15,49 +17,47 @@ import axios from 'axios';
 
 import { ThunkAction } from 'redux-thunk';
 
-import { EventListName } from 'src/components/Schedule/actionTypes';
 import { transformCachedEventsToListItems } from 'src/components/Schedule/utils';
 import { geocode } from 'src/services/GoogleAPI';
 
-const FETCH_LIMIT = 10;
+const FETCH_LIMIT = 25;
 
-export const switchList = (name: EventListName): ActionTypes.SwitchList => ({
-    type: SCHEDULE_ACTIONS.SWITCH_LIST,
+const fetchEventsRequest = (name: EventListName): ActionTypes.FetchEventsRequest => ({
     name,
-});
-
-const fetchEventsRequest = (): ActionTypes.FetchEventsRequest => ({
     type: SCHEDULE_ACTIONS.FETCH_EVENTS_REQUEST,
 });
 
-const fetchEventsError = (): ActionTypes.FetchEventsError => ({
+const fetchEventsError = (name: EventListName): ActionTypes.FetchEventsError => ({
+    name,
     type: SCHEDULE_ACTIONS.FETCH_EVENTS_ERROR,
 });
 
 type FetchEventsSuccess = (
+    name: EventListName,
     listItems: EventItemType[],
     currentItem: DayItem,
     hasMore: boolean,
+    lastQuery?: string,
 ) => ActionTypes.FetchEventsSuccess;
 
-const fetchEventsSuccess: FetchEventsSuccess = (listItems, currentItem, hasMore) => ({
+const fetchEventsSuccess: FetchEventsSuccess = (name, listItems, currentItem, hasMore, lastQuery) => ({
+    name,
     type: SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS,
     listItems,
     currentItem,
     hasMore,
+    lastQuery,
 });
 
-/* EDIT THIS */
-const shouldFetchEvents = (state: GlobalStateShape) => {
-    const activeName = state.schedule_eventItems.activeName;
-    const eventItemsReducer = state.schedule_eventItems[activeName];
+const shouldFetchEvents = (name: EventListName, state: GlobalStateShape) => {
+    const eventItemsReducer = state.schedule_eventItems[name];
     // should not call, api is fetching, or the last fetch was empty
     return !eventItemsReducer.isFetchingList && eventItemsReducer.hasMore;
 };
 
-const fetchEvents = ({ after, before, date, scrollTo }: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => async (dispatch, getState) => {
+const fetchEvents = (name: EventListName, { after, before, date, scrollTo }: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => async (dispatch, getState) => {
     try {
-        dispatch(fetchEventsRequest());
+        dispatch(fetchEventsRequest(name));
         const params: FetchEventsAPIParams = {
             limit: FETCH_LIMIT,
         };
@@ -73,7 +73,7 @@ const fetchEvents = ({ after, before, date, scrollTo }: FetchEventsArguments): T
         const calendarResponse = await axios.get('/api/calendar', { params });
         const data: CachedEvent[] = calendarResponse.data;
         const state = getState().schedule_eventItems;
-        const listItems = transformCachedEventsToListItems(data, state[state.activeName].setOfMonths);
+        const listItems = transformCachedEventsToListItems(data, state[name].setOfMonths);
 
         let currentItem: DayItem;
         const desiredDate = date || after || before;
@@ -87,58 +87,93 @@ const fetchEvents = ({ after, before, date, scrollTo }: FetchEventsArguments): T
             }, undefined) as DayItem;
         }
         const hasMore = !!listItems.length;
-        dispatch(fetchEventsSuccess(listItems, currentItem, hasMore));
+        dispatch(fetchEventsSuccess(name, listItems, currentItem, hasMore));
     } catch (err) {
-        dispatch(fetchEventsError());
+        dispatch(fetchEventsError(name));
         console.log('fetch events error', err);
     }
 };
 
-export const createFetchEventsAction = (args: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
-    if (shouldFetchEvents(getState())) {
+export const createFetchEventsAction = (name: EventListName, args: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
+    if (shouldFetchEvents(name, getState())) {
         // need to fetch items
-        dispatch(fetchEvents(args));
+        dispatch(fetchEvents(name, args));
     }
 };
 
-const fetchLatLngRequest = (): ActionTypes.FetchLatLngRequest => ({
+const clearList = (name: EventListName): ActionTypes.ClearList => ({
+    name,
+    type: SCHEDULE_ACTIONS.CLEAR_LIST,
+});
+
+export const createSearchEventsAction = (name: EventListName, args: SearchEventsArguments): ThunkAction<void, GlobalStateShape, void> => async (dispatch, getState) => {
+    try {
+        const params = {
+            q: args.q,
+        };
+        const state = getState().schedule_eventItems.search;
+        if (state.isFetchingList || !state.hasMore && state.lastQuery === args.q) {
+            return;
+        }
+        dispatch(clearList(name));
+        if (args.q === '') {
+            dispatch(fetchEventsSuccess(name, [], undefined, false, args.q));
+            return;
+        }
+        dispatch(fetchEventsRequest(name));
+
+        const { data }: { data: CachedEvent[]; } = await axios.get('/api/calendar/search', { params });
+        const listItems = transformCachedEventsToListItems(data, new Set<string>());
+
+        dispatch(fetchEventsSuccess(name, listItems, undefined, false, args.q));
+    } catch (err) {
+        dispatch(fetchEventsError(name));
+        console.log('search events error', err);
+    }
+};
+
+const fetchLatLngRequest = (name: EventListName): ActionTypes.FetchLatLngRequest => ({
+    name,
     type: SCHEDULE_ACTIONS.FETCH_LAT_LNG_REQUEST,
 });
 
-const fetchLatLngError = (): ActionTypes.FetchLatLngError => ({
+const fetchLatLngError = (name: EventListName): ActionTypes.FetchLatLngError => ({
+    name,
     type: SCHEDULE_ACTIONS.FETCH_LAT_LNG_ERROR,
 });
 
-const fetchLatLngSuccess = (latlng: LatLng): ActionTypes.FetchLatLngSuccess => ({
+const fetchLatLngSuccess = (name: EventListName, latlng: LatLng): ActionTypes.FetchLatLngSuccess => ({
+    name,
     type: SCHEDULE_ACTIONS.FETCH_LAT_LNG_SUCCESS,
     lat: latlng.lat,
     lng: latlng.lng,
 });
 
-const shouldFetchLatLng = (state: GlobalStateShape) => {
-    const eventItemsReducer = state.schedule_eventItems[state.schedule_eventItems.activeName];
+const shouldFetchLatLng = (name: EventListName, state: GlobalStateShape) => {
+    const eventItemsReducer = state.schedule_eventItems[name];
     return !eventItemsReducer.isFetchingLatLng;
 };
 
-const fetchLatLng = (location: string): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
+const fetchLatLng = (name: EventListName, location: string): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
     try {
-        dispatch(fetchLatLngRequest());
+        dispatch(fetchLatLngRequest(name));
         const geocodeResponse = await geocode(location);
         const latlng: LatLng = geocodeResponse.data.results[0].geometry.location;
-        dispatch(fetchLatLngSuccess(latlng));
+        dispatch(fetchLatLngSuccess(name, latlng));
     } catch (err) {
-        dispatch(fetchLatLngError());
+        dispatch(fetchLatLngError(name));
         console.log('failed to fetch geocode', err);
     }
 };
 
-export const createFetchLatLngAction = (location: string): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
-    if (shouldFetchLatLng(getState())) {
-        dispatch(fetchLatLng(location));
+export const createFetchLatLngAction = (name: EventListName, location: string): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
+    if (shouldFetchLatLng(name, getState())) {
+        dispatch(fetchLatLng(name, location));
     }
 };
 
-export const selectEvent = (eventItem: DayItem): ActionTypes.SelectEvent => ({
+export const selectEvent = (name: EventListName, eventItem: DayItem): ActionTypes.SelectEvent => ({
+    name,
     type: SCHEDULE_ACTIONS.SELECT_EVENT,
     eventItem,
 });

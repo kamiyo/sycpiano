@@ -1,4 +1,5 @@
 import startCase from 'lodash-es/startCase';
+import { parse } from 'qs';
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import { Helmet } from 'react-helmet';
@@ -12,18 +13,21 @@ import debounce from 'lodash-es/debounce';
 import { default as moment, Moment } from 'moment-timezone';
 
 import { LoadingInstance } from 'src/components/LoadingSVG';
-import { createFetchEventsAction, selectEvent, switchList } from 'src/components/Schedule/actions';
-import { EventListName } from 'src/components/Schedule/actionTypes';
+import { createFetchEventsAction, createSearchEventsAction, selectEvent } from 'src/components/Schedule/actions';
 import EventItem from 'src/components/Schedule/EventItem';
 import EventMonthItem from 'src/components/Schedule/EventMonthItem';
 import {
     DayItem,
     EventItemType,
+    EventListName,
+    FetchEventsArguments,
     itemIsDay,
     itemIsMonth,
     itemNotLoading,
 } from 'src/components/Schedule/types';
 import { lightBlue } from 'src/styles/colors';
+import { lato2 } from 'src/styles/fonts';
+import { screenXSorPortrait } from 'src/styles/screens';
 import { GlobalStateShape } from 'src/types';
 import { metaDescriptions, titleStringBase } from 'src/utils';
 
@@ -34,27 +38,27 @@ interface EventListStateToProps {
     readonly maxDate: Moment;
     readonly currentItem: DayItem;
     readonly isFetchingList: boolean;
-    readonly activeName: EventListName;
     readonly hasMore: boolean;
 }
 
 interface EventListDispatchToProps {
     readonly selectEvent: typeof selectEvent;
     readonly createFetchEventsAction: typeof createFetchEventsAction;
-    readonly switchList: typeof switchList;
+    readonly createSearchEventsAction: typeof createSearchEventsAction;
 }
 
 interface EventListOwnProps {
-    readonly date: string;
+    readonly date?: string;
     readonly type: EventListName;
     readonly isMobile?: boolean;
+    readonly search?: string;
 }
 
 type EventListProps = RouteComponentProps<ParamProps> & EventListOwnProps & EventListStateToProps & EventListDispatchToProps;
 
 interface ParamProps {
-    readonly type: string;
-    readonly date: string;
+    readonly date?: string;
+    readonly search?: string;
 }
 
 interface OnScrollProps {
@@ -63,7 +67,7 @@ interface OnScrollProps {
     clientHeight: number;
 }
 
-const StyledLoadingInstance = styled(LoadingInstance) `
+const StyledLoadingInstance = styled(LoadingInstance)`
     position: relative;
     left: 50%;
     transform: translateX(-50%);
@@ -77,15 +81,98 @@ const fullWidthHeight = css`
     height: 100%;
 `;
 
-class EventList extends React.Component<EventListProps, { updatedCurrent?: boolean; }> {
+const placeholderStyle = css`
+    width: 80%;
+    height: 100%;
+    min-height: 6.5rem;
+    max-width: 1240px;
+    margin: 0 auto;
+    font-family: ${lato2};
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        width: 90%;
+        font-size: 1.5rem;
+    }
+`;
+
+const firstElementStyle = css`
+    ${placeholderStyle}
+    padding-top: 85px;
+    justify-content: unset;
+    padding-left: 28px;
+    min-height: 4.5rem;
+`;
+
+class EventList extends React.Component<EventListProps> {
     private List: React.RefObject<List> = React.createRef();
     private updatedCurrent = true;
+    private currentQuery: {
+        q: string;
+    } = {
+            q: undefined,
+        };
 
+    constructor(props: EventListProps) {
+        super(props);
+    }
+
+    fetchDateParam = (type: string) => type === 'upcoming' ? 'after' : 'before';
+
+    // we are inserting an item at the front and one at the back of the list
+    // total length of List will be eventItems.length + 2
     keyMapper = (rowIndex: number) => {
-        return this.props.eventItems.length && this.props.eventItems[rowIndex] ? this.props.eventItems[rowIndex].dateTime.format() : '';
+        const temp =
+            rowIndex ?
+                (this.props.eventItems.length && this.props.eventItems[rowIndex - 1] ?
+                    this.props.type + '_' + this.props.eventItems[rowIndex - 1].dateTime.format() :
+                    this.props.type + '_loading'
+                ) :
+                'placeholder_' + decodeURI(this.props.location.search);
+        return temp;
     }
 
     cache = new CellMeasurerCache({ fixedWidth: true, keyMapper: this.keyMapper });
+
+    onMountOrUpdate() {
+        const date = moment(this.props.match.params.date, 'YYYY-MM-DD');
+        if (this.props.location.search) {
+            this.currentQuery = parse(this.props.location.search, { ignoreQueryPrefix: true });
+            this.props.createSearchEventsAction('search', { q: this.currentQuery.q });
+        } else {
+            if (this.props.eventItems.length === 0) {
+                let params: FetchEventsArguments;
+                if (this.props.match.params.date) {
+                    params = {
+                        date,
+                        scrollTo: true,
+                    };
+                } else {
+                    params = {
+                        [this.fetchDateParam(this.props.type)]: moment(),
+                        scrollTo: false,
+                    };
+                }
+                this.props.createFetchEventsAction(this.props.type, params);
+                return;
+            } else if (
+                this.props.match.params.date &&
+                !this.props.eventItems.find(
+                    (value) => itemNotLoading(value) && value.dateTime.utc().isSame(date.utc(), 'day'),
+                )
+            ) {
+                const params: FetchEventsArguments = {
+                    date,
+                    scrollTo: true,
+                };
+                this.props.createFetchEventsAction(this.props.type, params);
+                return;
+            }
+        }
+    }
 
     componentDidMount() {
         // enforce if date is after now, use upcoming
@@ -95,70 +182,47 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
         if (strDate) {
             if (date.isSameOrAfter(moment(), 'day') && this.props.type === 'archive') {
                 this.props.history.replace(`/schedule/upcoming/${strDate}`);
+                return;
             } else if (date.isBefore(moment(), 'day') && this.props.type === 'upcoming') {
                 this.props.history.replace(`/schedule/archive/${strDate}`);
-            }
-        }
-
-        // activate redux state for current type
-        this.props.switchList(this.props.type);
-    }
-
-    componentDidUpdate(prevProps: EventListProps & { [key: string]: any }) {
-        const date = moment(this.props.match.params.date, 'YYYY-MM-DD');
-        if (prevProps.type !== this.props.type) {
-            this.props.switchList(this.props.type);
-            return;
-        } else if (this.props.eventItems.length === 0 && this.props.hasMore && !this.props.isFetchingList) {
-            let params;
-            if (this.props.match.params.date) {
-                params = { date, scrollTo: true };
-            } else if (this.props.activeName === 'upcoming') {
-                params = { after: moment(), scrollTo: false };
-            } else if (this.props.activeName === 'archive') {
-                params = { before: moment(), scrollTo: false };
-            }
-            this.props.createFetchEventsAction(params);
-            return;
-        } else if (prevProps.activeName !== this.props.activeName) {
-            let params;
-            if (this.props.eventItems.length === 0) {
-                if (this.props.match.params.date) {
-                    params = { date, scrollTo: true };
-                } else if (this.props.activeName === 'upcoming') {
-                    params = { after: moment(), scrollTo: false };
-                } else if (this.props.activeName === 'archive') {
-                    params = { before: moment(), scrollTo: false };
-                }
-            } else if (
-                this.props.match.params.date &&
-                !this.props.eventItems.find(
-                    (value) => itemNotLoading(value) && value.dateTime.isSame(moment(date), 'day'))
-            ) {
-                params = { date, scrollTo: true };
-            } else {
-                this.updatedCurrent = true;
-                this.List.current.recomputeRowHeights();
                 return;
             }
-            this.props.createFetchEventsAction({ ...params });
-            return;
-        } else if (prevProps.currentItem !== this.props.currentItem) {
+        }
+
+        this.onMountOrUpdate();
+    }
+
+    componentDidUpdate(prevProps: EventListProps) {
+        this.onMountOrUpdate();
+        if (prevProps.currentItem !== this.props.currentItem) {
             this.updatedCurrent = true;
-            return;
+        }
+        if (prevProps.type !== this.props.type) {
+            this.props.currentItem && this.props.selectEvent(this.props.type, undefined);
+            this.cache.clearAll();
         }
     }
 
+    getScrollFetchParams: {
+        [key: string]: () => FetchEventsArguments;
+    } = {
+            upcoming: () => ({
+                after: this.props.maxDate,
+            }),
+            archive: () => ({
+                before: this.props.minDate,
+            }),
+        };
+
     onScroll = ({ clientHeight, scrollTop, scrollHeight }: OnScrollProps) => {
-        if (scrollTop + clientHeight > scrollHeight - 400 && this.props.hasMore && !this.props.isFetchingList && this.props.maxDate && this.props.minDate) {
-            if (this.props.type === 'upcoming') {
-                this.props.createFetchEventsAction({
-                    after: this.props.maxDate,
-                });
-            } else if (this.props.type === 'archive') {
-                this.props.createFetchEventsAction({
-                    before: this.props.minDate,
-                });
+        if (scrollTop + clientHeight > scrollHeight - 600 &&
+            this.props.hasMore &&
+            !this.props.isFetchingList &&
+            this.props.maxDate &&
+            this.props.minDate
+        ) {
+            if (this.props.type !== 'search') {
+                this.props.createFetchEventsAction(this.props.type, this.getScrollFetchParams[this.props.type]());
             }
         }
     }
@@ -186,7 +250,9 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
 
         const title = `${titleStringBase} | Schedule` + (item
             ? ` | ${item.dateTime.format('dddd MMMM DD, YYYY, HH:mm zz')}`
-            : ` | ${this.props.type === 'upcoming' ? 'Upcoming' : 'Archived'} Events`);
+            : ` | ${this.props.type === 'archive' ? 'Archived' : startCase(this.props.type)} Events${
+            this.props.location.search ? ': ' + decodeURI(this.currentQuery.q) : ''
+            }`);
 
         const description = item
             ? `${startCase(this.props.type)} ${startCase(item.eventType)}: ${item.name}`
@@ -206,7 +272,7 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
                                     ref={this.List}
                                     height={height}
                                     width={width}
-                                    rowCount={this.props.eventItems.length + 1}
+                                    rowCount={this.props.eventItems.length + 2}
                                     rowHeight={this.cache.rowHeight}
                                     deferredMeasurementCache={this.cache}
                                     rowRenderer={this.rowItemRenderer}
@@ -239,17 +305,32 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
         style: React.CSSProperties,
         measure: () => void,
     ) => {
-        if (index === this.props.eventItems.length) {
+        if (index === this.props.eventItems.length + 1) {
             return (
                 <div style={style} >
                     {this.props.hasMore && this.props.isFetchingList ?
                         <StyledLoadingInstance width={80} height={80} /> :
-                        <div className={css` height: 100px; `} />
+                        <div className={placeholderStyle}>{
+                            this.props.eventItems.length === 0 ? 'No Events Fetched' : ''
+                        }</div>
                     }
                 </div>
             );
         }
-        const item = this.props.eventItems[index];
+        if (index === 0) {
+            const count = this.props.eventItems.filter((ev) => itemIsDay(ev)).length;
+            return (
+                <div style={style}>
+                    <div className={firstElementStyle}>
+                        {this.props.type === 'search' ?
+                            `Search results for "${decodeURI(this.currentQuery.q)}": ${count} results` :
+                            ''
+                        }
+                    </div>
+                </div>
+            );
+        }
+        const item = this.props.eventItems[index - 1];
         if (itemIsMonth(item)) {
             return (
                 <EventMonthItem
@@ -260,13 +341,13 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
                 />
             );
         } else {
-            const permaLink = `/schedule/${this.props.type}/${item.dateTime.format('YYYY-MM-DD')}`;
+            const permaLink = `/schedule/${item.dateTime.format('YYYY-MM-DD')}`;
             return (
                 <EventItem
                     measure={measure}
                     event={item}
                     style={style}
-                    handleSelect={() => this.props.selectEvent(item)}
+                    handleSelect={() => this.props.selectEvent(this.props.type, item)}
                     type={this.props.type}
                     active={this.props.currentItem && item.id === this.props.currentItem.id}
                     isMobile={this.props.isMobile}
@@ -280,7 +361,7 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
         <CellMeasurer
             cache={this.cache}
             columnIndex={0}
-            key={`${key}_${this.props.activeName}`}
+            key={`${key}_${this.props.type}`}
             rowIndex={index}
             parent={parent}
         >
@@ -289,9 +370,8 @@ class EventList extends React.Component<EventListProps, { updatedCurrent?: boole
     )
 }
 
-const mapStateToProps = (state: GlobalStateShape): EventListStateToProps => {
-    const name = state.schedule_eventItems.activeName || 'upcoming';
-    const reducer = state.schedule_eventItems[name];
+const mapStateToProps = (state: GlobalStateShape, ownProps: EventListOwnProps): EventListStateToProps => {
+    const reducer = state.schedule_eventItems[ownProps.type];
     return {
         eventItems: reducer.itemArray,
         hasEventBeenSelected: reducer.hasEventBeenSelected,
@@ -299,7 +379,6 @@ const mapStateToProps = (state: GlobalStateShape): EventListStateToProps => {
         maxDate: reducer.maxDate,
         currentItem: reducer.currentItem,
         isFetchingList: reducer.isFetchingList,
-        activeName: name,
         hasMore: reducer.hasMore,
     };
 };
@@ -307,7 +386,7 @@ const mapStateToProps = (state: GlobalStateShape): EventListStateToProps => {
 const mapDispatchToProps: EventListDispatchToProps = {
     selectEvent,
     createFetchEventsAction,
-    switchList,
+    createSearchEventsAction,
 };
 
 export default connect<EventListStateToProps, EventListDispatchToProps, EventListOwnProps>(

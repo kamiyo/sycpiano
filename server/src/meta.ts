@@ -24,6 +24,7 @@ const descriptions: {
     contact: string;
     upcoming: string;
     archive: string;
+    search: string;
     videos: string;
     music: string;
     photos: string;
@@ -36,6 +37,7 @@ const descriptions: {
         contact: `Contact information for Sean Chen and for booking performances.`,
         upcoming: 'Upcoming recitals, concerti, and masterclasses.',
         archive: 'Past recitals, concerti, and masterclasses.',
+        search: 'Search recitals, concerti, and masterclasses,',
         videos: `A playlist of Sean Chen's YouTube clips.`,
         music: `A playlist of Sean Chen's live concert recordings, and a link to his Spotify musician page.`,
         getMusic: (piece: string, contributors?: string) =>

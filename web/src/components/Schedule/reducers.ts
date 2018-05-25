@@ -45,7 +45,6 @@ const initialState: EventItemsStateShape = {
 };
 
 export const scheduleReducer = (state: ScheduleStateShape = {
-    activeName: undefined,
     upcoming: {
         ...initialState,
         items: new SortedArraySet<EventItemType>([], equals, ascendCompare),
@@ -54,14 +53,13 @@ export const scheduleReducer = (state: ScheduleStateShape = {
         ...initialState,
         items: new SortedArraySet<EventItemType>([], equals, descendCompare),
     },
+    search: {
+        ...initialState,
+        items: new SortedArraySet<EventItemType>([], equals, descendCompare),
+        lastQuery: '',
+    },
 }, action: ActionType) => {
-    if (action.type === SCHEDULE_ACTIONS.SWITCH_LIST) {
-        return {
-            ...state,
-            activeName: action.name,
-        };
-    }
-    switch (state.activeName) {
+    switch (action.name) {
         case 'upcoming':
             return {
                 ...state,
@@ -71,6 +69,11 @@ export const scheduleReducer = (state: ScheduleStateShape = {
             return {
                 ...state,
                 archive: eventItemsReducer(state.archive, action),
+            };
+        case 'search':
+            return {
+                ...state,
+                search: eventItemsReducer(state.search, action),
             };
         default:
             return state;
@@ -82,6 +85,15 @@ const eventItemsReducer = (
     action: ActionType,
 ) => {
     switch (action.type) {
+        case SCHEDULE_ACTIONS.CLEAR_LIST:
+            return {
+                ...state,
+                hasMore: true,
+                isFetchingList: false,
+                items: new SortedArraySet<EventItemType>([], equals, descendCompare),
+                itemArray: [],
+                lastQuery: '',
+            };
         case SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS:
             state.items.addEach(action.listItems);
             return {
@@ -93,6 +105,7 @@ const eventItemsReducer = (
                 minDate: state.items.length ? moment.min(state.items.min().dateTime, state.items.max().dateTime) : moment(),
                 maxDate: state.items.length ? moment.max(state.items.min().dateTime, state.items.max().dateTime) : moment(),
                 hasMore: action.hasMore,
+                lastQuery: action.lastQuery,
             };
         case SCHEDULE_ACTIONS.FETCH_EVENTS_REQUEST:
             return {

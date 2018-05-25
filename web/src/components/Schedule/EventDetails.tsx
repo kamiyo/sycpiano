@@ -44,6 +44,9 @@ EventDate = styled<EventDateTimeProps, typeof EventDate>(EventDate)`
     height: 6.7em;
     width: 6.7em;
     line-height: 2.5em;
+    padding: 0.8em;
+
+    /* stylelint-disable */
     ${props => {
         switch (props.rounded) {
             case 'top':
@@ -54,7 +57,7 @@ EventDate = styled<EventDateTimeProps, typeof EventDate>(EventDate)`
                 return 'border-radius: 50%;';
         }
     }}
-    padding: 0.8em;
+    /* stylelint-enable */
 `;
 
 interface EventNameProps { name: string; eventType: EventType; className?: string; isMobile?: boolean; permaLink: string; }
@@ -87,7 +90,7 @@ const eventNameStyle = css`
 class EventName extends React.Component<EventNameProps & RouteComponentProps<{}>> {
     copiedSpan: React.RefObject<HTMLSpanElement> = React.createRef();
     onCopy = () => {
-        this.props.history.push(this.props.permaLink);
+        // this.props.history.push(this.props.permaLink);
         TweenLite.fromTo(this.copiedSpan.current, 0.2, { autoAlpha: 1 }, { autoAlpha: 0, delay: 0.5 });
     }
 
