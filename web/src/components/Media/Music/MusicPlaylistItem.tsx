@@ -17,6 +17,7 @@ interface MusicPlaylistItemProps {
     readonly currentItemId: number | string;
     readonly baseRoute: string;
     readonly onClick: (item: MusicFileItem) => void;
+    readonly userInteracted: boolean;
 }
 
 const baseItemStyle = css`
@@ -30,11 +31,11 @@ const baseItemStyle = css`
     }
 `;
 
-const StyledMusicItem = styled('li') `
+const StyledMusicItem = styled('li')`
     ${baseItemStyle}
 `;
 
-const StyledCollectionItem = styled('li') `
+const StyledCollectionItem = styled('li')`
     ${baseItemStyle}
     margin-left: 15px;
     width: auto;
@@ -43,7 +44,7 @@ const StyledCollectionItem = styled('li') `
 
 interface HighlightProps { active: boolean; }
 
-const Highlight = styled<HighlightProps, 'div'>('div') `
+const Highlight = styled<HighlightProps, 'div'>('div')`
     padding: 10px 10px 10px 15px;
     border-left: 7px solid transparent;
     ${(props) => props.active && `border-left-color: ${lightBlue};`}
@@ -68,32 +69,32 @@ const h4style = css`
     line-height: 1rem;
 `;
 
-const TextLeft = styled('h4') `
+const TextLeft = styled('h4')`
     ${h4style}
 `;
 
-const TextRight = styled('h4') `
+const TextRight = styled('h4')`
     ${h4style}
     margin: 0 0 0 10px;
     font-size: 0.75rem;
 `;
 
-const StyledCollectionContainer = styled('li') `
+const StyledCollectionContainer = styled('li')`
     padding: 10px 0;
 `;
 
-const StyledCollectionList = styled('ul') `
+const StyledCollectionList = styled('ul')`
     padding: 0;
 `;
 
-const StyledCollectionTitleContainer = styled('div') `
+const StyledCollectionTitleContainer = styled('div')`
     position: relative;
     height: 100%;
     background-color: ${playlistBackground};
     padding: 10px 10px 10px 22px;
 `;
 
-const StyledInfo = styled('div') `
+const StyledInfo = styled('div')`
     ${section as any}
     width: 100%;
     height: 100%;
@@ -109,7 +110,7 @@ const StyledInfo = styled('div') `
     }
 `;
 
-const StyledCategory = styled('div') `
+const StyledCategory = styled('div')`
     background-color: #eee;
     padding: 12px 0 12px 22px;
     font-size: 1.2rem;
@@ -127,6 +128,7 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
     currentItemId,
     onClick,
     baseRoute,
+    userInteracted,
 }) => {
     if (!isMusicItem(item)) {
         return (
@@ -140,6 +142,9 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
                     <Link
                         to={path.normalize(`${baseRoute}/${getLastName(item.composer)}/${normalizeString(item.piece)}${musicFile.name ? '/' + normalizeString(musicFile.name) : ''}`)}
                         onClick={async () => {
+                            if (!userInteracted) {
+                                play();
+                            }
                             try {
                                 await onClick(musicFile);
                                 play();
@@ -177,11 +182,14 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
                                 <Link
                                     to={path.normalize(`${baseRoute}/${getLastName(item.composer)}/${normalizeString(item.piece)}/${normalizeString(musicFile.name)}`)}
                                     onClick={async () => {
+                                        if (!userInteracted) {
+                                            play();
+                                        }
                                         try {
                                             await onClick(musicFile);
                                             play();
                                         } catch (e) {
-                                            console.debug('onClick no effect because already loading track');
+                                            // already loading track;
                                         }
                                     }}
                                 >

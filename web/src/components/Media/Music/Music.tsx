@@ -30,6 +30,7 @@ interface MusicState {
     readonly duration: number;
     readonly currentTrack: MusicItem;
     readonly isLoading: boolean;
+    readonly userInteracted: boolean;
 }
 
 interface MusicStateToProps {
@@ -79,6 +80,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         duration: -1,
         currentTrack: undefined,
         isLoading: false,
+        userInteracted: false,
     };
 
     audioCtx: AudioContext;
@@ -109,6 +111,11 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     play = () => {
+        if (!this.state.userInteracted) {
+            this.setState({
+                userInteracted: true,
+            });
+        }
         if (this.audioCtx.state === 'suspended') {
             this.audioCtx.resume();
         }
@@ -308,6 +315,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
                     baseRoute={this.props.baseRoute}
                     isMobile={isMobile}
+                    userInteracted={this.state.userInteracted}
                 />
                 <AudioUI
                     seekAudio={this.seekAudio}

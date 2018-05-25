@@ -1,7 +1,7 @@
 import { rgba } from 'polished';
 import { stringify } from 'qs';
 import * as React from 'react';
-import styled from 'react-emotion';
+import styled, { css } from 'react-emotion';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 import { SearchIconInstance, SearchIconSVG } from 'src/components/Schedule/SearchIconSVG';
@@ -44,6 +44,7 @@ const Container = styled<{ focused: boolean }, 'div'>('div')`
 `;
 
 const Label = styled<{ focused: boolean }, 'label'>('label')`
+    flex: 0 0 auto;
     font-size: 1.5rem;
     color: ${props => props.focused ? lightBlue : unfocusedGray};
 
@@ -53,7 +54,7 @@ const Label = styled<{ focused: boolean }, 'label'>('label')`
 `;
 
 const Span = styled<{ focused: boolean }, 'span'>('span')`
-    flex: 1 0 auto;
+    flex: 1 1 auto;
     margin: 0.6rem 0 0.6rem 0.6rem;
     border-bottom: 1px solid ${props => props.focused ? focusedBlue : unfocusedGray};
     display: flex;
@@ -61,10 +62,11 @@ const Span = styled<{ focused: boolean }, 'span'>('span')`
 `;
 
 const Input = styled('input')`
-    flex: 1 0 auto;
+    flex: 1 1 auto;
     border: none;
     font-family: ${lato1};
     font-size: 1.3rem;
+    width: 100%;
 `;
 
 const ResetButton = styled<{ focused: boolean }, 'div'>('div')`
@@ -134,7 +136,7 @@ class Search extends React.Component<SearchProps, { focused: boolean; }> {
                         />
                         {this.props.search !== '' && <ResetButton focused={this.state.focused} onClick={this.onReset} >{'\u00D7'}</ResetButton>}
                     </Span>
-                    <a href={`/schedule/search${stringify({ q: this.props.search}, { addQueryPrefix: true })}`}>
+                    <a href={`/schedule/search${stringify({ q: this.props.search}, { addQueryPrefix: true })}`} className={css` flex: 0 0 auto; `}>
                         <SearchIconInstance />
                     </a>
                 </Container>
