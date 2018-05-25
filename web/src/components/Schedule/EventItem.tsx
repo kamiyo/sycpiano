@@ -1,8 +1,7 @@
 import * as React from 'react';
 
-import { EventListName } from 'src/components/Schedule/actionTypes';
 import { EventItemBody } from 'src/components/Schedule/EventItemBody';
-import { DayItem } from 'src/components/Schedule/types';
+import { DayItem, EventListName } from 'src/components/Schedule/types';
 
 interface EventItemProps {
     readonly event: DayItem;

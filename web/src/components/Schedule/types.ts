@@ -1,9 +1,10 @@
 import { Moment } from 'moment-timezone';
 
 import { SortedArraySet } from 'collections/sorted-array-set';
-import { EventListName } from 'src/components/Schedule/actionTypes';
 
 export type EventType = 'concerto' | 'chamber' | 'solo' | 'masterclass';
+
+export type EventListName = 'upcoming' | 'archive' | 'search' ;
 
 export interface Collaborator {
     name: string;
@@ -76,9 +77,9 @@ export const itemNotLoading = (item: EventItemType | LoadingItem): item is DayIt
 );
 
 export interface ScheduleStateShape {
-    activeName: EventListName;
     upcoming: EventItemsStateShape;
     archive: EventItemsStateShape;
+    [key: string]: EventItemsStateShape;
 }
 
 export interface EventItemsStateShape {
@@ -93,6 +94,11 @@ export interface EventItemsStateShape {
     readonly maxDate: Moment;
     readonly setOfMonths: Set<string>;
     readonly hasMore: boolean;
+    readonly lastQuery?: string;
+}
+
+export interface SearchEventsArguments {
+    q: string;
 }
 
 export interface FetchEventsArguments {

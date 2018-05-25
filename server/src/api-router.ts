@@ -8,8 +8,29 @@ const sequelize = db.sequelize;
 const apiRouter = express.Router();
 
 import Sequelize from 'sequelize';
-import { BioInstance } from 'types';
-const { gt, lt } = Sequelize.Op;
+import { BioInstance, CalendarInstance } from 'types';
+const { and, eq, gt, lt, or } = Sequelize.Op;
+
+const calendarIncludeBase = [
+    {
+        model: models.collaborator,
+        attributes: {
+            exclude: ['id', 'created_at', 'updated_at', 'calendarCollaborators', '_search'],
+        },
+        through: {
+            attributes: ['order'],
+        },
+    },
+    {
+        model: models.piece,
+        attributes: {
+            exclude: ['id', 'created_at', 'updated_at', 'calendarPieces', '_search'],
+        },
+        through: {
+            attributes: ['order'],
+        },
+    },
+];
 
 apiRouter.get('/bio', async (_, res) => {
     const bio: BioInstance[] = await models.bio.findAll({
@@ -28,7 +49,7 @@ apiRouter.get('/bio', async (_, res) => {
 apiRouter.get('/acclaims', async (req, res) => {
     const params: Sequelize.FindOptions<{}> = {
         attributes: {
-            exclude: ['short', 'shortAuthor', 'createdAt', 'updatedAt'],
+            exclude: ['short', 'shortAuthor', 'created_at', 'updated_at'],
         },
         order: [
             ['date', 'DESC'],
@@ -45,36 +66,9 @@ apiRouter.get('/acclaims', async (req, res) => {
 function getEventsBefore(before: string, limit: number) {
     return models.calendar.findAll({
         attributes: {
-            exclude: ['createdAt', 'updatedAt'],
+            exclude: ['created_at', 'updated_at'],
         },
-        include: [
-            {
-                model: models.collaborator,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt'],
-                },
-                through: {
-                    attributes: ['order'],
-                },
-                include: [{
-                    model: models.calendarCollaborator,
-                    attributes: ['order'],
-                }],
-            },
-            {
-                model: models.piece,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt'],
-                },
-                through: {
-                    attributes: ['order'],
-                },
-                include: [{
-                    model: models.calendarPiece,
-                    attributes: ['order'],
-                }],
-            },
-        ],
+        include: calendarIncludeBase,
         where: {
             dateTime: {
                 [lt]: before,
@@ -93,36 +87,9 @@ function getEventsBefore(before: string, limit: number) {
 function getEventsAfter(after: string, limit: number) {
     return models.calendar.findAll({
         attributes: {
-            exclude: ['createdAt', 'updatedAt'],
+            exclude: ['created_at', 'updated_at'],
         },
-        include: [
-            {
-                model: models.collaborator,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt'],
-                },
-                through: {
-                    attributes: [],
-                },
-                include: [{
-                    model: models.calendarCollaborator,
-                    attributes: ['order'],
-                }],
-            },
-            {
-                model: models.piece,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt'],
-                },
-                through: {
-                    attributes: [],
-                },
-                include: [{
-                    model: models.calendarPiece,
-                    attributes: ['order'],
-                }],
-            },
-        ],
+        include: calendarIncludeBase,
         where: {
             dateTime: {
                 [gt]: after,
@@ -137,40 +104,13 @@ function getEventsAfter(after: string, limit: number) {
     });
 }
 
-// The interval is open on the less-than side.
+// The interval is open side.
 function getEventsBetween(start: string, end: string, order: 'ASC' | 'DESC') {
     return models.calendar.findAll({
         attributes: {
-            exclude: ['createdAt', 'updatedAt'],
+            exclude: ['created_at', 'updated_at'],
         },
-        include: [
-            {
-                model: models.collaborator,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt'],
-                },
-                through: {
-                    attributes: ['order'],
-                },
-                include: [{
-                    model: models.calendarCollaborator,
-                    attributes: ['order'],
-                }],
-            },
-            {
-                model: models.piece,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt'],
-                },
-                through: {
-                    attributes: ['order'],
-                },
-                include: [{
-                    model: models.calendarPiece,
-                    attributes: ['order'],
-                }],
-            },
-        ],
+        include: calendarIncludeBase,
         where: {
             dateTime: {
                 [gt]: start,
@@ -192,6 +132,104 @@ const PAST = -1;
 const BEFORE = -2;
 
 const calendarRouter = express.Router({ mergeParams: true });
+
+calendarRouter.get('/search', async (req, res) => {
+    const str: string = req.query.q;
+    let idArray: string[];
+    if (str) {
+        const tokens = str.replace(', ', '|').replace(' ', '&');
+
+        const ids: CalendarInstance[] = await db.sequelize.query(`
+            SELECT c."id" FROM (
+                SELECT
+                    "calendar"."id",
+                    "calendar"."name",
+                    (tsvector_agg(coalesce("collaborators"."_search", '')) || tsvector_agg(coalesce("pieces"."_search", '')) || ("calendar"."_search")) as "tsv"
+                FROM "calendar" AS "calendar"
+                LEFT OUTER JOIN (
+                    "calendar_collaborator" AS "collaborators->calendarCollaborator"
+                    INNER JOIN "collaborator" AS "collaborators"
+                        ON "collaborators"."id" = "collaborators->calendarCollaborator"."collaborator_id"
+                ) ON "calendar"."id" = "collaborators->calendarCollaborator"."calendar_id"
+                LEFT OUTER JOIN (
+                    "calendar_piece" AS "pieces->calendarPiece"
+                    INNER JOIN "piece" AS "pieces"
+                        ON "pieces"."id" = "pieces->calendarPiece"."piece_id"
+                ) ON "calendar"."id" = "pieces->calendarPiece"."calendar_id"
+                GROUP BY "calendar"."id"
+            ) c WHERE c."tsv" @@ to_tsquery('en', :query);
+        `, {
+                replacements: { query: tokens },
+                type: Sequelize.QueryTypes.SELECT,
+            });
+
+        console.log(ids);
+        idArray = ids.map(({ id }) => id);
+    }
+
+    const before = req.query.before ? moment(req.query.before) : undefined;
+    const after = req.query.after ? moment(req.query.after) : undefined;
+    const date = req.query.date ? moment(req.query.date) : undefined;
+
+    let where: {
+        id?: string[],
+        dateTime?: any,
+    } = (str) ? {
+        id: idArray,
+    } : {};
+    if (date) {
+        where = {
+            dateTime: {
+                [eq]: date,
+            },
+        };
+    } else if (before && after) {
+        const arr = [
+            { [lt]: before },
+            { [gt]: after },
+        ];
+        let op;
+        if (before.isBefore(after)) {
+            op = or;
+        } else {
+            op = and;
+        }
+        where = {
+            dateTime: {
+                [op]: arr,
+            },
+        };
+    } else if (before) {
+        where = {
+            dateTime: {
+                [lt]: before,
+            },
+        };
+    } else if (after) {
+        where = {
+            dateTime: {
+                [gt]: after,
+            },
+        };
+    }
+
+    const calendarResults: CalendarInstance[] = await db.models.calendar.findAll({
+        where: {
+            ...where,
+        },
+        attributes: {
+            exclude: ['created_at', 'updated_at', '_search'],
+        },
+        include: calendarIncludeBase,
+        order: [
+            ['dateTime', 'DESC'],
+            [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
+            [models.piece, models.calendarPiece, 'order', 'ASC'],
+        ],
+    });
+
+    res.json(calendarResults);
+});
 
 calendarRouter.get('/', async (req, res) => {
     const model = models.calendar;
@@ -227,19 +265,19 @@ calendarRouter.get('/', async (req, res) => {
         case FUTURE:
             [betweenEvents, futureEvents] = await Promise.all([
                 getEventsBetween(nowMoment.format(), date, 'ASC'),
-                getEventsAfter(date, 5),
+                getEventsAfter(date, 25),
             ]);
             response = [...betweenEvents, ...futureEvents];
             break;
         case PAST:
             [betweenEvents, pastEvents] = await Promise.all([
                 getEventsBetween(date, nowMoment.format(), 'DESC'),
-                getEventsBefore(date, 5),
+                getEventsBefore(date, 25),
             ]);
             response = [...betweenEvents.reverse(), ...pastEvents];
             break;
         case ALL:
-            response = await model.findAll();
+            response = await model.findAll({ include: calendarIncludeBase });
             break;
         case AFTER:
             response = await getEventsAfter(after, limit);
@@ -272,12 +310,12 @@ const getMusicInstancesOfType = (type: string) => {
             type,
         },
         attributes: {
-            exclude: ['createdAt', 'updatedAt'],
+            exclude: ['created_at', 'updated_at'],
         },
         include: [{
             model: models.musicFile,
             attributes: {
-                exclude: ['createdAt', 'updatedAt'],
+                exclude: ['created_at', 'updated_at'],
             },
         }],
         order,
@@ -300,7 +338,7 @@ apiRouter.get('/photos', async (_, res) => {
     const model = models.photo;
     const response = await model.findAll({
         attributes: {
-            exclude: ['createdAt', 'updatedAt'],
+            exclude: ['created_at', 'updated_at'],
         },
     });
     res.json(response);
