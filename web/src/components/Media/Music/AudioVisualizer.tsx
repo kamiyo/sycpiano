@@ -105,7 +105,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     lastHover: number = 0;
     lastCurrentPosition: number = 0;
     idleStart: number = 0;
-    requestId: number = -1;
+    requestId: number = 0;
     lastCallback: number;
 
     adjustHeight = () => {
