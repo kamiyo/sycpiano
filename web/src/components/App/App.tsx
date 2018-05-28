@@ -12,7 +12,7 @@ import 'picturefill';
 import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 
 import 'gsap/CSSPlugin';
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap/TweenLite';
 import moment from 'moment-timezone';
 
 import NavBar from 'src/components/App/NavBar/NavBar';

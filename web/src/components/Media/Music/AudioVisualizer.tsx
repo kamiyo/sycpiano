@@ -2,9 +2,11 @@ import * as React from 'react';
 import styled from 'react-emotion';
 import { connect } from 'react-redux';
 
+import { TweenLite } from 'gsap/TweenLite';
+
 import { storeVerticalOffset } from 'src/components/Media/Music/actions';
 import { polarToCartesian, visibilityChangeApi } from 'src/components/Media/Music/utils';
-import { constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
+import { CIRCLE_SAMPLES, constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
 
 import { screenM, screenXSorPortrait } from 'src/styles/screens';
@@ -12,9 +14,6 @@ import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;
-const CIRCLE_SAMPLES = 512;
-const INV_CIRCLE_SAMPLES = 1 / CIRCLE_SAMPLES;
-const TWO_PI_PER_CIRCLE_SAMPLES = TWO_PI * INV_CIRCLE_SAMPLES;
 const SCALE_DESKTOP = 40;
 const SCALE_MOBILE = 20;
 const HEIGHT_ADJUST_MOBILE = -50;
@@ -55,6 +54,7 @@ const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div')`
         width: calc(100% - ${playlistContainerWidth.tablet});
     }
 
+    /* stylelint-disable-next-line no-duplicate-selectors */
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         height: 450px;
@@ -98,8 +98,6 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     SAMPLES_PER_CROSSING: number;
     HALF_CROSSINGS: number;
     FILTER_SIZE: number;
-    firCoeffs: Float32Array;
-    firDeltas: Float32Array;
 
     STEP_SIZE: number;
     lastIsHover: boolean = false;
@@ -139,8 +137,6 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
             this.NUM_CROSSINGS = firLoader.numCrossings;
             this.SAMPLES_PER_CROSSING = firLoader.samplesPerCrossing;
-            this.firCoeffs = Float32Array.from(firLoader.coeffs);
-            this.firDeltas = Float32Array.from(firLoader.deltas);
             this.HALF_CROSSINGS = firLoader.halfCrossings;
             this.FILTER_SIZE = firLoader.filterSize;
             this.STEP_SIZE = this.CQ_BINS / CIRCLE_SAMPLES;
@@ -149,27 +145,34 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.vizBins = new Float32Array(this.CQ_BINS);
             this.normalizedL = new Float32Array(this.FFT_HALF_SIZE);
             this.normalizedR = new Float32Array(this.FFT_HALF_SIZE);
+            this.idleStart = performance.now();
 
-            if (!this.requestId) {
-                this.requestId = requestAnimationFrame(this.onAnalyze);
-            }
+            TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
+            // if (!this.requestId) {
+            //     this.requestId = requestAnimationFrame(this.onAnalyze);
+            // }
         } catch (err) {
             console.error('visualizer init failed.', err);
         }
     }
 
-    onAnalyze = (timestamp = 0) => {
-        this.requestId = requestAnimationFrame(this.onAnalyze);
+    onAnalyze = () => {
+        // this.requestId = requestAnimationFrame(this.onAnalyze);
         // don't render anything if analyzers are null, i.e. audio not set up yet
         // also limit 30fps on mobile =).
+        const timestamp = performance.now();
         if (!this.props.analyzers[0] || !this.props.analyzers[1] ||
             this.props.isMobile && this.lastCallback && (timestamp - this.lastCallback) < MOBILE_MSPF
         ) {
             return;
         } else {
             if (this.props.isMobile) {
-                const timeAdjusted = (timestamp - this.lastCallback) % MOBILE_MSPF;
-                this.lastCallback += timeAdjusted;
+                if (this.lastCallback) {
+                    const timeAdjusted = (timestamp - this.lastCallback) % MOBILE_MSPF;
+                    this.lastCallback = timestamp - timeAdjusted;
+                } else {
+                    this.lastCallback = timestamp;
+                }
             }
 
             if (!this.props.isPlaying) {
@@ -186,8 +189,9 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
                 this.lastCurrentPosition = this.props.currentPosition;
                 // if has been idle for over 3.5 seconds, cancel animation
                 if (this.idleStart !== 0 && (timestamp - this.idleStart > 3500)) {
-                    cancelAnimationFrame(this.requestId);
-                    this.requestId = 0;
+                    // cancelAnimationFrame(this.requestId);
+                    // this.requestId = 0;
+                    TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
                     return;
                 }
             }
@@ -264,14 +268,12 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
                     input -= this.CQ_BINS;
                 }
                 const scale = values[input];
-                sum += scale * (this.firCoeffs[i] + fractionalPart * this.firDeltas[i]);
+                sum += scale * (firLoader.coeffs[i] + fractionalPart * firLoader.deltas[i]);
             }
-            const result = this.props.volume * sum * this.SCALE;
-            // first term is the actual incrementing.
-            // second term is adjusting so that the visualization is symmetric
-            // third term is adjusting so it starts at the bottom of the screen.
-            const angle = (currentSample * TWO_PI_PER_CIRCLE_SAMPLES) + (TWO_PI * this.INV_CQ_BINS) + Math.PI;
-            const [x, y] = polarToCartesian((radius + result), angle);
+            const result = radius + this.props.volume * sum * this.SCALE;
+            let { x, y } = constantQ.angles[currentSample];
+            x *= result;
+            y *= result;
 
             // if first sample, use moveTo instead of lineTo
             if (currentSample === 0) {
@@ -294,19 +296,20 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
     drawWaveForm = (context: CanvasRenderingContext2D, centerAxis: number, color: string) => {
         const waveform = waveformLoader.waveform;
+        const angles = waveformLoader.angles;
         if (!waveform || waveform.length === 0) {
             return;
         }
 
         const waveformLength = waveform.length / 2;
-        const twoPiPerWaveformLength = TWO_PI / waveformLength;
         const volumeHeightScale = this.props.volume * this.WAVEFORM_HALF_HEIGHT;
         context.beginPath();
         // going through mins from start to end
         for (let j = 0; j < waveformLength; j++) {
-            const angle = ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
             const scale = centerAxis + waveform[j * 2] * volumeHeightScale;
-            const [x, y] = polarToCartesian(scale, angle);
+            let { x, y } = angles[j];
+            x *= scale;
+            y *= scale;
 
             if (j === 0) {
                 context.moveTo(x, y);
@@ -317,9 +320,10 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
         // looping around maxes from end to start
         for (let j = waveformLength - 1; j >= 0; j--) {
-            const angle = ((j + 0.5) * twoPiPerWaveformLength);  // progress through waveform converted to angle
             const scale = centerAxis + waveform[j * 2 + 1] * volumeHeightScale;
-            const [x, y] = polarToCartesian(scale, angle);
+            let { x, y } = angles[j];
+            x *= scale;
+            y *= scale;
 
             context.lineTo(x, y);
         }
@@ -431,15 +435,16 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     onVisibilityChange = () => {
-        if ((document as any)[visibilityChangeApi.hidden]) {
-            if (this.requestId) {
-                cancelAnimationFrame(this.requestId);
-                this.requestId = 0;
-            }
-        } else {
-            if (!this.requestId) {
-                this.requestId = requestAnimationFrame(this.onAnalyze);
-            }
+        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+        if (!(document as any)[visibilityChangeApi.hidden]) {
+            // if (this.requestId) {
+            //     cancelAnimationFrame(this.requestId);
+            //     this.requestId = 0;
+            // }
+            // if (!this.requestId) {
+            //     this.requestId = requestAnimationFrame(this.onAnalyze);
+            // }
+            TweenLite.ticker.addEventListener('tick', this.onAnalyze);
         }
     }
 
@@ -452,8 +457,9 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
         document.removeEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange);
-        cancelAnimationFrame(this.requestId);
-        this.requestId = 0;
+        // cancelAnimationFrame(this.requestId);
+        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+        // this.requestId = 0;
     }
 
     // dunno why it doens't work without this. onResize should be called anyways
@@ -462,9 +468,11 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.adjustHeight();
             this.onResize();
         }
-        if (!this.requestId) {
-            this.requestId = requestAnimationFrame(this.onAnalyze);
-        }
+        // if (!this.requestId) {
+        //     this.requestId = requestAnimationFrame(this.onAnalyze);
+        // }
+        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+        TweenLite.ticker.addEventListener('tick', this.onAnalyze);
     }
 
     shouldComponentUpdate(nextProps: AudioVisualizerProps) {

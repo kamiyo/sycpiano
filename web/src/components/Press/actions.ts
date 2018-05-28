@@ -26,7 +26,9 @@ const fetchAcclaimsSuccess = (items: AcclaimItemShape[]): ActionTypes.FetchAccla
     items,
 });
 
-const fetchAcclaims = (): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
+type FetchAcclaimsActions = ActionTypes.FetchAcclaimsError | ActionTypes.FetchAcclaimsRequest | ActionTypes.FetchAcclaimsSuccess;
+
+const fetchAcclaims = (): ThunkAction<void, GlobalStateShape, void, FetchAcclaimsActions> => async (dispatch) => {
     try {
         dispatch(fetchAcclaimsRequest());
         const response = await axios.get('/api/acclaims');
@@ -37,7 +39,7 @@ const fetchAcclaims = (): ThunkAction<void, GlobalStateShape, void> => async (di
     }
 };
 
-export const createFetchAcclaimsAction = (): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
+export const createFetchAcclaimsAction = (): ThunkAction<void, GlobalStateShape, void, FetchAcclaimsActions> => (dispatch, getState) => {
     if (shouldFetchAcclaims(getState())) {
         dispatch(fetchAcclaims());
     }

@@ -23,7 +23,9 @@ const shouldFetchBio = (state: GlobalStateShape) => {
     return !state.about.isFetching && state.about.bio.length === 0;
 };
 
-const fetchBio = (): ThunkAction<Promise<void>, GlobalStateShape, void> =>
+type FetchBioActions = ActionTypes.FetchBioError | ActionTypes.FetchBioRequest | ActionTypes.FetchBioSuccess;
+
+const fetchBio = (): ThunkAction<Promise<void>, GlobalStateShape, void, FetchBioActions> =>
     async (dispatch) => {
         try {
             dispatch(fetchBioRequest());
@@ -35,7 +37,7 @@ const fetchBio = (): ThunkAction<Promise<void>, GlobalStateShape, void> =>
         }
     };
 
-export const fetchBioAction = (): ThunkAction<Promise<void>, GlobalStateShape, void> =>
+export const fetchBioAction = (): ThunkAction<Promise<void>, GlobalStateShape, void, FetchBioActions> =>
     async (dispatch, getState) => {
         if (shouldFetchBio(getState())) {
             await dispatch(fetchBio());

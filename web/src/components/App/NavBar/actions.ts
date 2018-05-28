@@ -1,5 +1,4 @@
-import { Dispatch } from 'react-redux';
-import { ThunkAction } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import debounce from 'lodash-es/debounce';
 
@@ -12,7 +11,7 @@ const debouncedToggle = debounce((dispatch, correctedShow) => dispatch({
     show: correctedShow,
 } as ActionTypes.ToggleNav), 50, { leading: true });
 
-export const toggleNavBar = (show?: boolean): ThunkAction<void, GlobalStateShape, void> =>
+export const toggleNavBar = (show?: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.ToggleNav> =>
     (dispatch, getState) => {
         const correctedShow = (typeof show === 'boolean') ? show : !getState().navbar.isVisible;
         if (getState().navbar.isVisible !== correctedShow) {
@@ -20,16 +19,16 @@ export const toggleNavBar = (show?: boolean): ThunkAction<void, GlobalStateShape
         }
     };
 
-export const toggleExpanded = (show?: boolean): ThunkAction<void, GlobalStateShape, void> =>
+export const toggleExpanded = (show?: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.ToggleExpanded> =>
     (dispatch, getState) => {
         const correctedShow = (typeof show === 'boolean') ? show : !getState().navbar.isExpanded;
         dispatch({
             type: NAV_ACTIONS.NAV_TOGGLE_EXPANDED,
             show: correctedShow,
-        } as ActionTypes.ToggleExpanded);
+        });
     };
 
-export const toggleSubNav = (sub = '', isMobile?: boolean): ThunkAction<void, GlobalStateShape, void> =>
+export const toggleSubNav = (sub = '', isMobile?: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.ToggleSubnav> =>
     (dispatch, getState) => {
         const type = NAV_ACTIONS.NAV_TOGGLE_SUBNAV;
         let showSubs = getState().navbar.showSubs;
@@ -49,22 +48,22 @@ export const toggleSubNav = (sub = '', isMobile?: boolean): ThunkAction<void, Gl
         dispatch({
             type,
             showSubs,
-        } as ActionTypes.ToggleSubnav);
+        });
     };
 
-const lastScroll = (scrollTop: number): ThunkAction<void, GlobalStateShape, void> =>
+const lastScroll = (scrollTop: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.LastScroll> =>
     (dispatch) => {
         dispatch({
             type: NAV_ACTIONS.NAV_LAST_SCROLL,
             scrollTop,
-        } as ActionTypes.LastScroll);
+        });
     };
 
 const debouncedLastScroll = debounce((dispatch, scrollTop) => {
     dispatch(lastScroll(scrollTop));
 }, 50, { leading: true });
 
-const onScroll = (triggerHeight: number, dispatch: Dispatch<GlobalStateShape>, getState: () => GlobalStateShape) => (event: React.UIEvent<HTMLElement> | UIEvent) => {
+const onScroll = (triggerHeight: number, dispatch: ThunkDispatch<GlobalStateShape, void, ActionTypes.ToggleNav>, getState: () => GlobalStateShape) => (event: React.UIEvent<HTMLElement> | UIEvent) => {
     const scrollTop = (event.target as HTMLElement).scrollTop;
     if (typeof triggerHeight === 'number') {
         if (scrollTop > getState().navbar.lastScrollTop && scrollTop > triggerHeight) {
@@ -76,7 +75,7 @@ const onScroll = (triggerHeight: number, dispatch: Dispatch<GlobalStateShape>, g
     }
 };
 
-export const setOnScroll = (triggerHeight?: number): ThunkAction<void, GlobalStateShape, void> =>
+export const setOnScroll = (triggerHeight?: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.SetOnScroll> =>
     (dispatch, getState) => {
         dispatch({
             type: NAV_ACTIONS.NAV_SET_ONSCROLL,

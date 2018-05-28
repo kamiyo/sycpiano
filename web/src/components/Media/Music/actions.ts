@@ -9,30 +9,30 @@ import { isMusicItem, MusicCategories, MusicFileItem, MusicItem, MusicListItem, 
 import { getLastName, normalizeString } from 'src/components/Media/Music/utils';
 import { GlobalStateShape } from 'src/types';
 
-export const storeVerticalOffset = (offset: number): ThunkAction<void, GlobalEventHandlers, void> =>
+export const storeVerticalOffset = (offset: number): ThunkAction<void, GlobalEventHandlers, void, ActionTypes.StoreVerticalOffset> =>
     (dispatch) => dispatch({
         type: AUDIO_ACTIONS.STORE_VERTICAL_OFFSET,
         offset,
-    } as ActionTypes.StoreVerticalOffset);
+    });
 
-export const setHoverSeekring = (isHover: boolean, angle: number): ThunkAction<void, GlobalStateShape, void> =>
+export const setHoverSeekring = (isHover: boolean, angle: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.SetHoverSeekring> =>
     (dispatch) => dispatch({
         type: AUDIO_ACTIONS.IS_HOVER_SEEKRING,
         isHoverSeekring: isHover,
         angle: angle ? angle : 0,
-    } as ActionTypes.SetHoverSeekring);
+    });
 
-export const setHoverPlaypause = (isHover: boolean): ThunkAction<void, GlobalStateShape, void> =>
+export const setHoverPlaypause = (isHover: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.SetHoverPlaypause> =>
     (dispatch) => dispatch({
         type: AUDIO_ACTIONS.IS_HOVER_PLAYPAUSE,
         isHoverPlaypause: isHover,
-    } as ActionTypes.SetHoverPlaypause);
+    });
 
-export const setMouseMove = (isMove: boolean): ThunkAction<void, GlobalStateShape, void> =>
+export const setMouseMove = (isMove: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.SetMouseMove> =>
     (dispatch) => dispatch({
         type: AUDIO_ACTIONS.IS_MOUSE_MOVE,
         isMouseMove: isMove,
-    } as ActionTypes.SetMouseMove);
+    });
 
 const fetchPlaylistRequest = (): ActionTypes.FetchPlaylistRequest => ({
     type: AUDIO_ACTIONS.FETCH_PLAYLIST_REQUEST,
@@ -58,7 +58,9 @@ const musicListIfExists = (response: MusicResponse, category: MusicCategories) =
     ] : []
 );
 
-const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape, void> => async (dispatch) => {
+type FetchPlaylistActions = ActionTypes.FetchPlaylistError | ActionTypes.FetchPlaylistRequest | ActionTypes.FetchPlaylistSuccess;
+
+const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape, void, FetchPlaylistActions> => async (dispatch) => {
     try {
         dispatch(fetchPlaylistRequest());
         const { data: response }: { data: MusicResponse } = await axios.get('/api/music');
@@ -83,7 +85,7 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
     }
 };
 
-export const fetchPlaylistAction = (composer: string, piece: string, movement: string = ''): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void> =>
+export const fetchPlaylistAction = (composer: string, piece: string, movement: string = ''): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void, FetchPlaylistActions> =>
     async (dispatch, getState) => {
         let items: MusicListItem[];
         if (shouldFetchPlaylist(getState())) {

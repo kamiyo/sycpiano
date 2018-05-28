@@ -7,10 +7,10 @@ import youTube from 'src/services/YouTube';
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { GlobalStateShape } from 'src/types';
 
-export const initializeYoutubeElement = (el: HTMLElement, videoId?: string, isMobile?: boolean): ThunkAction<void, GlobalStateShape, void> => (dispatch) => {
+export const initializeYoutubeElement = (el: HTMLElement, videoId?: string, isMobile?: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.PlayerIsReady> => (dispatch) => {
     youTube.initializePlayerOnElement(el);
     youTube.executeWhenPlayerReady(() => {
-        dispatch<ActionTypes.PlayerIsReady>({
+        dispatch({
             type: VIDEO_ACTIONS.PLAYER_IS_READY,
         });
         videoId && dispatch(playVideo(isMobile, videoId));
@@ -31,8 +31,10 @@ const fetchPlaylistError = (): ActionTypes.FetchPlaylistError => ({
     type: VIDEO_ACTIONS.FETCH_PLAYLIST_ERROR,
 });
 
+type FetchPlaylistActions = ActionTypes.FetchPlaylistError | ActionTypes.FetchPlaylistRequest | ActionTypes.FetchPlaylistSuccess;
+
 // need two separate api requests, because statistics is only available when fetching videos
-const fetchPlaylist = (): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
+const fetchPlaylist = (): ThunkAction<void, GlobalStateShape, void, FetchPlaylistActions> => async (dispatch) => {
     try {
         dispatch(fetchPlaylistRequest());
         const playlistResponse = await youTube.getPlaylistItems();
@@ -56,7 +58,7 @@ const shouldFetchPlaylist = (state: GlobalStateShape) => {
     return (playlistReducer.items.length === 0 && !playlistReducer.isFetching);
 };
 
-export const createFetchPlaylistAction = (): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
+export const createFetchPlaylistAction = (): ThunkAction<void, GlobalStateShape, void, FetchPlaylistActions | ActionTypes.TogglePlaylist> => (dispatch, getState) => {
     if (shouldFetchPlaylist(getState())) {
         dispatch(fetchPlaylist());
     } else {
@@ -77,11 +79,11 @@ const togglePlaylist = (show: boolean, state: GlobalStateShape): ActionTypes.Tog
     };
 };
 
-export const togglePlaylistAction = (show: boolean = null): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => (
+export const togglePlaylistAction = (show: boolean = null): ThunkAction<void, GlobalStateShape, void, ActionTypes.TogglePlaylist> => (dispatch, getState) => (
     dispatch(togglePlaylist(show, getState()))
 );
 
-export const playVideo = (isMobile: boolean = false, videoId?: string): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
+export const playVideo = (isMobile: boolean = false, videoId?: string): ThunkAction<void, GlobalStateShape, void, ActionTypes.TogglePlaylist | ActionTypes.PlayItem> => (dispatch, getState) => {
     const videoPlayerReducer = getState().video_player;
     if (!getState().video_playlist.items.find((item) => item.id === videoId)) {
         return;
@@ -97,9 +99,9 @@ export const playVideo = (isMobile: boolean = false, videoId?: string): ThunkAct
     dispatch(playItem(vid));
 };
 
-export const resetPlayer = (): ThunkAction<void, GlobalStateShape, void> => (dispatch) => {
+export const resetPlayer = (): ThunkAction<void, GlobalStateShape, void, ActionTypes.ResetPlayer> => (dispatch) => {
     youTube.destroyPlayer();
-    dispatch<ActionTypes.ResetPlayer>({
+    dispatch({
         type: VIDEO_ACTIONS.RESET_PLAYER,
     });
 };

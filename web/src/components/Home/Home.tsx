@@ -3,8 +3,7 @@ import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import { Transition } from 'react-transition-group';
 
-import Ease from 'gsap/EasePack';
-import TweenLite from 'gsap/TweenLite';
+import { Ease, TweenLite } from 'gsap/all';
 
 import { lato1, lato2, lato2i } from 'src/styles/fonts';
 import { generateSrcsetWidths, homeBackground, resizedImage, staticImage, sycChairVertical } from 'src/styles/imageUrls';
@@ -193,7 +192,6 @@ const SocialContainer = styled('div')`
         font-size: 0.8rem;
         top: unset;
     }
-
 `;
 
 const StyledCopyright = styled('div')`
@@ -237,9 +235,10 @@ const SocialLink = styled<{ show: boolean; canHover: boolean; }, 'a'>('a')`
     filter: drop-shadow(0 0 0.5rem black);
 
     ${/* sc-selector */ screenXSandPortrait} {
-        padding: .8rem 0;
+        padding: 0.8rem 0;
     }
 
+    /* stylelint-disable */
     ${props => props.canHover && `
         transition: transform 0.1s linear, filter 0.1s linear;
         &:hover {
@@ -247,6 +246,7 @@ const SocialLink = styled<{ show: boolean; canHover: boolean; }, 'a'>('a')`
             filter: drop-shadow(0 0 0.75rem black);
         }
     `}
+    /* stylelint-enable */
 `;
 
 interface SocialMediaLinkProps {
