@@ -11,8 +11,14 @@ import { Transition, TransitionGroup } from 'react-transition-group';
 import 'picturefill';
 import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 
-import 'gsap/CSSPlugin';
-import { TweenLite } from 'gsap/TweenLite';
+import CSSPlugin from 'gsap/CSSPlugin';
+import TweenLite from 'gsap/TweenLite';
+
+/* tslint:disable-next-line:no-unused-var */
+const activated = [
+    CSSPlugin,
+];
+
 import moment from 'moment-timezone';
 
 import NavBar from 'src/components/App/NavBar/NavBar';

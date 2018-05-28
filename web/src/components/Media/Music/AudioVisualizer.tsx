@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'react-emotion';
 import { connect } from 'react-redux';
 
-import { TweenLite } from 'gsap/TweenLite';
+import TweenLite from 'gsap/TweenLite';
 
 import { storeVerticalOffset } from 'src/components/Media/Music/actions';
 import { polarToCartesian, visibilityChangeApi } from 'src/components/Media/Music/utils';

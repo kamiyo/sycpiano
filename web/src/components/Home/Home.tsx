@@ -3,7 +3,8 @@ import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import { Transition } from 'react-transition-group';
 
-import { Ease, TweenLite } from 'gsap/all';
+import Ease from 'gsap/EasePack';
+import TweenLite from 'gsap/TweenLite';
 
 import { lato1, lato2, lato2i } from 'src/styles/fonts';
 import { generateSrcsetWidths, homeBackground, resizedImage, staticImage, sycChairVertical } from 'src/styles/imageUrls';
