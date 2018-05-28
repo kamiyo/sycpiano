@@ -149,93 +149,95 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.normalizedL = new Float32Array(this.FFT_HALF_SIZE);
             this.normalizedR = new Float32Array(this.FFT_HALF_SIZE);
 
-            this.requestId = requestAnimationFrame(this.onAnalyze);
+            if (!this.requestId) {
+                this.requestId = requestAnimationFrame(this.onAnalyze);
+            }
         } catch (err) {
             console.error('visualizer init failed.', err);
         }
     }
 
     onAnalyze = (timestamp = 0) => {
+        this.requestId = requestAnimationFrame(this.onAnalyze);
         // don't render anything if analyzers are null, i.e. audio not set up yet
         // also limit 30fps on mobile =).
         if (!this.props.analyzers[0] || !this.props.analyzers[1] ||
             this.props.isMobile && this.lastCallback && (timestamp - this.lastCallback) < (1000 / 30)
         ) {
-            this.requestId = requestAnimationFrame(this.onAnalyze);
             return;
+        } else {
+
+            this.lastCallback = timestamp;
+
+            if (!this.props.isPlaying) {
+                // reset idleStart time if either hover, hoverangle, or currPos changes
+                if (this.lastIsHover !== this.props.isHoverSeekring ||
+                    this.lastCurrentPosition !== this.props.currentPosition ||
+                    this.lastHover !== this.props.hoverAngle
+                ) {
+                    this.idleStart = timestamp;
+                }
+                // update hover, hoverangle, currPos (no effect obviously if no change)
+                this.lastIsHover = this.props.isHoverSeekring;
+                this.lastHover = this.props.hoverAngle;
+                this.lastCurrentPosition = this.props.currentPosition;
+                // if has been idle for over 3.5 seconds, cancel animation
+                if (this.idleStart !== 0 && (timestamp - this.idleStart > 3500)) {
+                    cancelAnimationFrame(this.requestId);
+                    this.requestId = 0;
+                    return;
+                }
+            }
+
+            // accumulators
+            const lowFreqs = {
+                l: 0,
+                r: 0,
+            };
+
+            const highFreqs = {
+                l: 0,
+                r: 0,
+            };
+
+            // get byte data, and store into normalized[L,R], while accumulating
+            this.props.analyzers[0].getByteFrequencyData(this.frequencyData);
+            this.normalizedL.forEach((_, index, arr) => {
+                const temp = this.frequencyData[index] / 255;
+                arr[index] = temp;
+                // accumulate
+                if (index < this.MAX_BIN) {
+                    index && (lowFreqs.l += temp);
+                    (index >= this.HIGH_PASS_BIN) && (highFreqs.l += temp);
+                }
+            });
+
+            this.props.analyzers[1].getByteFrequencyData(this.frequencyData);
+            this.normalizedR.forEach((_, index, arr) => {
+                const temp = this.frequencyData[index] / 255;
+                arr[index] = temp;
+                // accumulate
+                if (index < this.MAX_BIN) {
+                    index && (lowFreqs.r += temp);
+                    (index >= this.HIGH_PASS_BIN) && (highFreqs.r += temp);
+                }
+            });
+
+            // FFT -> CQ
+            const resultL = constantQ.apply(this.normalizedL);
+            const resultR = constantQ.apply(this.normalizedR).reverse();
+
+            // concat the results, store in vizBins
+            this.vizBins.set(resultL);
+            this.vizBins.set(resultR, resultL.length);
+
+            // Average left and right for each high and low accumulator, and divide by number of bins
+            let highFreq = (highFreqs.l + highFreqs.r) / (2 * (this.MAX_BIN - this.HIGH_PASS_BIN));
+            const lowFreq = (lowFreqs.l + lowFreqs.r) / (2 * this.HIGH_PASS_BIN);
+            highFreq = HIGH_FREQ_SCALE * highFreq;
+
+            this.drawVisualization(this.visualizationCtx, lowFreq, this.vizBins, highFreq, timestamp);
         }
-
-        this.lastCallback = timestamp;
-
-        if (!this.props.isPlaying) {
-            // reset idleStart time if either hover, hoverangle, or currPos changes
-            if (this.lastIsHover !== this.props.isHoverSeekring ||
-                this.lastCurrentPosition !== this.props.currentPosition ||
-                this.lastHover !== this.props.hoverAngle
-            ) {
-                this.idleStart = timestamp;
-            }
-            // update hover, hoverangle, currPos (no effect obviously if no change)
-            this.lastIsHover = this.props.isHoverSeekring;
-            this.lastHover = this.props.hoverAngle;
-            this.lastCurrentPosition = this.props.currentPosition;
-            // if has been idle for over 3.5 seconds, cancel animation
-            if (this.idleStart !== 0 && (timestamp - this.idleStart > 3500)) {
-                cancelAnimationFrame(this.requestId);
-                this.requestId = 0;
-                return;
-            }
-        }
-
-        // accumulators
-        const lowFreqs = {
-            l: 0,
-            r: 0,
-        };
-
-        const highFreqs = {
-            l: 0,
-            r: 0,
-        };
-
-        // get byte data, and store into normalized[L,R], while accumulating
-        this.props.analyzers[0].getByteFrequencyData(this.frequencyData);
-        this.normalizedL.forEach((_, index, arr) => {
-            const temp = this.frequencyData[index] / 255;
-            arr[index] = temp;
-            // accumulate
-            if (index < this.MAX_BIN) {
-                index && (lowFreqs.l += temp);
-                (index >= this.HIGH_PASS_BIN) && (highFreqs.l += temp);
-            }
-        });
-
-        this.props.analyzers[1].getByteFrequencyData(this.frequencyData);
-        this.normalizedR.forEach((_, index, arr) => {
-            const temp = this.frequencyData[index] / 255;
-            arr[index] = temp;
-            // accumulate
-            if (index < this.MAX_BIN) {
-                index && (lowFreqs.r += temp);
-                (index >= this.HIGH_PASS_BIN) && (highFreqs.r += temp);
-            }
-        });
-
-        // FFT -> CQ
-        const resultL = constantQ.apply(this.normalizedL);
-        const resultR = constantQ.apply(this.normalizedR).reverse();
-
-        // concat the results, store in vizBins
-        this.vizBins.set(resultL);
-        this.vizBins.set(resultR, resultL.length);
-
-        // Average left and right for each high and low accumulator, and divide by number of bins
-        let highFreq = (highFreqs.l + highFreqs.r) / (2 * (this.MAX_BIN - this.HIGH_PASS_BIN));
-        const lowFreq = (lowFreqs.l + lowFreqs.r) / (2 * this.HIGH_PASS_BIN);
-        highFreq = HIGH_FREQ_SCALE * highFreq;
-
-        this.drawVisualization(this.visualizationCtx, lowFreq, this.vizBins, highFreq, timestamp);
-        this.requestId = requestAnimationFrame(this.onAnalyze);
     }
 
     drawConstantQBins = (context: CanvasRenderingContext2D, values: Float32Array, radius: number, color: string) => {
@@ -427,9 +429,14 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
     onVisibilityChange = () => {
         if ((document as any)[visibilityChangeApi.hidden]) {
-            cancelAnimationFrame(this.requestId);
+            if (this.requestId) {
+                cancelAnimationFrame(this.requestId);
+                this.requestId = 0;
+            }
         } else {
-            this.requestId = requestAnimationFrame(this.onAnalyze);
+            if (!this.requestId) {
+                this.requestId = requestAnimationFrame(this.onAnalyze);
+            }
         }
     }
 
