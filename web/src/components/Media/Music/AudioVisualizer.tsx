@@ -20,6 +20,7 @@ const SCALE_MOBILE = 20;
 const HEIGHT_ADJUST_MOBILE = -50;
 const HEIGHT_ADJUST_DESKTOP = -100;
 const HIGH_FREQ_SCALE = 10;
+const MOBILE_MSPF = 1000 / 30;
 
 interface AudioVisualizerStateToProps {
     readonly isHoverSeekring: boolean;
@@ -162,12 +163,14 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         // don't render anything if analyzers are null, i.e. audio not set up yet
         // also limit 30fps on mobile =).
         if (!this.props.analyzers[0] || !this.props.analyzers[1] ||
-            this.props.isMobile && this.lastCallback && (timestamp - this.lastCallback) < (1000 / 30)
+            this.props.isMobile && this.lastCallback && (timestamp - this.lastCallback) < MOBILE_MSPF
         ) {
             return;
         } else {
-
-            this.lastCallback = timestamp;
+            if (this.props.isMobile) {
+                const timeAdjusted = (timestamp - this.lastCallback) % MOBILE_MSPF;
+                this.lastCallback += timeAdjusted;
+            }
 
             if (!this.props.isPlaying) {
                 // reset idleStart time if either hover, hoverangle, or currPos changes
@@ -369,8 +372,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     drawVisualization = (context: CanvasRenderingContext2D, lowFreq: number, values: Float32Array, lightness: number, timestamp: number) => {
-        context.clearRect(-this.width / 2, -this.height / 2 - this.HEIGHT_ADJUST, this.width, this.height);
-
+        // beware! we are rotating the whole thing by -half_pi so, we need to swap width and height values
+        context.clearRect(-this.height / 2 + this.HEIGHT_ADJUST, -this.width / 2, this.height, this.width);
         // hsl derived from @light-blue: #4E86A4;
         const color = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
         // adjust large radius to change with the average of all values
@@ -378,7 +381,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.props.storeRadii(radius - 2 * this.WAVEFORM_HALF_HEIGHT, radius, this.RADIUS_BASE);
 
         this.drawConstantQBins(context, values, radius, color);
-        drawCircleMask(context, radius + 1, [this.width, this.height]);
+        drawCircleMask(context, radius + 0.25, [this.width, this.height]);
         this.drawSeekArea(context, radius, color, timestamp);
     }
 
