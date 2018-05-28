@@ -76,6 +76,7 @@ const UIContainer = styled('div') `
         width: calc(100% - ${playlistContainerWidth.tablet});
     }
 
+    /* stylelint-disable-next-line no-duplicate-selectors */
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         height: 450px;

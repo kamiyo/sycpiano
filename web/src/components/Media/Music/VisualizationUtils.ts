@@ -10,6 +10,8 @@ import jDataView from 'jdataview';
 
 import { getAudioContext } from 'src/components/Media/Music/utils';
 
+export const CIRCLE_SAMPLES = 512;
+
 type DrawCircleMaskShape = (
     context: CanvasRenderingContext2D,
     radius: number,
@@ -25,6 +27,23 @@ export const drawCircleMask: DrawCircleMaskShape = (context, radius, dimensions,
     context.clip();
     context.clearRect(center[0] - dimensions[0] / 2, center[1] - dimensions[1] / 2, dimensions[0], dimensions[1]);
     context.restore();
+};
+
+const getCirclePoints = (points: number, offset: number = 0) => {
+    const pointArray: Array<{
+        x: number;
+        y: number;
+    }> = new Array();
+
+    const twoPiPerPoints = 2 * Math.PI / points;
+    for (let i = 0; i < points; i++) {
+        const angle = i * twoPiPerPoints + offset;
+        pointArray.push({
+            x: Math.cos(angle),
+            y: Math.sin(angle),
+        });
+    }
+    return pointArray;
 };
 
 interface Binary extends jBinary {
@@ -47,12 +66,14 @@ export class WaveformLoader {
         length: number;
     } = undefined;
     waveform: Float32Array = undefined;
+    angles: Array<{ x: number; y: number; }>;
 
     loaded: Promise<any>;
 
     reset = () => {
         this.header = undefined;
         this.waveform = undefined;
+        this.angles = undefined;
     }
 
     loadWaveformFile = (filename: string) => {
@@ -74,6 +95,8 @@ export class WaveformLoader {
                 }, 0);
                 this.waveform = Float32Array.from(body.values, (num) => num / maxAbs);
                 this.header = header;
+                const length = this.waveform.length / 2;
+                this.angles = getCirclePoints(length, Math.PI / length);
                 return resolve();
             });
         });
@@ -94,8 +117,8 @@ class FIRLoader {
     filterSize: number;
     halfCrossings: number;
     loaded: Promise<any>;
-    coeffs: number[];
-    deltas: number[];
+    coeffs: Float32Array;
+    deltas: Float32Array;
 
     constructor() {
         this.numCrossings = undefined;
@@ -120,8 +143,8 @@ class FIRLoader {
                     coeffs: ['array', 'float32', this.filterSize],
                     deltas: ['array', 'float32', this.filterSize],
                 });
-                this.coeffs = body.coeffs;
-                this.deltas = body.deltas;
+                this.coeffs = Float32Array.from(body.coeffs);
+                this.deltas = Float32Array.from(body.deltas);
                 resolve();
             });
         })
@@ -148,6 +171,7 @@ class ConstantQ {
     numRows = 0;
     numCols = 0;
     sampleRate: number;
+    angles: Array<{ x: number; y: number; }>;
 
     constructor(sampleRate: number) {
         this.matrix = undefined;
@@ -178,6 +202,10 @@ class ConstantQ {
                 this.minF = header.minFreq;
                 this.maxF = header.maxFreq;
                 this.matrix = math.type.SparseMatrix.fromJSON(o);
+
+                const cqBins = 2 * this.numCols;
+                const invCqBins = 1 / cqBins;
+                this.angles = getCirclePoints(CIRCLE_SAMPLES, Math.PI * (invCqBins + 1));
                 resolve();
             });
         })

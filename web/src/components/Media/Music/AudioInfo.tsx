@@ -45,6 +45,7 @@ const AudioInfoContainer = styled('div') `
         width: calc(100% - ${playlistContainerWidth.tablet});
     }
 
+    /* stylelint-disable-next-line no-duplicate-selectors */
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
         height: 450px;
@@ -159,7 +160,7 @@ class AudioInfo extends React.Component<AudioInfoProps> {
                         {
                             isMobile ? (
                                 <Marquee innerRef={this.marquee}>
-                                    <span>{composerTitle}</span><span>{composerTitleWithMovement}</span>
+                                    <span>{composerTitleWithMovement}</span><span>{composerTitleWithMovement}</span>
                                 </Marquee>
                             ) : (
                                     composerTitle

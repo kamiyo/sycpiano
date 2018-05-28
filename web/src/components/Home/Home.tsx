@@ -193,7 +193,6 @@ const SocialContainer = styled('div')`
         font-size: 0.8rem;
         top: unset;
     }
-
 `;
 
 const StyledCopyright = styled('div')`
@@ -237,9 +236,10 @@ const SocialLink = styled<{ show: boolean; canHover: boolean; }, 'a'>('a')`
     filter: drop-shadow(0 0 0.5rem black);
 
     ${/* sc-selector */ screenXSandPortrait} {
-        padding: .8rem 0;
+        padding: 0.8rem 0;
     }
 
+    /* stylelint-disable */
     ${props => props.canHover && `
         transition: transform 0.1s linear, filter 0.1s linear;
         &:hover {
@@ -247,6 +247,7 @@ const SocialLink = styled<{ show: boolean; canHover: boolean; }, 'a'>('a')`
             filter: drop-shadow(0 0 0.75rem black);
         }
     `}
+    /* stylelint-enable */
 `;
 
 interface SocialMediaLinkProps {

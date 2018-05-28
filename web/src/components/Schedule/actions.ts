@@ -55,7 +55,9 @@ const shouldFetchEvents = (name: EventListName, state: GlobalStateShape) => {
     return !eventItemsReducer.isFetchingList && eventItemsReducer.hasMore;
 };
 
-const fetchEvents = (name: EventListName, { after, before, date, scrollTo }: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => async (dispatch, getState) => {
+type FetchEventsActions = ActionTypes.FetchEventsError | ActionTypes.FetchEventsRequest | ActionTypes.FetchEventsSuccess;
+
+const fetchEvents = (name: EventListName, { after, before, date, scrollTo }: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void, FetchEventsActions> => async (dispatch, getState) => {
     try {
         dispatch(fetchEventsRequest(name));
         const params: FetchEventsAPIParams = {
@@ -94,7 +96,7 @@ const fetchEvents = (name: EventListName, { after, before, date, scrollTo }: Fet
     }
 };
 
-export const createFetchEventsAction = (name: EventListName, args: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
+export const createFetchEventsAction = (name: EventListName, args: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void, FetchLatLngActions> => (dispatch, getState) => {
     if (shouldFetchEvents(name, getState())) {
         // need to fetch items
         dispatch(fetchEvents(name, args));
@@ -106,7 +108,7 @@ const clearList = (name: EventListName): ActionTypes.ClearList => ({
     type: SCHEDULE_ACTIONS.CLEAR_LIST,
 });
 
-export const createSearchEventsAction = (name: EventListName, args: SearchEventsArguments): ThunkAction<void, GlobalStateShape, void> => async (dispatch, getState) => {
+export const createSearchEventsAction = (name: EventListName, args: SearchEventsArguments): ThunkAction<void, GlobalStateShape, void, FetchEventsActions | ActionTypes.ClearList> => async (dispatch, getState) => {
     try {
         const params = {
             q: args.q,
@@ -154,7 +156,9 @@ const shouldFetchLatLng = (name: EventListName, state: GlobalStateShape) => {
     return !eventItemsReducer.isFetchingLatLng;
 };
 
-const fetchLatLng = (name: EventListName, location: string): ThunkAction<void, GlobalStateShape, void> => async (dispatch) => {
+type FetchLatLngActions = ActionTypes.FetchLatLngError | ActionTypes.FetchLatLngRequest | ActionTypes.FetchLatLngSuccess;
+
+const fetchLatLng = (name: EventListName, location: string): ThunkAction<void, GlobalStateShape, void, FetchLatLngActions> => async (dispatch) => {
     try {
         dispatch(fetchLatLngRequest(name));
         const geocodeResponse = await geocode(location);
@@ -166,7 +170,7 @@ const fetchLatLng = (name: EventListName, location: string): ThunkAction<void, G
     }
 };
 
-export const createFetchLatLngAction = (name: EventListName, location: string): ThunkAction<void, GlobalStateShape, void> => (dispatch, getState) => {
+export const createFetchLatLngAction = (name: EventListName, location: string): ThunkAction<void, GlobalStateShape, void, FetchLatLngActions> => (dispatch, getState) => {
     if (shouldFetchLatLng(name, getState())) {
         dispatch(fetchLatLng(name, location));
     }
