@@ -262,6 +262,10 @@ const updateMusicFileHash = async (req: express.Request, _: express.Response, ne
             musicId,
         }: MusicFileAttributes = req.body.data.attributes;
 
+        if (!musicId) {
+            musicId = req.body.data.relationships.music.data.id;
+        }
+
         if (!name || !musicId) {
             const musicFile: MusicFileInstance = await db.models.musicFile.findOne({
                 where: {
