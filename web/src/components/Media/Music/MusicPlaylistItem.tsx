@@ -2,12 +2,11 @@ import * as React from 'react';
 import styled, { css } from 'react-emotion';
 
 import startCase from 'lodash-es/startCase';
-import * as path from 'path';
 
 import { Link } from 'react-router-dom';
 
 import { isMusicItem, MusicFileItem, MusicListItem } from 'src/components/Media/Music/types';
-import { formatTime, getLastName, normalizeString } from 'src/components/Media/Music/utils';
+import { formatTime, getPermaLink } from 'src/components/Media/Music/utils';
 
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 
@@ -114,6 +113,9 @@ const StyledCategory = styled('div')`
     background-color: #eee;
     padding: 12px 0 12px 22px;
     font-size: 1.2rem;
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.5);
 `;
 
 const getComposerTitleYear = (composer: string, piece: string, year: number) => {
@@ -140,7 +142,7 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
             return (
                 <StyledMusicItem>
                     <Link
-                        to={path.normalize(`${baseRoute}/${getLastName(item.composer)}/${normalizeString(item.piece)}${musicFile.name ? '/' + normalizeString(musicFile.name) : ''}`)}
+                        to={getPermaLink(baseRoute, item.composer, item.piece, musicFile.name)}
                         onClick={async () => {
                             if (!userInteracted) {
                                 play();
@@ -180,7 +182,7 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
                                 key={index}
                             >
                                 <Link
-                                    to={path.normalize(`${baseRoute}/${getLastName(item.composer)}/${normalizeString(item.piece)}/${normalizeString(musicFile.name)}`)}
+                                    to={getPermaLink(baseRoute, item.composer, item.piece, musicFile.name)}
                                     onClick={async () => {
                                         if (!userInteracted) {
                                             play();

@@ -143,6 +143,7 @@ const AboutContainer = styled('div')`
         height: 100%;
         display: block;
         overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 `;
 

@@ -14,10 +14,12 @@ import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 import CSSPlugin from 'gsap/CSSPlugin';
 import TweenLite from 'gsap/TweenLite';
 
-/* tslint:disable-next-line:no-unused-var */
+/* tslint:disable:no-unused-var */
+// @ts-ignore
 const activated = [
     CSSPlugin,
 ];
+/* tslint:enable:no-unused-var */
 
 import moment from 'moment-timezone';
 

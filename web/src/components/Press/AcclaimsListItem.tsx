@@ -52,27 +52,29 @@ const getRepeatCSS = (n: number, s: string) => {
 };
 
 const Link = styled('a')`
-    background: linear-gradient(
-        to bottom,
-        transparent 0%,
-        transparent calc(0.95em - 0.51px),
-        ${logoBlue} calc(0.95em - 0.5px),
-        ${logoBlue} calc(0.95em + 0.5px),
-        transparent calc(0.95em + 0.51px),
-        transparent 100%
-    );
-    transition: background 0.5s linear, color 0.5s linear;
-
-    &:hover {
-        background: linear-gradient(
+    background:
+        linear-gradient(
             to bottom,
             transparent 0%,
-            transparent calc0.951em - 0.51px),
-            #000204 calc(0.95em - 0.5px),
-            #000204 calc(0.95em + 0.5px),
+            transparent calc(0.95em - 0.51px),
+            ${logoBlue} calc(0.95em - 0.5px),
+            ${logoBlue} calc(0.95em + 0.5px),
             transparent calc(0.95em + 0.51px),
             transparent 100%
         );
+    transition: background 0.5s linear, color 0.5s linear;
+
+    &:hover {
+        background:
+            linear-gradient(
+                to bottom,
+                transparent 0%,
+                transparent calc(0.951em - 0.51px),
+                #000204 calc(0.95em - 0.5px),
+                #000204 calc(0.95em + 0.5px),
+                transparent calc(0.95em + 0.51px),
+                transparent 100%
+            );
     }
 
     text-shadow: ${getRepeatCSS(20, '0 0 1px white')};
@@ -80,7 +82,7 @@ const Link = styled('a')`
 
 let Author: React.SFC<AuthorProps> = ({ author, date, hasFullDate, website, className }) => {
     const Container = website ? Link : 'span';
-    const attributes = website ? { href: website } : {};
+    const attributes = website ? { href: website, target: '_blank' } : {};
     return (
         <div className={className}>
             <Container {...attributes}>

@@ -60,6 +60,7 @@ const HyperlinkText = styled('div') `
         line-height: 1.5rem;
     }
 
+    /* stylelint-disable-next-line no-duplicate-selectors */
     ${/* sc-selector */ screenM} {
         padding: 1.5rem 0;
     }
@@ -236,7 +237,7 @@ const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
     isExpanded: navbar.isExpanded,
 });
 
-export default connect<NavBarLinkStateToProps, NavBarLinkDispatchToProps>(
+export default connect<NavBarLinkStateToProps, NavBarLinkDispatchToProps, NavBarLinkProps>(
     mapStateToProps,
     {
         toggleSubNav,

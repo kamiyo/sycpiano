@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+import { lighten } from 'polished';
 import * as React from 'react';
 import ClampLines from 'react-clamp-lines';
 import styled, { css } from 'react-emotion';
@@ -7,7 +8,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 import { lato1, lato2 } from 'src/styles/fonts';
-import { screenXSorPortrait } from 'src/styles/screens';
 
 type VideoPlaylistItemProps = RouteComponentProps<{}> & {
     readonly item: VideoItemShape;
@@ -31,10 +31,6 @@ const ImageContainer = styled('div') `
     height: 100%;
     width: ${thumbnailWidth}px;
     position: relative;
-
-    ${/* sc-selector */ screenXSorPortrait} {
-        width:
-    }
 
     img {
         width: 100%;
@@ -79,7 +75,7 @@ const Duration = styled<{ active: boolean; children: string; }, 'span'>('span') 
     position: absolute;
     right: 0;
     bottom: 0;
-    color: ${props => (props.active) ? '#4E86A4 + #555' : '#fff'};
+    color: ${props => (props.active) ? lighten(0.2, '#4E86A4') : '#fff'};
     font-family: ${props => (props.active) ? lato2 : lato1};
     padding-right: 3px;
 `;

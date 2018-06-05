@@ -37,7 +37,7 @@ let EventDate: React.SFC<EventDateTimeProps> = (props) => (
     </div>
 );
 
-EventDate = styled<EventDateTimeProps, typeof EventDate>(EventDate)`
+EventDate = styled<EventDateTimeProps, {}>(EventDate)`
     text-align: center;
     background-color: ${lightBlue};
     color: white;

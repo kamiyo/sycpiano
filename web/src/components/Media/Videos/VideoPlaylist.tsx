@@ -47,6 +47,8 @@ const playlistContainerStyle = css`
         position: absolute;
         right: unset;
         z-index: 0;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 `;
 
@@ -91,7 +93,7 @@ const mapDispatchToProps: VideoPlaylistDispatchToProps = {
     togglePlaylistAction,
 };
 
-export default connect<VideoPlaylistStateToProps, VideoPlaylistDispatchToProps>(
+export default connect<VideoPlaylistStateToProps, VideoPlaylistDispatchToProps, VideoOwnProps>(
     mapStateToProps,
     mapDispatchToProps,
 )(VideoPlaylist);

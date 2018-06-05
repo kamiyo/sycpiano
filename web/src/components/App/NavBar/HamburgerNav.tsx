@@ -51,7 +51,7 @@ const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
     isExpanded: navbar.isExpanded,
 });
 
-export default connect<HamburgerNavStateToProps, HamburgerNavDispatchToProps>(
+export default connect<HamburgerNavStateToProps, HamburgerNavDispatchToProps, NavBarLinksProps>(
     mapStateToProps,
     { toggleExpanded },
 )(HamburgerNav);

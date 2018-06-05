@@ -15,7 +15,9 @@ export interface MusicFileItem {
     readonly waveformFile: string;
     readonly durationSeconds: number;
     readonly musicId: string;
+    readonly musicItem?: MusicItem;
 }
+
 export type MusicCategories = 'concerto' | 'solo' | 'chamber' | 'composition' | 'videogame';
 
 export interface MusicCategoryItem {
@@ -40,7 +42,6 @@ export interface AudioVisualizerStateShape {
 
 export interface AudioUIStateShape {
     readonly isHoverSeekring: boolean;
-    readonly isHoverPlaypause: boolean;
     readonly isMouseMove: boolean;
     readonly angle: number;
 }
@@ -48,4 +49,5 @@ export interface AudioUIStateShape {
 export interface AudioPlaylistStateShape {
     readonly isFetching: boolean;
     readonly items: MusicListItem[];
+    readonly flatItems: MusicFileItem[];
 }

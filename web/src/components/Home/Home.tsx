@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import { Transition } from 'react-transition-group';
 
-import Ease from 'gsap/EasePack';
+import { Elastic } from 'gsap/EasePack';
 import TweenLite from 'gsap/TweenLite';
 
 import { lato1, lato2, lato2i } from 'src/styles/fonts';
@@ -292,12 +292,12 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; },
 
     onSocialEnter = (id: number) => (el: HTMLLinkElement) => {
         const relative = id - (Object.keys(socials).length / 2 - 0.5);
-        TweenLite.fromTo(el, 0.25, { opacity: 0, y: `-50%`, x: `${relative * -100}%` }, { opacity: 1, y: `0%`, x: `0%`, delay: .05 * id, ease: Ease.Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
+        TweenLite.fromTo(el, 0.25, { opacity: 0, y: `-50%`, x: `${relative * -100}%` }, { opacity: 1, y: `0%`, x: `0%`, delay: .05 * id, ease: Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
     }
 
     onSocialExit = (id: number) => (el: HTMLLinkElement) => {
         const relative = id - Math.floor(Object.keys(socials).length / 2);
-        TweenLite.fromTo(el, 0.25, { opacity: 1, y: `0%`, x: `0%` }, { opacity: 0, y: `-50%`, x: `${relative * -100}%` , delay: .05 * id, ease: Ease.Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
+        TweenLite.fromTo(el, 0.25, { opacity: 1, y: `0%`, x: `0%` }, { opacity: 0, y: `-50%`, x: `${relative * -100}%` , delay: .05 * id, ease: Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
         this.setState({ canHover: this.defaultCanHover });
     }
 
