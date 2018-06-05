@@ -21,7 +21,7 @@ let DropboxButton: React.SFC<DropboxButtonProps> = ({ className }) => {
     );
 };
 
-DropboxButton = styled<{ isMobile?: boolean; }, typeof DropboxButton>(DropboxButton) `
+DropboxButton = styled(DropboxButton) `
     position: fixed;
     bottom: 25px;
     right: calc(${playlistWidth.desktop} / 2);
@@ -44,6 +44,7 @@ DropboxButton = styled<{ isMobile?: boolean; }, typeof DropboxButton>(DropboxBut
         right: calc(${playlistWidth.tablet} / 2);
     }
 
+    /* stylelint-disable-next-line */
     ${/* sc-selector */ screenXSorPortrait} {
         bottom: 10px;
         right: 50%;

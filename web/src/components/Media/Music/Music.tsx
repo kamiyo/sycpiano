@@ -1,8 +1,9 @@
 import isEmpty from 'lodash-es/isEmpty';
+import shuffle from 'lodash-es/shuffle';
 import * as React from 'react';
 import { css } from 'react-emotion';
 import { connect } from 'react-redux';
-import { match } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import TweenLite from 'gsap/TweenLite';
 
@@ -12,10 +13,10 @@ import AudioInfo from 'src/components/Media/Music/AudioInfo';
 import AudioUI from 'src/components/Media/Music/AudioUI';
 import AudioVisualizer from 'src/components/Media/Music/AudioVisualizer';
 import MusicPlaylist from 'src/components/Media/Music/MusicPlaylist';
-import { getAudioContext } from 'src/components/Media/Music/utils';
+import { getAudioContext, getPermaLink, modulo } from 'src/components/Media/Music/utils';
 import { constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 
-import { isMusicItem, MusicFileItem, MusicItem, MusicListItem } from 'src/components/Media/Music/types';
+import { MusicFileItem, MusicListItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
@@ -28,13 +29,16 @@ interface MusicState {
     readonly playbackPosition: number;
     readonly lastUpdateTimestamp: number;
     readonly duration: number;
-    readonly currentTrack: MusicItem;
+    readonly currentTrack: MusicFileItem;
     readonly isLoading: boolean;
     readonly userInteracted: boolean;
+    readonly isShuffle: boolean;
+    readonly localFlat: MusicFileItem[];
 }
 
 interface MusicStateToProps {
     readonly items: MusicListItem[];
+    readonly flatItems: MusicFileItem[];
     readonly onScroll: (event: React.UIEvent<HTMLElement> | UIEvent) => void;
 }
 
@@ -45,15 +49,14 @@ interface MusicDispatchToProps {
 
 interface MusicOwnProps {
     baseRoute: string;
-    match: match<{
-        composer?: string;
-        piece?: string;
-        movement?: string;
-    }>;
     isMobile: boolean;
 }
 
-type MusicProps = MusicOwnProps & MusicStateToProps & MusicDispatchToProps;
+type MusicProps = MusicOwnProps & MusicStateToProps & MusicDispatchToProps & RouteComponentProps<{
+    composer?: string;
+    piece?: string;
+    movement?: string;
+}>;
 
 const musicStyle = css`
     ${pushed}
@@ -66,6 +69,7 @@ const musicStyle = css`
         padding-top: ${navBarHeight.mobile}px;
         height: 100%;
         overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 `;
 
@@ -81,21 +85,26 @@ class Music extends React.Component<MusicProps, MusicState> {
         currentTrack: undefined,
         isLoading: false,
         userInteracted: false,
+        isShuffle: false,
+        localFlat: [],
     };
 
     audioCtx: AudioContext;
     analyzerL: AnalyserNode;
     analyzerR: AnalyserNode;
 
+    musicOrder: number[];
+    musicFileOrder: number[];
+
     circleRadii: {
         inner: number;
         outer: number;
         base: number;
     } = {
-        inner: 0,
-        outer: 0,
-        base: 0,
-    };
+            inner: 0,
+            outer: 0,
+            base: 0,
+        };
 
     storeRadii = (inner: number, outer: number, base: number) => {
         this.circleRadii = { inner, outer, base };
@@ -103,11 +112,32 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     getRadii = () => this.circleRadii;
 
-    getNextMovement = () => {
-        const curr = this.props.items.find((item) => isMusicItem(item) && item.id === this.state.currentTrack.id) as MusicItem;
-        const trackNo = curr.musicFiles.findIndex((file) => file.id === this.state.currentTrack.musicFiles[0].id);
-        const nextTrackNo = trackNo + 1;
-        return (nextTrackNo < curr.musicFiles.length) ? curr.musicFiles[nextTrackNo] : null;
+    getNextTrack = (which: 'next' | 'prev', force: boolean = false) => {
+        const trackNo = this.state.localFlat.findIndex((item) => item.id === this.state.currentTrack.id);
+        const nextTrackNo = (which === 'next') ? trackNo + 1 : trackNo - 1;
+        if (force) {
+            return this.state.localFlat[modulo(nextTrackNo, this.state.localFlat.length)];
+        }
+        if (nextTrackNo >= 0 && nextTrackNo < this.state.localFlat.length
+        ) {
+            return this.state.localFlat[nextTrackNo];
+        }
+    }
+
+    toggleShuffle = () => {
+        this.setState({
+            isShuffle: !this.state.isShuffle,
+        }, () => {
+            if (this.state.isShuffle) {
+                this.setState({
+                    localFlat: shuffle(this.state.localFlat),
+                });
+            } else {
+                this.setState({
+                    localFlat: this.props.flatItems,
+                });
+            }
+        });
     }
 
     play = () => {
@@ -164,6 +194,9 @@ class Music extends React.Component<MusicProps, MusicState> {
 
             this.analyzerL.fftSize = this.analyzerR.fftSize = constantQ.numRows * 2;
 
+            this.setState({
+                localFlat: this.props.flatItems,
+            });
             this.loadTrack(firstTrack as any);
         } catch (err) {
             console.error('constantQ or playlist init failed.', err);
@@ -171,8 +204,7 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     loadTrack = async (track: MusicFileItem) => {
-        if (this.state.currentTrack && this.state.currentTrack.musicFiles[0] &&
-            this.state.currentTrack.musicFiles[0].id === track.id
+        if (this.state.currentTrack && this.state.currentTrack.id === track.id
         ) {
             return Promise.reject(new Error('no clicky'));
         }
@@ -189,12 +221,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         });
         this.audio.current.pause();
         this.setState({
-            currentTrack: {
-                ...this.props.items.find((item) => {
-                    return isMusicItem(item) && item.id === track.musicId;
-                }),
-                musicFiles: [track],
-            } as MusicItem,
+            currentTrack: track,
             duration: -1,
             isLoading: this.audioCtx.state === 'suspended' ? false : true,
         });
@@ -218,16 +245,37 @@ class Music extends React.Component<MusicProps, MusicState> {
         });
     }
 
+    playPrev = async () => {
+        if (!this.state.userInteracted) {
+            this.play();
+        }
+        const next = this.getNextTrack('prev', true);
+        if (next) {
+            this.props.history.push(getPermaLink(this.props.baseRoute, next.musicItem.composer, next.musicItem.piece, next.name));
+            await this.loadTrack(next);
+            this.play();
+        }
+    }
+
+    playNext = async () => {
+        if (!this.state.userInteracted) {
+            this.play();
+        }
+        const next = this.getNextTrack('next', true);
+        if (next) {
+            this.props.history.push(getPermaLink(this.props.baseRoute, next.musicItem.composer, next.musicItem.piece, next.name));
+            await this.loadTrack(next);
+            this.play();
+        }
+    }
+
     onEnded = () => {
         this.setState({
             isPlaying: false,
             playbackPosition: 0,
             lastUpdateTimestamp: performance.now(),
         });
-        const next = this.getNextMovement();
-        if (next) {
-            this.loadTrack(next);
-        }
+        this.playNext();
     }
 
     onDrag = (percent: number) => {
@@ -312,10 +360,12 @@ class Music extends React.Component<MusicProps, MusicState> {
                 <MusicPlaylist
                     play={this.play}
                     onClick={this.loadTrack}
-                    currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.musicFiles[0].id : ''}
+                    currentTrackId={(this.state.currentTrack) ? this.state.currentTrack.id : ''}
                     baseRoute={this.props.baseRoute}
                     isMobile={isMobile}
                     userInteracted={this.state.userInteracted}
+                    toggleShuffle={this.toggleShuffle}
+                    isShuffle={this.state.isShuffle}
                 />
                 <AudioUI
                     seekAudio={this.seekAudio}
@@ -323,6 +373,8 @@ class Music extends React.Component<MusicProps, MusicState> {
                     onDrag={this.onDrag}
                     play={this.play}
                     pause={this.pause}
+                    next={this.playNext}
+                    prev={this.playPrev}
                     isPlaying={this.state.isPlaying}
                     currentPosition={this.state.playbackPosition}
                     isMobile={isMobile}
@@ -351,9 +403,13 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 }
 
-const mapStateToProps = (state: GlobalStateShape): MusicStateToProps => ({
-    items: state.audio_playlist.items,
-    onScroll: state.navbar.onScroll,
+const mapStateToProps = ({
+    audio_playlist,
+    navbar,
+}: GlobalStateShape): MusicStateToProps => ({
+    items: audio_playlist.items,
+    flatItems: audio_playlist.flatItems,
+    onScroll: navbar.onScroll,
 });
 
 const ConnectedMusic = connect<MusicStateToProps, MusicDispatchToProps>(

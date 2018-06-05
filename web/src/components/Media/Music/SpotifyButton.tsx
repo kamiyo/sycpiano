@@ -21,11 +21,11 @@ let SpotifyButton: React.SFC<SpotifyButtonProps> = ({ className }) => {
     );
 };
 
-SpotifyButton = styled<SpotifyButtonProps, typeof SpotifyButton>(SpotifyButton) `
+SpotifyButton = styled<SpotifyButtonProps, {}>(SpotifyButton) `
     position: fixed;
     bottom: 25px;
-    right: calc(${playlistWidth.desktop} / 2);
-    transform: translateX(50%);
+    right: calc(${playlistWidth.desktop} * 2 / 3);
+    transform: translateX(33.33%);
     z-index: 50;
     filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
     transition: all 0.2s;
@@ -33,7 +33,7 @@ SpotifyButton = styled<SpotifyButtonProps, typeof SpotifyButton>(SpotifyButton) 
     &:hover {
         cursor: pointer;
         filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
-        transform: translateX(50%) translateY(-1px) scale(1.05);
+        transform: translateX(33.33%) translateY(-1px) scale(1.05);
     }
 
     a img {
@@ -44,9 +44,10 @@ SpotifyButton = styled<SpotifyButtonProps, typeof SpotifyButton>(SpotifyButton) 
         right: calc(${playlistWidth.tablet} / 2);
     }
 
+    /* stylelint-disable-next-line no-duplicate-selectors */
     ${/* sc-selector */ screenXSorPortrait} {
         bottom: 10px;
-        right: 50%;
+        right: 66.67%;
     }
 `;
 

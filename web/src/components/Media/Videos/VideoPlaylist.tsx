@@ -47,6 +47,8 @@ const playlistContainerStyle = css`
         position: absolute;
         right: unset;
         z-index: 0;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 `;
 

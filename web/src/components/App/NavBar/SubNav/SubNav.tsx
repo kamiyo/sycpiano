@@ -24,7 +24,7 @@ let SubNav: React.SFC<SubNavProps> = ({ className, links, ...props }) => (
     </ul>
 );
 
-SubNav = styled<SubNavProps, 'SubNav'>(SubNav)`
+SubNav = styled(SubNav)`
     z-index: 10;
     position: absolute;
     list-style: none;

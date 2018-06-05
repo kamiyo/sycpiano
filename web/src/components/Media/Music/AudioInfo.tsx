@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import TweenLite from 'gsap/TweenLite';
 
-import { MusicItem } from 'src/components/Media/Music/types';
+import { MusicFileItem } from 'src/components/Media/Music/types';
 import { formatTime } from 'src/components/Media/Music/utils';
 
 import { lato1 } from 'src/styles/fonts';
@@ -15,7 +15,7 @@ import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 import { metaDescriptions, titleStringBase } from 'src/utils';
 
 interface AudioInfoProps {
-    currentTrack: MusicItem;
+    currentTrack: MusicFileItem;
     duration: number;
     currentPosition: number;
     isMobile: boolean;
@@ -23,7 +23,7 @@ interface AudioInfoProps {
     matchParams: boolean;
 }
 
-const AudioInfoContainer = styled('div') `
+const AudioInfoContainer = styled('div')`
     ${noHighlight}
     width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
@@ -48,29 +48,30 @@ const AudioInfoContainer = styled('div') `
     /* stylelint-disable-next-line no-duplicate-selectors */
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
-        height: 450px;
+        height: 360px;
         top: ${navBarHeight.mobile}px;
         padding-bottom: 1rem;
     }
 `;
 
-const ComposerTitle = styled('div') `
+const ComposerTitle = styled('div')`
     padding: 0 20px;
     font-size: 2.2rem;
     line-height: 3.2rem;
+    width: 100%;
+    overflow-x: hidden;
 
     ${/* sc-selector */ screenXSorPortrait} {
-        width: 100%;
         white-space: nowrap;
-        overflow-x: hidden;
         font-size: 1.4rem;
         line-height: 2rem;
     }
 `;
 
-const Marquee = styled('div') `
+const Marquee = styled('div')`
     width: fit-content;
     position: relative;
+    white-space: nowrap;
 
     span {
         display: inline-block;
@@ -81,13 +82,13 @@ const Marquee = styled('div') `
     }
 `;
 
-const Movement = styled('div') `
+const Movement = styled('div')`
     padding: 0 10px;
     font-size: 2.2rem;
     line-height: 3.2rem;
 `;
 
-const ContributingOrDuration = styled('div') `
+const ContributingOrDuration = styled('div')`
     padding: 0 10px;
     font-size: 2rem;
     line-height: 3.2rem;
@@ -102,30 +103,42 @@ class AudioInfo extends React.Component<AudioInfoProps> {
     private tween: any;
     private titleDiv: React.RefObject<HTMLDivElement> = React.createRef();
     private marquee: React.RefObject<HTMLDivElement> = React.createRef();
+    private secondSpan: React.RefObject<HTMLSpanElement> = React.createRef();
+
+    recalculateMarquee = () => {
+        this.tween && this.tween.kill();
+        this.marquee.current.removeAttribute('style');
+        this.titleDiv.current.removeAttribute('style');
+        const divWidth = this.titleDiv.current.offsetWidth;
+        const spanWidth = (this.marquee.current.children[0] as HTMLDivElement).offsetWidth;
+        if (divWidth > spanWidth) {
+            this.marquee.current.style.left = `${(divWidth - spanWidth) / 2}px`;
+            this.titleDiv.current.style.padding = '0';
+            this.secondSpan.current.style.visibility = 'hidden';
+        } else {
+            const dur = this.marquee.current.offsetWidth / 100;
+            this.tween = TweenLite.fromTo(this.marquee.current, dur, { x: '0%' }, { x: '-50%', ease: 'linear', clearProps: 'transform', delay: 3, onComplete: () => this.tween.restart(true) });
+            this.secondSpan.current.style.visibility = 'unset';
+        }
+    }
 
     componentDidUpdate(prevProps: AudioInfoProps) {
         if (
-            this.props.isMobile && (
-                !prevProps.isMobile ||
-                this.props.currentTrack && (
-                    !prevProps.currentTrack ||
-                    prevProps.currentTrack.musicFiles[0].id !== this.props.currentTrack.musicFiles[0].id
-                )
+            this.props.currentTrack && (
+                !prevProps.currentTrack ||
+                prevProps.currentTrack.id !== this.props.currentTrack.id
             )
         ) {
-            this.tween && this.tween.kill();
-            this.marquee.current.removeAttribute('style');
-            this.titleDiv.current.removeAttribute('style');
-            const divWidth = this.titleDiv.current.offsetWidth;
-            const spanWidth = (this.marquee.current.children[0] as HTMLDivElement).offsetWidth;
-            if (divWidth > spanWidth) {
-                this.marquee.current.style.left = `${(divWidth - spanWidth) / 2}px`;
-                this.titleDiv.current.style.padding = '0';
-            } else {
-                const dur = this.marquee.current.offsetWidth / 100;
-                this.tween = TweenLite.fromTo(this.marquee.current, dur, { x: '0%' }, { x: '-50%', ease: 'linear', clearProps: 'transform', delay: 3, onComplete: () => this.tween.restart(true) });
-            }
+            this.recalculateMarquee();
         }
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.recalculateMarquee);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.recalculateMarquee);
     }
 
     render() {
@@ -136,17 +149,17 @@ class AudioInfo extends React.Component<AudioInfoProps> {
             composer = '',
             contributors = '',
             year = null,
-            musicFiles = [],
-        } = this.props.currentTrack || {};
+        } = (this.props.currentTrack && this.props.currentTrack.musicItem) || {};
 
         const {
             name: movement = '',
-        } = musicFiles[0] || {};
+        } = this.props.currentTrack || {};
 
         const contribArray = contributors && contributors.split(', ');
         const composerTitle = composer + ' ' + piece + (year ? ` (${year})` : '');
         const composerTitleWithMovement = composerTitle + (movement ? ': ' + movement : '');
         const metaTitle = ' | Music | ' + composerTitleWithMovement;
+        const marqueeText = this.props.isMobile ? composerTitleWithMovement : composerTitle;
         return (
             <>
                 {this.props.matchParams &&
@@ -157,15 +170,9 @@ class AudioInfo extends React.Component<AudioInfoProps> {
                 }
                 <AudioInfoContainer>
                     <ComposerTitle innerRef={this.titleDiv}>
-                        {
-                            isMobile ? (
-                                <Marquee innerRef={this.marquee}>
-                                    <span>{composerTitleWithMovement}</span><span>{composerTitleWithMovement}</span>
-                                </Marquee>
-                            ) : (
-                                    composerTitle
-                                )
-                        }
+                        <Marquee innerRef={this.marquee}>
+                            <span>{marqueeText}</span><span ref={this.secondSpan}>{marqueeText}</span>
+                        </Marquee>
                     </ComposerTitle>
                     {!isMobile && movement && <Movement>{movement}</Movement>}
                     {contributors &&

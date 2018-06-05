@@ -40,6 +40,8 @@ const StyledPhotos = styled('div') `
     ${/* sc-selector */ screenXSorPortrait} {
         height: 100%;
         margin-top: 0;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 `;
 

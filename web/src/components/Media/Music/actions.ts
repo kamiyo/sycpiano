@@ -22,25 +22,19 @@ export const setHoverSeekring = (isHover: boolean, angle: number): ThunkAction<v
         angle: angle ? angle : 0,
     });
 
-export const setHoverPlaypause = (isHover: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.SetHoverPlaypause> =>
-    (dispatch) => dispatch({
-        type: AUDIO_ACTIONS.IS_HOVER_PLAYPAUSE,
-        isHoverPlaypause: isHover,
-    });
-
 export const setMouseMove = (isMove: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.SetMouseMove> =>
     (dispatch) => dispatch({
         type: AUDIO_ACTIONS.IS_MOUSE_MOVE,
         isMouseMove: isMove,
     });
-
 const fetchPlaylistRequest = (): ActionTypes.FetchPlaylistRequest => ({
     type: AUDIO_ACTIONS.FETCH_PLAYLIST_REQUEST,
 });
 
-const fetchPlaylistSuccess = (items: MusicListItem[]): ActionTypes.FetchPlaylistSuccess => ({
+const fetchPlaylistSuccess = (items: MusicListItem[], flatItems: MusicFileItem[]): ActionTypes.FetchPlaylistSuccess => ({
     type: AUDIO_ACTIONS.FETCH_PLAYLIST_SUCCESS,
     items,
+    flatItems,
 });
 
 const fetchPlaylistError = (): ActionTypes.FetchPlaylistError => ({
@@ -64,6 +58,18 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
     try {
         dispatch(fetchPlaylistRequest());
         const { data: response }: { data: MusicResponse } = await axios.get('/api/music');
+        const flatItems: MusicFileItem[] = new Array();
+        Object.keys(response).forEach((currKey: MusicCategories) => {
+            response[currKey].forEach((_, idx) => {
+                response[currKey][idx].musicFiles.forEach((__, idy) => {
+                    response[currKey][idx].musicFiles[idy] = {
+                        ...response[currKey][idx].musicFiles[idy],
+                        musicItem: response[currKey][idx],
+                    };
+                    flatItems.push(response[currKey][idx].musicFiles[idy]);
+                });
+            });
+        });
         response.concerto.push({
             composer: 'For more recordings of concerti, please contact Sean Chen directly',
             piece: '',
@@ -77,7 +83,7 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
             ...musicListIfExists(response, 'composition'),
             ...musicListIfExists(response, 'videogame'),
         ]);
-        dispatch(fetchPlaylistSuccess(items));
+        dispatch(fetchPlaylistSuccess(items, flatItems));
         return items;
     } catch (err) {
         console.log('fetch music error', err);
@@ -100,10 +106,10 @@ export const fetchPlaylistAction = (composer: string, piece: string, movement: s
                 if (isMusicItem(item) && getLastName(item.composer) === composer && normalizeString(item.piece) === piece) {
                     return prev.concat(
                         item.musicFiles.length === 1
-                        ? item.musicFiles
-                        : item.musicFiles.filter((musicFile) => (
-                        normalizeString(musicFile.name) === movement
-                    )));
+                            ? item.musicFiles
+                            : item.musicFiles.filter((musicFile) => (
+                                normalizeString(musicFile.name) === movement
+                            )));
                 } else {
                     return prev;
                 }

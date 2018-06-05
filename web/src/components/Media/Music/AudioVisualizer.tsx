@@ -16,7 +16,7 @@ const TWO_PI = 2 * Math.PI;
 const HALF_PI = Math.PI / 2;
 const SCALE_DESKTOP = 40;
 const SCALE_MOBILE = 20;
-const HEIGHT_ADJUST_MOBILE = -50;
+const HEIGHT_ADJUST_MOBILE = -45;
 const HEIGHT_ADJUST_DESKTOP = -100;
 const HIGH_FREQ_SCALE = 10;
 const MOBILE_MSPF = 1000 / 30;
@@ -57,7 +57,7 @@ const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div')`
     /* stylelint-disable-next-line no-duplicate-selectors */
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
-        height: 450px;
+        height: 360px;
         top: ${navBarHeight.mobile}px;
     }
 `;
@@ -148,9 +148,6 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.idleStart = performance.now();
 
             TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
-            // if (!this.requestId) {
-            //     this.requestId = requestAnimationFrame(this.onAnalyze);
-            // }
         } catch (err) {
             console.error('visualizer init failed.', err);
         }
@@ -189,8 +186,6 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
                 this.lastCurrentPosition = this.props.currentPosition;
                 // if has been idle for over 3.5 seconds, cancel animation
                 if (this.idleStart !== 0 && (timestamp - this.idleStart > 3500)) {
-                    // cancelAnimationFrame(this.requestId);
-                    // this.requestId = 0;
                     TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
                     return;
                 }
@@ -229,7 +224,6 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
                     (index >= this.HIGH_PASS_BIN) && (highFreqs.r += temp);
                 }
             });
-
             // FFT -> CQ
             const resultL = constantQ.apply(this.normalizedL);
             const resultR = constantQ.apply(this.normalizedR).reverse();
@@ -356,7 +350,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         } else {
             this.lastPlayheadPosition = this.props.currentPosition;
         }
-        const angle = (this.props.duration) ? TWO_PI * playbackHead / this.props.duration : 0;
+        const angle = (this.props.currentPosition && this.props.duration) ? TWO_PI * playbackHead / this.props.duration : 0;
         this.drawPlaybackHead(
             context,
             angle,
@@ -430,20 +424,13 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.visualizationCtx.translate(-centerY, centerX);
 
         this.RADIUS_SCALE = Math.min(this.width, this.height) / 12;
-        this.RADIUS_BASE = Math.min(centerX, centerY) - this.RADIUS_SCALE;
+        this.RADIUS_BASE = Math.min(centerX, centerY) - this.RADIUS_SCALE * 3 / 4;
         this.WAVEFORM_HALF_HEIGHT = Math.min(50, this.RADIUS_BASE / 4);
     }
 
     onVisibilityChange = () => {
         TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
         if (!(document as any)[visibilityChangeApi.hidden]) {
-            // if (this.requestId) {
-            //     cancelAnimationFrame(this.requestId);
-            //     this.requestId = 0;
-            // }
-            // if (!this.requestId) {
-            //     this.requestId = requestAnimationFrame(this.onAnalyze);
-            // }
             TweenLite.ticker.addEventListener('tick', this.onAnalyze);
         }
     }
@@ -457,9 +444,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
         document.removeEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange);
-        // cancelAnimationFrame(this.requestId);
         TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
-        // this.requestId = 0;
     }
 
     // dunno why it doens't work without this. onResize should be called anyways
@@ -468,9 +453,6 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.adjustHeight();
             this.onResize();
         }
-        // if (!this.requestId) {
-        //     this.requestId = requestAnimationFrame(this.onAnalyze);
-        // }
         TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
         TweenLite.ticker.addEventListener('tick', this.onAnalyze);
     }
@@ -496,9 +478,9 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 }
 
-const mapStateToProps = (state: GlobalStateShape) => ({
-    isHoverSeekring: state.audio_ui.isHoverSeekring,
-    hoverAngle: state.audio_ui.angle,
+const mapStateToProps = ({ audio_ui }: GlobalStateShape) => ({
+    isHoverSeekring: audio_ui.isHoverSeekring,
+    hoverAngle: audio_ui.angle,
 });
 
 const mapDispatchToProps: AudioVisualizerDispatchToProps = {

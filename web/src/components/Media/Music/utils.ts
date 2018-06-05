@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 type PolarToCartesianShape = (
     radius: number,
     angle: number,
@@ -74,4 +76,12 @@ export const getLastName = (name: string) => {
 
 export const normalizeString = (str: string) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f":()',\.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
+};
+
+export const getPermaLink = (base: string, composer: string, piece: string, movement?: string) => {
+    return path.normalize(`${base}/${getLastName(composer)}/${normalizeString(piece)}${movement ? '/' + normalizeString(movement) : ''}`);
+};
+
+export const modulo = (n: number, m: number) => {
+    return ((n % m) + m) % m;
 };

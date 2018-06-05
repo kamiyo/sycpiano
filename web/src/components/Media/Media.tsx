@@ -32,7 +32,7 @@ const fadeOnExit = (element: HTMLElement) => {
     }
 };
 
-const MediaContainer = styled('div') `
+const MediaContainer = styled('div')`
     height: 100%;
     width: 100%;
     background: url(${cliburn1}) no-repeat;
@@ -41,7 +41,7 @@ const MediaContainer = styled('div') `
     ${container};
 `;
 
-const FadingContainer = styled('div') `
+const FadingContainer = styled('div')`
     height: 100%;
     width: 100%;
     visibility: hidden;
@@ -82,8 +82,8 @@ const Media: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{ media: str
                                         />
                                         <Route
                                             path="/media/music/(.*)"
-                                            render={() => (
-                                                <Redirect to="/media/music" />
+                                            render={(childProps) => (
+                                                <Redirect to="/media/music" {...childProps} />
                                             )}
                                         />
                                         <Route
@@ -100,7 +100,7 @@ const Media: React.SFC<{ isMobile: boolean; } & RouteComponentProps<{ media: str
                                 exact={true}
                             />
                             <Route
-                                render={() => <Redirect to="/media/videos"/>}
+                                render={() => <Redirect to="/media/videos" />}
                             />
                         </Switch>
                     </FadingContainer>

@@ -1,30 +1,32 @@
 import * as React from 'react';
 import styled, { css, cx } from 'react-emotion';
 
-import { PauseSVG, PlaySVG } from 'src/components/Media/Music/IconSVGs';
+import { PauseSVG, PlaySVG, SkipSVG } from 'src/components/Media/Music/IconSVGs';
 
 interface IconProps {
     setRef: (div: HTMLDivElement) => void;
     width: number;
     height: number;
     verticalOffset: number;
+    Component?: React.ReactType;
+    className?: string;
 }
 
 const getSharedStyle = (verticalOffset: number) => css`
     transform: translateY(${verticalOffset}px);
     transform-origin: center center;
     z-index: 2;
-    flex: initial;
     display: flex;
     align-items: center;
     justify-content: center;
     -webkit-tap-highlight-color: transparent;
 `;
 
-const StyledIcon = styled<{ verticalOffset: number }, 'div'>('div') `
+const StyledIcon = styled<{ verticalOffset: number }, 'div'>('div')`
     opacity: 0;
     ${(props) => getSharedStyle(props.verticalOffset)};
     pointer-events: none;
+    position: absolute;
 
     svg {
         pointer-events: none;
@@ -43,40 +45,26 @@ const blurStyle = css`
     z-index: 1;
 `;
 
-const SolidPlayIcon = styled(PlaySVG) `
-    ${solidStyle}
-`;
-
-const BlurPlayIcon = styled(PlaySVG) `
-    ${blurStyle}
-`;
-
-export const PlayIcon: React.SFC<IconProps> = ({ setRef, verticalOffset, ...props }) => (
+const Icon: React.SFC<IconProps> = ({ setRef, verticalOffset, Component, className, ...props }) => (
     <StyledIcon
         innerRef={(div) => setRef(div)}
         verticalOffset={verticalOffset}
     >
-        <SolidPlayIcon {...props} />
-        <BlurPlayIcon {...props} />
+        <Component className={cx(className, solidStyle)} {...props} />
+        <Component className={cx(className, blurStyle)} {...props} />
     </StyledIcon>
 );
 
-const SolidPauseIcon = styled(PauseSVG) `
-    ${solidStyle}
-`;
+export const PlayIcon: React.SFC<IconProps> = ({ ...props }) => (
+    <Icon Component={PlaySVG} {...props} />
+);
 
-const BlurPauseIcon = styled(PauseSVG) `
-    ${blurStyle}
-`;
+export const PauseIcon: React.SFC<IconProps> = ({ ...props }) => (
+    <Icon Component={PauseSVG} {...props} />
+);
 
-export const PauseIcon: React.SFC<IconProps> = ({ setRef, verticalOffset, ...props }) => (
-    <StyledIcon
-        innerRef={(div) => setRef(div)}
-        verticalOffset={verticalOffset}
-    >
-        <SolidPauseIcon {...props} />
-        <BlurPauseIcon {...props} />
-    </StyledIcon>
+export const SkipIcon: React.SFC<IconProps> = ({ ...props }) => (
+    <Icon Component={SkipSVG} {...props} />
 );
 
 interface ButtonProps {
@@ -88,12 +76,17 @@ interface ButtonProps {
     readonly width: number;
     readonly height: number;
     readonly verticalOffset: number;
+    readonly Component?: React.ReactType;
+    readonly className?: string;
 }
 
-const StyledButton = styled<{ verticalOffset: number }, 'div'>('div') `
+const StyledButton = styled<{ verticalOffset: number; height: number; width: number; }, 'div'>('div')`
     ${(props) => getSharedStyle(props.verticalOffset)}
     transition: opacity 0.25s;
     opacity: 1;
+    flex: initial;
+    width: ${props => props.width}px;
+    height: ${props => props.height}px;
 `;
 
 const solidButtonStyle = css`
@@ -116,7 +109,7 @@ const blurButtonHover = css`
     filter: blur(5px);
 `;
 
-export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({
+const Button: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({
     isHovering,
     onMouseOver,
     onMouseOut,
@@ -125,13 +118,18 @@ export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>
     width,
     height,
     verticalOffset,
+    Component,
+    className,
 }) => (
         <StyledButton
             onMouseMove={onMouseMove}
             verticalOffset={verticalOffset}
+            width={width}
+            height={height}
         >
-            <PlaySVG
+            <Component
                 className={cx(
+                    className,
                     solidButtonStyle,
                     { [solidButtonHover]: isHovering },
                 )}
@@ -141,8 +139,9 @@ export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>
                 width={width}
                 height={height}
             />
-            <PlaySVG
+            <Component
                 className={cx(
+                    className,
                     blurButtonStyle,
                     { [blurButtonHover]: isHovering },
                 )}
@@ -152,38 +151,11 @@ export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>
         </StyledButton>
     );
 
-export const PauseButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({
-    isHovering,
-    onMouseOver,
-    onMouseOut,
-    onMouseMove,
-    onClick,
-    width,
-    height,
-    verticalOffset,
-}) => (
-        <StyledButton
-            onMouseMove={onMouseMove}
-            verticalOffset={verticalOffset}
-        >
-            <PauseSVG
-                className={cx(
-                    solidButtonStyle,
-                    { [solidButtonHover]: isHovering },
-                )}
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
-                onClick={onClick}
-                width={width}
-                height={height}
-            />
-            <PauseSVG
-                className={cx(
-                    blurButtonStyle,
-                    { [blurButtonHover]: isHovering },
-                )}
-                width={width}
-                height={height}
-            />
-        </StyledButton>
-    );
+export const PlayButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({ ...props }) =>
+    <Button Component={PlaySVG} {...props} />;
+
+export const PauseButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({ ...props }) =>
+    <Button Component={PauseSVG} {...props} />;
+
+export const SkipButton: React.SFC<ButtonProps & React.HTMLProps<HTMLDivElement>> = ({ ...props }) =>
+    <Button Component={SkipSVG} {...props} />;

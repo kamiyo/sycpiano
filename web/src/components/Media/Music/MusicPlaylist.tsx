@@ -3,6 +3,7 @@ import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
+import { ShuffleButton } from 'src/components/Media/Music/ShuffleButton';
 import SpotifyButton from 'src/components/Media/Music/SpotifyButton';
 import Playlist from 'src/components/Media/Playlist';
 
@@ -23,6 +24,8 @@ interface MusicPlaylistOwnProps {
     readonly play: () => void;
     readonly isMobile: boolean;
     readonly userInteracted: boolean;
+    readonly toggleShuffle: () => void;
+    readonly isShuffle: boolean;
 }
 
 type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;
@@ -31,7 +34,7 @@ const musicPlaylistStyle = css`
     position: initial;
 
     ${/* sc-selector */ screenXSorPortrait} {
-        top: 450px;
+        top: 360px;
         position: relative;
         overflow: visible;
     }
@@ -46,7 +49,7 @@ const musicULStyle = css`
     }
 `;
 
-const playlistContainerStyle = css `
+const playlistContainerStyle = css`
     width: fit-content;
     height: 100%;
     right: 0;
@@ -68,6 +71,8 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
     play,
     baseRoute,
     userInteracted,
+    isShuffle,
+    toggleShuffle,
 }) => (
         <div className={playlistContainerStyle}>
             <Playlist
@@ -90,14 +95,15 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
                 ))}
             </Playlist>
             <SpotifyButton isMobile={isMobile} />
+            <ShuffleButton isMobile={isMobile} onClick={toggleShuffle} on={isShuffle} />
         </div>
     );
 
-const mapStateToProps = (state: GlobalStateShape) => ({
-    items: state.audio_playlist.items,
+const mapStateToProps = ({ audio_playlist }: GlobalStateShape) => ({
+    items: audio_playlist.items,
 });
 
-export default connect<MusicPlaylistStateToProps>(
+export default connect<MusicPlaylistStateToProps, {}, MusicPlaylistOwnProps>(
     mapStateToProps,
     null,
 )(MusicPlaylist);

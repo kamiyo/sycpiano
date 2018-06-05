@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 
 import TweenLite from 'gsap/TweenLite';
 import { LoadingInstance } from 'src/components/LoadingSVG';
-import { setHoverPlaypause, setHoverSeekring, setMouseMove } from 'src/components/Media/Music/actions';
-import { PauseButton, PauseIcon, PlayButton, PlayIcon } from 'src/components/Media/Music/Buttons';
+import { setHoverSeekring, setMouseMove } from 'src/components/Media/Music/actions';
+import { PauseButton, PauseIcon, PlayButton, PlayIcon, SkipButton } from 'src/components/Media/Music/Buttons';
 import { cartesianToPolar } from 'src/components/Media/Music/utils';
 import { GlobalStateShape } from 'src/types';
 
@@ -14,14 +14,12 @@ import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
-    readonly isHoverPlaypause: boolean;
     readonly isMouseMove: boolean;
     readonly verticalOffset: number;
 }
 
 interface AudioUIDispatchToProps {
     readonly setHoverSeekring: typeof setHoverSeekring;
-    readonly setHoverPlaypause: typeof setHoverPlaypause;
     readonly setMouseMove: typeof setMouseMove;
 }
 
@@ -32,6 +30,8 @@ interface AudioUIOwnProps {
     readonly onStartDrag: (percent: number) => void;
     readonly pause: () => void;
     readonly play: () => void;
+    readonly next: () => void;
+    readonly prev: () => void;
     readonly seekAudio: (percent: number) => void;
     readonly isMobile: boolean;
     readonly isLoading: boolean;
@@ -44,6 +44,12 @@ interface AudioUIOwnProps {
 
 type AudioUIProps = AudioUIOwnProps & AudioUIStateToProps & AudioUIDispatchToProps;
 
+interface AudioUIState {
+    isHoverPlaypause: boolean;
+    isHoverNext: boolean;
+    isHoverPrev: boolean;
+}
+
 const getLoadingInstanceStyle = (verticalOffset: number) => css`
     position: relative;
     left: 50%;
@@ -53,7 +59,7 @@ const getLoadingInstanceStyle = (verticalOffset: number) => css`
     stroke: ${lightBlue};
 `;
 
-const LoadingOverlay = styled('div') `
+const LoadingOverlay = styled('div')`
     position: absolute;
     z-index: 30;
     width: 100%;
@@ -61,7 +67,7 @@ const LoadingOverlay = styled('div') `
     background-color: rgba(0, 0, 0, 0.5);
 `;
 
-const UIContainer = styled('div') `
+const UIContainer = styled('div')`
     position: absolute;
     width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
@@ -70,7 +76,7 @@ const UIContainer = styled('div') `
     z-index: 20;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
 
     ${/* sc-selector */ screenM} {
         width: calc(100% - ${playlistContainerWidth.tablet});
@@ -79,12 +85,12 @@ const UIContainer = styled('div') `
     /* stylelint-disable-next-line no-duplicate-selectors */
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
-        height: 450px;
+        height: 360px;
         top: ${navBarHeight.mobile}px;
     }
 `;
 
-const StyledSeekRing = styled('canvas') `
+const StyledSeekRing = styled('canvas')`
     position: absolute;
     width: 100%;
     height: 100%;
@@ -92,7 +98,12 @@ const StyledSeekRing = styled('canvas') `
     -webkit-tap-highlight-color: transparent;
 `;
 
-class AudioUI extends React.Component<AudioUIProps> {
+class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
+    state = {
+        isHoverPlaypause: false,
+        isHoverNext: false,
+        isHoverPrev: false,
+    };
     playButton: HTMLDivElement;
     pauseButton: HTMLDivElement;
 
@@ -124,6 +135,7 @@ class AudioUI extends React.Component<AudioUIProps> {
             } else {
                 this.props.play();
             }
+            event.preventDefault();
         }
     }
 
@@ -141,7 +153,9 @@ class AudioUI extends React.Component<AudioUIProps> {
         this.visualizationCtx = this.seekRing.getContext('2d');
         this.isDragging = false;
         this.props.setMouseMove(false);
-        this.props.setHoverPlaypause(false);
+        this.setState({
+            isHoverPlaypause: false,
+        });
     }
 
     isMouseEvent = (event: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>): event is React.MouseEvent<HTMLElement> => {
@@ -246,15 +260,20 @@ class AudioUI extends React.Component<AudioUIProps> {
         }
     }
 
-    handleMouseover = () => {
-        this.props.setHoverPlaypause(true);
-        if (this.props.isMobile) {
-            setTimeout(() => this.props.setHoverPlaypause(false), 1000);
-        }
+    handleMouseover = (state: keyof AudioUIState) => () => {
+        this.setState({
+            [state]: true,
+        } as Pick<AudioUIState, keyof AudioUIState>, () => {
+            if (this.props.isMobile) {
+                setTimeout(() => this.setState({ [state]: true } as Pick<AudioUIState, keyof AudioUIState>));
+            }
+        });
     }
 
-    handleMouseout = () => {
-        this.props.setHoverPlaypause(false);
+    handleMouseout = (state: keyof AudioUIState) => () => {
+        this.setState({
+            [state]: false,
+        } as Pick<AudioUIState, keyof AudioUIState>);
     }
 
     componentDidUpdate(prevProps: AudioUIProps) {
@@ -316,29 +335,52 @@ class AudioUI extends React.Component<AudioUIProps> {
                     height={buttonLength}
                     verticalOffset={this.props.verticalOffset}
                 />
+                <SkipButton
+                    onClick={this.props.prev}
+                    isHovering={this.state.isHoverPrev}
+                    onMouseMove={this.handleMousemove}
+                    onMouseOver={this.handleMouseover('isHoverPrev')}
+                    onMouseOut={this.handleMouseout('isHoverPrev')}
+                    onMouseUp={this.handleMouseup}
+                    width={buttonLength * 4 / 5}
+                    height={buttonLength * 8 / 15}
+                    verticalOffset={this.props.verticalOffset}
+                    className={css` transform: scaleX(-1); `}
+                />
                 {(this.props.isPlaying) ?
                     <PauseButton
                         onClick={this.togglePlaying}
-                        isHovering={this.props.isHoverPlaypause}
+                        isHovering={this.state.isHoverPlaypause}
                         onMouseMove={this.handleMousemove}
-                        onMouseOver={this.handleMouseover}
-                        onMouseOut={this.handleMouseout}
+                        onMouseOver={this.handleMouseover('isHoverPlaypause')}
+                        onMouseOut={this.handleMouseout('isHoverPlaypause')}
                         onMouseUp={this.handleMouseup}
                         width={buttonLength}
                         height={buttonLength}
                         verticalOffset={this.props.verticalOffset}
                     /> : <PlayButton
                         onClick={this.togglePlaying}
-                        isHovering={this.props.isHoverPlaypause}
+                        isHovering={this.state.isHoverPlaypause}
                         onMouseMove={this.handleMousemove}
-                        onMouseOver={this.handleMouseover}
-                        onMouseOut={this.handleMouseout}
+                        onMouseOver={this.handleMouseover('isHoverPlaypause')}
+                        onMouseOut={this.handleMouseout('isHoverPlaypause')}
                         onMouseUp={this.handleMouseup}
                         width={buttonLength}
                         height={buttonLength}
                         verticalOffset={this.props.verticalOffset}
                     />
                 }
+                <SkipButton
+                    onClick={this.props.next}
+                    isHovering={this.state.isHoverNext}
+                    onMouseMove={this.handleMousemove}
+                    onMouseOver={this.handleMouseover('isHoverNext')}
+                    onMouseOut={this.handleMouseout('isHoverNext')}
+                    onMouseUp={this.handleMouseup}
+                    width={buttonLength * 4 / 5}
+                    height={buttonLength * 8 / 15}
+                    verticalOffset={this.props.verticalOffset}
+                />
                 <StyledSeekRing
                     innerRef={(canvas) => this.seekRing = canvas}
                     onMouseMove={this.handleMousemove}
@@ -354,14 +396,12 @@ class AudioUI extends React.Component<AudioUIProps> {
 }
 
 const mapStateToProps = (state: GlobalStateShape) => ({
-    isHoverPlaypause: state.audio_ui.isHoverPlaypause,
     isMouseMove: state.audio_ui.isMouseMove,
     verticalOffset: state.audio_visualizer.verticalOffset,
 });
 
 const mapDispatchToProps: AudioUIDispatchToProps = {
     setHoverSeekring,
-    setHoverPlaypause,
     setMouseMove,
 };
 

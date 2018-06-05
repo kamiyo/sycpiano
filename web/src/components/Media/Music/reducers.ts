@@ -17,7 +17,6 @@ export const audioVisualizerReducer = (state: AudioVisualizerStateShape = {
 
 export const audioUIReducer = (state: AudioUIStateShape = {
     isHoverSeekring: false,
-    isHoverPlaypause: false,
     isMouseMove: false,
     angle: 0,
 }, action: ActionTypes) => {
@@ -27,11 +26,6 @@ export const audioUIReducer = (state: AudioUIStateShape = {
                 ...state,
                 isHoverSeekring: action.isHoverSeekring,
                 angle: action.angle,
-            };
-        case AUDIO_ACTIONS.IS_HOVER_PLAYPAUSE:
-            return {
-                ...state,
-                isHoverPlaypause: action.isHoverPlaypause,
             };
         case AUDIO_ACTIONS.IS_MOUSE_MOVE:
             return {
@@ -45,6 +39,7 @@ export const audioUIReducer = (state: AudioUIStateShape = {
 export const audioPlaylistReducer = (state: AudioPlaylistStateShape = {
     isFetching: false,
     items: [],
+    flatItems: [],
 }, action: ActionTypes) => {
     switch (action.type) {
         case AUDIO_ACTIONS.FETCH_PLAYLIST_REQUEST:
@@ -62,6 +57,7 @@ export const audioPlaylistReducer = (state: AudioPlaylistStateShape = {
                 ...state,
                 isFetching: false,
                 items: action.items,
+                flatItems: action.flatItems,
             };
         default: return state;
     }

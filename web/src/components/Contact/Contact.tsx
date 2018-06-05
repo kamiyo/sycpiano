@@ -44,7 +44,7 @@ class Contact extends React.Component<ContactProps> {
     }
 }
 
-const StyledContact = styled<ContactProps, typeof Contact>(Contact) `
+const StyledContact = styled(Contact) `
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
