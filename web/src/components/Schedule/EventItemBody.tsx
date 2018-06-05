@@ -10,7 +10,7 @@ import {
     EventTime,
     EventWebsiteButton,
 } from 'src/components/Schedule/EventDetails';
-import { DayItem } from 'src/components/Schedule/types';
+import { DayItem, EventListName } from 'src/components/Schedule/types';
 
 import { lightBlue } from 'src/styles/colors';
 import { lato1 } from 'src/styles/fonts';
@@ -45,7 +45,7 @@ const Connector = styled('div')`
         );
 `;
 
-type EventItemBodyProps = DayItem & { className?: string, isMobile?: boolean; permaLink: string; };
+type EventItemBodyProps = DayItem & { className?: string, isMobile?: boolean; permaLink: string; listType: EventListName };
 
 const detailSectionMargin = (extra?: number) => css` margin-bottom: ${20 + (extra || 0)}px; `;
 
@@ -62,12 +62,13 @@ let EventItemBody: React.SFC<EventItemBodyProps> = ({
     program,
     website,
     permaLink,
+    listType,
 }) => (
         <div className={className}>
             <DateContainer>
-                {endDate && <FlexEventDate dateTime={endDate} isMobile={isMobile} rounded={'top'} />}
+                {endDate && <FlexEventDate dateTime={listType === 'archive' ? endDate : dateTime} isMobile={isMobile} rounded={'top'} />}
                 {endDate && <Connector />}
-                <FlexEventDate dateTime={dateTime} isMobile={isMobile} rounded={endDate ? 'bottom' : 'both'} />
+                <FlexEventDate dateTime={listType === 'archive' ? dateTime : endDate} isMobile={isMobile} rounded={endDate ? 'bottom' : 'both'} />
             </DateContainer>
 
             <FlexEventInfoContainer>
