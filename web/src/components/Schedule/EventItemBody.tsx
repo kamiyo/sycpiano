@@ -63,12 +63,20 @@ let EventItemBody: React.SFC<EventItemBodyProps> = ({
     website,
     permaLink,
     listType,
-}) => (
+}) => {
+    const firstDate = listType === 'archive' ? endDate : dateTime;
+    const secondDate = listType === 'archive' ? dateTime : endDate;
+    const DateChildren = endDate ? (
+        <>
+            <FlexEventDate dateTime={firstDate} isMobile={isMobile} rounded={'top'} />
+            <Connector />
+            <FlexEventDate dateTime={secondDate} isMobile={isMobile} rounded={'bottom'} />
+        </>
+    ) : <FlexEventDate dateTime={dateTime} isMobile={isMobile} rounded={'both'} />;
+    return (
         <div className={className}>
             <DateContainer>
-                {endDate && <FlexEventDate dateTime={listType === 'archive' ? endDate : dateTime} isMobile={isMobile} rounded={'top'} />}
-                {endDate && <Connector />}
-                <FlexEventDate dateTime={listType === 'archive' ? dateTime : endDate} isMobile={isMobile} rounded={endDate ? 'bottom' : 'both'} />
+                {DateChildren}
             </DateContainer>
 
             <FlexEventInfoContainer>
@@ -87,6 +95,7 @@ let EventItemBody: React.SFC<EventItemBodyProps> = ({
             </FlexEventInfoContainer>
         </div>
     );
+};
 
 EventItemBody = styled<EventItemBodyProps, typeof EventItemBody>(EventItemBody)`
     display: flex;
