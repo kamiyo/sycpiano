@@ -52,6 +52,7 @@ const getRepeatCSS = (n: number, s: string) => {
 };
 
 const Link = styled('a')`
+    font-family: ${lato2};
     background:
         linear-gradient(
             to bottom,
