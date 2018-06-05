@@ -7,7 +7,7 @@ interface SVGProps {
     readonly height: number;
 }
 
-export const PlaySVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, ...props }) => (
+export const PlaySVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, onClick, ...props }) => (
     <svg
         {...props}
         width={width}
@@ -17,13 +17,14 @@ export const PlaySVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMous
     >
         <path
             d="M105.252 66.145L75.922 83.08l-29.33 16.932V32.28l29.33 16.932z"
+            onClick={onClick}
             onMouseOver={onMouseOver}
             onMouseOut={onMouseOut}
         />
     </svg>
 );
 
-export const SkipSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, ...props }) => (
+export const SkipSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, onClick, ...props }) => (
     <svg
         {...props}
         width={width}
@@ -34,6 +35,7 @@ export const SkipSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMous
         <g
             onMouseOver={onMouseOver}
             onMouseOut={onMouseOut}
+            onClick={onClick}
         >
             <path d="M105.252 66.145L75.922 83.08l-29.33 16.932V32.28l29.33 16.932z" />
             <path d="M151.844 66.145L122.514 83.08l-29.33 16.932V32.28l29.33 16.932z" />
@@ -42,7 +44,7 @@ export const SkipSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMous
     </svg>
 );
 
-export const PauseSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, ...props }) => (
+export const PauseSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, onClick, ...props }) => (
     <svg
         width={width}
         height={height}
@@ -53,6 +55,7 @@ export const PauseSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMou
         <g
             onMouseOver={onMouseOver}
             onMouseOut={onMouseOut}
+            onClick={onClick}
         >
             <path fill="#FFF" fillOpacity="0" d="M23.813 23.813h84.667v84.667H23.813z" />
             <path d="M44.71 32.28H55.29v67.732H44.71zm32.29 0H87.58v67.732H77z" />
