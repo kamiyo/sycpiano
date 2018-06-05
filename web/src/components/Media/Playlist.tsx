@@ -37,6 +37,7 @@ const playlistContainerStyle = css`
         transform: translateX(${playlistWidth.tablet});
     }
 
+    /* stylelint-disable-next-line no-duplicate-selectors */
     ${/* sc-selector */ screenXSorPortrait} {
         width: 100%;
     }

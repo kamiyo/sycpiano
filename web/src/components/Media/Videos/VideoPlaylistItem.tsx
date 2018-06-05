@@ -7,7 +7,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 import { lato1, lato2 } from 'src/styles/fonts';
-import { screenXSorPortrait } from 'src/styles/screens';
 
 type VideoPlaylistItemProps = RouteComponentProps<{}> & {
     readonly item: VideoItemShape;
@@ -31,10 +30,6 @@ const ImageContainer = styled('div') `
     height: 100%;
     width: ${thumbnailWidth}px;
     position: relative;
-
-    ${/* sc-selector */ screenXSorPortrait} {
-        width:
-    }
 
     img {
         width: 100%;

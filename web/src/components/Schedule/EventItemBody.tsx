@@ -33,15 +33,16 @@ const Connector = styled('div')`
     flex: 1 1 auto;
     min-height: 2rem;
     transform: scaleY(1.2);
-    background: linear-gradient(
-        to right,
-        ${lightBlue} 0%,
-        ${lightBlue} calc(50% - 0.81px),
-        white calc(50% - 0.8px),
-        white calc(50% + 0.8px),
-        ${lightBlue} calc(50% + 0.81px),
-        ${lightBlue} 100%
-    );
+    background:
+        linear-gradient(
+            to right,
+            ${lightBlue} 0%,
+            ${lightBlue} calc(50% - 0.81px),
+            white calc(50% - 0.8px),
+            white calc(50% + 0.8px),
+            ${lightBlue} calc(50% + 0.81px),
+            ${lightBlue} 100%
+        );
 `;
 
 type EventItemBodyProps = DayItem & { className?: string, isMobile?: boolean; permaLink: string; };

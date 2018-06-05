@@ -93,7 +93,7 @@ const mapDispatchToProps: VideoPlaylistDispatchToProps = {
     togglePlaylistAction,
 };
 
-export default connect<VideoPlaylistStateToProps, VideoPlaylistDispatchToProps>(
+export default connect<VideoPlaylistStateToProps, VideoPlaylistDispatchToProps, VideoOwnProps>(
     mapStateToProps,
     mapDispatchToProps,
 )(VideoPlaylist);

@@ -69,7 +69,7 @@ const Link = styled('a')`
             linear-gradient(
                 to bottom,
                 transparent 0%,
-                transparent calc0.951em - 0.51px),
+                transparent calc(0.951em - 0.51px),
                 #000204 calc(0.95em - 0.5px),
                 #000204 calc(0.95em + 0.5px),
                 transparent calc(0.95em + 0.51px),
