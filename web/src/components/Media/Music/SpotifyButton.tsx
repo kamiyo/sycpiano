@@ -41,7 +41,7 @@ SpotifyButton = styled<SpotifyButtonProps, {}>(SpotifyButton) `
     }
 
     ${/* sc-selector */ screenM} {
-        right: calc(${playlistWidth.tablet} / 2);
+        right: calc(${playlistWidth.tablet} * 2 / 3);
     }
 
     /* stylelint-disable-next-line no-duplicate-selectors */
