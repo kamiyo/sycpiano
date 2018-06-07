@@ -1,11 +1,6 @@
 import AUDIO_ACTIONS from 'src/components/Media/Music/actionTypeKeys';
 import { MusicFileItem, MusicListItem } from 'src/components/Media/Music/types';
 
-export interface StoreVerticalOffset {
-    readonly type: typeof AUDIO_ACTIONS.STORE_VERTICAL_OFFSET;
-    readonly offset: number;
-}
-
 export interface SetHoverSeekring {
     readonly type: typeof AUDIO_ACTIONS.IS_HOVER_SEEKRING;
     readonly isHoverSeekring: boolean;
@@ -36,7 +31,7 @@ export interface OtherActions {
 }
 
 type ActionTypes = SetHoverSeekring | SetMouseMove |
-    FetchPlaylistError | FetchPlaylistRequest | FetchPlaylistSuccess | StoreVerticalOffset |
+    FetchPlaylistError | FetchPlaylistRequest | FetchPlaylistSuccess |
     OtherActions;
 
 export default ActionTypes;

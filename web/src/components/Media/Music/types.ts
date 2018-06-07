@@ -36,10 +36,6 @@ export const isMusicItem = (item: MusicListItem): item is MusicItem => {
     return !!(test.piece || test.composer || test.contributors || test.musicFiles);
 };
 
-export interface AudioVisualizerStateShape {
-    readonly verticalOffset: number;
-}
-
 export interface AudioUIStateShape {
     readonly isHoverSeekring: boolean;
     readonly isMouseMove: boolean;

@@ -9,13 +9,13 @@ import { PauseButton, PauseIcon, PlayButton, PlayIcon, SkipButton } from 'src/co
 import { cartesianToPolar } from 'src/components/Media/Music/utils';
 import { GlobalStateShape } from 'src/types';
 
+import { HEIGHT_ADJUST_DESKTOP, HEIGHT_ADJUST_MOBILE } from 'src/components/Media/Music/audioVisualizerBase';
 import { lightBlue } from 'src/styles/colors';
 import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
     readonly isMouseMove: boolean;
-    readonly verticalOffset: number;
 }
 
 interface AudioUIDispatchToProps {
@@ -50,13 +50,17 @@ interface AudioUIState {
     isHoverPrev: boolean;
 }
 
-const getLoadingInstanceStyle = (verticalOffset: number) => css`
+const loadingInstanceStyle = css`
     position: relative;
     left: 50%;
-    top: calc(50% + ${verticalOffset}px);
+    top: calc(50% + ${HEIGHT_ADJUST_DESKTOP}px);
     transform: translateX(-50%) translateY(-50%);
     fill: none;
     stroke: ${lightBlue};
+
+    ${/* sc-selector */ screenXSorPortrait} {
+        top: calc(50% + ${HEIGHT_ADJUST_MOBILE}px);
+    }
 `;
 
 const LoadingOverlay = styled('div')`
@@ -145,7 +149,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
         this.seekRing.height = this.height;
         this.seekRing.width = this.width;
         this.centerX = this.width / 2;
-        this.centerY = this.height / 2 + this.props.verticalOffset;
+        this.centerY = this.height / 2 + (this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP);
     }
 
     initializeUI = () => {
@@ -277,7 +281,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
     }
 
     componentDidUpdate(prevProps: AudioUIProps) {
-        if (prevProps.verticalOffset !== this.props.verticalOffset) {
+        if (prevProps.isMobile !== this.props.isMobile) {
             this.onResize();
         }
         if (prevProps.isPlaying !== this.props.isPlaying && !this.isDragging) {
@@ -312,6 +316,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
 
     render() {
         const buttonLength = this.props.getRadii().base * Math.SQRT1_2;
+        const verticalOffset = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
         return (
             <UIContainer>
                 {this.props.isLoading &&
@@ -319,7 +324,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                         <LoadingInstance
                             width={200}
                             height={200}
-                            className={getLoadingInstanceStyle(this.props.verticalOffset)}
+                            className={loadingInstanceStyle}
                         />
                     </LoadingOverlay>
                 }
@@ -327,13 +332,13 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                     setRef={this.setPauseButtonRef}
                     width={buttonLength}
                     height={buttonLength}
-                    verticalOffset={this.props.verticalOffset}
+                    verticalOffset={verticalOffset}
                 />
                 <PlayIcon
                     setRef={this.setPlayButtonRef}
                     width={buttonLength}
                     height={buttonLength}
-                    verticalOffset={this.props.verticalOffset}
+                    verticalOffset={verticalOffset}
                 />
                 <SkipButton
                     onClick={this.props.prev}
@@ -344,7 +349,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                     onMouseUp={this.handleMouseup}
                     width={buttonLength * 4 / 5}
                     height={buttonLength * 8 / 15}
-                    verticalOffset={this.props.verticalOffset}
+                    verticalOffset={verticalOffset}
                     className={css` transform: scaleX(-1); `}
                 />
                 {(this.props.isPlaying) ?
@@ -357,7 +362,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                         onMouseUp={this.handleMouseup}
                         width={buttonLength}
                         height={buttonLength}
-                        verticalOffset={this.props.verticalOffset}
+                        verticalOffset={verticalOffset}
                     /> : <PlayButton
                         onClick={this.togglePlaying}
                         isHovering={this.state.isHoverPlaypause}
@@ -367,7 +372,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                         onMouseUp={this.handleMouseup}
                         width={buttonLength}
                         height={buttonLength}
-                        verticalOffset={this.props.verticalOffset}
+                        verticalOffset={verticalOffset}
                     />
                 }
                 <SkipButton
@@ -379,7 +384,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                     onMouseUp={this.handleMouseup}
                     width={buttonLength * 4 / 5}
                     height={buttonLength * 8 / 15}
-                    verticalOffset={this.props.verticalOffset}
+                    verticalOffset={verticalOffset}
                 />
                 <StyledSeekRing
                     innerRef={(canvas) => this.seekRing = canvas}
@@ -397,7 +402,6 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
 
 const mapStateToProps = (state: GlobalStateShape) => ({
     isMouseMove: state.audio_ui.isMouseMove,
-    verticalOffset: state.audio_visualizer.verticalOffset,
 });
 
 const mapDispatchToProps: AudioUIDispatchToProps = {

@@ -1,72 +1,41 @@
+import { parseToRgb } from 'polished';
 import * as React from 'react';
-import styled from 'react-emotion';
 import { connect } from 'react-redux';
 
 import TweenLite from 'gsap/TweenLite';
 
-import { storeVerticalOffset } from 'src/components/Media/Music/actions';
+import {
+    AudioVisualizerProps,
+    AudioVisualizerStateToProps,
+    HEIGHT_ADJUST_DESKTOP,
+    HEIGHT_ADJUST_MOBILE,
+    HIGH_FREQ_SCALE,
+    MOBILE_MSPF,
+    SCALE_DESKTOP,
+    SCALE_MOBILE,
+    TWO_PI,
+    VisualizerCanvas,
+    VisualizerContainer,
+} from 'src/components/Media/Music/audioVisualizerBase';
 import { polarToCartesian, visibilityChangeApi } from 'src/components/Media/Music/utils';
-import { CIRCLE_SAMPLES, constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
+import { CIRCLE_SAMPLES, constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
 
-import { screenM, screenXSorPortrait } from 'src/styles/screens';
-import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
+import { cqFrag, genFrag, genVert, lineVert } from 'src/components/Media/Music/shaders';
+import { initShader } from 'src/components/Media/Music/webGLHelpers';
 
-const TWO_PI = 2 * Math.PI;
-const HALF_PI = Math.PI / 2;
-const SCALE_DESKTOP = 40;
-const SCALE_MOBILE = 20;
-const HEIGHT_ADJUST_MOBILE = -45;
-const HEIGHT_ADJUST_DESKTOP = -100;
-const HIGH_FREQ_SCALE = 10;
-const MOBILE_MSPF = 1000 / 30;
-
-interface AudioVisualizerStateToProps {
-    readonly isHoverSeekring: boolean;
-    readonly hoverAngle: number;
+interface ShaderProgram {
+    shader: WebGLShader;
+    buffers: {
+        [key: string]: WebGLBuffer;
+    };
+    uniforms: {
+        [key: string]: WebGLUniformLocation;
+    };
+    attributes: {
+        [key: string]: number;
+    };
 }
-
-interface AudioVisualizerDispatchToProps {
-    readonly storeVerticalOffset: typeof storeVerticalOffset;
-}
-
-interface AudioVisualizerOwnProps {
-    readonly analyzers: AnalyserNode[];
-    readonly currentPosition: number;
-    readonly duration: number;
-    readonly isPlaying: boolean;
-    readonly prevTimestamp: number;
-    readonly volume: number;
-    readonly isMobile: boolean;
-    readonly storeRadii: (inner: number, outer: number, base: number) => void;
-}
-
-type AudioVisualizerProps = AudioVisualizerStateToProps & AudioVisualizerDispatchToProps & AudioVisualizerOwnProps;
-
-const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div')`
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: calc(100% - ${playlistContainerWidth.desktop});
-    height: 100%;
-
-    ${/* sc-selector */ screenM} {
-        width: calc(100% - ${playlistContainerWidth.tablet});
-    }
-
-    /* stylelint-disable-next-line no-duplicate-selectors */
-    ${/* sc-selector */ screenXSorPortrait} {
-        width: 100%;
-        height: 360px;
-        top: ${navBarHeight.mobile}px;
-    }
-`;
-
-const VisualizerCanvas = styled('canvas')`
-    position: absolute;
-    width: 100%;
-    height: 100%;
-`;
 
 class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     lastPlayheadPosition = 0;
@@ -79,7 +48,13 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     RADIUS_BASE: number;
     WAVEFORM_HALF_HEIGHT: number;
     HEIGHT_ADJUST: number;
-    visualizationCtx: CanvasRenderingContext2D;
+
+    gl: WebGLRenderingContext;
+    cqProgram: ShaderProgram;
+    genProgram: ShaderProgram;
+    lineProgram: ShaderProgram;
+
+    viewMatrix: Float32Array;
 
     frequencyData: Uint8Array;
     FFT_HALF_SIZE: number;
@@ -107,15 +82,74 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     requestId: number = 0;
     lastCallback: number;
 
+    internalOffset: number;
+    deviceRatio: number;
+
     adjustHeight = () => {
         this.HEIGHT_ADJUST = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
         this.SCALE = this.props.isMobile ? SCALE_MOBILE : SCALE_DESKTOP;
-        this.props.storeVerticalOffset(this.HEIGHT_ADJUST);
     }
 
     initializeVisualizer = async () => {
-        this.visualizationCtx = this.visualization.current.getContext('2d');
-        this.visualizationCtx.save();
+        const gl = this.visualization.current.getContext('webgl');
+        gl.getExtension('GL_OES_standard_derivatives');
+        gl.getExtension('OES_standard_derivatives');
+        this.gl = gl;
+
+        const cqShader = initShader(gl, genVert, cqFrag);
+        const genShader = initShader(gl, genVert, genFrag);
+        const lineShader = initShader(gl, lineVert, genFrag);
+
+        this.cqProgram = {
+            shader: cqShader,
+            buffers: {
+                vertices: gl.createBuffer(),
+            },
+            uniforms: {
+                globalColor: gl.getUniformLocation(cqShader, 'uGlobalColor'),
+                radius: gl.getUniformLocation(cqShader, 'uRadius'),
+                center: gl.getUniformLocation(cqShader, 'uCenter'),
+                viewMatrix: gl.getUniformLocation(cqShader, 'uMatrix'),
+            },
+            attributes: {
+                vertexPosition: gl.getAttribLocation(cqShader, 'aVertexPosition'),
+            },
+        };
+
+        this.genProgram = {
+            shader: genShader,
+            buffers: {
+                vertices: gl.createBuffer(),
+            },
+            uniforms: {
+                globalColor: gl.getUniformLocation(genShader, 'uGlobalColor'),
+                viewMatrix: gl.getUniformLocation(genShader, 'uMatrix'),
+            },
+            attributes: {
+                vertexPosition: gl.getAttribLocation(genShader, 'aVertexPosition'),
+            },
+        };
+
+        this.lineProgram = {
+            shader: lineShader,
+            buffers: {
+                vertices: gl.createBuffer(),
+            },
+            uniforms: {
+                globalColor: gl.getUniformLocation(lineShader, 'uGlobalColor'),
+                thickness: gl.getUniformLocation(lineShader, 'uThickness'),
+                viewMatrix: gl.getUniformLocation(lineShader, 'uMatrix'),
+            },
+            attributes: {
+                position: gl.getAttribLocation(lineShader, 'aPosition'),
+                normal: gl.getAttribLocation(lineShader, 'aNormal'),
+            },
+        };
+
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // To disable the background color of the canvas element
+        gl.enable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
+
         this.adjustHeight();
         this.onResize();
 
@@ -237,15 +271,18 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             const lowFreq = (lowFreqs.l + lowFreqs.r) / (2 * this.HIGH_PASS_BIN);
             highFreq = HIGH_FREQ_SCALE * highFreq;
 
-            this.drawVisualization(this.visualizationCtx, lowFreq, this.vizBins, highFreq, timestamp);
+            this.drawVisualization(this.gl, lowFreq, this.vizBins, highFreq, timestamp);
         }
     }
 
-    drawConstantQBins = (context: CanvasRenderingContext2D, values: Float32Array, radius: number, color: string) => {
-        context.beginPath();
+    drawConstantQBins = (gl: WebGLRenderingContext, values: Float32Array, radius: number, color: Float32Array) => {
         let currentInput = 0;
         let currentSample = 0;
         let currentFraction = 0;
+
+        const vertices = new Float32Array(CIRCLE_SAMPLES * 2 + 4);
+        vertices[0] = 0;
+        vertices[1] = 0;
 
         // "resampling" constantQ from CQ_BINS to CIRCLE_SAMPLES using FIR
         while (currentSample < CIRCLE_SAMPLES && currentInput < this.CQ_BINS) {
@@ -269,12 +306,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             x *= result;
             y *= result;
 
-            // if first sample, use moveTo instead of lineTo
-            if (currentSample === 0) {
-                context.moveTo(x, y);
-            } else {
-                context.lineTo(x, y);
-            }
+            vertices[2 + 2 * currentSample] = x;
+            vertices[2 + 2 * currentSample + 1] = y;
 
             // update for next sample
             currentSample += 1;
@@ -284,11 +317,29 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
                 currentFraction -= 1;
             }
         }
-        context.fillStyle = color;
-        context.fill();
+
+        vertices[2 + CIRCLE_SAMPLES * 2] = vertices[2];
+        vertices[2 + CIRCLE_SAMPLES * 2 + 1] = vertices[3];
+
+        gl.useProgram(this.cqProgram.shader);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.cqProgram.buffers.vertices);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW);
+
+        const { globalColor: uGlobalColor, center: uCenter, radius: uRadius } = this.cqProgram.uniforms;
+
+        gl.uniform4fv(uGlobalColor, color);
+        gl.uniform2fv(uCenter, new Float32Array([this.visualization.current.width / 2, this.visualization.current.height / 2 - this.internalOffset]));
+        gl.uniform1f(uRadius, 1 + radius * this.deviceRatio);
+
+        const { vertices: aVertexPosition } = this.cqProgram.attributes;
+        gl.enableVertexAttribArray(aVertexPosition);
+        gl.vertexAttribPointer(aVertexPosition, 2, gl.FLOAT, false, 0, 0);
+
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, vertices.length / 2);
     }
 
-    drawWaveForm = (context: CanvasRenderingContext2D, centerAxis: number, color: string) => {
+    drawWaveForm = (gl: WebGLRenderingContext, centerAxis: number, color: Float32Array) => {
         const waveform = waveformLoader.waveform;
         const angles = waveformLoader.angles;
         if (!waveform || waveform.length === 0) {
@@ -297,47 +348,69 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
         const waveformLength = waveform.length / 2;
         const volumeHeightScale = this.props.volume * this.WAVEFORM_HALF_HEIGHT;
-        context.beginPath();
+        const vertices = new Float32Array(waveformLength * 4);
         // going through mins from start to end
         for (let j = 0; j < waveformLength; j++) {
-            const scale = centerAxis + waveform[j * 2] * volumeHeightScale;
-            let { x, y } = angles[j];
-            x *= scale;
-            y *= scale;
+            let scale = centerAxis + waveform[j * 2] * volumeHeightScale;
+            const { x, y } = angles[j];
 
-            if (j === 0) {
-                context.moveTo(x, y);
-            } else {
-                context.lineTo(x, y);
-            }
+            vertices[j * 4] = x * scale;
+            vertices[j * 4 + 1] = y * scale;
+
+            scale = centerAxis + waveform[j * 2 + 1] * volumeHeightScale;
+
+            vertices[j * 4 + 2] = x * scale;
+            vertices[j * 4 + 3] = y * scale;
         }
 
-        // looping around maxes from end to start
-        for (let j = waveformLength - 1; j >= 0; j--) {
-            const scale = centerAxis + waveform[j * 2 + 1] * volumeHeightScale;
-            let { x, y } = angles[j];
-            x *= scale;
-            y *= scale;
+        gl.useProgram(this.genProgram.shader);
 
-            context.lineTo(x, y);
-        }
-        context.fillStyle = color;
-        context.fill();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.genProgram.buffers.vertices);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW);
+
+        gl.uniform4fv(this.genProgram.uniforms.globalColor, color);
+
+        gl.enableVertexAttribArray(this.genProgram.attributes.vertexPosition);
+        gl.vertexAttribPointer(this.genProgram.attributes.vertexPosition, 2, gl.FLOAT, false, 0, 0);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, waveformLength * 2);
     }
 
-    drawPlaybackHead = (context: CanvasRenderingContext2D, angle: number, minRad: number, maxRad: number, color: string) => {
+    drawPlaybackHead = (gl: WebGLRenderingContext, angle: number, minRad: number, maxRad: number, color: Float32Array) => {
         const [xStart, yStart] = polarToCartesian(minRad, angle);
         const [xEnd, yEnd] = polarToCartesian(maxRad, angle);
-        context.beginPath();
-        context.moveTo(xStart, yStart);
-        context.lineTo(xEnd, yEnd);
-        context.strokeStyle = color;
-        context.stroke();
+
+        let [dx, dy] = [xEnd - xStart, yEnd - yStart];
+        const length = Math.sqrt(dx * dx + dy * dy);
+        dx /= length;
+        dy /= length;
+
+        const verts = new Float32Array([
+            xStart, yStart, -dy, dx,
+            xStart, yStart, dy, -dx,
+            xEnd, yEnd, -dy, dx,
+            xEnd, yEnd, dy, -dx,
+        ]);
+
+        gl.useProgram(this.lineProgram.shader);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.lineProgram.buffers.vertices);
+        gl.bufferData(gl.ARRAY_BUFFER, verts, gl.DYNAMIC_DRAW);
+
+        gl.enableVertexAttribArray(this.lineProgram.attributes.position);
+        gl.enableVertexAttribArray(this.lineProgram.attributes.normal);
+        gl.vertexAttribPointer(this.lineProgram.attributes.position, 2, gl.FLOAT, false, 4 * 4, 0);
+        gl.vertexAttribPointer(this.lineProgram.attributes.normal, 2, gl.FLOAT, false, 4 * 4, 2 * 4);
+
+        gl.uniform4fv(this.lineProgram.uniforms.globalColor, color);
+        gl.uniform1f(this.lineProgram.uniforms.thickness, 1.0);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
-    drawSeekArea = (context: CanvasRenderingContext2D, radius: number, color: string, timestamp: number) => {
+    drawSeekArea = (gl: WebGLRenderingContext, radius: number, color: Float32Array, timestamp: number) => {
         const WAVEFORM_CENTER_AXIS = radius - this.WAVEFORM_HALF_HEIGHT;
-        this.drawWaveForm(context, WAVEFORM_CENTER_AXIS, color);
+        this.drawWaveForm(gl, WAVEFORM_CENTER_AXIS, color);
 
         // interpolate playbackhead position with timestamp difference if audio object hasn't updated current position
         let playbackHead = this.props.currentPosition;
@@ -352,76 +425,77 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
         const angle = (this.props.currentPosition && this.props.duration) ? TWO_PI * playbackHead / this.props.duration : 0;
         this.drawPlaybackHead(
-            context,
+            gl,
             angle,
             WAVEFORM_CENTER_AXIS - this.props.volume * this.WAVEFORM_HALF_HEIGHT,
             WAVEFORM_CENTER_AXIS + this.props.volume * this.WAVEFORM_HALF_HEIGHT,
-            '#FFF',
+            new Float32Array([1.0, 1.0, 1.0, 1.0]),
         );
         if (this.props.isHoverSeekring) {
             this.drawPlaybackHead(
-                context,
+                gl,
                 this.props.hoverAngle,
                 WAVEFORM_CENTER_AXIS - this.props.volume * this.WAVEFORM_HALF_HEIGHT,
                 WAVEFORM_CENTER_AXIS + this.props.volume * this.WAVEFORM_HALF_HEIGHT,
-                '#888',
+                new Float32Array([0.5, 0.5, 0.5, 1.0]),
             );
         }
     }
 
-    drawVisualization = (context: CanvasRenderingContext2D, lowFreq: number, values: Float32Array, lightness: number, timestamp: number) => {
+    drawVisualization = (gl: WebGLRenderingContext, lowFreq: number, values: Float32Array, lightness: number, timestamp: number) => {
         // beware! we are rotating the whole thing by -half_pi so, we need to swap width and height values
-        context.clearRect(-this.height / 2 + this.HEIGHT_ADJUST, -this.width / 2, this.height, this.width);
+        // context.clearRect(-this.height / 2 + this.HEIGHT_ADJUST, -this.width / 2, this.height, this.width);
         // hsl derived from @light-blue: #4E86A4;
-        const color = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
+        const hsl = `hsl(201, ${Math.round(36 + lightness * 64)}%, ${Math.round(47 + lightness * 53)}%)`;
+        const color = parseToRgb(hsl);
+        const colorArray = new Float32Array([color.red / 255, color.green / 255, color.blue / 255, 1.0]);
+
         // adjust large radius to change with the average of all values
         const radius = this.RADIUS_BASE + lowFreq * this.RADIUS_SCALE;
         this.props.storeRadii(radius - 2 * this.WAVEFORM_HALF_HEIGHT, radius, this.RADIUS_BASE);
 
-        this.drawConstantQBins(context, values, radius, color);
-        drawCircleMask(context, radius + 0.25, [this.width, this.height]);
-        this.drawSeekArea(context, radius, color, timestamp);
+        gl.viewport(0, 0, this.visualization.current.width, this.visualization.current.height);
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        this.drawConstantQBins(gl, values, radius, colorArray);
+        this.drawSeekArea(gl, radius, colorArray, timestamp);
     }
 
     onResize = () => {
-        this.visualizationCtx.restore();
-        this.visualizationCtx.save();
-
-        // scale canvas for high-resolution screens
-        // code from https://gist.github.com/callumlocke/cc258a193839691f60dd
         const devicePixelRatio = window.devicePixelRatio || 1;
-        const anyCtx: any = this.visualizationCtx;
-        const backingStoreRatio = anyCtx.webkitBackingStorePixelRatio ||
-            anyCtx.mozBackingStorePixelRatio ||
-            anyCtx.msBackingStorePixelRatio ||
-            anyCtx.oBackingStorePixelRatio ||
-            anyCtx.backingStorePixelRatio || 1;
-
-        const ratio = devicePixelRatio / backingStoreRatio;
 
         this.height = this.container.current.offsetHeight;
         this.width = this.container.current.offsetWidth;
-        if (devicePixelRatio !== backingStoreRatio) {
-            this.visualization.current.height = this.height * ratio;
-            this.visualization.current.width = this.width * ratio;
-            this.visualization.current.style.width = `${this.width}px`;
-            this.visualization.current.style.height = `${this.height}px`;
-            this.visualizationCtx.scale(ratio, ratio);
-        } else {
-            this.visualization.current.height = this.height;
-            this.visualization.current.width = this.width;
-            this.visualization.current.style.width = '';
-            this.visualization.current.style.height = '';
-        }
+        this.visualization.current.height = this.height * devicePixelRatio;
+        this.visualization.current.width = this.width * devicePixelRatio;
+        this.visualization.current.style.width = `${this.width}px`;
+        this.visualization.current.style.height = `${this.height}px`;
 
         const centerX = this.width / 2;
         const centerY = this.height / 2 + this.HEIGHT_ADJUST;
 
         // rotate so 0rad is up top
-        this.visualizationCtx.rotate(-HALF_PI);
         // move so center is in center of canvas element (but since we rotated already,
         // we also need to rotate our translate [centerX, centerY] => [-centerY, centerX]
-        this.visualizationCtx.translate(-centerY, centerX);
+
+        this.viewMatrix = new Float32Array([
+            0, 2 * devicePixelRatio / this.visualization.current.height, 0,
+            2 * devicePixelRatio / this.visualization.current.width, 0, 0,
+            0, -2 * devicePixelRatio * this.HEIGHT_ADJUST / this.visualization.current.height, 1,
+        ]);
+
+        this.gl.useProgram(this.cqProgram.shader);
+        this.gl.uniformMatrix3fv(this.cqProgram.uniforms.viewMatrix, false, this.viewMatrix);
+
+        this.gl.useProgram(this.genProgram.shader);
+        this.gl.uniformMatrix3fv(this.genProgram.uniforms.viewMatrix, false, this.viewMatrix);
+
+        this.gl.useProgram(this.lineProgram.shader);
+        this.gl.uniformMatrix3fv(this.lineProgram.uniforms.viewMatrix, false, this.viewMatrix);
+
+        this.internalOffset = this.HEIGHT_ADJUST * devicePixelRatio;
+        this.deviceRatio = devicePixelRatio;
 
         this.RADIUS_SCALE = Math.min(this.width, this.height) / 12;
         this.RADIUS_BASE = Math.min(centerX, centerY) - this.RADIUS_SCALE * 3 / 4;
@@ -483,11 +557,7 @@ const mapStateToProps = ({ audio_ui }: GlobalStateShape) => ({
     hoverAngle: audio_ui.angle,
 });
 
-const mapDispatchToProps: AudioVisualizerDispatchToProps = {
-    storeVerticalOffset,
-};
-
-export default connect<AudioVisualizerStateToProps, AudioVisualizerDispatchToProps>(
+export const Component = connect<AudioVisualizerStateToProps>(
     mapStateToProps,
-    mapDispatchToProps,
+    null,
 )(AudioVisualizer);
