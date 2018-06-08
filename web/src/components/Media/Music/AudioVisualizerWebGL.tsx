@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import TweenLite from 'gsap/TweenLite';
 
 import {
+    AudioVisualizerDispatchToProps,
     AudioVisualizerProps,
     AudioVisualizerStateToProps,
     HEIGHT_ADJUST_DESKTOP,
@@ -17,6 +18,8 @@ import {
     VisualizerCanvas,
     VisualizerContainer,
 } from 'src/components/Media/Music/audioVisualizerBase';
+
+import { storeRadii } from 'src/components/Media/Music/actions';
 import { polarToCartesian, visibilityChangeApi } from 'src/components/Media/Music/utils';
 import { CIRCLE_SAMPLES, constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 import { GlobalStateShape } from 'src/types';
@@ -150,7 +153,6 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         gl.enable(gl.BLEND);
         gl.disable(gl.DEPTH_TEST);
 
-        this.adjustHeight();
         this.onResize();
 
         try {
@@ -463,6 +465,9 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     onResize = () => {
+        this.idleStart = performance.now();
+        this.adjustHeight();
+
         const devicePixelRatio = window.devicePixelRatio || 1;
 
         this.height = this.container.current.offsetHeight;
@@ -505,7 +510,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     onVisibilityChange = () => {
         TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
         if (!(document as any)[visibilityChangeApi.hidden]) {
-            TweenLite.ticker.addEventListener('tick', this.onAnalyze);
+            TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
         }
     }
 
@@ -523,12 +528,12 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
     // dunno why it doens't work without this. onResize should be called anyways
     componentDidUpdate(prevProps: AudioVisualizerProps) {
+        this.idleStart = performance.now();
+        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+        TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
         if (prevProps.isMobile !== this.props.isMobile) {
-            this.adjustHeight();
             this.onResize();
         }
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
-        TweenLite.ticker.addEventListener('tick', this.onAnalyze);
     }
 
     shouldComponentUpdate(nextProps: AudioVisualizerProps) {
@@ -557,7 +562,7 @@ const mapStateToProps = ({ audio_ui }: GlobalStateShape) => ({
     hoverAngle: audio_ui.angle,
 });
 
-export const Component = connect<AudioVisualizerStateToProps>(
+export const Component = connect<AudioVisualizerStateToProps, AudioVisualizerDispatchToProps>(
     mapStateToProps,
-    null,
+    { storeRadii },
 )(AudioVisualizer);

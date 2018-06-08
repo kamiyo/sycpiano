@@ -21,6 +21,17 @@ export const setMouseMove = (isMove: boolean): ThunkAction<void, GlobalStateShap
         type: AUDIO_ACTIONS.IS_MOUSE_MOVE,
         isMouseMove: isMove,
     });
+
+export const storeRadii = (inner: number, outer: number, base: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.StoreRadii> =>
+    (dispatch) => dispatch({
+        type: AUDIO_ACTIONS.STORE_RADII,
+        radii: {
+            inner,
+            outer,
+            base,
+        },
+    });
+
 const fetchPlaylistRequest = (): ActionTypes.FetchPlaylistRequest => ({
     type: AUDIO_ACTIONS.FETCH_PLAYLIST_REQUEST,
 });

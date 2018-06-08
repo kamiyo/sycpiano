@@ -26,11 +26,20 @@ export interface FetchPlaylistSuccess {
     readonly flatItems: MusicFileItem[];
 }
 
+export interface StoreRadii {
+    readonly type: typeof AUDIO_ACTIONS.STORE_RADII;
+    readonly radii: {
+        inner: number;
+        outer: number;
+        base: number;
+    };
+}
+
 export interface OtherActions {
     readonly type: typeof AUDIO_ACTIONS.OTHER_ACTIONS;
 }
 
-type ActionTypes = SetHoverSeekring | SetMouseMove |
+type ActionTypes = SetHoverSeekring | SetMouseMove | StoreRadii |
     FetchPlaylistError | FetchPlaylistRequest | FetchPlaylistSuccess |
     OtherActions;
 

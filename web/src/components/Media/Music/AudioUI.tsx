@@ -16,6 +16,11 @@ import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
     readonly isMouseMove: boolean;
+    readonly radii: {
+        inner: number;
+        outer: number;
+        base: number;
+    };
 }
 
 interface AudioUIDispatchToProps {
@@ -35,7 +40,7 @@ interface AudioUIOwnProps {
     readonly seekAudio: (percent: number) => void;
     readonly isMobile: boolean;
     readonly isLoading: boolean;
-    readonly getRadii: () => {
+    readonly radii: {
         inner: number;
         outer: number;
         base: number;
@@ -186,7 +191,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
 
     isEventInSeekRing = (event: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => {
         const canvasPos = this.getMousePositionInCanvas(event);
-        const { inner, outer } = this.props.getRadii();
+        const { inner, outer } = this.props.radii;
         const isInOuter = this.isPointInCircle([canvasPos.x, canvasPos.y], outer, [this.centerX, this.centerY]);
         const isInInner = this.isPointInCircle([canvasPos.x, canvasPos.y], inner, [this.centerX, this.centerY]);
         return isInOuter && !isInInner;
@@ -315,7 +320,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
     }
 
     render() {
-        const buttonLength = this.props.getRadii().base * Math.SQRT1_2;
+        const buttonLength = this.props.radii.base * Math.SQRT1_2;
         const verticalOffset = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
         return (
             <UIContainer>
@@ -400,8 +405,9 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
     }
 }
 
-const mapStateToProps = (state: GlobalStateShape) => ({
-    isMouseMove: state.audio_ui.isMouseMove,
+const mapStateToProps = ({ audio_ui }: GlobalStateShape) => ({
+    isMouseMove: audio_ui.isMouseMove,
+    radii: audio_ui.radii,
 });
 
 const mapDispatchToProps: AudioUIDispatchToProps = {

@@ -1,7 +1,9 @@
 import styled from 'react-emotion';
 
+import { storeRadii } from 'src/components/Media/Music/actions';
+
 import { screenM, screenXSorPortrait } from 'src/styles/screens';
-import { navBarHeight,  playlistContainerWidth } from 'src/styles/variables';
+import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 export const TWO_PI = 2 * Math.PI;
 export const HALF_PI = Math.PI / 2;
@@ -17,6 +19,10 @@ export interface AudioVisualizerStateToProps {
     readonly hoverAngle: number;
 }
 
+export interface AudioVisualizerDispatchToProps {
+    readonly storeRadii: typeof storeRadii;
+}
+
 export interface AudioVisualizerOwnProps {
     readonly analyzers: AnalyserNode[];
     readonly currentPosition: number;
@@ -25,10 +31,9 @@ export interface AudioVisualizerOwnProps {
     readonly prevTimestamp: number;
     readonly volume: number;
     readonly isMobile: boolean;
-    readonly storeRadii: (inner: number, outer: number, base: number) => void;
 }
 
-export type AudioVisualizerProps = AudioVisualizerStateToProps & AudioVisualizerOwnProps;
+export type AudioVisualizerProps = AudioVisualizerStateToProps & AudioVisualizerDispatchToProps & AudioVisualizerOwnProps;
 
 export const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div')`
     position: absolute;
@@ -55,6 +60,6 @@ export const VisualizerCanvas = styled('canvas')`
     height: 100%;
 `;
 
-export type AudioVisualizerType = React.ComponentClass<Pick<AudioVisualizerProps, 'isMobile' | 'analyzers' | 'currentPosition' | 'duration' | 'isPlaying' | 'prevTimestamp' | 'volume' | 'storeRadii'>> & {
+export type AudioVisualizerType = React.ComponentClass<Pick<AudioVisualizerProps, 'isMobile' | 'analyzers' | 'currentPosition' | 'duration' | 'isPlaying' | 'prevTimestamp' | 'volume' >> & {
     WrappedComponent: React.ComponentType<AudioVisualizerProps>;
 };

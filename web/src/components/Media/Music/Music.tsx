@@ -104,22 +104,6 @@ class Music extends React.Component<MusicProps, MusicState> {
     musicOrder: number[];
     musicFileOrder: number[];
 
-    circleRadii: {
-        inner: number;
-        outer: number;
-        base: number;
-    } = {
-            inner: 0,
-            outer: 0,
-            base: 0,
-        };
-
-    storeRadii = (inner: number, outer: number, base: number) => {
-        this.circleRadii = { inner, outer, base };
-    }
-
-    getRadii = () => this.circleRadii;
-
     getNextTrack = (which: 'next' | 'prev', force: boolean = false) => {
         const trackNo = this.state.localFlat.findIndex((item) => item.id === this.state.currentTrack.id);
         const nextTrackNo = (which === 'next') ? trackNo + 1 : trackNo - 1;
@@ -405,7 +389,6 @@ class Music extends React.Component<MusicProps, MusicState> {
                     currentPosition={this.state.playbackPosition}
                     isMobile={isMobile}
                     isLoading={this.state.isLoading}
-                    getRadii={this.getRadii}
                 />
                 <AudioInfo
                     duration={this.state.duration}
@@ -422,7 +405,6 @@ class Music extends React.Component<MusicProps, MusicState> {
                     prevTimestamp={this.state.lastUpdateTimestamp}
                     volume={this.state.volume}
                     isMobile={isMobile}
-                    storeRadii={this.storeRadii}
                 />}
             </div>
         );

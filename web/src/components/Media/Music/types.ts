@@ -40,6 +40,11 @@ export interface AudioUIStateShape {
     readonly isHoverSeekring: boolean;
     readonly isMouseMove: boolean;
     readonly angle: number;
+    readonly radii: {
+        inner: number;
+        outer: number;
+        base: number;
+    };
 }
 
 export interface AudioPlaylistStateShape {
