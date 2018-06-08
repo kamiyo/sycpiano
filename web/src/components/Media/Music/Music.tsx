@@ -11,17 +11,22 @@ import { setOnScroll } from 'src/components/App/NavBar/actions';
 import { fetchPlaylistAction } from 'src/components/Media/Music/actions';
 import AudioInfo from 'src/components/Media/Music/AudioInfo';
 import AudioUI from 'src/components/Media/Music/AudioUI';
-import AudioVisualizer from 'src/components/Media/Music/AudioVisualizer';
 import MusicPlaylist from 'src/components/Media/Music/MusicPlaylist';
 import { getAudioContext, getPermaLink, modulo } from 'src/components/Media/Music/utils';
 import { constantQ, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 
+import { AudioVisualizerType } from 'src/components/Media/Music/audioVisualizerBase';
 import { MusicFileItem, MusicListItem } from 'src/components/Media/Music/types';
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
 import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
+
+import module from 'src/module';
+import store from 'src/store';
+
+const register = module(store);
 
 interface MusicState {
     readonly isPlaying: boolean;
@@ -34,6 +39,8 @@ interface MusicState {
     readonly userInteracted: boolean;
     readonly isShuffle: boolean;
     readonly localFlat: MusicFileItem[];
+
+    Visualizer: AudioVisualizerType;
 }
 
 interface MusicStateToProps {
@@ -87,6 +94,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         userInteracted: false,
         isShuffle: false,
         localFlat: [],
+        Visualizer: null,
     };
 
     audioCtx: AudioContext;
@@ -95,22 +103,6 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     musicOrder: number[];
     musicFileOrder: number[];
-
-    circleRadii: {
-        inner: number;
-        outer: number;
-        base: number;
-    } = {
-            inner: 0,
-            outer: 0,
-            base: 0,
-        };
-
-    storeRadii = (inner: number, outer: number, base: number) => {
-        this.circleRadii = { inner, outer, base };
-    }
-
-    getRadii = () => this.circleRadii;
 
     getNextTrack = (which: 'next' | 'prev', force: boolean = false) => {
         const trackNo = this.state.localFlat.findIndex((item) => item.id === this.state.currentTrack.id);
@@ -332,9 +324,26 @@ class Music extends React.Component<MusicProps, MusicState> {
         });
     }
 
-    componentDidMount() {
+    detectWebGL = () => {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        return (gl && gl instanceof WebGLRenderingContext);
+    }
+
+    async componentDidMount() {
         this.props.setOnScroll(navBarHeight.mobile);
         this.initializeAudioPlayer();
+        if (this.detectWebGL()) {
+            const component = await register('visualizer', import(/* webpackChunkName: 'visualizerWebGL' */ 'src/components/Media/Music/AudioVisualizerWebGL'));
+            this.setState({
+                Visualizer: component.Component as AudioVisualizerType,
+            });
+        } else {
+            const component = await register('visualizer', import(/* webpackChunkName: 'visualizerCanvas' */ 'src/components/Media/Music/AudioVisualizerCanvas'));
+            this.setState({
+                Visualizer: component.Component as AudioVisualizerType,
+            });
+        }
     }
 
     async componentWillUnmount() {
@@ -344,6 +353,7 @@ class Music extends React.Component<MusicProps, MusicState> {
 
     render() {
         const isMobile = this.props.isMobile;
+        const Visualizer = this.state.Visualizer;
         return (
             <div className={musicStyle} onScroll={this.props.isMobile ? this.props.onScroll : null}>
                 <audio
@@ -379,7 +389,6 @@ class Music extends React.Component<MusicProps, MusicState> {
                     currentPosition={this.state.playbackPosition}
                     isMobile={isMobile}
                     isLoading={this.state.isLoading}
-                    getRadii={this.getRadii}
                 />
                 <AudioInfo
                     duration={this.state.duration}
@@ -388,7 +397,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     isMobile={isMobile}
                     matchParams={!isEmpty(this.props.match.params)}
                 />
-                <AudioVisualizer
+                {Visualizer && <Visualizer
                     currentPosition={this.state.playbackPosition}
                     analyzers={[this.analyzerL, this.analyzerR]}
                     isPlaying={this.state.isPlaying}
@@ -396,8 +405,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     prevTimestamp={this.state.lastUpdateTimestamp}
                     volume={this.state.volume}
                     isMobile={isMobile}
-                    storeRadii={this.storeRadii}
-                />
+                />}
             </div>
         );
     }

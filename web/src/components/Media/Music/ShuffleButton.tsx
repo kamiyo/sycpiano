@@ -71,7 +71,7 @@ export const ShuffleButton = styled<ShuffleButtonProps, { on: boolean }>(ShuffBu
     }
 
     ${/* sc-selector */ screenM} {
-        right: calc(${playlistWidth.tablet} / 2);
+        right: calc(${playlistWidth.tablet} / 3);
     }
 
     /* stylelint-disable-next-line no-duplicate-selectors */

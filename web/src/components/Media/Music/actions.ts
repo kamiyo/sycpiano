@@ -9,12 +9,6 @@ import { isMusicItem, MusicCategories, MusicFileItem, MusicItem, MusicListItem, 
 import { getLastName, normalizeString } from 'src/components/Media/Music/utils';
 import { GlobalStateShape } from 'src/types';
 
-export const storeVerticalOffset = (offset: number): ThunkAction<void, GlobalEventHandlers, void, ActionTypes.StoreVerticalOffset> =>
-    (dispatch) => dispatch({
-        type: AUDIO_ACTIONS.STORE_VERTICAL_OFFSET,
-        offset,
-    });
-
 export const setHoverSeekring = (isHover: boolean, angle: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.SetHoverSeekring> =>
     (dispatch) => dispatch({
         type: AUDIO_ACTIONS.IS_HOVER_SEEKRING,
@@ -27,6 +21,17 @@ export const setMouseMove = (isMove: boolean): ThunkAction<void, GlobalStateShap
         type: AUDIO_ACTIONS.IS_MOUSE_MOVE,
         isMouseMove: isMove,
     });
+
+export const storeRadii = (inner: number, outer: number, base: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.StoreRadii> =>
+    (dispatch) => dispatch({
+        type: AUDIO_ACTIONS.STORE_RADII,
+        radii: {
+            inner,
+            outer,
+            base,
+        },
+    });
+
 const fetchPlaylistRequest = (): ActionTypes.FetchPlaylistRequest => ({
     type: AUDIO_ACTIONS.FETCH_PLAYLIST_REQUEST,
 });

@@ -16,6 +16,7 @@ const register = module(store);
 const Music = () => register('music', import(/* webpackChunkName: 'music' */ 'src/components/Media/Music'));
 const Photos = () => register('photos', import(/* webpackChunkName: 'photos' */ 'src/components/Media/Photos'));
 const Videos = () => register('videos', import(/* webpackChunkName: 'videos' */ 'src/components/Media/Videos'));
+
 import { cliburn1 } from 'src/styles/imageUrls';
 import { container } from 'src/styles/mixins';
 import { metaDescriptions, titleStringBase } from 'src/utils';

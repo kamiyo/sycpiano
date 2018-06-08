@@ -1,24 +1,16 @@
 import AUDIO_ACTIONS from 'src/components/Media/Music/actionTypeKeys';
 import ActionTypes from 'src/components/Media/Music/actionTypes';
-import { AudioPlaylistStateShape, AudioUIStateShape, AudioVisualizerStateShape } from 'src/components/Media/Music/types';
-
-export const audioVisualizerReducer = (state: AudioVisualizerStateShape = {
-    verticalOffset: 0,
-}, action: ActionTypes) => {
-    switch (action.type) {
-        case AUDIO_ACTIONS.STORE_VERTICAL_OFFSET:
-            return {
-                ...state,
-                verticalOffset: action.offset,
-            };
-        default: return state;
-    }
-};
+import { AudioPlaylistStateShape, AudioUIStateShape } from 'src/components/Media/Music/types';
 
 export const audioUIReducer = (state: AudioUIStateShape = {
     isHoverSeekring: false,
     isMouseMove: false,
     angle: 0,
+    radii: {
+        inner: 0,
+        outer: 0,
+        base: 0,
+    },
 }, action: ActionTypes) => {
     switch (action.type) {
         case AUDIO_ACTIONS.IS_HOVER_SEEKRING:
@@ -31,6 +23,11 @@ export const audioUIReducer = (state: AudioUIStateShape = {
             return {
                 ...state,
                 isMouseMove: action.isMouseMove,
+            };
+        case AUDIO_ACTIONS.STORE_RADII:
+            return {
+                ...state,
+                radii: action.radii,
             };
         default: return state;
     }
