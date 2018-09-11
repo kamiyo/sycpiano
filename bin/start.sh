@@ -1,3 +1,4 @@
+# This is the main script to invoke when booting the server on prod.
 export NODE_ENV=production;
 export PORT=8080;
 yarn install;
