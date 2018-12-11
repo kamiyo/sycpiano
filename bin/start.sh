@@ -5,4 +5,4 @@ yarn install;
 yarn run build-prod;
 node server/build/migrate up;
 node server/build/seed up;
-pm2 start app.js --name sycpiano;
+pm2 start pm2.json;
