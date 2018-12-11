@@ -1133,7 +1133,7 @@ babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@^6.22.0, babel-runtime@^6.23.0, babel-runtime@^6.26.0:
+babel-runtime@6.26.0, babel-runtime@^6.22.0, babel-runtime@^6.23.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   dependencies:
@@ -1203,6 +1203,10 @@ balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
 
+base32-encode@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/base32-encode/-/base32-encode-1.1.0.tgz#e9ec64a135628d071c3c960f9a95d1aaf0ad81e9"
+
 base64-js@^1.0.2:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.0.tgz#cab1e6118f051095e58b5281aea8c1cd22bfc0e3"
@@ -1246,6 +1250,10 @@ big.js@^3.1.3:
 binary-extensions@^1.0.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.11.0.tgz#46aa1751fb6a2f93ee5e689bb1087d4b14c6c205"
+
+bitwise-xor@0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/bitwise-xor/-/bitwise-xor-0.0.0.tgz#040a8172b5bb8cc562b0b7119f230b2a1a780e3d"
 
 bl@^1.0.0:
   version "1.2.2"
@@ -3358,22 +3366,25 @@ foreach@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/foreach/-/foreach-2.0.5.tgz#0bee005018aeb260d0a3af3ae658dd0136ec1b99"
 
-forest-express-sequelize@^2.11.1:
-  version "2.11.1"
-  resolved "https://registry.yarnpkg.com/forest-express-sequelize/-/forest-express-sequelize-2.11.1.tgz#03dfdc38f2cf82c988d974bfc922fcb3d001fb15"
+forest-express-sequelize@^2.16.9:
+  version "2.16.9"
+  resolved "https://registry.yarnpkg.com/forest-express-sequelize/-/forest-express-sequelize-2.16.9.tgz#199ed6bc95b1ce4878cb38cfb949b74f17cafeab"
   dependencies:
     bluebird "2.9.25"
-    forest-express "2.10.2"
+    forest-express "2.15.4"
     http-errors "1.6.1"
     lodash "4.17.10"
     moment "2.19.4"
     moment-timezone "0.5.14"
 
-forest-express@2.10.2:
-  version "2.10.2"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-2.10.2.tgz#7a380f7a8ffac5f9834de2fef145cb704dd4a72c"
+forest-express@2.15.4:
+  version "2.15.4"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-2.15.4.tgz#56889260d1b7e172070db4317c85bad6af127cbd"
   dependencies:
+    babel-runtime "6.26.0"
+    base32-encode "1.1.0"
     bcryptjs "2.4.3"
+    bitwise-xor "0.0.0"
     bluebird "3.3.4"
     body-parser "1.18.2"
     compose-middleware "4.0.0"
@@ -3387,6 +3398,7 @@ forest-express@2.10.2:
     jsonwebtoken "8.1.1"
     lodash "4.10.0"
     moment "2.19.4"
+    otplib "10.0.0"
     superagent "3.7.0"
     useragent "2.1.13"
     uuid "3.0.1"
@@ -6422,6 +6434,12 @@ osenv@^0.1.4:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
 
+otplib@10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/otplib/-/otplib-10.0.0.tgz#bf7f85a7552fa0440ada189f6d85f32850260120"
+  dependencies:
+    thirty-two "1.0.2"
+
 p-finally@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/p-finally/-/p-finally-1.0.0.tgz#3fbcfb15b899a44123b34b6dcc18b724336a2cae"
@@ -8700,6 +8718,10 @@ test-exclude@^4.2.1:
 text-table@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
+
+thirty-two@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/thirty-two/-/thirty-two-1.0.2.tgz#4ca2fffc02a51290d2744b9e3f557693ca6b627a"
 
 thread-loader@^1.1.5:
   version "1.1.5"
