@@ -1,27 +1,13 @@
 import * as React from 'react';
-import styled from 'react-emotion';
 import { Link } from 'react-router-dom';
+
+import styled from '@emotion/styled';
 
 import { staticImage } from 'src/styles/imageUrls';
 import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { playlistWidth } from 'src/styles/variables';
 
-interface DropboxButtonProps {
-    className?: string;
-    isMobile?: boolean;
-}
-
-let DropboxButton: React.SFC<DropboxButtonProps> = ({ className }) => {
-    return (
-        <div className={className}>
-            <Link style={{ display: 'block' }} to={'https://www.dropbox.com/sh/pzou7yeukjktznn/AADNCU7fmgUy_vmA3WioLiria?dl=0'} target="_blank">
-                <img width={50} height={50} src={staticImage(`/soc-logos/dropbox.svg`)} />
-            </Link>
-        </div>
-    );
-};
-
-DropboxButton = styled(DropboxButton) `
+const StyledDiv = styled.div`
     position: fixed;
     bottom: 25px;
     right: calc(${playlistWidth.desktop} / 2);
@@ -40,15 +26,26 @@ DropboxButton = styled(DropboxButton) `
         display: block;
     }
 
-    ${/* sc-selector */ screenM} {
+    ${screenM} {
         right: calc(${playlistWidth.tablet} / 2);
     }
 
-    /* stylelint-disable-next-line */
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         bottom: 10px;
         right: 50%;
     }
 `;
+
+const StyledLink = styled(Link)({ display: 'block' });
+
+const StyledImg = styled.img({ display: 'block' });
+
+const DropboxButton: React.FC<{}> = () => (
+    <StyledDiv>
+        <StyledLink to={'https://www.dropbox.com/sh/pzou7yeukjktznn/AADNCU7fmgUy_vmA3WioLiria?dl=0'} target="_blank" rel="noopener">
+            <StyledImg width={50} height={50} src={staticImage(`/soc-logos/dropbox.svg`)} />
+        </StyledLink>
+    </StyledDiv>
+);
 
 export default DropboxButton;

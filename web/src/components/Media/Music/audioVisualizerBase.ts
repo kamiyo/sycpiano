@@ -1,4 +1,4 @@
-import styled from 'react-emotion';
+import styled from '@emotion/styled';
 
 import { storeRadii } from 'src/components/Media/Music/actions';
 
@@ -35,31 +35,28 @@ export interface AudioVisualizerOwnProps {
 
 export type AudioVisualizerProps = AudioVisualizerStateToProps & AudioVisualizerDispatchToProps & AudioVisualizerOwnProps;
 
-export const VisualizerContainer = styled<{ isMobile: boolean; }, 'div'>('div')`
+export const VisualizerContainer = styled.div`
     position: absolute;
     left: 0;
     top: 0;
     width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
 
-    ${/* sc-selector */ screenM} {
+    ${screenM} {
         width: calc(100% - ${playlistContainerWidth.tablet});
     }
 
-    /* stylelint-disable-next-line no-duplicate-selectors */
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 100%;
         height: 360px;
         top: ${navBarHeight.mobile}px;
     }
 `;
 
-export const VisualizerCanvas = styled('canvas')`
+export const VisualizerCanvas = styled.canvas`
     position: absolute;
     width: 100%;
     height: 100%;
 `;
 
-export type AudioVisualizerType = React.ComponentClass<Pick<AudioVisualizerProps, 'isMobile' | 'analyzers' | 'currentPosition' | 'duration' | 'isPlaying' | 'prevTimestamp' | 'volume' >> & {
-    WrappedComponent: React.ComponentType<AudioVisualizerProps>;
-};
+export type AudioVisualizerType = new (props: any) => React.Component<Pick<AudioVisualizerProps, Exclude<keyof AudioVisualizerProps, 'storeRadii' | 'hoverAngle' | 'isHoverSeekring'>>>;

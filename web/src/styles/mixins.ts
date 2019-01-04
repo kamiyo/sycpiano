@@ -1,22 +1,23 @@
-import { css } from 'emotion';
+import { css } from '@emotion/core';
 import darken from 'polished/lib/color/darken';
 
 import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
-const pushedHelper = (marginTop: number) => css`
-    height: calc(100% - ${marginTop}px);
-    margin-top: ${marginTop}px;
-`;
+const pushedHelper = (marginTop: number) => ({
+    height: `calc(100% - ${marginTop}px)`,
+    marginTop: `${marginTop}px`,
+});
 
-export const pushed = css`
-    ${pushedHelper(navBarHeight.desktop)}
+export const pushedDesktop = css(pushedHelper(navBarHeight.desktop));
+export const pushedMobile = css(pushedHelper(navBarHeight.mobile));
 
-    /* stylelint-disable-next-line */
-    ${screenXSorPortrait} {
-        ${pushedHelper(navBarHeight.mobile)}
-    }
-`;
+export const pushed = css({
+    ...pushedHelper(navBarHeight.desktop),
+    [screenXSorPortrait]: {
+        ...pushedHelper(navBarHeight.mobile),
+    },
+});
 
 export const link = (colorString: string, hoverDelta = 0.2) => css`
     color: ${colorString};
@@ -24,7 +25,7 @@ export const link = (colorString: string, hoverDelta = 0.2) => css`
     cursor: pointer;
     transition: color 0.5s;
 
-    &:hover {
+    :hover {
         color: ${darken(hoverDelta, colorString)};
     }
 `;

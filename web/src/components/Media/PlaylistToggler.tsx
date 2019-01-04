@@ -1,5 +1,6 @@
 import * as React from 'react';
-import styled from 'react-emotion';
+
+import styled from '@emotion/styled';
 
 import { playlistBackground } from 'src/styles/colors';
 import { noHighlight } from 'src/styles/mixins';
@@ -7,7 +8,7 @@ import { playlistTogglerWidth } from 'src/styles/variables';
 
 const playlistTogglerHeight = playlistTogglerWidth * 2;
 
-const StyledToggler = styled('div')`
+const StyledToggler = styled.div`
     flex-basis: ${playlistTogglerWidth}px;
     align-self: center;
     border-top-left-radius: ${playlistTogglerHeight}px;
@@ -33,7 +34,7 @@ interface PlaylistTogglerProps {
     readonly isPlaylistVisible: boolean;
 }
 
-const PlaylistToggler: React.SFC<PlaylistTogglerProps> = ({ onClick, isPlaylistVisible }) => (
+const PlaylistToggler: React.FC<PlaylistTogglerProps> = ({ onClick, isPlaylistVisible }) => (
     <StyledToggler onClick={onClick}>
         {isPlaylistVisible ? '\u25B6' : '\u25C0'}
     </StyledToggler>

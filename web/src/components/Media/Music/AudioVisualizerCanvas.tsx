@@ -428,8 +428,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
 
     render() {
         return (
-            <VisualizerContainer innerRef={this.container} isMobile={this.props.isMobile}>
-                <VisualizerCanvas innerRef={this.visualization} />
+            <VisualizerContainer ref={this.container}>
+                <VisualizerCanvas ref={this.visualization} />
             </VisualizerContainer>
         );
     }

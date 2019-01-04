@@ -1,7 +1,5 @@
 const express = require('express');
-const fs = require('fs');
 const helmet = require('helmet');
-const https = require('https');
 const morgan = require('morgan');
 const path = require('path');
 const mustacheExpress = require('mustache-express');

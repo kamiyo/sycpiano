@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { css } from 'react-emotion';
+
+import { css } from '@emotion/core';
 import { connect } from 'react-redux';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
@@ -31,11 +32,11 @@ type AcclaimsListProps = (
     }
 );
 
-const listStyle = css `
-    ${/* sc-selector */ screenXSorPortrait} {
-        padding-top: ${navBarHeight.mobile}px;
-    }
-`;
+const listStyle = css({
+    [screenXSorPortrait]: {
+        paddingTop: navBarHeight.mobile,
+    },
+});
 
 class AcclaimsList extends React.Component<AcclaimsListProps> {
     cache = new CellMeasurerCache({ fixedWidth: true });
@@ -53,7 +54,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
     render() {
         const numRows = this.props.acclaims.length;
         return (
-            <div className={this.props.className}>
+            <div css={css` height: 100%; `} >
                 <AutoSizer>
                     {({ height, width }) => (
                         <List
@@ -63,7 +64,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
                             rowHeight={this.cache.rowHeight}
                             deferredMeasurementCache={this.cache}
                             rowRenderer={this.rowItemRenderer}
-                            className={listStyle}
+                            css={listStyle}
                         />
                     )}
                 </AutoSizer>

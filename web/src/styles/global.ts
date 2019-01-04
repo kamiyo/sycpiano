@@ -1,4 +1,4 @@
-import { injectGlobal } from 'emotion';
+import { css } from '@emotion/core';
 
 import { logoBlue } from 'src/styles/colors';
 import { link } from 'src/styles/mixins';
@@ -17,8 +17,7 @@ const loadFont = (fileName: string, fontFamily: string) => (
     }`
 );
 
-/* tslint:disable-next-line:no-unused-expression */
-injectGlobal`
+export const globalCss = css`
     * {
         box-sizing: border-box;
         outline: none;

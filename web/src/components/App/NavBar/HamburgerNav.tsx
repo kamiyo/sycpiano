@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import TweenLite from 'gsap/TweenLite';
 import * as React from 'react';
-import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 import { Transition } from 'react-transition-group';
 
@@ -20,13 +20,15 @@ interface HamburgerNavDispatchToProps {
     toggleExpanded: typeof toggleExpanded;
 }
 
-const HamburgerNav: React.SFC<NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps> = ({
+const MenuContainer = styled.div` margin: auto 0; `;
+
+const HamburgerNav: React.FC<NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps> = ({
     isExpanded,
     toggleExpanded: toggleExpand,
     currentBasePath,
     isMobile,
 }) => (
-        <div className={css` margin: auto 0; `}>
+        <MenuContainer>
             <HamburgerMenu
                 isExpanded={isExpanded}
                 onClick={() => toggleExpand()}
@@ -44,7 +46,7 @@ const HamburgerNav: React.SFC<NavBarLinksProps & HamburgerNavDispatchToProps & H
                     isMobile={isMobile}
                 />
             </Transition>
-        </div>
+        </MenuContainer>
     );
 
 const mapStateToProps = ({ navbar }: GlobalStateShape) => ({

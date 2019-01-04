@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { css } from 'react-emotion';
 import { connect } from 'react-redux';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import Playlist from 'src/components/Media/Playlist';
 import { playVideo, togglePlaylistAction } from 'src/components/Media/Videos/actions';
@@ -28,20 +30,20 @@ interface VideoOwnProps {
 type VideoPlaylistProps = VideoOwnProps & VideoPlaylistStateToProps & VideoPlaylistDispatchToProps;
 
 const videoPlaylistStyle = css`
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         top: 56.25vw;
         position: relative;
         overflow: visible;
     }
 `;
 
-const playlistContainerStyle = css`
+const StyledPlaylistContainer = styled.div`
     width: fit-content;
     height: 100%;
     right: 0;
     position: absolute;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 100%;
         height: auto;
         position: absolute;
@@ -52,7 +54,7 @@ const playlistContainerStyle = css`
     }
 `;
 
-const VideoPlaylist: React.SFC<VideoPlaylistProps> = ({
+const VideoPlaylist: React.FC<VideoPlaylistProps> = ({
     isShow,
     togglePlaylistAction: togglePlaylist,
     videos,
@@ -60,7 +62,7 @@ const VideoPlaylist: React.SFC<VideoPlaylistProps> = ({
     isMobile,
     playVideo: play,
 }) => (
-        <div className={playlistContainerStyle}>
+        <StyledPlaylistContainer>
             <Playlist
                 extraStyles={{ div: videoPlaylistStyle }}
                 isShow={isShow}
@@ -79,7 +81,7 @@ const VideoPlaylist: React.SFC<VideoPlaylistProps> = ({
                     />
                 ))}
             </Playlist>
-        </div>
+        </StyledPlaylistContainer>
     );
 
 const mapStateToProps = (state: GlobalStateShape): VideoPlaylistStateToProps => ({

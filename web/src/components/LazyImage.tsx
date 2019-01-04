@@ -1,7 +1,9 @@
 import Blazy from 'blazy';
 import * as React from 'react';
-import styled from 'react-emotion';
 import { Transition } from 'react-transition-group';
+
+import { SerializedStyles } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import TweenLite from 'gsap/TweenLite';
 
@@ -45,10 +47,10 @@ interface LazyImageProps {
     readonly container?: string;
     readonly mobileAttributes?: PictureGroupAttributes;
     readonly desktopAttributes?: PictureGroupAttributes;
-    readonly classNames?: {
-        readonly mobile?: string;
-        readonly desktop?: string;
-        readonly loading?: string;
+    readonly csss?: {
+        readonly mobile?: SerializedStyles;
+        readonly desktop?: SerializedStyles;
+        readonly loading?: SerializedStyles;
     };
     readonly loadingComponent?: React.ReactNode | 'default';
     readonly alt: string;
@@ -103,7 +105,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
     render() {
         const Loading = (this.props.loadingComponent as typeof React.Component);
         return (
-            <>
+            <React.Fragment>
                 <Transition
                     in={this.props.loadingComponent && !this.state.isLoaded}
                     mountOnEnter={true}
@@ -112,7 +114,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
                     onExit={fadeOnExit}
                     timeout={250}
                 >
-                    <div className={this.props.classNames.loading}>
+                    <div css={this.props.csss.loading}>
                         {this.props.loadingComponent === 'default'
                             ? <StyledLoadingInstance />
                             : this.props.loadingComponent
@@ -130,7 +132,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
                         />
                         <img
                             id={this.props.id}
-                            className={this.props.classNames.mobile}
+                            css={this.props.csss.mobile}
                             data-srcset={this.props.mobileAttributes.jpg.srcset}
                             data-src={this.props.mobileAttributes.src}
                             sizes={this.props.mobileAttributes.jpg.sizes}
@@ -146,7 +148,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
                             />
                             <img
                                 id={this.props.id}
-                                className={this.props.classNames.desktop}
+                                css={this.props.csss.desktop}
                                 data-srcset={this.props.desktopAttributes.jpg.srcset}
                                 data-src={this.props.desktopAttributes.src}
                                 sizes={this.props.desktopAttributes.jpg.sizes}
@@ -155,7 +157,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
                         </picture>
                     )
                 }
-            </>
+            </React.Fragment>
         );
     }
 }

@@ -1,19 +1,20 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
+
+import styled from '@emotion/styled';
 
 import { ContactSocialMediaShape } from 'src/components/Contact/types';
 import { staticImage } from 'src/styles/imageUrls';
 import { screenXSorPortrait } from 'src/styles/screens';
 
-const SocialMediaLinkContainer = styled('div')` padding-top: 20px; `;
+const SocialMediaLinkContainer = styled.div` padding-top: 20px; `;
 
-const socialMediaButtonStyles = css`
+const SocialMediaImg = styled.img`
     transition: all 0.2s;
     vertical-align: middle;
     margin: 0 20px;
     width: 3em;
 
-    ${/*sc-selector*/ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 2em;
     }
 
@@ -23,43 +24,42 @@ const socialMediaButtonStyles = css`
     }
 `;
 
+const StyledLink = styled.a`
+    flex: 1 0 auto;
+    text-align: center;
+    display: block;
+`;
+
 interface SocialMediaLinkProps {
     className?: string;
     social: string;
     url: string;
 }
 
-const SocialMediaLink: React.SFC<SocialMediaLinkProps> = (props) => (
-    <a className={props.className} href={props.url} target="_blank">
-        <img
-            className={socialMediaButtonStyles}
+const SocialMediaLink: React.FC<SocialMediaLinkProps> = (props) => (
+    <StyledLink href={props.url} target="_blank" rel="noopener">
+        <SocialMediaImg
             src={staticImage(`/soc-logos/${props.social}-color.svg`)}
         />
-    </a>
+    </StyledLink>
 );
 
-const StyledSocialMediaLink = styled(SocialMediaLink)`
-    flex: 1 0 auto;
-    text-align: center;
-    display: block;
-`;
-
-let ContactSocialMedia = (props: ContactSocialMediaShape) => (
-    <div className={props.className}>
-        {
-            Object.keys(props.social).map((social, i) => (
-                <SocialMediaLinkContainer key={i}>
-                    <StyledSocialMediaLink url={props.social[social]} social={social}/>
-                </SocialMediaLinkContainer>
-            ))
-        }
-    </div>
-);
-
-ContactSocialMedia = styled(ContactSocialMedia)`
+const LinksContainer = styled.div`
     padding: 0 10px;
     display: flex;
     justify-content: center;
 `;
+
+const ContactSocialMedia = (props: ContactSocialMediaShape) => (
+    <LinksContainer>
+        {
+            Object.keys(props.social).map((social, i) => (
+                <SocialMediaLinkContainer key={i}>
+                    <SocialMediaLink url={props.social[social]} social={social}/>
+                </SocialMediaLinkContainer>
+            ))
+        }
+    </LinksContainer>
+);
 
 export { ContactSocialMedia };

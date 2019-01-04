@@ -1,6 +1,8 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import TweenLite from 'gsap/TweenLite';
 import { LoadingInstance } from 'src/components/LoadingSVG';
@@ -63,12 +65,12 @@ const loadingInstanceStyle = css`
     fill: none;
     stroke: ${lightBlue};
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${ screenXSorPortrait} {
         top: calc(50% + ${HEIGHT_ADJUST_MOBILE}px);
     }
 `;
 
-const LoadingOverlay = styled('div')`
+const LoadingOverlay = styled.div`
     position: absolute;
     z-index: 30;
     width: 100%;
@@ -76,7 +78,7 @@ const LoadingOverlay = styled('div')`
     background-color: rgba(0, 0, 0, 0.5);
 `;
 
-const UIContainer = styled('div')`
+const UIContainer = styled.div`
     position: absolute;
     width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
@@ -87,19 +89,18 @@ const UIContainer = styled('div')`
     align-items: center;
     justify-content: space-around;
 
-    ${/* sc-selector */ screenM} {
+    ${screenM} {
         width: calc(100% - ${playlistContainerWidth.tablet});
     }
 
-    /* stylelint-disable-next-line no-duplicate-selectors */
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 100%;
         height: 360px;
         top: ${navBarHeight.mobile}px;
     }
 `;
 
-const StyledSeekRing = styled('canvas')`
+const StyledSeekRing = styled.canvas`
     position: absolute;
     width: 100%;
     height: 100%;
@@ -329,7 +330,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                         <LoadingInstance
                             width={200}
                             height={200}
-                            className={loadingInstanceStyle}
+                            css={loadingInstanceStyle}
                         />
                     </LoadingOverlay>
                 }
@@ -355,7 +356,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                     width={buttonLength * 4 / 5}
                     height={buttonLength * 8 / 15}
                     verticalOffset={verticalOffset}
-                    className={css` transform: scaleX(-1); `}
+                    css={css` transform: scaleX(-1); `}
                 />
                 {(this.props.isPlaying) ?
                     <PauseButton
@@ -392,7 +393,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                     verticalOffset={verticalOffset}
                 />
                 <StyledSeekRing
-                    innerRef={(canvas) => this.seekRing = canvas}
+                    ref={(canvas) => this.seekRing = canvas}
                     onMouseMove={this.handleMousemove}
                     onMouseUp={this.handleMouseup}
                     onMouseDown={this.handleMousedown}

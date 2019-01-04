@@ -1,6 +1,7 @@
 import * as React from 'react';
-import styled from 'react-emotion';
 import { connect } from 'react-redux';
+
+import styled from '@emotion/styled';
 
 import { setOnScroll } from 'src/components/App/NavBar/actions';
 import StyledContactItem from 'src/components/Contact/ContactItem';
@@ -25,26 +26,7 @@ interface ContactDispatchToProps {
 
 type ContactProps = ContactOwnProps & ContactStateToProps & ContactDispatchToProps;
 
-class Contact extends React.Component<ContactProps> {
-    componentDidMount() {
-        this.props.setOnScroll(navBarHeight.mobile);
-    }
-
-    render() {
-        return (
-            <div
-                onScroll={this.props.isMobile ? this.props.onScroll : null}
-                className={this.props.className}
-            >
-                {contacts.map((contact, i) => (
-                    <StyledContactItem {...contact} key={i} />
-                ))}
-            </div>
-        );
-    }
-}
-
-const StyledContact = styled(Contact) `
+const ContactContainer = styled.div`
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
@@ -52,14 +34,32 @@ const StyledContact = styled(Contact) `
     width: 100%;
     position: absolute;
     top: 0;
-    overflow-y: unset;
     overflow-x: hidden;
+    overflow-y: unset;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         overflow-y: scroll;
         justify-content: space-around;
     }
 `;
+
+class Contact extends React.Component<ContactProps> {
+    componentDidMount() {
+        this.props.setOnScroll(navBarHeight.mobile);
+    }
+
+    render() {
+        return (
+            <ContactContainer
+                onScroll={this.props.isMobile ? this.props.onScroll : null}
+            >
+                {contacts.map((contact, i) => (
+                    <StyledContactItem {...contact} key={i} />
+                ))}
+            </ContactContainer>
+        );
+    }
+}
 
 const mapStateToProps = ({ navbar }: GlobalStateShape): ContactStateToProps => ({
     onScroll: navbar.onScroll,
@@ -68,7 +68,8 @@ const mapStateToProps = ({ navbar }: GlobalStateShape): ContactStateToProps => (
 const ConnectedContact = connect<ContactStateToProps, ContactDispatchToProps>(
     mapStateToProps,
     { setOnScroll },
-)(StyledContact);
+)(Contact);
 
-export type ContactType = typeof ConnectedContact;
+export type ContactType = React.Component<ContactProps>;
+export type RequiredProps = ContactOwnProps;
 export default ConnectedContact;

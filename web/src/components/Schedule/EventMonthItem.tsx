@@ -1,5 +1,6 @@
 import * as React from 'react';
-import styled from 'react-emotion';
+
+import styled from '@emotion/styled';
 
 import {
     EventMonthItemBottomBorder,
@@ -16,14 +17,14 @@ interface EventMonthItemProps {
     readonly className?: string;
 }
 
-const EventMonthItem: React.SFC<EventMonthItemProps> = ({ className, style, month, year }) => (
+const EventMonthItem: React.FC<EventMonthItemProps> = ({ className, style, month, year }) => (
     <div className={className} style={style}>
         <EventMonthItemMonthYear month={month} year={year} />
         <EventMonthItemBottomBorder />
     </div>
 );
 
-const StyledEventMonthItem = styled(EventMonthItem) `
+const StyledEventMonthItem = styled(EventMonthItem)`
     font-family: ${lato2};
     font-size: 40px;
     width: 100%;

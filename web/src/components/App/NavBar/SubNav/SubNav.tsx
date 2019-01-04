@@ -1,10 +1,10 @@
 import * as React from 'react';
-import styled from 'react-emotion';
 
+import styled from '@emotion/styled';
 import tint from 'polished/lib/color/tint';
 
 import SubNavLink from 'src/components/App/NavBar/SubNav/SubNavLink';
-import { logoBlue } from 'src/styles/colors';
+import { lightBlue } from 'src/styles/colors';
 import { screenMorPortrait } from 'src/styles/screens';
 
 interface SubNavProps {
@@ -16,15 +16,7 @@ interface SubNavProps {
     readonly isMobile: boolean;
 }
 
-let SubNav: React.SFC<SubNavProps> = ({ className, links, ...props }) => (
-    <ul className={className}>
-        {links.map((link, i) => (
-            <SubNavLink key={i} link={link} {...props} />
-        ))}
-    </ul>
-);
-
-SubNav = styled(SubNav)`
+const SubNavContainer = styled.ul`
     z-index: 10;
     position: absolute;
     list-style: none;
@@ -35,15 +27,23 @@ SubNav = styled(SubNav)`
     transform: translateX(-50%);
     overflow: visible;
 
-    ${/* sc-selector */ screenMorPortrait} {
+    ${screenMorPortrait} {
         width: 100%;
         padding: 10px 0;
-        background-color: ${tint(0.2, logoBlue)};
+        background-color: ${tint(0.5, lightBlue)};
         box-shadow: inset 0 4px 5px -2px rgba(0, 0, 0, 0.2);
         position: relative;
         transform: unset;
         overflow: hidden;
     }
 `;
+
+const SubNav: React.FC<SubNavProps> = ({ links, ...props }) => (
+    <SubNavContainer>
+        {links.map((link, i) => (
+            <SubNavLink key={i} link={link} {...props} />
+        ))}
+    </SubNavContainer>
+);
 
 export default SubNav;

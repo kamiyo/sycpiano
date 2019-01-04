@@ -120,6 +120,7 @@ export interface MusicAttributes {
     readonly piece: string;
     readonly contributors: string;
     readonly type: string;
+    readonly year: number;
     readonly musicFiles: MusicFileAttributes[];
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
@@ -135,7 +136,6 @@ export interface MusicInstance extends Sequelize.Instance<MusicAttributes>, Musi
 }
 
 export interface MusicModel extends Model<MusicInstance, MusicAttributes> {
-    readonly musicFile: MusicFileModel;
 }
 
 export interface CollaboratorAttributes {
@@ -169,7 +169,7 @@ export interface PieceModel extends Model<PieceInstance, PieceAttributes> {}
 export interface CalendarPieceAttributes {
     readonly id?: string;
     readonly calendarId?: string;
-    readonly programId?: string;
+    readonly pieceId?: string;
     readonly order?: number;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;

@@ -3,8 +3,8 @@ function animateFn(
     endValue = 1,
     duration = 200, // ms
     fn: (parameter: number) => void,             // the function to use as animation (is called every frame)
-    easing: (input: number) => number,         // function input: t => [0, 1], output: eased t => [0, 1]
-    callback: () => void,       // callback for when animation finishes (i.e. return promise)
+    easing: (input: number) => number,           // function input: t => [0, 1], output: eased t => [0, 1]
+    callback: () => void,                        // callback for when animation finishes (i.e. return promise)
     animationRequestHandler: (requestId: number) => void,    // for dealing with requestIds (in case you want to cancel it on scroll, etc)
 ) {
     if (!fn) {

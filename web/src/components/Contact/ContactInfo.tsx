@@ -1,5 +1,6 @@
 import * as React from 'react';
-import styled from 'react-emotion';
+
+import styled from '@emotion/styled';
 
 import {
     PersonalContactShape,
@@ -13,26 +14,29 @@ import { screenXL } from 'src/styles/screens';
 
 const dividerColor = '#888';
 
-const NameContainer = styled('div')({
-    flex: '0 0 auto',
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    [screenXL]: { fontSize: '2.4rem' },
-});
+const NameContainer = styled.div`
+    flex: 0 0 auto;
+    font-size: 2rem;
+    font-weight: bold;
 
-const SubInfo = styled('div')`
+    ${screenXL} {
+        font-size: 2.4rem;
+    }
+`;
+
+const SubInfo = styled.div`
     flex: 1 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
 `;
 
-const SubInfoTitle = styled('div')`
+const SubInfoTitle = styled.div`
     font-size: 20px;
     margin-bottom: 10px;
 `;
 
-const PersonalInfo: React.SFC<PersonalInfoShape> = (props) => (
+const PersonalInfo: React.FC<PersonalInfoShape> = (props) => (
     <div className={props.className}>
         <NameContainer>{props.name}</NameContainer>
 
@@ -48,32 +52,35 @@ const PersonalInfo: React.SFC<PersonalInfoShape> = (props) => (
     </div>
 );
 
-const StyledPersonalInfo = styled(PersonalInfo)({
-    flex: '0 1 125px',
-    [screenXL]: { flex: '0 0 150px' },
-    display: 'flex',
-    flexDirection: 'column',
-});
+const StyledPersonalInfo = styled(PersonalInfo)`
+    flex: 0 1 125px;
+    display: flex;
+    flex-direction: column;
 
-const Divider = styled('div')`
+    ${screenXL} {
+        flex: 0 0 150px;
+    }
+`;
+
+const Divider = styled.div`
     border-top: 1px solid ${dividerColor};
     height: 1px;
     margin: 0 85px 15px;
 `;
 
-const ContactMethod = styled('div')`
+const ContactMethod = styled.div`
     flex: 1 0 auto;
     flex-direction: column;
     justify-content: center;
     display: flex;
 `;
 
-const PersonalContact: React.SFC<PersonalContactShape> = (props) => (
+const PersonalContact: React.FC<PersonalContactShape> = (props) => (
     <div className={props.className}>
         {props.phone && <ContactMethod>{props.phone}</ContactMethod>}
 
         <ContactMethod>
-            <a href={`mailto:${props.email}`} className={link(contactPageLinkColor)}>
+            <a href={`mailto:${props.email}`} css={link(contactPageLinkColor)}>
                 {props.email}
             </a>
         </ContactMethod>
@@ -88,10 +95,19 @@ const StyledPersonalContact = styled(PersonalContact)`
     justify-content: flex-start;
 `;
 
+const InfoContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 30px 0 10px;
+    font-family: ${lato2};
+    box-sizing: border-box;
+`;
+
 type ContactInfoProps = PersonalContactShape & PersonalInfoShape;
 
-let ContactInfo: React.SFC<ContactInfoProps> = (props) => (
-    <div className={props.className}>
+const ContactInfo: React.FC<ContactInfoProps> = (props) => (
+    <InfoContainer>
         <StyledPersonalInfo
             name={props.name}
             organization={props.organization}
@@ -104,16 +120,7 @@ let ContactInfo: React.SFC<ContactInfoProps> = (props) => (
             phone={props.phone}
             email={props.email}
         />
-    </div>
+    </InfoContainer>
 );
-
-ContactInfo = styled(ContactInfo)`
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    padding: 30px 0 10px;
-    font-family: ${lato2};
-    box-sizing: border-box;
-`;
 
 export { ContactInfo };

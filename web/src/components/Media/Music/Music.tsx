@@ -1,9 +1,10 @@
 import isEmpty from 'lodash-es/isEmpty';
 import shuffle from 'lodash-es/shuffle';
 import * as React from 'react';
-import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
+
+import styled from '@emotion/styled';
 
 import TweenLite from 'gsap/TweenLite';
 
@@ -65,13 +66,13 @@ type MusicProps = MusicOwnProps & MusicStateToProps & MusicDispatchToProps & Rou
     movement?: string;
 }>;
 
-const musicStyle = css`
+const MusicDiv = styled.div`
     ${pushed}
     position: relative;
     width: 100%;
     background-color: black;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         margin-top: 0;
         padding-top: ${navBarHeight.mobile}px;
         height: 100%;
@@ -355,7 +356,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         const isMobile = this.props.isMobile;
         const Visualizer = this.state.Visualizer;
         return (
-            <div className={musicStyle} onScroll={this.props.isMobile ? this.props.onScroll : null}>
+            <MusicDiv onScroll={this.props.isMobile ? this.props.onScroll : null}>
                 <audio
                     id="audio"
                     crossOrigin="anonymous"
@@ -406,7 +407,7 @@ class Music extends React.Component<MusicProps, MusicState> {
                     volume={this.state.volume}
                     isMobile={isMobile}
                 />}
-            </div>
+            </MusicDiv>
         );
     }
 }
@@ -428,5 +429,6 @@ const ConnectedMusic = connect<MusicStateToProps, MusicDispatchToProps>(
     },
 )(Music);
 
-export type MusicType = typeof ConnectedMusic;
+export type MusicType = React.Component<MusicProps>;
+export type RequiredProps = MusicOwnProps;
 export default ConnectedMusic;

@@ -7,7 +7,7 @@ interface SVGProps {
     readonly height: number;
 }
 
-export const PlaySVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, onClick, ...props }) => (
+export const PlaySVG: React.FC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, onClick, ...props }) => (
     <svg
         {...props}
         width={width}
@@ -24,7 +24,7 @@ export const PlaySVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMous
     </svg>
 );
 
-export const SkipSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, onClick, ...props }) => (
+export const SkipSVG: React.FC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, onClick, ...props }) => (
     <svg
         {...props}
         width={width}
@@ -44,7 +44,7 @@ export const SkipSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMous
     </svg>
 );
 
-export const PauseSVG: React.SFC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, onClick, ...props }) => (
+export const PauseSVG: React.FC<SVGProps & React.SVGAttributes<any>> = ({ onMouseOver, onMouseOut, width, height, onClick, ...props }) => (
     <svg
         width={width}
         height={height}

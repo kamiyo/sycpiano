@@ -1,6 +1,8 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import { setOnScroll } from 'src/components/App/NavBar/actions';
 import { GlobalStateShape } from 'src/types';
@@ -18,7 +20,7 @@ const photoListStyle = css`
     background-color: black;
     top: 0;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         padding-left: 0;
     }
 `;
@@ -27,7 +29,7 @@ const photoULStyle = css`
     padding-bottom: 80px;
     background-color: black;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         padding-top: ${navBarHeight.mobile}px;
         background-color: unset;
         padding-bottom: 60px;
@@ -39,14 +41,14 @@ const playlistExtraStyles = ({
     ul: photoULStyle,
 });
 
-const StyledPhotoListContainer = styled('div') `
+const StyledPhotoListContainer = styled('div')`
     width: fit-content;
     height: 100%;
     right: 0;
     top: 0;
     position: absolute;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 100%;
         height: auto;
         right: unset;
@@ -106,7 +108,7 @@ class PhotoList extends React.Component<PhotoListProps> {
                         />
                     ))}
                 </Playlist>
-                <DropboxButton isMobile={isMobile} />
+                <DropboxButton />
             </StyledPhotoListContainer>
         );
     }

@@ -1,7 +1,8 @@
 import * as React from 'react';
-import styled, { css, cx } from 'react-emotion';
 import ReactMedia from 'react-media';
 import { Link } from 'react-router-dom';
+
+import styled from '@emotion/styled';
 
 import { SycLogo } from 'src/components/App/NavBar/SycLogo';
 
@@ -19,7 +20,7 @@ interface NavBarLogoProps {
     specificRouteName: string;
 }
 
-const LogoText = styled<{ isMobile: boolean }, 'div'>('div') `
+const LogoText = styled.div`
     ${noHighlight}
     display: inline-block;
     margin-left: 20px;
@@ -27,63 +28,64 @@ const LogoText = styled<{ isMobile: boolean }, 'div'>('div') `
     line-height: ${navBarHeight.desktop}px;
     height: ${navBarHeight.desktop}px;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         margin-left: 0;
         line-height: ${navBarHeight.mobile}px;
         height: ${navBarHeight.mobile}px;
     }
 `;
 
-const logoStyle = css`
+const StyledLink = styled(Link, {
+    shouldForwardProp: prop => prop !== 'isHome' && prop !== 'isExpanded',
+}) <{ isHome: boolean; isExpanded: boolean }>`
+    display: inline-flex;
     font-family: ${lato2};
     font-size: ${navBarFontSizeREM}rem;
     letter-spacing: 0.05em;
     height: 100%;
     color: ${logoBlue};
-    fill: ${logoBlue};
+    fill: ${props => (props.isHome && !props.isExpanded) ? 'white' : logoBlue};
     transition: all 0.3s;
     overflow: hidden;
     cursor: pointer;
-    display: inline-flex;
     align-items: center;
+    -webkit-tap-highlight-color: transparent;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         font-size: ${navBarFontSizeREM * 0.75}rem;
     }
 `;
 
-const SeanChenText = styled('span')`
-    vertical-align: middle;
-`;
+const SeanChenText = styled.span` vertical-align: middle; `;
 
-const RouteText = styled('span')`
+const RouteText = styled.span`
     font-size: ${navBarFontSizeREM * 0.8}rem;
     vertical-align: middle;
     margin-left: 10px;
 `;
 
-const NavBarLogo: React.SFC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProps> = ({
+const NavBarLogo: React.FC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProps> = ({
     isHome,
     isExpanded,
     specificRouteName,
 }) => (
-        <Link to="/" className={cx(logoStyle, { [css` fill: white; `]: isHome && !isExpanded })}>
+        <StyledLink to="/" isHome={isHome} isExpanded={isExpanded}>
             <ReactMedia query={reactMediaMobileQuery}>
                 {(xs: boolean) =>
                     <ReactMedia query={reactMediaMediumQuery}>
                         {(medium: boolean) =>
-                            <>
+                            <React.Fragment>
                                 <SycLogo />
-                                <LogoText isMobile={xs}>
+                                <LogoText>
                                     {!isHome && !xs && <SeanChenText>{'SEAN CHEN' + (medium ? ' |' : '')}</SeanChenText>}
                                     {!isHome && (xs || medium) && <RouteText>{specificRouteName}</RouteText>}
                                 </LogoText>
-                            </>
+                            </React.Fragment>
                         }
                     </ReactMedia>
                 }
             </ReactMedia>
-        </Link>
+        </StyledLink>
     );
 
 export default NavBarLogo;

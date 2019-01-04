@@ -61,9 +61,7 @@ resized.get('/*', async (req, res) => {
             } catch (_) {
                 try {
                     await Sharp(imgPath)
-                        .resize(w, h)
-                        .max()
-                        .withoutEnlargement()
+                        .resize(w, h, { fit: 'inside', withoutEnlargement: true })
                         .toFile(newPath);
 
                 } catch (e) {
@@ -72,9 +70,7 @@ resized.get('/*', async (req, res) => {
                     try {
                         await statAsync(jpegPath);
                         await Sharp(jpegPath)
-                            .resize(w, h)
-                            .max()
-                            .withoutEnlargement()
+                            .resize(w, h, { fit: 'inside', withoutEnlargement: true })
                             .webp()
                             .toFile(newPath);
                     } catch (e) {

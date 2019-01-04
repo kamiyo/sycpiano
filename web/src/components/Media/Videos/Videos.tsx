@@ -1,9 +1,10 @@
 import * as React from 'react';
-import styled from 'react-emotion';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { Transition } from 'react-transition-group';
+
+import styled from '@emotion/styled';
 
 import TweenLite from 'gsap/TweenLite';
 
@@ -42,13 +43,13 @@ interface VideosOwnProps {
 
 type VideosProps = VideosStateToProps & VideosDispatchToProps & VideosOwnProps & RouteComponentProps<{ videoId?: string; }>;
 
-const StyledVideos = styled('div') `
+const StyledVideos = styled.div`
     ${pushed}
     width: 100%;
     background-color: black;
     position: relative;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         overflow-y: scroll;
         margin-top: 0;
         padding-top: ${navBarHeight.mobile}px;
@@ -59,7 +60,7 @@ const StyledVideos = styled('div') `
         width: 100%;
         height: 100%;
 
-        ${/* sc-selector */ screenXSorPortrait} {
+        ${screenXSorPortrait} {
             position: fixed;
             top: ${navBarHeight.mobile}px;
             height: 56.25vw;
@@ -69,7 +70,7 @@ const StyledVideos = styled('div') `
     }
 `;
 
-const LoadingOverlayDiv = styled('div') `
+const LoadingOverlayDiv = styled.div`
     width: 100%;
     height: 100%;
     z-index: 11;
@@ -106,7 +107,7 @@ class Videos extends React.Component<VideosProps> {
                     </Helmet>
                 }
                 <StyledVideos
-                    innerRef={this.domElement}
+                    ref={this.domElement}
                 >
                     <PreviewOverlay isMobile={this.props.isMobile} />
                     <Transition
@@ -147,5 +148,6 @@ const ConnectedVideos = connect<VideosStateToProps, VideosDispatchToProps, Video
     mapDispatchToProps,
 )(Videos);
 
-export type VideosType = typeof ConnectedVideos;
+export type VideosType = React.Component<VideosProps>;
+export type RequiredProps = VideosOwnProps;
 export default ConnectedVideos;

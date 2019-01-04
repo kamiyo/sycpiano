@@ -1,28 +1,31 @@
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import * as React from 'react';
-import styled, { css, cx } from 'react-emotion';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import { AcclaimItemShape } from 'src/components/Press/types';
 import { logoBlue } from 'src/styles/colors';
 import { lato1, lato2 } from 'src/styles/fonts';
 import { screenXSorPortrait } from 'src/styles/screens';
 
-const AcclaimContainer = styled('div')({
-    margin: '0 auto',
-    maxWidth: '800px',
-    fontSize: '1.2rem',
-    [screenXSorPortrait]: {
-        fontSize: '1.0rem',
-        padding: '0 1.2rem',
-    },
-});
+const AcclaimContainer = styled.div`
+    margin: 0 auto;
+    max-width: 800px;
+    font-size: 1.2rem;
+
+    ${screenXSorPortrait} {
+        font-size: 1rem;
+        padding: 0 1.2rem;
+    }
+`;
 
 interface QuoteProps {
     quote: string;
     className?: string;
 }
 
-let Quote: React.SFC<QuoteProps> = (props) => (
+let Quote: React.FC<QuoteProps> = (props) => (
     <div className={props.className}>
         {props.quote}
     </div>
@@ -81,14 +84,14 @@ const Link = styled('a')`
     text-shadow: ${getRepeatCSS(20, '0 0 1px white')};
 `;
 
-let Author: React.SFC<AuthorProps> = ({ author, date, hasFullDate, website, className }) => {
+let Author: React.FC<AuthorProps> = ({ author, date, hasFullDate, website, className }) => {
     const Container = website ? Link : 'span';
     const attributes = website ? { href: website, target: '_blank' } : {};
     return (
         <div className={className}>
             <Container {...attributes}>
                 <span>{`— ${author} `}</span>
-                <span className={css` display: inline-block; `}>
+                <span css={css` display: inline-block; `}>
                     {`(${hasFullDate ?
                         date.format('MMMM DD, YYYY') :
                         date.format('MMMM YYYY')})`
@@ -110,15 +113,16 @@ interface AcclaimsListItemProps {
     className?: string;
 }
 
-const AcclaimsListItem: React.SFC<AcclaimsListItemProps> = ({ className, style, acclaim }) => (
+const AcclaimsListItem: React.FC<AcclaimsListItemProps> = ({ className, style, acclaim }) => (
     <div
-        className={cx(className, css`
+        css={css`
             padding: 2rem 0;
 
-            &:first-child {
+            &:first-of-type {
                 padding-top: 3.5rem;
             }
-        `)}
+        `}
+        className={className}
         style={style}
     >
         <AcclaimContainer>

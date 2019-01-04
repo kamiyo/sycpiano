@@ -1,5 +1,7 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import TweenLite from 'gsap/TweenLite';
 
@@ -12,7 +14,7 @@ import { lightBlue } from 'src/styles/colors';
 import { generateSrcsetWidths, resizedImage } from 'src/styles/imageUrls';
 import { screenWidths, screenXSorPortrait } from 'src/styles/screens';
 
-const PhotoRow = styled<{ isMobile: boolean; isLoaded: boolean }, 'div'>('div') `
+const PhotoRow = styled.div<{ isMobile: boolean; isLoaded: boolean }>`
     position: relative;
     height: 300px;
     border: 1px solid transparent;
@@ -34,7 +36,7 @@ const PhotoRow = styled<{ isMobile: boolean; isLoaded: boolean }, 'div'>('div') 
         border-color: ${lightBlue};
     }
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         height: ${props => props.isLoaded ? 'auto' : '300px'};
         line-height: 0;
 
@@ -48,7 +50,7 @@ const PhotoRow = styled<{ isMobile: boolean; isLoaded: boolean }, 'div'>('div') 
     }
 `;
 
-const Highlight = styled<{ active: boolean; }, 'div'>('div') `
+const Highlight = styled.div<{ active: boolean; }>`
     padding-left: 15px;
     transition: border 0.15s;
     border-left: 7px solid ${props => props.active ? lightBlue : 'transparent'};
@@ -86,9 +88,9 @@ class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, { isL
                     alt={item.file}
                     isMobile={isMobile}
                     loadingComponent="default"
-                    classNames={{
-                        mobile: css` visibility: hidden; `,
-                        desktop: css` visibility: hidden; `,
+                    csss={{
+                        mobile: css({ visibility: 'hidden' }),
+                        desktop: css({ visibility: 'hidden' }),
                         loading: loadingStyle,
                     }}
                     mobileAttributes={{

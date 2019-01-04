@@ -6,14 +6,10 @@ const path = require('path');
 const webpack = require('webpack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const PreloadPlugin = require('preload-webpack-plugin');
 const os = require('os');
-const threadLoader = require('thread-loader');
 
 const isProd = process.env.NODE_ENV === 'production';
 
-// Heroku's free plan is strict about memory usage, so we'll use one on prod.
-// On Dev, keep one cpu for fork-ts
 const threadPoolSize = isProd ? 1 : os.cpus().length - 1;
 
 const staticPrefix = '/static';
@@ -50,22 +46,23 @@ const config = () => {
                     {
                         loader: 'babel-loader',
                         options: {
-                            plugins: [
-                                ['emotion',
+                            presets: [
+                                '@babel/preset-react',
+                                '@emotion/babel-preset-css-prop',
+                                [
+                                    '@babel/preset-env',
                                     {
-                                        sourceMap: true,
-                                        hoist: true,
-                                        autoLabel: isProd ? false : true,
-                                    },
+                                        targets: "> 0.25%, not dead",
+                                        useBuiltIns: 'usage',
+                                    }
                                 ],
-                                'syntax-dynamic-import',
+                                '@babel/preset-typescript',
                             ],
-                        },
-                    },
-                    {
-                        loader: 'ts-loader',
-                        options: {
-                            happyPackMode: true,
+                            plugins: [
+                                'syntax-dynamic-import',
+                                '@babel/proposal-class-properties',
+                                '@babel/proposal-object-rest-spread',
+                            ],
                         },
                     },
                 ]
@@ -104,9 +101,6 @@ const config = () => {
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, 'web/partials/index.html'),
                 inject: false,
-            }),
-            new PreloadPlugin({
-                include: 'initial',
             }),
             new ProgressBarPlugin({
                 format: '[:percent] webpack: :msg... :elapseds \n',

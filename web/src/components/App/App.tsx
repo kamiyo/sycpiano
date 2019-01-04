@@ -1,12 +1,22 @@
 import { startCase, toLower, toUpper } from 'lodash-es';
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
 import { Helmet } from 'react-helmet';
 import ReactMedia from 'react-media';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
+
+import { RequiredProps as AboutProps } from 'src/components/About/About';
+import { RequiredProps as ContactProps } from 'src/components/Contact/Contact';
+import { RequiredProps as HomeProps } from 'src/components/Home/Home';
+import { RequiredProps as MediaProps } from 'src/components/Media/Media';
+import { RequiredProps as PressProps } from 'src/components/Press/Press';
+import { RequiredProps as ScheduleProps } from 'src/components/schedule/Schedule';
+
+import { Global } from '@emotion/core';
+import styled from '@emotion/styled';
+import { globalCss } from 'src/styles/global';
 
 import 'picturefill';
 import 'picturefill/dist/plugins/mutation/pf.mutation.min';
@@ -67,13 +77,13 @@ const slideOnExit = (delay: number) => (element: HTMLElement) => {
     }
 };
 
-const RootContainer = styled<{ isHome: boolean }, 'div'>('div') `
+const RootContainer = styled.div<{ isHome: boolean }>`
     height: 100%;
     width: 100%;
     background-color: ${props => props.isHome ? 'black' : 'white'};
 `;
 
-const FadingContainer = styled('div') `
+const FadingContainer = styled('div')`
     height: 100%;
     width: 100%;
     visibility: hidden;
@@ -118,6 +128,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
         const description = metaDescriptions[toLower(currentPage)] || 'Welcome to the official website of pianist, composer, and arranger Sean Chen';
         return (
             <>
+                <Global styles={globalCss} />
                 <Helmet>
                     <title>{`${titleStringBase} | ${currentPage}`}</title>
                     <meta name="description" content={description} />
@@ -135,14 +146,13 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
                                 appear={true}
                             >
                                 <NavBar
-                                    className={css` visibility: hidden; `}
                                     currentBasePath={this.getRouteBase()}
                                     specificRouteName={this.getMostSpecificRouteName()}
                                 />
                             </Transition>
                             <TransitionGroup component={null}>
                                 <Transition
-                                    key={this.getRouteBase()}
+                                    key={this .getRouteBase()}
                                     onEntering={fadeOnEnter(0.25)}
                                     onExiting={fadeOnExit(0)}
                                     timeout={750}
@@ -153,33 +163,33 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; }> {
                                             <Route
                                                 path="/about"
                                                 exact={true}
-                                                render={(childProps) => <AsyncComponent moduleProvider={About} {...childProps} isMobile={matches} />}
+                                                render={(childProps) => <AsyncComponent<AboutProps> moduleProvider={About} {...childProps} isMobile={matches} />}
                                             />
                                             <Route
                                                 path="/contact"
                                                 exact={true}
-                                                render={(childProps) => <AsyncComponent moduleProvider={Contact} {...childProps} isMobile={matches} />}
+                                                render={(childProps) => <AsyncComponent<ContactProps> moduleProvider={Contact} {...childProps} isMobile={matches} />}
                                             />
                                             <Route
                                                 path="/media/:media/:other*"
                                                 exact={true}
-                                                render={(childProps) => <AsyncComponent moduleProvider={Media} {...childProps} isMobile={matches} />}
+                                                render={(childProps) => <AsyncComponent<MediaProps> moduleProvider={Media} {...childProps} isMobile={matches} />}
                                             />
                                             <Route
                                                 path="/press"
                                                 exact={true}
-                                                render={(childProps) => <AsyncComponent moduleProvider={Press} {...childProps} isMobile={matches} />}
+                                                render={(childProps) => <AsyncComponent<PressProps> moduleProvider={Press} {...childProps} isMobile={matches} />}
                                             />
                                             <Route
                                                 path="/schedule/:type?/:date?"
-                                                render={(childProps) => <AsyncComponent moduleProvider={Schedule} {...childProps} isMobile={matches} />}
+                                                render={(childProps) => <AsyncComponent<ScheduleProps> moduleProvider={Schedule} {...childProps} isMobile={matches} />}
                                             />
                                             <Route
                                                 path="/"
                                                 exact={true}
-                                                render={(childProps) => <AsyncComponent moduleProvider={Home} {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />}
+                                                render={(childProps) => <AsyncComponent<HomeProps> moduleProvider={Home} {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />}
                                             />
-                                            <Route render={() => <AsyncComponent moduleProvider={Page404} />} />
+                                            <Route render={() => <AsyncComponent<{}> moduleProvider={Page404} />} />
                                         </Switch>
                                     </FadingContainer>
                                 </Transition>

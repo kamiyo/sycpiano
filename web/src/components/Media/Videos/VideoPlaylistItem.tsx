@@ -2,8 +2,10 @@ import moment from 'moment-timezone';
 import { lighten } from 'polished';
 import * as React from 'react';
 import ClampLines from 'react-clamp-lines';
-import styled, { css } from 'react-emotion';
 import { RouteComponentProps, withRouter } from 'react-router';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { lightBlue, playlistBackground } from 'src/styles/colors';
@@ -22,11 +24,9 @@ const itemHeight = 100;
 const aspectRatio = 4 / 3;
 const thumbnailWidth = (itemHeight - padding * 2) * aspectRatio;
 
-const section = css`
-    vertical-align: middle;
-`;
+const section = ` vertical-align: middle; `;
 
-const ImageContainer = styled('div') `
+const ImageContainer = styled.div`
     ${section}
     height: 100%;
     width: ${thumbnailWidth}px;
@@ -39,48 +39,48 @@ const ImageContainer = styled('div') `
     }
 `;
 
-const StyledVideoItem = styled<{ active: boolean; }, 'li'>('li') `
-    background-color: ${playlistBackground};
-    list-style: none;
-    cursor: pointer;
-    width: 100%;
-    height: ${itemHeight}px;
-    padding: ${padding}px 0 ${padding}px 15px;
-    border-left: 7px solid transparent;
-    border-bottom: 1px solid rgba(120, 120, 120, 0.3);
-    transition: all 0.15s;
-    display: flex;
-
-    &:hover {
-        background-color: rgba(255, 255, 255, 1);
-
-        ${/* sc-selector */ ImageContainer as any} img {
+const StyledVideoItem = styled.li<{ active: boolean; }>(
+    props => props.active && css`
+        ${`${ImageContainer} img`} {
             filter: brightness(60%);
         }
-    }
+    `,
+    css`
+        background-color: ${playlistBackground};
+        list-style: none;
+        cursor: pointer;
+        width: 100%;
+        height: ${itemHeight}px;
+        padding: ${padding}px 0 ${padding}px 15px;
+        border-left: 7px solid transparent;
+        border-bottom: 1px solid rgba(120, 120, 120, 0.3);
+        transition: all 0.15s;
+        display: flex;
 
-    /* stylelint-disable */
-    ${props => props.active &&
-        `border-left-color: ${lightBlue};
+        &:hover {
+            background-color: rgba(255, 255, 255, 1);
+
+            ${`${ImageContainer} img`} {
+                filter: brightness(60%);
+            }
+        }
+    `,
+    props => props.active && css`
+        border-left-color: ${lightBlue};
         background-color: rgba(255, 255, 255, 1);
+    `,
+);
 
-        ${/* sc-selector */ ImageContainer} img {
-            filter: brightness(60%);
-        }`
-    }
-    /* stylelint-enable */
-`;
-
-const Duration = styled<{ active: boolean; children: string; }, 'span'>('span') `
+const Duration = styled.span<{ active: boolean; children: string; }>(props => css`
     position: absolute;
     right: 0;
     bottom: 0;
-    color: ${props => (props.active) ? lighten(0.2, '#4E86A4') : '#fff'};
-    font-family: ${props => (props.active) ? lato2 : lato1};
+    color: ${(props.active) ? lighten(0.2, '#4E86A4') : '#fff'};
+    font-family: ${(props.active) ? lato2 : lato1};
     padding-right: 3px;
-`;
+`);
 
-const VideoInfo = styled('div') `
+const VideoInfo = styled.div`
     ${section}
     width: calc(80% - 20px);
     padding: 0 20px;
@@ -95,20 +95,20 @@ const h4style = css`
     color: black;
 `;
 
-const TextTop = styled(ClampLines) `
+const TextTop = styled(ClampLines)`
     ${h4style}
-    padding-top: 5px;
+    padding-top: 5;
     font-size: 1rem;
     font-weight: bold;
 `;
 
-const TextBottom = styled('h4') `
+const TextBottom = styled.h4`
     ${h4style}
-    padding-bottom: 5px;
+    padding-bottom: 5;
     font-size: 0.8rem;
 `;
 
-const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentItemId, onClick, isMobile, history }) => (
+const VideoPlaylistItem: React.FC<VideoPlaylistItemProps> = ({ item, currentItemId, onClick, isMobile, history }) => (
     <StyledVideoItem
         active={currentItemId === item.id}
         onClick={() => {
@@ -125,7 +125,7 @@ const VideoPlaylistItem: React.SFC<VideoPlaylistItemProps> = ({ item, currentIte
         <VideoInfo>
             <TextTop
                 text={item.snippet.title}
-                lines="2"
+                lines={2}
                 ellipsis="..."
                 buttons={false}
             />

@@ -1,5 +1,7 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import {
     EventCollaborators,
@@ -16,20 +18,18 @@ import { lightBlue } from 'src/styles/colors';
 import { lato1 } from 'src/styles/fonts';
 import { screenXSorPortrait } from 'src/styles/screens';
 
-const FlexEventDate = styled(EventDate)` flex: 0 0 auto; `;
-
-const FlexEventInfoContainer = styled('div')`
+const FlexEventInfoContainer = styled.div`
     flex: 0 1 auto;
     padding: 0 0 0 35px;
 `;
 
-const DateContainer = styled('div')`
+const DateContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 `;
 
-const Connector = styled('div')`
+const Connector = styled.div`
     flex: 1 1 auto;
     min-height: 2rem;
     transform: scaleY(1.2);
@@ -49,8 +49,24 @@ type EventItemBodyProps = DayItem & { className?: string, isMobile?: boolean; pe
 
 const detailSectionMargin = (extra?: number) => css` margin-bottom: ${20 + (extra || 0)}px; `;
 
-let EventItemBody: React.SFC<EventItemBodyProps> = ({
-    className,
+const StyledItemBody = styled.div`
+    display: flex;
+    padding: 30px 0 30px 30px;
+    font-family: ${lato1};
+    align-items: top;
+    color: black;
+    transition: 0.2s all;
+    width: 80%;
+    max-width: 1240px;
+    margin: 0 auto;
+
+    ${screenXSorPortrait} {
+        padding: 30px 0;
+        width: 90%;
+    }
+`;
+
+const EventItemBody: React.FC<EventItemBodyProps> = ({
     dateTime,
     endDate,
     allDay,
@@ -67,51 +83,34 @@ let EventItemBody: React.SFC<EventItemBodyProps> = ({
     const firstDate = listType === 'archive' ? endDate : dateTime;
     const secondDate = listType === 'archive' ? dateTime : endDate;
     const DateChildren = endDate ? (
-        <>
-            <FlexEventDate dateTime={firstDate} isMobile={isMobile} rounded={'top'} />
+        <React.Fragment>
+            <EventDate dateTime={firstDate} isMobile={isMobile} rounded={'top'} />
             <Connector />
-            <FlexEventDate dateTime={secondDate} isMobile={isMobile} rounded={'bottom'} />
-        </>
-    ) : <FlexEventDate dateTime={dateTime} isMobile={isMobile} rounded={'both'} />;
+            <EventDate dateTime={secondDate} isMobile={isMobile} rounded={'bottom'} />
+        </React.Fragment>
+    ) : <EventDate dateTime={dateTime} isMobile={isMobile} rounded={'both'} />;
     return (
-        <div className={className}>
+        <StyledItemBody>
             <DateContainer>
                 {DateChildren}
             </DateContainer>
 
             <FlexEventInfoContainer>
-                <EventNameWithRouter className={detailSectionMargin()} name={name} isMobile={isMobile} permaLink={permaLink} eventType={eventType} />
+                <EventNameWithRouter css={detailSectionMargin()} name={name} isMobile={isMobile} permaLink={permaLink} eventType={eventType} />
 
                 {!allDay && <EventTime
-                    className={detailSectionMargin()}
+                    css={detailSectionMargin()}
                     dateTime={dateTime}
                 />}
 
-                <EventLocation location={location} className={detailSectionMargin()} isMobile={isMobile} />
-                <EventCollaborators collaborators={collaborators} className={detailSectionMargin()} />
-                <EventProgram program={program} className={detailSectionMargin(5)} />
+                <EventLocation location={location} css={detailSectionMargin()} isMobile={isMobile} />
+                <EventCollaborators collaborators={collaborators} css={detailSectionMargin()} />
+                <EventProgram program={program} css={detailSectionMargin(5)} />
 
                 {website && <EventWebsiteButton website={website} />}
             </FlexEventInfoContainer>
-        </div>
+        </StyledItemBody>
     );
 };
-
-EventItemBody = styled<EventItemBodyProps, typeof EventItemBody>(EventItemBody)`
-    display: flex;
-    padding: 30px 0 30px 30px;
-    font-family: ${lato1};
-    align-items: top;
-    color: black;
-    transition: 0.2s all;
-    width: 80%;
-    max-width: 1240px;
-    margin: 0 auto;
-
-    ${/* sc-selector */ screenXSorPortrait} {
-        padding: 30px 0;
-        width: 90%;
-    }
-`;
 
 export { EventItemBody };

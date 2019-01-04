@@ -3,7 +3,7 @@
 
 const merge = require('webpack-merge');
 const common = require('./webpack.common.config.js');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const Minimizer = require('terser-webpack-plugin');
 const webpack = require('webpack');
 const os = require('os');
 
@@ -13,8 +13,13 @@ const config = merge(common.config, {
         filename: '[name].[chunkhash:8].bundle.js',
         chunkFilename: '[name].[chunkhash:8].chunk.js',
     },
+    optimization: {
+        minimizer: [new Minimizer({
+            cache: true,
+            parallel: true,
+        })],
+    },
     plugins: [
-        new UglifyJsPlugin(),
         new webpack.DefinePlugin({
             MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music'),
         }),

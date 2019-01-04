@@ -1,15 +1,15 @@
-import styled from 'react-emotion';
+import styled from '@emotion/styled';
 
 import { LogoInstance } from 'src/components/LogoSVG';
 import { screenXSorPortrait } from 'src/styles/screens';
 
-export const SycLogo = styled(LogoInstance)`
-    width: 150px;
-    height: 150px;
-    float: left;
-
-    ${/* sc-selector */ screenXSorPortrait} {
-        width: 120px;
-        height: 120px;
-    }
-`;
+export const SycLogo = styled(LogoInstance)({
+    width: 150,
+    height: 150,
+    float: 'left',
+    WebkitTapHighlightColor: 'transparent',
+    [screenXSorPortrait]: {
+        width: 120,
+        height: 120,
+    },
+});

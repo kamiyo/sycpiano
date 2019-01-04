@@ -3,8 +3,10 @@ import { Moment } from 'moment-timezone';
 import mix from 'polished/lib/color/mix';
 import * as React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import styled, { css, cx } from 'react-emotion';
 import { RouteComponentProps, withRouter } from 'react-router';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import { LinkIconInstance } from 'src/components/Schedule/LinkIconSVG';
 import { LocationIconInstance } from 'src/components/Schedule/LocationIconSVG';
@@ -23,21 +25,29 @@ interface EventDateTimeProps {
     dateTime: Moment;
     className?: string;
     isMobile?: boolean;
-    rounded?: string;
+    rounded?: 'top' | 'bottom' | 'both';
 }
 
-let EventDate: React.SFC<EventDateTimeProps> = (props) => (
+let EventDate: React.FC<EventDateTimeProps> = (props) => (
     <div className={props.className}>
-        <div className={css({ fontSize: '2.2em' })}>
+        <div css={css({ fontSize: '2.2em' })}>
             {parseInt(props.dateTime.format('D'), 10)}
         </div>
-        <div className={css({ fontSize: '1.4em' })}>
+        <div css={css({ fontSize: '1.4em' })}>
             {props.dateTime.format('ddd')}
         </div>
     </div>
 );
 
-EventDate = styled<EventDateTimeProps, {}>(EventDate)`
+const radii: {
+    [key: string]: string;
+} = {
+    top: '50% 50% 0 0',
+    bottom: '0 0 50% 50%',
+    both: '50%',
+};
+
+EventDate = styled(EventDate)<EventDateTimeProps>`
     text-align: center;
     background-color: ${lightBlue};
     color: white;
@@ -45,19 +55,8 @@ EventDate = styled<EventDateTimeProps, {}>(EventDate)`
     width: 6.7em;
     line-height: 2.5em;
     padding: 0.8em;
-
-    /* stylelint-disable */
-    ${props => {
-        switch (props.rounded) {
-            case 'top':
-                return 'border-radius: 50% 50% 0 0;';
-            case 'bottom':
-                return 'border-radius: 0 0 50% 50%;';
-            default:
-                return 'border-radius: 50%;';
-        }
-    }}
-    /* stylelint-enable */
+    flex: 0 0 auto;
+    border-radius: ${props => radii[props.rounded]};
 `;
 
 interface EventNameProps { name: string; eventType: EventType; className?: string; isMobile?: boolean; permaLink: string; }
@@ -82,8 +81,8 @@ const eventNameStyle = css`
         fill: #999;
     }
 
-    ${/* sc-selector */ screenXSorPortrait} {
-        fill: logoBlue;
+    ${screenXSorPortrait} {
+        fill: ${logoBlue};
     }
 `;
 
@@ -97,12 +96,12 @@ class EventName extends React.Component<EventNameProps & RouteComponentProps<{}>
     render() {
         return (
             <CopyToClipboard onCopy={this.onCopy} text={`${window.location.host}${this.props.permaLink}`}>
-                <div className={eventNameStyle}>
+                <div css={eventNameStyle}>
                     <span>{this.props.name}</span>
                     {this.props.eventType === 'masterclass' && <span>{`: Masterclass`}</span>}
-                    <LinkIconInstance className={linkIconStyle} />
+                    <LinkIconInstance css={linkIconStyle} />
                     <span
-                        className={css`
+                        css={css`
                             visibility: hidden;
                             font-size: 0.5em;
                         `}
@@ -118,7 +117,7 @@ class EventName extends React.Component<EventNameProps & RouteComponentProps<{}>
 
 const EventNameWithRouter = withRouter(EventName);
 
-let EventTime: React.SFC<EventDateTimeProps> = ({ className, dateTime }) => (
+let EventTime: React.FC<EventDateTimeProps> = ({ className, dateTime }) => (
     <div className={className}>
         {dateTime.format('h:mm a z')}
     </div>
@@ -139,20 +138,18 @@ const getVenueName = (location: string): string => {
     return locArray.length >= 1 ? locArray[0] : '';
 };
 
-let EventLocation: React.SFC<EventLocationProps> = ({ location, className, isMobile }) => {
+let EventLocation: React.FC<EventLocationProps> = ({ location, className, isMobile }) => {
     const locationIconStyle = css({
         height: locationIconDimension,
         width: locationIconDimension,
     });
 
     return (
-        <a href={getGoogleMapsSearchUrl(location)} className={cx(className)} target="_blank">
-            <LocationIconInstance className={locationIconStyle} />
+        <a href={getGoogleMapsSearchUrl(location)} className={className} target="_blank" rel="noopener">
+            <LocationIconInstance css={locationIconStyle} />
 
             <strong
-                className={css`
-                    margin-left: ${isMobile ? 0 : 10}px;
-                `}
+                css={{ marginLeft: isMobile ? 0 : 10}}
             >
                 {getVenueName(location)}
             </strong>
@@ -160,7 +157,7 @@ let EventLocation: React.SFC<EventLocationProps> = ({ location, className, isMob
     );
 };
 
-EventLocation = styled<EventLocationProps, typeof EventLocation>(EventLocation)`
+EventLocation = styled(EventLocation)`
     font-size: 1.2em;
     display: flex;
     flex-direction: row;
@@ -180,7 +177,7 @@ interface EventCollaboratorsProps {
     className?: string;
 }
 
-let EventCollaborators: React.SFC<EventCollaboratorsProps> = ({ className, collaborators }) => (
+let EventCollaborators: React.FC<EventCollaboratorsProps> = ({ className, collaborators }) => (
     <div className={className}>
         {collaborators.map((collaborator: Collaborator, i: number) => (
             collaborator.name && collaborator.instrument && (
@@ -205,7 +202,7 @@ interface EventProgramProps {
     className?: string;
 }
 
-let EventProgram: React.SFC<EventProgramProps> = ({ program, className }) => (
+let EventProgram: React.FC<EventProgramProps> = ({ program, className }) => (
     <div className={className}>
         {program.map(({ composer, piece }: Piece, i: number) => (
             <div key={i}>
@@ -227,8 +224,8 @@ interface EventWebsiteButtonProps {
     className?: string;
 }
 
-let EventWebsiteButton: React.SFC<EventWebsiteButtonProps> = ({ website, className }) => (
-    <a href={website} target="_blank" className={className}>
+let EventWebsiteButton: React.FC<EventWebsiteButtonProps> = ({ website, className }) => (
+    <a href={website} target="_blank" rel="noopener" className={className}>
         {`Tickets & Info`}
     </a>
 );

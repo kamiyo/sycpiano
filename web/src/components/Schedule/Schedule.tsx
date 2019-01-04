@@ -1,7 +1,8 @@
 import moment from 'moment-timezone';
 import { parse } from 'qs';
 import * as React from 'react';
-import { css } from 'react-emotion';
+
+import { css } from '@emotion/core';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
 import EventList from 'src/components/Schedule/EventList';
@@ -49,9 +50,9 @@ class Schedule extends React.Component<ScheduleProps, { search: string; }> {
     render() {
         const { isMobile } = this.props;
         return (
-            <div className={scheduleStyles}>
+            <div css={scheduleStyles}>
                 <Search search={this.state.search} setSearch={this.setSearch} />
-                <div className={css` height: 100%; `}>
+                <div css={css` height: 100%; `}>
                     <Switch>
                         <Route
                             path="/schedule/upcoming/:date?"
@@ -118,5 +119,6 @@ class Schedule extends React.Component<ScheduleProps, { search: string; }> {
     }
 }
 
-export type ScheduleType = typeof Schedule;
+export type ScheduleType = React.Component<ScheduleProps>;
+export type RequiredProps = ScheduleProps;
 export default Schedule;

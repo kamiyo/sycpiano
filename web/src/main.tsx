@@ -1,14 +1,11 @@
-import * as bluebird from 'bluebird';
+import bluebird from 'bluebird';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import 'babel-polyfill';
 global.Promise = bluebird;
 
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route } from 'react-router-dom';
-
-import 'src/styles/global';
 
 import store from 'src/store';
 

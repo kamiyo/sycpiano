@@ -7,7 +7,7 @@ const common = require('./webpack.common.config.js');
 const webpack = require('webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const os = require('os');
-const threadLoader = require('thread-loader');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const config = () => {
     return merge(common.config, {
@@ -40,6 +40,9 @@ const config = () => {
             }),
             new webpack.DefinePlugin({
                 MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music_dev'),
+            }),
+            new BundleAnalyzerPlugin({
+                openAnalyzer: false,
             }),
         ],
     });

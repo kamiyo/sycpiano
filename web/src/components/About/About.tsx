@@ -1,6 +1,8 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import { fetchBioAction } from 'src/components/About/actions';
 import { Blurb } from 'src/components/About/types';
@@ -9,7 +11,6 @@ import { setOnScroll } from 'src/components/App/NavBar/actions';
 import { easeQuadOut } from 'd3-ease';
 import TweenLite from 'gsap/TweenLite';
 
-// import blurbs from 'src/components/About/blurbs';
 import { LazyImage } from 'src/components/LazyImage';
 
 import { offWhite } from 'src/styles/colors';
@@ -22,23 +23,23 @@ import { GlobalStateShape } from 'src/types';
 
 const pictureHeight = 250;
 
-const Paragraph = styled('p')`
+const Paragraph = styled.p`
     font-family: ${lato2};
     font-size: 1.2em;
     line-height: 2em;
     margin: 1.6em 0;
 
-    ${/*sc-selector*/ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         font-size: 1em;
         line-height: 1.6em;
         margin: 1.3em 0;
     }
 `;
 
-const SpaceFiller = styled('div')`
+const SpaceFiller = styled.div`
     display: none;
 
-    ${/*sc-selector*/ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         display: block;
         height: ${pictureHeight}px;
         width: 100%;
@@ -46,70 +47,14 @@ const SpaceFiller = styled('div')`
     }
 `;
 
-const TextGroup = styled('div')`
-    ${/*sc-selector*/ screenXSorPortrait} {
+const TextGroup = styled.div`
+    ${screenXSorPortrait} {
         background-color: white;
         padding: 20px 20px;
     }
 `;
 
-const AboutText: React.SFC<{ className?: string, bio?: Blurb[] }> = (props) => (
-    <div className={props.className}>
-        <SpaceFiller />
-        <TextGroup>
-            {props.bio.map(({ text }, i) => {
-                if (i === 0) {
-                    const nameLocation = text.indexOf('Sean Chen');
-                    const name = text.slice(nameLocation, nameLocation + 9);
-                    const beforeName = text.slice(0, nameLocation);
-                    const afterName = text.slice(nameLocation + 9);
-                    return (
-                        <Paragraph key={i}>
-                            {beforeName}
-                            <span className={css` font-family: ${lato3}; `}>
-                                {name}
-                            </span>
-                            {afterName}
-                        </Paragraph>
-                    );
-                }
-                return <Paragraph key={i}>{text}</Paragraph>;
-            })}
-        </TextGroup>
-    </div>
-);
-
-interface ImageContainerProps { currScrollTop: number; bgImage?: string; }
-
-const ImageContainer = styled<ImageContainerProps, 'div'>('div')`
-    flex: 1;
-    ${props => props.bgImage && `background-image: url(${props.bgImage});`}
-    background-size: cover;
-    background-position: center -100px;
-    background-attachment: initial;
-    background-repeat: no-repeat;
-    background-color: black;
-    visibility: hidden;
-
-    ${/* sc-sel */ screenM} {
-        background-size: cover;
-        background-position: center 0;
-    }
-
-    /* stylelint-disable-next-line */
-    ${/* sc-sel */ screenXSorPortrait}, {
-        position: fixed;
-        z-index: 0;
-        top: ${navBarHeight}px;
-        height: ${pictureHeight}px;
-        width: 100%;
-        background-size: 106%;
-        background-position: center 15%;
-        opacity: ${props => `${easeQuadOut(Math.max(1 - props.currScrollTop / pictureHeight, 0))}`};
-    }
-`;
-
-const TextContainer = styled(AboutText)`
+const TextContainer = styled.div`
     box-sizing: border-box;
     flex: 0 0 45%;
     height: auto;
@@ -118,7 +63,7 @@ const TextContainer = styled(AboutText)`
     color: black;
     overflow-y: scroll;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         position: relative;
         z-index: 1;
         margin-top: 0;
@@ -130,17 +75,78 @@ const TextContainer = styled(AboutText)`
     }
 `;
 
-const AboutContainer = styled('div')`
-    ${pushed};
+const NameSpan = styled.span({
+    fontFamily: lato3,
+});
+
+class AboutText extends React.PureComponent<{ bio?: Blurb[] }> {
+    render() {
+        const props = this.props;
+        return (
+            <TextContainer>
+                <SpaceFiller />
+                <TextGroup>
+                    {props.bio.map(({ text }, i) => {
+                        if (i === 0) {
+                            const nameLocation = text.indexOf('Sean Chen');
+                            const name = text.slice(nameLocation, nameLocation + 9);
+                            const beforeName = text.slice(0, nameLocation);
+                            const afterName = text.slice(nameLocation + 9);
+                            return (
+                                <Paragraph key={i}>
+                                    {beforeName}
+                                    <NameSpan>{name}</NameSpan>
+                                    {afterName}
+                                </Paragraph>
+                            );
+                        }
+                        return <Paragraph key={i}>{text}</Paragraph>;
+                    })}
+                </TextGroup>
+            </TextContainer>
+        );
+    }
+}
+
+interface ImageContainerProps { currScrollTop: number; bgImage?: string; }
+
+const ImageContainer = styled.div<ImageContainerProps>`
+    flex: 1;
+    background-image: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
+    background-size: cover;
+    background-position: center -100px;
+    background-attachment: initial;
+    background-repeat: no-repeat;
+    background-color: black;
+    visibility: hidden;
+
+    ${screenM} {
+        background-size: cover;
+        background-position: center 0;
+    }
+
+    ${screenXSorPortrait} {
+        position: fixed;
+        z-index: 0;
+        top: ${navBarHeight.mobile}px;
+        height: ${pictureHeight}px;
+        width: 100%;
+        background-size: 106%;
+        background-position: center 15%;
+        opacity: ${props => easeQuadOut(Math.max(1 - props.currScrollTop / pictureHeight, 0))};
+    }
+`;
+
+const AboutContainer = styled.div`
+    ${pushed}
     width: 100%;
     background-color: black;
     position: absolute;
     display: flex;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         margin-top: 0;
         padding-top: ${navBarHeight.mobile}px;
-        height: 100%;
         display: block;
         overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
@@ -209,12 +215,12 @@ class About extends React.Component<AboutProps, AboutState> {
                 <ImageContainer
                     currScrollTop={this.props.scrollTop}
                     bgImage={this.state.bgImage}
-                    innerRef={this.bgRef}
+                    ref={this.bgRef}
                 >
                     <LazyImage
                         isMobile={this.props.isMobile}
                         id="about_lazy_image"
-                        classNames={{
+                        csss={{
                             mobile: imageLoaderStyle,
                             desktop: imageLoaderStyle,
                         }}
@@ -245,7 +251,7 @@ class About extends React.Component<AboutProps, AboutState> {
                         destroyCb={this.onImageDestroy}
                     />
                 </ImageContainer>
-                <TextContainer bio={this.props.bio} />
+                <AboutText bio={this.props.bio} />
             </AboutContainer>
         );
     }
@@ -265,5 +271,6 @@ const connectedAbout = connect<AboutStateToProps, AboutDispatchToProps, AboutPro
     },
 )(About);
 
-export type AboutType = typeof connectedAbout;
+export type AboutType = new (props: any) => React.Component<AboutProps>;
+export type RequiredProps = AboutOwnProps;
 export default connectedAbout;

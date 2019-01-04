@@ -1,13 +1,15 @@
 import startCase from 'lodash-es/startCase';
 import { parse } from 'qs';
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
 import { List, ListRowRenderer } from 'react-virtualized/dist/es/List';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import debounce from 'lodash-es/debounce';
 import { default as moment, Moment } from 'moment-timezone';
@@ -93,7 +95,7 @@ const placeholderStyle = css`
     align-items: center;
     justify-content: center;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 90%;
         font-size: 1.5rem;
     }
@@ -259,12 +261,12 @@ class EventList extends React.Component<EventListProps> {
             : metaDescriptions[this.props.type];
 
         return (
-            <>
+            <React.Fragment>
                 <Helmet>
                     <title>{title}</title>
                     <meta name="description" content={description} />
                 </Helmet>
-                <div className={fullWidthHeight}>
+                <div css={fullWidthHeight}>
                     {
                         <AutoSizer>
                             {({ height, width }) => (
@@ -286,7 +288,7 @@ class EventList extends React.Component<EventListProps> {
                         </AutoSizer>
                     }
                 </div>
-            </>
+            </React.Fragment>
         );
     }
 
@@ -310,7 +312,7 @@ class EventList extends React.Component<EventListProps> {
                 <div style={style} >
                     {this.props.hasMore && this.props.isFetchingList ?
                         <StyledLoadingInstance width={80} height={80} /> :
-                        <div className={placeholderStyle}>{
+                        <div css={placeholderStyle}>{
                             this.props.eventItems.length === 0 ? 'No Events Fetched' : ''
                         }</div>
                     }
@@ -321,7 +323,7 @@ class EventList extends React.Component<EventListProps> {
             const count = this.props.eventItems.filter((ev) => itemIsDay(ev)).length;
             return (
                 <div style={style}>
-                    <div className={firstElementStyle}>
+                    <div css={firstElementStyle}>
                         {this.props.type === 'search' ?
                             `Search results for "${decodeURI(this.currentQuery.q)}": ${count} results` :
                             ''

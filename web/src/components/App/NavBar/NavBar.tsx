@@ -1,7 +1,8 @@
 import * as React from 'react';
-import styled, { css, cx } from 'react-emotion';
 import ReactMedia from 'react-media';
 import { connect } from 'react-redux';
+
+import styled from '@emotion/styled';
 
 import HamburgerNav from 'src/components/App/NavBar/HamburgerNav';
 import { links } from 'src/components/App/NavBar/links';
@@ -22,11 +23,12 @@ interface NavBarStateToProps {
     readonly isExpanded?: boolean;
 }
 
-const navBarStyle = css`
+const StyledNavBar = styled.div<{ isHome: boolean; isExpanded: boolean }>`
+    visibility: hidden;
     height: ${navBarHeight.desktop}px;
     padding: 0 30px 0 0;
 
-    ${/* sc-selector */ screenMandPortrait}, {
+    ${screenMandPortrait} {
         height: ${navBarHeight.mobile}px;
         padding-right: 15px;
     }
@@ -39,37 +41,25 @@ const navBarStyle = css`
     left: 0;
     right: 0;
     z-index: 5000;
-    background-color: white;
+    background-color: ${props => (props.isExpanded || !props.isHome) ? 'white' : 'transparent'};
     transition: background-color 0.25s;
     box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.3);
 `;
 
-const homeNavBarStyle = (isExpanded: boolean) => css`
-    background-color: ${isExpanded ? 'white' : 'transparent'};
-`;
-
-const StyledNavBarLogo = styled(NavBarLogo) `
-    display: inline-flex;
-`;
-
-const NavBar: React.SFC<NavBarProps & NavBarStateToProps> = ({
+const NavBar: React.FC<NavBarProps & NavBarStateToProps> = ({
     currentBasePath,
     isExpanded,
     specificRouteName,
-    className,
 }) => {
     const isHome = currentBasePath === '/';
     return (
         <ReactMedia query={reactMediaMediumQuery}>
             {(matches: boolean) =>
-                <div
-                    className={cx(
-                        className,
-                        navBarStyle,
-                        { [homeNavBarStyle(isExpanded)]: isHome },
-                    )}
+                <StyledNavBar
+                    isHome={isHome}
+                    isExpanded={isExpanded}
                 >
-                    <StyledNavBarLogo
+                    <NavBarLogo
                         isHome={isHome}
                         isExpanded={isExpanded}
                         specificRouteName={specificRouteName}
@@ -86,7 +76,7 @@ const NavBar: React.SFC<NavBarProps & NavBarStateToProps> = ({
                             isMobile={false}
                         />
                     }
-                </div >
+                </StyledNavBar >
             }
         </ReactMedia>
     );

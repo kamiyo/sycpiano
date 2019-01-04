@@ -14,7 +14,7 @@ interface EventItemProps {
     readonly permaLink: string;
 }
 
-const EventItem: React.SFC<EventItemProps> = ({ event, style, isMobile, permaLink, type }) => (
+const EventItem: React.FC<EventItemProps> = ({ event, style, isMobile, permaLink, type }) => (
     <div style={style}>
         <EventItemBody {...event} isMobile={isMobile} permaLink={permaLink} listType={type} />
     </div>

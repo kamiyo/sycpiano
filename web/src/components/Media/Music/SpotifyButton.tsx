@@ -1,31 +1,17 @@
 import * as React from 'react';
-import styled from 'react-emotion';
 import { Link } from 'react-router-dom';
+
+import styled from '@emotion/styled';
 
 import { staticImage } from 'src/styles/imageUrls';
 import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { playlistWidth } from 'src/styles/variables';
 
-interface SpotifyButtonProps {
-    className?: string;
-    isMobile?: boolean;
-}
-
-let SpotifyButton: React.SFC<SpotifyButtonProps> = ({ className }) => {
-    return (
-        <div className={className}>
-            <Link style={{ display: 'block' }} to={'https://open.spotify.com/artist/6kMZjx0C2LY2v2fUsaN27y?si=8Uxb9kFTQPisQCvAyOybMQ'} target="_blank">
-                <img width={50} height={50} src={staticImage(`/soc-logos/spotify-color.svg`)} />
-            </Link>
-        </div>
-    );
-};
-
-SpotifyButton = styled<SpotifyButtonProps, {}>(SpotifyButton) `
+const StyledDiv = styled.div`
     position: fixed;
     bottom: 25px;
     right: calc(${playlistWidth.desktop} * 2 / 3);
-    transform: translateX(33.33%);
+    transform: translateX(calc(100% / 3));
     z-index: 50;
     filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
     transition: all 0.2s;
@@ -33,22 +19,29 @@ SpotifyButton = styled<SpotifyButtonProps, {}>(SpotifyButton) `
     &:hover {
         cursor: pointer;
         filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
-        transform: translateX(33.33%) translateY(-1px) scale(1.05);
+        transform: translateX(calc(100% / 3)) translateY(-1px) scale(1.05);
     }
 
-    a img {
-        display: block;
-    }
-
-    ${/* sc-selector */ screenM} {
+    ${screenM} {
         right: calc(${playlistWidth.tablet} * 2 / 3);
     }
 
-    /* stylelint-disable-next-line no-duplicate-selectors */
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         bottom: 10px;
-        right: 66.67%;
+        right: calc(100% * 2 / 3);
     }
 `;
+
+const StyledImg = styled.img` display: block; `;
+
+const StyledLink = styled(Link)` display: block; `;
+
+const SpotifyButton: React.FC<{}> = () => (
+    <StyledDiv>
+        <StyledLink to={'https://open.spotify.com/artist/6kMZjx0C2LY2v2fUsaN27y?si=8Uxb9kFTQPisQCvAyOybMQ'} target="_blank" rel="noopener">
+            <StyledImg width={50} height={50} src={staticImage(`/soc-logos/spotify-color.svg`)} />
+        </StyledLink>
+    </StyledDiv>
+);
 
 export default SpotifyButton;

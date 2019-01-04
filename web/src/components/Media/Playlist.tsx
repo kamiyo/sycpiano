@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { css, cx } from 'react-emotion';
 import { Transition } from 'react-transition-group';
+
+import { css } from '@emotion/core';
 
 import TweenLite from 'gsap/TweenLite';
 
@@ -32,13 +33,12 @@ const playlistContainerStyle = css`
     display: flex;
     ${noHighlight}
 
-    ${/* sc-selector */ screenM} {
+    ${screenM} {
         width: ${playlistContainerWidth.tablet};
         transform: translateX(${playlistWidth.tablet});
     }
 
-    /* stylelint-disable-next-line no-duplicate-selectors */
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 100%;
     }
 `;
@@ -82,10 +82,10 @@ class Playlist extends React.Component<PlaylistProps> {
                 timeout={400}
             >
                 <div
-                    className={cx(
+                    css={[
                         playlistContainerStyle,
                         props.extraStyles && props.extraStyles.div,
-                    )}
+                    ]}
                 >
                     {props.hasToggler &&
                         <PlaylistToggler
@@ -98,10 +98,10 @@ class Playlist extends React.Component<PlaylistProps> {
                     <ul
                         id={props.id}
                         ref={this.ulRef}
-                        className={cx(
+                        css={[
                             playlistStyle,
                             props.extraStyles && props.extraStyles.ul,
-                        )}
+                        ]}
                         onScroll={this.props.onScroll}
                     >
                         {this.props.children}

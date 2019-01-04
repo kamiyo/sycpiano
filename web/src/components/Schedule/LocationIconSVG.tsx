@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export const LocationIconSVG: React.SFC<{}> = () => (
+export const LocationIconSVG: React.FC<{}> = () => (
     <svg style={{ display: 'none' }}>
         <symbol id="location_icon_template">
             {/* <path strokeWidth="2" strokeMiterlimit="10" d="M200 351h200l100 150H100z" /> */}
@@ -9,7 +9,7 @@ export const LocationIconSVG: React.SFC<{}> = () => (
     </svg>
 );
 
-export const LocationIconInstance: React.SFC<React.SVGAttributes<{}>> = (props) => (
+export const LocationIconInstance: React.FC<React.SVGAttributes<{}>> = (props) => (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="100 50 400 400">
         <use xlinkHref="#location_icon_template" />
     </svg>

@@ -1,4 +1,4 @@
-/**
+/*
  * This is the global redux store.
  *
  * It takes reducers from different pages, combines them into a single reducer,

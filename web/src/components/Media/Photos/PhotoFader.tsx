@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { css } from 'react-emotion';
+
+import { css } from '@emotion/core';
 import { Transition } from 'react-transition-group';
 
 import TweenLite from 'gsap/TweenLite';
@@ -23,7 +24,7 @@ interface PhotoFaderProps {
     readonly isCurrent: boolean;
 }
 
-const PhotoFader: React.SFC<PhotoFaderProps> = ({ item, isCurrent }) => {
+const PhotoFader: React.FC<PhotoFaderProps> = ({ item, isCurrent }) => {
     const urlWebP = resizedPathFromItem(item, { gallery: true, webp: true });
     const urlJpg = resizedPathFromItem(item, { gallery: true });
     return (
@@ -39,7 +40,7 @@ const PhotoFader: React.SFC<PhotoFaderProps> = ({ item, isCurrent }) => {
             <LazyImage
                 id={`${idFromItem(item)}_view`}
                 alt="Sean Chen Pianist Photo Viewer"
-                classNames={{
+                csss={{
                     desktop: css` visibility: hidden; `,
                 }}
                 desktopAttributes={{

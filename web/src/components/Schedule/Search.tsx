@@ -1,8 +1,10 @@
 import { rgba } from 'polished';
 import { stringify } from 'qs';
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
 import { RouteComponentProps, withRouter } from 'react-router';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import { SearchIconInstance, SearchIconSVG } from 'src/components/Schedule/SearchIconSVG';
 
@@ -21,7 +23,7 @@ type SearchProps = {
     setSearch: (search: string) => void;
 } & RouteComponentProps<{}>;
 
-const Container = styled<{ focused: boolean }, 'div'>('div')`
+const Container = styled.div<{ focused: boolean }>`
     width: 90%;
     max-width: 30rem;
     height: 50px;
@@ -43,17 +45,17 @@ const Container = styled<{ focused: boolean }, 'div'>('div')`
     }
 `;
 
-const Label = styled<{ focused: boolean }, 'label'>('label')`
+const Label = styled.label<{ focused: boolean }>`
     flex: 0 0 auto;
     font-size: 1.5rem;
     color: ${props => props.focused ? lightBlue : unfocusedGray};
 
-    ${/* sc-selector */screenXSandPortrait} {
+    ${screenXSandPortrait} {
         font-size: 1.2rem;
     }
 `;
 
-const Span = styled<{ focused: boolean }, 'span'>('span')`
+const Span = styled.span<{ focused: boolean }>`
     flex: 1 1 auto;
     margin: 0.6rem 0 0.6rem 0.6rem;
     border-bottom: 1px solid ${props => props.focused ? focusedBlue : unfocusedGray};
@@ -61,7 +63,7 @@ const Span = styled<{ focused: boolean }, 'span'>('span')`
     position: relative;
 `;
 
-const Input = styled('input')`
+const Input = styled.input`
     flex: 1 1 auto;
     border: none;
     font-family: ${lato1};
@@ -69,7 +71,7 @@ const Input = styled('input')`
     width: 100%;
 `;
 
-const ResetButton = styled<{ focused: boolean }, 'div'>('div')`
+const ResetButton = styled.div<{ focused: boolean }>`
     ${noHighlight}
     flex: 0 0 auto;
     text-align: center;
@@ -100,7 +102,7 @@ class Search extends React.Component<SearchProps, { focused: boolean; }> {
 
     onSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-            this.props.history.push(`/schedule/search${stringify({ q: this.props.search}, { addQueryPrefix: true })}`);
+            this.props.history.push(`/schedule/search${stringify({ q: this.props.search }, { addQueryPrefix: true })}`);
             event.preventDefault();
         }
     }
@@ -134,9 +136,21 @@ class Search extends React.Component<SearchProps, { focused: boolean; }> {
                             onBlur={this.onBlur}
                             onKeyPress={this.onSubmit}
                         />
-                        {this.props.search !== '' && <ResetButton focused={this.state.focused} onClick={this.onReset} >{'\u00D7'}</ResetButton>}
+                        {this.props.search !== '' &&
+                            <ResetButton
+                                focused={this.state.focused}
+                                onClick={this.onReset}
+                            >
+                                {'\u00D7'}
+                            </ResetButton>}
                     </Span>
-                    <a href={`/schedule/search${stringify({ q: this.props.search}, { addQueryPrefix: true })}`} className={css` flex: 0 0 auto; `}>
+                    <a
+                        href={`/schedule/search${stringify(
+                            { q: this.props.search },
+                            { addQueryPrefix: true },
+                        )}`}
+                        css={css` flex: 0 0 auto; `}
+                    >
                         <SearchIconInstance />
                     </a>
                 </Container>

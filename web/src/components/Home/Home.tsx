@@ -1,13 +1,21 @@
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
 import { Transition } from 'react-transition-group';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import { Elastic } from 'gsap/EasePack';
 import TweenLite from 'gsap/TweenLite';
 
 import { lato1, lato2, lato2i } from 'src/styles/fonts';
-import { generateSrcsetWidths, homeBackground, resizedImage, staticImage, sycChairVertical } from 'src/styles/imageUrls';
+import {
+    generateSrcsetWidths,
+    homeBackground,
+    resizedImage,
+    staticImage,
+    sycChairVertical,
+} from 'src/styles/imageUrls';
 import { container, noHighlight } from 'src/styles/mixins';
 import { navBarHeight } from 'src/styles/variables';
 
@@ -34,7 +42,7 @@ const Content = styled('div')`
     z-index: 100;
     overflow: hidden;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         height: calc(100% - ${navBarHeight.mobile}px);
     }
 `;
@@ -47,7 +55,7 @@ const Name = styled('div')`
     width: 100%;
     top: 31%;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         font-size: calc(100vw / 6.2);
         bottom: 63%;
         top: unset;
@@ -63,7 +71,7 @@ const Skills = styled('div')`
     width: 100%;
     top: 47%;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         font-size: calc(100vw / 16);
         bottom: 58%;
         top: unset;
@@ -84,7 +92,7 @@ const Handle = styled('div')`
         cursor: pointer;
     }
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 100%;
         bottom: 15%;
     }
@@ -139,7 +147,7 @@ const BackgroundCover = styled('div')`
             rgba(0, 0, 0, 0.2) 75%
         );
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         background-image:
             linear-gradient(
                 66deg,
@@ -167,7 +175,7 @@ const NavBarGradient = styled('div')`
             rgba(53, 53, 53, 0.27) 70%
         );
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         height: ${navBarHeight.mobile}px;
         background-image:
             linear-gradient(
@@ -188,7 +196,7 @@ const SocialContainer = styled('div')`
     left: 50%;
     transform: translateX(-50%);
 
-    ${/* sc-selector */ screenXSandPortrait} {
+    ${screenXSandPortrait} {
         bottom: 12%;
         font-size: 0.8rem;
         top: unset;
@@ -203,11 +211,6 @@ const StyledCopyright = styled('div')`
     font-weight: bold;
     color: white;
     padding: 20px 30px;
-
-    ${/* sc-selector */ screenXSandPortrait} {
-        width: 100%;
-        font-size: 0.8rem;
-    }
 `;
 
 const srcWidths = screenLengths.map((value) => (
@@ -225,7 +228,7 @@ const socials: {
     instagram: 'https://www.instagram.com/seanchenpiano',
 };
 
-const SocialLink = styled<{ show: boolean; canHover: boolean; }, 'a'>('a')`
+const SocialLink = styled.a<{ show: boolean; canHover: boolean; }>`
     padding: 1.5rem 0;
     width: calc(100vw / ${Object.keys(socials).length});
     max-width: 120px;
@@ -235,19 +238,17 @@ const SocialLink = styled<{ show: boolean; canHover: boolean; }, 'a'>('a')`
     pointer-events: ${props => props.show ? 'unset' : 'none'};
     filter: drop-shadow(0 0 0.5rem black);
 
-    ${/* sc-selector */ screenXSandPortrait} {
+    ${screenXSandPortrait} {
         padding: 0.8rem 0;
     }
 
-    /* stylelint-disable */
-    ${props => props.canHover && `
+    ${props => props.canHover ? `
         transition: transform 0.1s linear, filter 0.1s linear;
         &:hover {
             transform: scale(1.1);
             filter: drop-shadow(0 0 0.75rem black);
         }
-    `}
-    /* stylelint-enable */
+    ` : ''}
 `;
 
 interface SocialMediaLinkProps {
@@ -272,7 +273,12 @@ interface HomeState {
     canHover: { [key: string]: boolean; };
 }
 
-class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; }, HomeState > {
+interface HomeProps {
+    bgLoaded: () => void;
+    isMobile: boolean;
+}
+
+class Home extends React.Component<HomeProps, HomeState> {
 
     defaultCanHover = Object.keys(socials).reduce((prev, curr) => {
         return {
@@ -292,12 +298,36 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; },
 
     onSocialEnter = (id: number) => (el: HTMLLinkElement) => {
         const relative = id - (Object.keys(socials).length / 2 - 0.5);
-        TweenLite.fromTo(el, 0.25, { opacity: 0, y: `-50%`, x: `${relative * -100}%` }, { opacity: 1, y: `0%`, x: `0%`, delay: .05 * id, ease: Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
+        TweenLite.fromTo(el, 0.25,
+            {
+                opacity: 0,
+                y: `-50%`,
+                x: `${relative * -100}%`,
+            }, {
+                opacity: 1,
+                y: `0%`,
+                x: `0%`,
+                delay: .05 * id,
+                ease: Elastic.easeOut.config(1, 0.75),
+                clearProps: 'transform',
+            });
     }
 
     onSocialExit = (id: number) => (el: HTMLLinkElement) => {
         const relative = id - Math.floor(Object.keys(socials).length / 2);
-        TweenLite.fromTo(el, 0.25, { opacity: 1, y: `0%`, x: `0%` }, { opacity: 0, y: `-50%`, x: `${relative * -100}%` , delay: .05 * id, ease: Elastic.easeOut.config(1, 0.75), clearProps: 'transform' });
+        TweenLite.fromTo(el, 0.25,
+            {
+                opacity: 1,
+                y: `0%`,
+                x: `0%`,
+            }, {
+                opacity: 0,
+                y: `-50%`,
+                x: `${relative * -100}%`,
+                delay: .05 * id,
+                ease: Elastic.easeOut.config(1, 0.75),
+                clearProps: 'transform',
+            });
         this.setState({ canHover: this.defaultCanHover });
     }
 
@@ -312,7 +342,7 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; },
                     <LazyImage
                         isMobile={this.props.isMobile}
                         id="home_bg"
-                        classNames={{
+                        csss={{
                             mobile: mobileBackgroundStyle,
                             desktop: desktopBackgroundStyle,
                             loading: loadingStyle,
@@ -350,20 +380,18 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; },
                     <SocialContainer>
                         <Handle onClick={this.onHandleClick}>@seanchenpiano</Handle>
                         {
-                            Object.keys(socials).map((key, idx) => {
-                                return (
-                                    <Transition
-                                        key={key}
-                                        in={this.state.showSocial}
-                                        onEnter={this.onSocialEnter(idx)}
-                                        onExit={this.onSocialExit(idx)}
-                                        timeout={250 + 50 * idx}
-                                        onEntered={() => this.setState({ canHover: { ...this.state.canHover, [key]: true }})}
-                                    >
-                                        <SocialMediaLink canHover={this.state.canHover[key]} show={this.state.showSocial} url={socials[key]} social={key} />
-                                    </Transition>
-                                );
-                            })
+                            Object.keys(socials).map((key, idx) => (
+                                <Transition
+                                    key={key}
+                                    in={this.state.showSocial}
+                                    onEnter={this.onSocialEnter(idx)}
+                                    onExit={this.onSocialExit(idx)}
+                                    timeout={250 + 50 * idx}
+                                    onEntered={() => this.setState({ canHover: { ...this.state.canHover, [key]: true } })}
+                                >
+                                    <SocialMediaLink canHover={this.state.canHover[key]} show={this.state.showSocial} url={socials[key]} social={key} />
+                                </Transition>
+                            ))
                         }
                     </SocialContainer>
                     <StyledCopyright>Copyright © {moment().format('YYYY')} Sean Chen</StyledCopyright>
@@ -373,5 +401,6 @@ class Home extends React.Component<{ bgLoaded: () => void; isMobile: boolean; },
     }
 }
 
-export type HomeType = typeof Home;
+export type HomeType = React.Component<HomeProps>;
+export type RequiredProps = HomeProps;
 export default Home;

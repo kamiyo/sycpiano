@@ -23,10 +23,9 @@ const config = () => {
     let dialect: string;
     const dbUrl = process.env.DATABASE_URL;
     if (dbUrl) {
-        let entire;
         let portString;
         [
-            entire,
+            ,
             username,
             password,
             host,

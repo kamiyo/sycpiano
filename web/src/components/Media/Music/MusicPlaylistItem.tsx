@@ -1,5 +1,7 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import startCase from 'lodash-es/startCase';
 
@@ -30,30 +32,21 @@ const baseItemStyle = css`
     }
 `;
 
-const StyledMusicItem = styled('li')`
-    ${baseItemStyle}
-`;
+const StyledMusicItem = styled.li(baseItemStyle);
 
-const StyledCollectionItem = styled('li')`
-    ${baseItemStyle}
+const StyledCollectionItem = styled.li(baseItemStyle, css`
     margin-left: 15px;
     width: auto;
     border: none;
-`;
+`);
 
 interface HighlightProps { active: boolean; }
 
-const Highlight = styled<HighlightProps, 'div'>('div')`
+const Highlight = styled.div<HighlightProps>(({active}) => css`
     padding: 10px 10px 10px 15px;
-    border-left: 7px solid transparent;
-    ${(props) => props.active && `border-left-color: ${lightBlue};`}
+    border-left: 7px solid ${(active) ? lightBlue : 'transparent'};
     transition: all 0.15s;
-
-    ${/* sc-selector */ StyledCollectionItem as any} & {
-        border-left: 7px solid transparent;
-        ${(props) => props.active && `border-left: 7px solid ${lightBlue};`}
-    }
-`;
+`);
 
 const section = css`
     vertical-align: middle;
@@ -68,48 +61,48 @@ const h4style = css`
     line-height: 1rem;
 `;
 
-const TextLeft = styled('h4')`
-    ${h4style}
-`;
+const TextLeft = styled.h4(h4style);
 
-const TextRight = styled('h4')`
-    ${h4style}
-    margin: 0 0 0 10px;
-    font-size: 0.75rem;
-`;
+const TextRight = styled.h4(
+    h4style,
+    css`
+        margin: 0 0 0 10px;
+        font-size: 0.75rem;
+    `,
+);
 
-const StyledCollectionContainer = styled('li')`
-    padding: 10px 0;
-`;
+const StyledCollectionContainer = styled.li` padding: 10px 0; `;
 
-const StyledCollectionList = styled('ul')`
-    padding: 0;
-`;
+const StyledCollectionList = styled.ul` padding: 0; `;
 
-const StyledCollectionTitleContainer = styled('div')`
+const StyledCollectionTitleContainer = styled.div`
     position: relative;
     height: 100%;
     background-color: ${playlistBackground};
     padding: 10px 10px 10px 22px;
 `;
 
-const StyledInfo = styled('div')`
-    ${section as any}
-    width: 100%;
-    height: 100%;
-    position: relative;
-    padding: 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+const StyledInfo = styled.div(
+    section,
+    css`
+        width: 100%;
+        height: 100%;
+        position: relative;
+        padding: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
 
-    ${/* sc-selector */ StyledCollectionItem as any} &,
-    ${/* sc-selector */ StyledCollectionTitleContainer as any} & {
-        padding: 0;
-    }
-`;
+        ${`
+            ${StyledCollectionItem} &,
+            ${StyledCollectionTitleContainer} &
+        `} {
+            padding: 0;
+        }
+    `,
+);
 
-const StyledCategory = styled('div')`
+const StyledCategory = styled.div`
     background-color: #eee;
     padding: 12px 0 12px 22px;
     font-size: 1.2rem;
@@ -124,7 +117,7 @@ const getComposerTitleYear = (composer: string, piece: string, year: number) => 
     return `${compStr}${piece}${yearStr}`;
 };
 
-const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
+const MusicPlaylistItem: React.FC<MusicPlaylistItemProps> = ({
     play,
     item,
     currentItemId,
@@ -173,7 +166,7 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
                 <StyledCollectionContainer>
                     <StyledCollectionTitleContainer>
                         <StyledInfo>
-                            <h4 className={h4style}>{getComposerTitleYear(item.composer, item.piece, item.year)}</h4>
+                            <TextLeft>{getComposerTitleYear(item.composer, item.piece, item.year)}</TextLeft>
                         </StyledInfo>
                     </StyledCollectionTitleContainer>
                     <StyledCollectionList>
@@ -196,7 +189,6 @@ const MusicPlaylistItem: React.SFC<MusicPlaylistItemProps> = ({
                                     }}
                                 >
                                     <Highlight active={currentItemId === musicFile.id}>
-
                                         <StyledInfo>
                                             <TextLeft>
                                                 {musicFile.name}

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
 import { connect } from 'react-redux';
+
+import styled from '@emotion/styled';
 
 import { setOnScroll } from 'src/components/App/NavBar/actions';
 import AcclaimsList from 'src/components/Press/AcclaimsList';
@@ -25,6 +26,21 @@ interface PressOwnProps {
 
 type PressProps = PressStateToProps & PressDispatchToProps & PressOwnProps;
 
+const PressContainer = styled.div(
+    pushed,
+    container,
+    {
+        boxSizing: 'border-box',
+        position: 'absolute',
+        width: '100%',
+        top: 0,
+        [screenXSorPortrait]: {
+            marginTop: 0,
+            height: '100%',
+        },
+    },
+);
+
 class Press extends React.Component<PressProps> {
     componentDidMount() {
         this.props.isMobile && this.props.setOnScroll(navBarHeight.mobile);
@@ -32,26 +48,12 @@ class Press extends React.Component<PressProps> {
 
     render() {
         return (
-            <div className={this.props.className} onScroll={this.props.isMobile ? this.props.onScroll : null}>
-                <AcclaimsList className={css` height: 100%; `} isMobile={this.props.isMobile} />
-            </div>
+            <PressContainer onScroll={this.props.isMobile ? this.props.onScroll : null}>
+                <AcclaimsList isMobile={this.props.isMobile} />
+            </PressContainer>
         );
     }
 }
-
-const StyledPress = styled(Press) `
-    ${pushed}
-    ${container}
-    box-sizing: border-box;
-    position: absolute;
-    width: 100%;
-    top: 0;
-
-    ${/* sc-selector */ screenXSorPortrait} {
-        margin-top: 0;
-        height: 100%;
-    }
-`;
 
 const mapStateToProps = ({ navbar }: GlobalStateShape): PressStateToProps => ({
     onScroll: navbar.onScroll,
@@ -64,7 +66,8 @@ const mapDispatchToProps: PressDispatchToProps = {
 const ConnectedPress = connect<PressStateToProps, PressDispatchToProps>(
     mapStateToProps,
     mapDispatchToProps,
-)(StyledPress);
+)(Press);
 
-export type PressType = typeof ConnectedPress;
+export type PressType = React.Component<PressProps>;
+export type RequiredProps = PressOwnProps;
 export default ConnectedPress;

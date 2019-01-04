@@ -1,5 +1,7 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
+
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 
 const hamburgerLayerHeight = 3;
 const hamburgerLayerBorderRadius = '0px';
@@ -9,7 +11,7 @@ const hamburgerLayerOffsetMultiple = 10;
 const hamburgerMenuWidth = '35px';
 const hamburgerMenuHeight = `${hamburgerLayerOffsetMultiple * 2 + hamburgerLayerHeight}px`;
 
-const hamburgerLayerStyles = ({ backgroundColor }: { backgroundColor: string; }) => css`
+const hamburgerLayerStyles = (backgroundColor: string) => css`
     display: block;
     position: absolute;
     height: ${hamburgerLayerHeight}px;
@@ -32,24 +34,30 @@ interface HamburgerLayerProps {
     backgroundColor: string;
 }
 
-const HamburgerTop = styled<HamburgerLayerProps, 'span'>('span')`
-    ${(props) => hamburgerLayerStyles({ backgroundColor: props.backgroundColor })};
-    top: ${(props) => props.isExpanded ? hamburgerLayerOffsetMultiple : 0}px;
-    transform: ${(props) => props.isExpanded ? `rotate(-${hamburgerLayerExpandRotation}deg)` : 'none'};
-`;
+const HamburgerTop = styled.span<HamburgerLayerProps>(
+    (props) => hamburgerLayerStyles(props.backgroundColor),
+    (props) => ({
+        top: props.isExpanded ? hamburgerLayerOffsetMultiple : 0,
+        transform: props.isExpanded ? `rotate(-${hamburgerLayerExpandRotation}deg)` : 'none',
+    }),
+);
 
-const HamburgerMiddle = styled<HamburgerLayerProps, 'span'>('span')`
-    ${(props) => hamburgerLayerStyles({ backgroundColor: props.backgroundColor })};
-    top: ${hamburgerLayerOffsetMultiple}px;
-    opacity: ${(props) => props.isExpanded ? 0 : 1};
-    left: ${(props) => props.isExpanded ? '60px' : '0'};
-`;
+const HamburgerMiddle = styled.span<HamburgerLayerProps>(
+    (props) => hamburgerLayerStyles(props.backgroundColor),
+    (props) => ({
+        top: hamburgerLayerOffsetMultiple,
+        opacity: props.isExpanded ? 0 : 1,
+        left: props.isExpanded ? 60 : 0,
+    }),
+);
 
-const HamburgerBottom = styled<HamburgerLayerProps, 'span'>('span')`
-    ${(props) => hamburgerLayerStyles({ backgroundColor: props.backgroundColor })};
-    top: ${(props) => props.isExpanded ? hamburgerLayerOffsetMultiple : hamburgerLayerOffsetMultiple * 2}px;
-    transform: ${(props) => props.isExpanded ? `rotate(${hamburgerLayerExpandRotation}deg)` : 'none'};
-`;
+const HamburgerBottom = styled.span<HamburgerLayerProps>(
+    (props) => hamburgerLayerStyles(props.backgroundColor),
+    (props) => ({
+        top: props.isExpanded ? hamburgerLayerOffsetMultiple : hamburgerLayerOffsetMultiple * 2,
+        transform: props.isExpanded ? `rotate(${hamburgerLayerExpandRotation}deg)` : 'none',
+    }),
+);
 
 interface HamburgerMenuProps {
     isExpanded: boolean;
@@ -58,15 +66,7 @@ interface HamburgerMenuProps {
     layerColor: string;
 }
 
-let HamburgerMenu: React.SFC<HamburgerMenuProps> = (props) => (
-    <div className={props.className} onClick={props.onClick}>
-        <HamburgerTop isExpanded={props.isExpanded} backgroundColor={props.layerColor} />
-        <HamburgerMiddle isExpanded={props.isExpanded} backgroundColor={props.layerColor} />
-        <HamburgerBottom isExpanded={props.isExpanded} backgroundColor={props.layerColor} />
-    </div>
-);
-
-HamburgerMenu = styled(HamburgerMenu)`
+const StyledHamburger = styled.div`
     width: ${hamburgerMenuWidth};
     height: ${hamburgerMenuHeight};
     position: relative;
@@ -75,5 +75,13 @@ HamburgerMenu = styled(HamburgerMenu)`
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 `;
+
+const HamburgerMenu: React.FC<HamburgerMenuProps> = (props) => (
+    <StyledHamburger onClick={props.onClick}>
+        <HamburgerTop isExpanded={props.isExpanded} backgroundColor={props.layerColor} />
+        <HamburgerMiddle isExpanded={props.isExpanded} backgroundColor={props.layerColor} />
+        <HamburgerBottom isExpanded={props.isExpanded} backgroundColor={props.layerColor} />
+    </StyledHamburger>
+);
 
 export default HamburgerMenu;

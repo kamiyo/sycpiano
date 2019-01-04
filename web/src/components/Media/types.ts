@@ -1,3 +1,5 @@
+import { SerializedStyles } from '@emotion/css';
+
 export interface ChildRendererProps<T> {
     readonly key: number | string;
     readonly currentItemId: number | string;
@@ -8,8 +10,8 @@ export interface ChildRendererProps<T> {
 
 export interface PlaylistProps {
     readonly extraStyles?: {
-        div?: string;
-        ul?: string
+        div?: SerializedStyles;
+        ul?: SerializedStyles;
     };
     readonly hasToggler: boolean;
     readonly isShow: boolean;

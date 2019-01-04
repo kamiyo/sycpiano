@@ -1,5 +1,6 @@
 import * as React from 'react';
-import styled, { css, cx } from 'react-emotion';
+
+import { css, SerializedStyles } from '@emotion/core';
 
 import { lightBlue } from 'src/styles/colors';
 import { screenM, screenXSorPortrait } from 'src/styles/screens';
@@ -15,22 +16,57 @@ interface ShuffleButtonProps {
 const upClass = css`
     cursor: pointer;
     filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
-    transform: translateX(66.67%) translateY(-1px) scale(1.05);
+    transform: translateX(calc(100% * 2 / 3)) translateY(-1px) scale(1.05);
 `;
 
-class ShuffButton extends React.Component<ShuffleButtonProps, { extraClass: string }> {
-    state = {
-        extraClass: '',
+const baseClass = (on: boolean) => css`
+    position: fixed;
+    bottom: 25px;
+    right: calc(${playlistWidth.desktop} / 3);
+    transform: translateX(calc(100% * 2 / 3));
+    z-index: 50;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+    transition: all 0.2s;
+    background-color: ${on ? lightBlue : '#999'};
+    border-radius: 50%;
+
+    svg {
+        stroke: white;
+        vertical-align: middle;
+
+        '#outline': {
+            stroke: ${on ? lightBlue : '#999'};
+            transition: all 0.2s;
+        }
+    }
+
+    ${screenM} {
+        right: calc(${playlistWidth.tablet} / 3);
+    }
+
+    ${screenXSorPortrait} {
+        bottom: 10px;
+        right: calc(100% / 3);
+    }
+`;
+
+interface ShuffleButtonState {
+    extraClass: SerializedStyles | null | undefined;
+}
+
+class ShuffleButton extends React.Component<ShuffleButtonProps, ShuffleButtonState> {
+    state: ShuffleButtonState = {
+        extraClass: null,
     };
 
     render() {
-        const { className, onClick } = this.props;
+        const { on, onClick } = this.props;
         return (
             <div
-                className={cx(className, this.state.extraClass)}
+                css={[baseClass(on), this.state.extraClass]}
                 onClick={onClick}
-                onMouseDown={() => !this.props.isMobile && this.setState({ extraClass: '' })}
-                onMouseOut={() => !this.props.isMobile && this.setState({ extraClass: '' })}
+                onMouseDown={() => !this.props.isMobile && this.setState({ extraClass: null })}
+                onMouseOut={() => !this.props.isMobile && this.setState({ extraClass: null })}
                 onMouseOver={() => !this.props.isMobile && this.setState({ extraClass: upClass })}
                 onMouseUp={() => !this.props.isMobile && this.setState({ extraClass: upClass })}
             >
@@ -49,34 +85,4 @@ class ShuffButton extends React.Component<ShuffleButtonProps, { extraClass: stri
     }
 }
 
-export const ShuffleButton = styled<ShuffleButtonProps, { on: boolean }>(ShuffButton)`
-    position: fixed;
-    bottom: 25px;
-    right: calc(${playlistWidth.desktop} / 3);
-    transform: translateX(66.67%);
-    z-index: 50;
-    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
-    transition: all 0.2s;
-    background-color: ${props => props.on ? lightBlue : '#999'};
-    border-radius: 50%;
-
-    svg {
-        stroke: white;
-        vertical-align: middle;
-
-        #outline {
-            stroke: ${props => props.on ? lightBlue : '#999'};
-            transition: all 0.2s;
-        }
-    }
-
-    ${/* sc-selector */ screenM} {
-        right: calc(${playlistWidth.tablet} / 3);
-    }
-
-    /* stylelint-disable-next-line no-duplicate-selectors */
-    ${/* sc-selector */ screenXSorPortrait} {
-        bottom: 10px;
-        right: calc(33.33%);
-    }
-`;
+export default ShuffleButton;

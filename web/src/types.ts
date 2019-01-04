@@ -12,19 +12,9 @@ import { videoPlayerReducer, videoPlaylistReducer } from 'src/components/Media/V
 import { acclaimsListReducer } from 'src/components/Press/reducers';
 import { scheduleReducer } from 'src/components/Schedule/reducers';
 
-import { Store } from 'react-redux';
+import { Store } from 'redux';
 
-import { AboutType } from 'src/components/About/About';
 import { NavBarStateShape } from 'src/components/App/NavBar/types';
-import { ContactType } from 'src/components/Contact/Contact';
-import { HomeType } from 'src/components/Home/Home';
-import { MediaType } from 'src/components/Media/Media';
-import { AudioVisualizerType } from 'src/components/Media/Music/audioVisualizerBase';
-import { MusicType } from 'src/components/Media/Music/Music';
-import { PhotosType } from 'src/components/Media/Photos/Photos';
-import { VideosType } from 'src/components/Media/Videos/Videos';
-import { PressType } from 'src/components/Press/Press';
-import { ScheduleType } from 'src/components/Schedule/Schedule';
 
 export interface GlobalStateShape {
     readonly about?: AboutStateShape;
@@ -56,13 +46,12 @@ export interface Reducers {
     readonly [key: string]: AnyReducerType;
 }
 
-export type AnyComponentType = AboutType | PressType | ScheduleType | HomeType | MediaType | ContactType |
-                                MusicType | PhotosType | VideosType | AudioVisualizerType;
+export type AnyComponent = (new (props: any) => React.Component<any>) | React.FunctionComponent<any>;
 
 export type AsyncStore = Store<GlobalStateShape | {}> & { async?: Reducers };
 
 export interface AsyncModule {
-    Component: AnyComponentType;
+    Component: AnyComponent;
     reducers?: {
         [key: string]: AnyReducerType;
     };

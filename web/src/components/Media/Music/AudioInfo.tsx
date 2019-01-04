@@ -1,7 +1,8 @@
 import * as React from 'react';
-import styled from 'react-emotion';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
+
+import styled from '@emotion/styled';
 
 import TweenLite from 'gsap/TweenLite';
 
@@ -23,7 +24,7 @@ interface AudioInfoProps {
     matchParams: boolean;
 }
 
-const AudioInfoContainer = styled('div')`
+const AudioInfoContainer = styled.div`
     ${noHighlight}
     width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
@@ -41,12 +42,11 @@ const AudioInfoContainer = styled('div')`
     color: white;
     padding-bottom: 3rem;
 
-    ${/* sc-selector */ screenM} {
+    ${screenM} {
         width: calc(100% - ${playlistContainerWidth.tablet});
     }
 
-    /* stylelint-disable-next-line no-duplicate-selectors */
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 100%;
         height: 360px;
         top: ${navBarHeight.mobile}px;
@@ -54,21 +54,21 @@ const AudioInfoContainer = styled('div')`
     }
 `;
 
-const ComposerTitle = styled('div')`
+const ComposerTitle = styled.div`
     padding: 0 20px;
     font-size: 2.2rem;
     line-height: 3.2rem;
     width: 100%;
     overflow-x: hidden;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         white-space: nowrap;
         font-size: 1.4rem;
         line-height: 2rem;
     }
 `;
 
-const Marquee = styled('div')`
+const Marquee = styled.div`
     width: fit-content;
     position: relative;
     white-space: nowrap;
@@ -82,18 +82,18 @@ const Marquee = styled('div')`
     }
 `;
 
-const Movement = styled('div')`
+const Movement = styled.div`
     padding: 0 10px;
     font-size: 2.2rem;
     line-height: 3.2rem;
 `;
 
-const ContributingOrDuration = styled('div')`
+const ContributingOrDuration = styled.div`
     padding: 0 10px;
     font-size: 2rem;
     line-height: 3.2rem;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         font-size: 1.1rem;
         line-height: 1.5rem;
     }
@@ -110,14 +110,22 @@ class AudioInfo extends React.Component<AudioInfoProps> {
         this.marquee.current.removeAttribute('style');
         this.titleDiv.current.removeAttribute('style');
         const divWidth = this.titleDiv.current.offsetWidth;
-        const spanWidth = (this.marquee.current.children[0] as HTMLDivElement).offsetWidth;
+        const spanWidth = (this.marquee.current.children[ 0 ] as HTMLDivElement).offsetWidth;
         if (divWidth > spanWidth) {
             this.marquee.current.style.left = `${(divWidth - spanWidth) / 2}px`;
             this.titleDiv.current.style.padding = '0';
             this.secondSpan.current.style.visibility = 'hidden';
         } else {
             const dur = this.marquee.current.offsetWidth / 100;
-            this.tween = TweenLite.fromTo(this.marquee.current, dur, { x: '0%' }, { x: '-50%', ease: 'linear', clearProps: 'transform', delay: 3, onComplete: () => this.tween.restart(true) });
+            this.tween = TweenLite.fromTo(this.marquee.current, dur,
+                { x: '0%' },
+                {
+                    x: '-50%',
+                    ease: 'linear',
+                    clearProps: 'transform',
+                    delay: 3,
+                    onComplete: () => this.tween.restart(true),
+                });
             this.secondSpan.current.style.visibility = 'unset';
         }
     }
@@ -169,8 +177,8 @@ class AudioInfo extends React.Component<AudioInfoProps> {
                     </Helmet>
                 }
                 <AudioInfoContainer>
-                    <ComposerTitle innerRef={this.titleDiv}>
-                        <Marquee innerRef={this.marquee}>
+                    <ComposerTitle ref={this.titleDiv}>
+                        <Marquee ref={this.marquee}>
                             <span>{marqueeText}</span><span ref={this.secondSpan}>{marqueeText}</span>
                         </Marquee>
                     </ComposerTitle>

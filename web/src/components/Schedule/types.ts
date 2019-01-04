@@ -121,16 +121,16 @@ export interface LatLngLiteral {
 
 export declare class LatLng {
     constructor(lat: number, lng: number, noWrap?: boolean);
-    /** Comparison function. */
+    /* Comparison function. */
     equals(other: LatLng): boolean;
-    /** Returns the latitude in degrees. */
+    /* Returns the latitude in degrees. */
     lat: number;
-    /** Returns the longitude in degrees. */
+    /* Returns the longitude in degrees. */
     lng: number;
-    /** Converts to string representation. */
+    /* Converts to string representation. */
     toString(): string;
-    /** Returns a string of the form "lat,lng". We round the lat/lng values to 6 decimal places by default. */
+    /* Returns a string of the form "lat,lng". We round the lat/lng values to 6 decimal places by default. */
     toUrlValue(precision?: number): string;
-    /** Converts to JSON representation. This function is intended to be used via JSON.stringify. */
+    /* Converts to JSON representation. This function is intended to be used via JSON.stringify. */
     toJSON(): LatLngLiteral;
 }

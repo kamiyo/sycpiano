@@ -1,13 +1,12 @@
 import * as express from 'express';
 import * as path from 'path';
 
-import * as Promise from 'bluebird';
+import Promise from 'bluebird';
 
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-/* tslint:disable-next-line:no-var-requires */
-const forest = require('forest-express-sequelize');
+import * as forest from 'forest-express-sequelize';
 
 import { createCalendarEvent, deleteCalendarEvent, getCalendarSingleEvent, getLatLng, getTimeZone, updateCalendar } from './gapi/calendar';
 import { getHash } from './hash';
@@ -15,7 +14,7 @@ import db from './models';
 
 import { CalendarAttributes, CalendarInstance, MusicAttributes, MusicFileAttributes, MusicFileInstance, MusicFileModel, MusicInstance } from 'types';
 
-const adminRest = express();
+const adminRest = express.Router();
 
 adminRest.use(express.json());
 adminRest.use(express.urlencoded({ extended: true }));

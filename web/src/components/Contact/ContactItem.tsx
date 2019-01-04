@@ -1,5 +1,7 @@
 import * as React from 'react';
-import styled, { css } from 'react-emotion';
+
+import { css, SerializedStyles } from '@emotion/core';
+import styled from '@emotion/styled';
 
 import TweenLite from 'gsap/TweenLite';
 
@@ -20,30 +22,30 @@ import { screenWidths, screenXSorPortrait } from 'src/styles/screens';
 const imageInsetShadowColor = '#222';
 const alternateBackgroundColor = '#eee';
 
-const photosAttributesMap = new Map<string, { jpg: string; webp: string; css: string; }>([
-        ['Sean Chen', {
-            jpg: seanChenContactPhotoUrl(),
-            webp: seanChenContactPhotoUrl('webp'),
-            css: css({
-                backgroundSize: 'cover',
-                backgroundPosition: '0 28%',
-            }),
-        }],
-        ['Joel Harrison', {
-            jpg: joelHarrisonContactPhotoUrl(),
-            webp: joelHarrisonContactPhotoUrl('webp'),
-            css: css({
-                backgroundSize: '125%',
-                backgroundPosition: 'center 40%',
-            }),
-        }],
+const photosAttributesMap = new Map<string, { jpg: string; webp: string; css: SerializedStyles; }>([
+    ['Sean Chen', {
+        jpg: seanChenContactPhotoUrl(),
+        webp: seanChenContactPhotoUrl('webp'),
+        css: css({
+            backgroundSize: 'cover',
+            backgroundPosition: '0 28%',
+        }),
+    }],
+    ['Joel Harrison', {
+        jpg: joelHarrisonContactPhotoUrl(),
+        webp: joelHarrisonContactPhotoUrl('webp'),
+        css: css({
+            backgroundSize: '125%',
+            backgroundPosition: 'center 40%',
+        }),
+    }],
 ]);
 
 interface ImageContainerProps { bgImage?: string; contact: string; }
 
-const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
-    ${props => props.bgImage && `background-image: url(${props.bgImage});`}
+const ImageContainer = styled.div<ImageContainerProps>`
     ${props => photosAttributesMap.get(props.contact).css}
+    background-image: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
     background-attachment: initial;
     background-repeat: no-repeat;
     background-color: black;
@@ -51,20 +53,40 @@ const ImageContainer = styled<ImageContainerProps, 'div'>('div') `
     flex: 0 0 55%;
     box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         height: 75vw;
     }
 `;
 
-const StyledContactInfo = styled(ContactInfo) `
-    flex: 1 0 31%;
-`;
+const StyledContactInfo = styled(ContactInfo)` flex: 1 0 31%; `;
 
-const StyledContactSocialMedia = styled(ContactSocialMedia) ` flex: 1 0 auto; `;
+const StyledContactSocialMedia = styled(ContactSocialMedia)` flex: 1 0 auto; `;
 
 const imageLoaderStyle = css`
     visibility: hidden;
     position: absolute;
+`;
+
+const StyledContactItem = styled.div`
+    ${pushed}
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    flex: 0 1 600px;
+    width: 100%;
+
+    &:nth-of-type(2n) {
+        background-color: ${alternateBackgroundColor};
+    }
+
+    ${screenXSorPortrait} {
+        height: fit-content;
+        padding-bottom: 3em;
+
+        &:not(:first-of-type) {
+            margin-top: 0;
+        }
+    }
 `;
 
 interface ContactItemState {
@@ -94,7 +116,6 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
 
     render() {
         const {
-            className,
             name,
             title,
             organization,
@@ -104,16 +125,16 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
             isMobile,
         } = this.props;
         return (
-            <div className={className}>
+            <StyledContactItem>
                 <ImageContainer
                     bgImage={this.state.bgImage}
-                    innerRef={this.bgRef}
+                    ref={this.bgRef}
                     contact={name}
                 >
                     <LazyImage
                         isMobile={isMobile}
                         id={`contact_lazy_image_${name.replace(/ /g, '_')}`}
-                        classNames={{
+                        csss={{
                             mobile: imageLoaderStyle,
                             desktop: imageLoaderStyle,
                         }}
@@ -154,31 +175,9 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
                 />
 
                 <StyledContactSocialMedia social={social} />
-            </div>
+            </StyledContactItem>
         );
     }
 }
 
-const StyledContactItem = styled(ContactItem) `
-    ${pushed};
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    flex: 0 1 600px;
-    width: 100%;
-
-    &:nth-child(2n) {
-        background-color: ${alternateBackgroundColor};
-    }
-
-    ${/* sc-selector */ screenXSorPortrait} {
-        height: fit-content;
-        padding-bottom: 3em;
-
-        &:not(:first-child) {
-            margin-top: 0;
-        }
-    }
-`;
-
-export default StyledContactItem;
+export default ContactItem;

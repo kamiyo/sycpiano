@@ -1,21 +1,22 @@
 import React, { PureComponent } from 'react';
-import { AnyComponentType, AsyncModule } from 'src/types';
+import { AnyComponent, AsyncModule } from 'src/types';
 
-interface AsyncComponentProps {
+interface AsyncComponentBase {
     moduleProvider?: () => Promise<AsyncModule>;
-    [props: string]: any;
 }
+
+type AsyncComponentProps<P> = AsyncComponentBase & P;
 
 interface AsyncComponentState {
-    Component?: AnyComponentType;
+    Component: AnyComponent;
 }
 
-export default class AsyncComponent extends PureComponent<AsyncComponentProps, AsyncComponentState> {
+export default class AsyncComponent<P> extends PureComponent<AsyncComponentProps<P>, AsyncComponentState> {
     state: AsyncComponentState = {
         Component: null,
     };
 
-    constructor(props: AsyncComponent) {
+    constructor(props: AsyncComponentProps<P>) {
         super(props);
         this.props.moduleProvider().then(({ Component }) => {
             this.setState({ Component });

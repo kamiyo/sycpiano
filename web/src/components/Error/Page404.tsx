@@ -1,11 +1,12 @@
 import * as React from 'react';
-import styled from 'react-emotion';
 import { Helmet } from 'react-helmet';
+
+import styled from '@emotion/styled';
 
 import { lato2 } from 'src/styles/fonts';
 import { titleStringBase } from 'src/utils';
 
-const StyledDiv = styled('div') `
+const StyledDiv = styled.div`
     height: 100%;
     width: 100%;
     position: absolute;
@@ -16,7 +17,7 @@ const StyledDiv = styled('div') `
     justify-content: center;
 `;
 
-const Page404: React.SFC<{}> = () => (
+const Page404: React.FunctionComponent<{}> = () => (
     <>
         <Helmet>
             <title>{`${titleStringBase} | 404: Page Not Found`}</title>
@@ -27,4 +28,5 @@ const Page404: React.SFC<{}> = () => (
     </>
 );
 
+export type Page404Type = React.FunctionComponent<{}>;
 export default Page404;

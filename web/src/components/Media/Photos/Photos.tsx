@@ -1,6 +1,7 @@
 import * as React from 'react';
-import styled from 'react-emotion';
 import { connect } from 'react-redux';
+
+import styled from '@emotion/styled';
 
 import PhotoFader from 'src/components/Media/Photos/PhotoFader';
 import PhotoList from 'src/components/Media/Photos/PhotoList';
@@ -31,13 +32,13 @@ interface PhotosOwnProps {
 
 type PhotosProps = PhotosStateToProps & PhotosDispatchToProps & PhotosOwnProps;
 
-const StyledPhotos = styled('div') `
+const StyledPhotos = styled('div')`
     ${pushed}
     width: 100%;
     background-color: black;
     position: relative;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         height: 100%;
         margin-top: 0;
         overflow-y: scroll;
@@ -45,12 +46,12 @@ const StyledPhotos = styled('div') `
     }
 `;
 
-const StyledPhotoViewer = styled('div') `
+const StyledPhotoViewer = styled('div')`
     position: relative;
     width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
 
-    ${/* sc-selector */ screenM} {
+    ${screenM} {
         width: calc(100% - ${playlistContainerWidth.tablet});
     }
 
@@ -121,5 +122,6 @@ const ConnectedPhotos = connect<PhotosStateToProps, PhotosDispatchToProps>(
     mapDispatchToProps,
 )(Photos);
 
-export type PhotosType = typeof ConnectedPhotos;
+export type PhotosType = React.Component<PhotosProps>;
+export type RequiredProps = PhotosOwnProps;
 export default ConnectedPhotos;

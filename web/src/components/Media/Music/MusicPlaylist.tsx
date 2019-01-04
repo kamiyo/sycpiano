@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { css } from 'react-emotion';
 import { connect } from 'react-redux';
 
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
+
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
-import { ShuffleButton } from 'src/components/Media/Music/ShuffleButton';
+import ShuffleButton from 'src/components/Media/Music/ShuffleButton';
 import SpotifyButton from 'src/components/Media/Music/SpotifyButton';
 import Playlist from 'src/components/Media/Playlist';
 
@@ -33,7 +35,7 @@ type MusicPlaylistProps = MusicPlaylistOwnProps & MusicPlaylistStateToProps;
 const musicPlaylistStyle = css`
     position: initial;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         top: 360px;
         position: relative;
         overflow: visible;
@@ -44,18 +46,18 @@ const musicULStyle = css`
     background-color: ${playlistBackground};
     padding-bottom: 80px;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         padding-bottom: 60px;
     }
 `;
 
-const playlistContainerStyle = css`
+const PlaylistContainer = styled.div`
     width: fit-content;
     height: 100%;
     right: 0;
     position: absolute;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         width: 100%;
         height: auto;
         position: unset;
@@ -63,7 +65,7 @@ const playlistContainerStyle = css`
     }
 `;
 
-const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
+const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
     isMobile,
     items,
     onClick,
@@ -74,7 +76,7 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
     isShuffle,
     toggleShuffle,
 }) => (
-        <div className={playlistContainerStyle}>
+        <PlaylistContainer>
             <Playlist
                 extraStyles={{ div: musicPlaylistStyle, ul: musicULStyle }}
                 isShow={true}
@@ -94,9 +96,9 @@ const MusicPlaylist: React.SFC<MusicPlaylistProps> = ({
                     />
                 ))}
             </Playlist>
-            <SpotifyButton isMobile={isMobile} />
+            <SpotifyButton />
             <ShuffleButton isMobile={isMobile} onClick={toggleShuffle} on={isShuffle} />
-        </div>
+        </PlaylistContainer>
     );
 
 const mapStateToProps = ({ audio_playlist }: GlobalStateShape) => ({

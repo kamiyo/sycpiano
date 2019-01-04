@@ -1,5 +1,6 @@
 import * as React from 'react';
-import styled from 'react-emotion';
+
+import styled from '@emotion/styled';
 
 interface EventMonthItemBodyProps {
     readonly month: string;
@@ -7,7 +8,7 @@ interface EventMonthItemBodyProps {
     readonly className?: string;
 }
 
-const EventMonthItemBottomBorder = styled('div')`
+const EventMonthItemBottomBorder = styled.div`
     margin: 0 auto 1px;
     width: 80%;
     max-width: 1240px;
@@ -18,15 +19,15 @@ const EventMonthItemBottomBorder = styled('div')`
     background: radial-gradient(circle farthest-side at 0%, black, white 90%);
 `;
 
-let EventMonthItemMonthYear: React.SFC<EventMonthItemBodyProps> = ({ className, month, year }) => (
-    <div className={className}>{`${month} ${year}`}</div>
-);
-
-EventMonthItemMonthYear = styled(EventMonthItemMonthYear)`
+const StyledDiv = styled.div`
     padding: 20px 0 0 28px;
     width: 80%;
     max-width: 1240px;
     margin: 0 auto;
 `;
+
+const EventMonthItemMonthYear: React.FC<EventMonthItemBodyProps> = ({ className, month, year }) => (
+    <StyledDiv className={className}>{`${month} ${year}`}</StyledDiv>
+);
 
 export { EventMonthItemBottomBorder, EventMonthItemMonthYear };
