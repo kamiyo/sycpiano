@@ -148,6 +148,7 @@ const AboutContainer = styled.div`
         margin-top: 0;
         padding-top: ${navBarHeight.mobile}px;
         display: block;
+        height: 100%;
         overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
     }
