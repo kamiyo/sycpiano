@@ -211,6 +211,10 @@ const StyledCopyright = styled('div')`
     font-weight: bold;
     color: white;
     padding: 20px 30px;
+
+    ${screenXSandPortrait} {
+        width: 100%;
+    }
 `;
 
 const srcWidths = screenLengths.map((value) => (

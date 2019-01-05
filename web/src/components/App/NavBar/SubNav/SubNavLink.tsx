@@ -69,7 +69,7 @@ const StyledLi = styled.li(noHighlight);
 const SubNavLink: React.FC<SubNavLinkProps> = ({ basePath, link, onClick, isHome, isMobile }) => (
     <StyledLi>
         <StyledSubNavLink
-            css={[isMobile && mobileStyle, isHome && homeStyle]}
+            css={[isHome && homeStyle, isMobile && mobileStyle]}
             to={`${basePath}/${link}`}
             isMobile={isMobile}
             isHome={isHome}
