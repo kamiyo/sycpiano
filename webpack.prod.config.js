@@ -14,10 +14,12 @@ const config = merge(common.config, {
         chunkFilename: '[name].[chunkhash:8].chunk.js',
     },
     optimization: {
-        minimizer: [new Minimizer({
-            cache: true,
-            parallel: true,
-        })],
+        minimizer: [
+            new Minimizer({
+                cache: true,
+                parallel: true,
+            }),
+        ],
     },
     plugins: [
         new webpack.DefinePlugin({

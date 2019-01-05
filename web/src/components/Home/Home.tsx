@@ -259,7 +259,7 @@ interface SocialMediaLinkProps {
     url: string;
 }
 
-const SocialMediaLink: React.SFC<SocialMediaLinkProps> = (props) => (
+const SocialMediaLink: React.FC<SocialMediaLinkProps> = (props) => (
     <SocialLink canHover={props.canHover} show={props.show} href={props.url} target="_blank">
         <img
             className={''}
