@@ -34,7 +34,7 @@ const baseClass = (on: boolean) => css`
         stroke: white;
         vertical-align: middle;
 
-        '#outline': {
+        #outline {
             stroke: ${on ? lightBlue : '#999'};
             transition: all 0.2s;
         }
