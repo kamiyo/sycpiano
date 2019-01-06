@@ -12,7 +12,6 @@ import { LoadingInstance } from 'src/components/LoadingSVG';
 import PreviewOverlay from 'src/components/Media/Videos/PreviewOverlay';
 import VideoPlaylist from 'src/components/Media/Videos/VideoPlaylist';
 
-import { setOnScroll } from 'src/components/App/NavBar/actions';
 import { createFetchPlaylistAction, initializeYoutubeElement, playVideo, resetPlayer } from 'src/components/Media/Videos/actions';
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { GlobalStateShape } from 'src/types';
@@ -26,14 +25,12 @@ interface VideosStateToProps {
     readonly videoId: string;
     readonly videos: VideoItemShape[];
     readonly isPlayerReady: boolean;
-    readonly onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
 }
 
 interface VideosDispatchToProps {
     readonly createFetchPlaylistAction: typeof createFetchPlaylistAction;
     readonly initializeYoutubeElement: typeof initializeYoutubeElement;
     readonly resetPlayer: typeof resetPlayer;
-    readonly setOnScroll: typeof setOnScroll;
     readonly playVideo: typeof playVideo;
 }
 
@@ -128,18 +125,16 @@ class Videos extends React.Component<VideosProps> {
     }
 }
 
-const mapStateToProps = ({ video_player, video_playlist, navbar }: GlobalStateShape): VideosStateToProps => ({
+const mapStateToProps = ({ video_player, video_playlist }: GlobalStateShape): VideosStateToProps => ({
     videos: video_playlist.items,
     videoId: video_player.videoId,
     isPlayerReady: video_player.isPlayerReady,
-    onScroll: navbar.onScroll,
 });
 
 const mapDispatchToProps: VideosDispatchToProps = {
     initializeYoutubeElement,
     createFetchPlaylistAction,
     resetPlayer,
-    setOnScroll,
     playVideo,
 };
 

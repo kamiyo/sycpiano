@@ -52,7 +52,7 @@ const PersonalInfo: React.FC<PersonalInfoShape> = (props) => (
     </div>
 );
 
-const StyledPersonalInfo = styled(PersonalInfo)`
+const StyledPersonalInfo = styled(React.memo(PersonalInfo))`
     flex: 0 1 125px;
     display: flex;
     flex-direction: column;
@@ -87,7 +87,7 @@ const PersonalContact: React.FC<PersonalContactShape> = (props) => (
     </div>
 );
 
-const StyledPersonalContact = styled(PersonalContact)`
+const StyledPersonalContact = styled(React.memo(PersonalContact))`
     flex: 1 0 auto;
     font-family: ${lato3};
     display: flex;
@@ -106,7 +106,7 @@ const InfoContainer = styled.div`
 
 type ContactInfoProps = PersonalContactShape & PersonalInfoShape;
 
-const ContactInfo: React.FC<ContactInfoProps> = (props) => (
+const ContactInfo = React.memo((props: ContactInfoProps) => (
     <InfoContainer>
         <StyledPersonalInfo
             name={props.name}
@@ -121,6 +121,6 @@ const ContactInfo: React.FC<ContactInfoProps> = (props) => (
             email={props.email}
         />
     </InfoContainer>
-);
+));
 
 export { ContactInfo };

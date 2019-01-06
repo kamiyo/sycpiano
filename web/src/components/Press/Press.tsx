@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import styled from '@emotion/styled';
 
-import { setOnScroll } from 'src/components/App/NavBar/actions';
+import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 import AcclaimsList from 'src/components/Press/AcclaimsList';
 
 import { container, pushed } from 'src/styles/mixins';
@@ -16,7 +16,7 @@ interface PressStateToProps {
 }
 
 interface PressDispatchToProps {
-    readonly setOnScroll: typeof setOnScroll;
+    readonly onScroll: typeof onScroll;
 }
 
 interface PressOwnProps {
@@ -41,14 +41,10 @@ const PressContainer = styled.div(
     },
 );
 
-class Press extends React.Component<PressProps> {
-    componentDidMount() {
-        this.props.isMobile && this.props.setOnScroll(navBarHeight.mobile);
-    }
-
+class Press extends React.PureComponent<PressProps> {
     render() {
         return (
-            <PressContainer onScroll={this.props.isMobile ? this.props.onScroll : null}>
+            <PressContainer onScroll={this.props.isMobile ? scrollFn(navBarHeight.mobile, this.props.onScroll) : null}>
                 <AcclaimsList isMobile={this.props.isMobile} />
             </PressContainer>
         );
@@ -59,13 +55,9 @@ const mapStateToProps = ({ navbar }: GlobalStateShape): PressStateToProps => ({
     onScroll: navbar.onScroll,
 });
 
-const mapDispatchToProps: PressDispatchToProps = {
-    setOnScroll,
-};
-
 const ConnectedPress = connect<PressStateToProps, PressDispatchToProps>(
     mapStateToProps,
-    mapDispatchToProps,
+    { onScroll },
 )(Press);
 
 export type PressType = React.Component<PressProps>;

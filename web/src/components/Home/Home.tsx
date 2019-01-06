@@ -272,18 +272,12 @@ const SocialMediaLink: React.FC<SocialMediaLinkProps> = (props) => (
     </SocialLink>
 );
 
-interface HomeState {
-    showSocial: boolean;
+interface SocialState {
+    show: boolean;
     canHover: { [key: string]: boolean; };
 }
 
-interface HomeProps {
-    bgLoaded: () => void;
-    isMobile: boolean;
-}
-
-class Home extends React.Component<HomeProps, HomeState> {
-
+class Social extends React.PureComponent<{}, SocialState> {
     defaultCanHover = Object.keys(socials).reduce((prev, curr) => {
         return {
             ...prev,
@@ -291,13 +285,13 @@ class Home extends React.Component<HomeProps, HomeState> {
         };
     }, {});
 
-    state: HomeState = {
-        showSocial: false,
+    state: SocialState = {
+        show: false,
         canHover: this.defaultCanHover,
     };
 
     onHandleClick = () => {
-        this.setState({ showSocial: !this.state.showSocial });
+        this.setState({ show: !this.state.show });
     }
 
     onSocialEnter = (id: number) => (el: HTMLLinkElement) => {
@@ -334,6 +328,42 @@ class Home extends React.Component<HomeProps, HomeState> {
             });
         this.setState({ canHover: this.defaultCanHover });
     }
+    render() {
+        return (
+            <SocialContainer>
+                <Handle onClick={this.onHandleClick}>@seanchenpiano</Handle>
+                {
+                    Object.keys(socials).map((key, idx) => (
+                        <Transition
+                            key={key}
+                            in={this.state.show}
+                            onEnter={this.onSocialEnter(idx)}
+                            onExit={this.onSocialExit(idx)}
+                            timeout={250 + 50 * idx}
+                            onEntered={() => this.setState({ canHover: { ...this.state.canHover, [key]: true } })}
+                        >
+                            <SocialMediaLink canHover={this.state.canHover[key]} show={this.state.show} url={socials[key]} social={key} />
+                        </Transition>
+                    ))
+                }
+            </SocialContainer>
+        );
+    }
+}
+
+interface HomeProps {
+    bgLoaded: () => void;
+    isMobile: boolean;
+}
+
+class Home extends React.Component<HomeProps, {}> {
+
+    defaultCanHover = Object.keys(socials).reduce((prev, curr) => {
+        return {
+            ...prev,
+            [curr]: false,
+        };
+    }, {});
 
     onImageLoaded = () => {
         this.props.bgLoaded();
@@ -381,23 +411,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 <Content>
                     <Name>Sean Chen</Name>
                     <Skills>pianist / composer / arranger</Skills>
-                    <SocialContainer>
-                        <Handle onClick={this.onHandleClick}>@seanchenpiano</Handle>
-                        {
-                            Object.keys(socials).map((key, idx) => (
-                                <Transition
-                                    key={key}
-                                    in={this.state.showSocial}
-                                    onEnter={this.onSocialEnter(idx)}
-                                    onExit={this.onSocialExit(idx)}
-                                    timeout={250 + 50 * idx}
-                                    onEntered={() => this.setState({ canHover: { ...this.state.canHover, [key]: true } })}
-                                >
-                                    <SocialMediaLink canHover={this.state.canHover[key]} show={this.state.showSocial} url={socials[key]} social={key} />
-                                </Transition>
-                            ))
-                        }
-                    </SocialContainer>
+                    <Social />
                     <StyledCopyright>Copyright © {moment().format('YYYY')} Sean Chen</StyledCopyright>
                 </Content>
             </HomeContainer>

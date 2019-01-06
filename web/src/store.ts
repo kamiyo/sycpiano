@@ -8,6 +8,7 @@
  */
 
 import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import thunk from 'redux-thunk';
 
 import { NavBarReducer } from 'src/components/App/NavBar/reducers';
@@ -22,8 +23,12 @@ const createReducer = (reducers?: Reducers) => {
 };
 
 export default (() => {
-    /* tslint:disable-next-line:no-empty */
-    const store: AsyncStore = createStore(createReducer(), applyMiddleware(thunk));
+    const store: AsyncStore = createStore(
+        createReducer(),
+        composeWithDevTools(
+            applyMiddleware(thunk),
+        ),
+    );
     store.async = {};
     return store;
 })();

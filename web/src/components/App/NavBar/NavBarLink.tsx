@@ -55,14 +55,14 @@ const HyperlinkText = styled.div`
     }
 `;
 
-const Highlight: React.FC<HighlightProps> = ({ active, isHome, link, isMobile }) => (
+const Highlight = ({ active, isHome, link, isMobile }: HighlightProps) => (
     <React.Fragment>
         {!isMobile && <HighlightDiv active={active} isHome={isHome} />}
         <HyperlinkText>{link}</HyperlinkText>
     </React.Fragment>
 );
 
-interface NavBarLinkProps {
+interface NavBarLinkOwnProps {
     readonly className?: string;
     readonly active: boolean;
     readonly isHome: boolean;
@@ -81,6 +81,8 @@ interface NavBarLinkDispatchToProps {
     readonly toggleSubNav: typeof toggleSubNav;
     readonly toggleExpanded: typeof toggleExpanded;
 }
+
+type NavBarLinkProps = NavBarLinkOwnProps & NavBarLinkDispatchToProps & NavBarLinkStateToProps;
 
 const linkStyle = css`
     ${noHighlight}
@@ -157,7 +159,29 @@ const StyledLi = styled.li`
     }
 `;
 
-const NavBarLink: React.FC<NavBarLinkProps & NavBarLinkDispatchToProps & NavBarLinkStateToProps> = ({
+const subsAreEqual = (prev: NavBarLinkProps, next: NavBarLinkProps) => {
+    const { showSubs: prevShowSubs, ...prevWithoutShowSubs} = prev;
+    const { showSubs: nextShowSubs, ...nextWithoutShowSubs} = next;
+    let basicCompare = true;
+    Object.keys(prevWithoutShowSubs).forEach((key: keyof typeof prevWithoutShowSubs) => {
+        if (prevWithoutShowSubs[key] !== nextWithoutShowSubs[key]) {
+            basicCompare = false;
+        }
+    });
+    prevShowSubs.forEach((sub) => {
+        if (!nextShowSubs.includes(sub)) {
+            basicCompare = false;
+        }
+    });
+    nextShowSubs.forEach((sub) => {
+        if (!prevShowSubs.includes(sub)) {
+            basicCompare = false;
+        }
+    });
+    return basicCompare;
+};
+
+const NavBarLink = ({
     active,
     isHome,
     isMobile,
@@ -168,7 +192,7 @@ const NavBarLink: React.FC<NavBarLinkProps & NavBarLinkDispatchToProps & NavBarL
     showSubs,
     toggleExpanded: expand,
     toggleSubNav: toggle,
-}) => {
+}: NavBarLinkProps) => {
     // css attr is common
     const attr: React.LinkHTMLAttributes<HTMLElement> | LinkProps = {};
     const style = css(
@@ -232,10 +256,10 @@ const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
     isExpanded: navbar.isExpanded,
 });
 
-export default connect<NavBarLinkStateToProps, NavBarLinkDispatchToProps, NavBarLinkProps>(
+export default connect<NavBarLinkStateToProps, NavBarLinkDispatchToProps, NavBarLinkOwnProps>(
     mapStateToProps,
     {
         toggleSubNav,
         toggleExpanded,
     },
-)(NavBarLink);
+)(React.memo(NavBarLink, subsAreEqual));

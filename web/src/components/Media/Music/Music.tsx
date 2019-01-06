@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 
 import TweenLite from 'gsap/TweenLite';
 
-import { setOnScroll } from 'src/components/App/NavBar/actions';
+import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 import { fetchPlaylistAction } from 'src/components/Media/Music/actions';
 import AudioInfo from 'src/components/Media/Music/AudioInfo';
 import AudioUI from 'src/components/Media/Music/AudioUI';
@@ -47,12 +47,11 @@ interface MusicState {
 interface MusicStateToProps {
     readonly items: MusicListItem[];
     readonly flatItems: MusicFileItem[];
-    readonly onScroll: (event: React.UIEvent<HTMLElement> | UIEvent) => void;
 }
 
 interface MusicDispatchToProps {
     readonly fetchPlaylistAction: typeof fetchPlaylistAction;
-    readonly setOnScroll: typeof setOnScroll;
+    readonly onScroll: typeof onScroll;
 }
 
 interface MusicOwnProps {
@@ -332,7 +331,6 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 
     async componentDidMount() {
-        this.props.setOnScroll(navBarHeight.mobile);
         this.initializeAudioPlayer();
         if (this.detectWebGL()) {
             const component = await register('visualizer', import(/* webpackChunkName: 'visualizerWebGL' */ 'src/components/Media/Music/AudioVisualizerWebGL'));
@@ -356,7 +354,7 @@ class Music extends React.Component<MusicProps, MusicState> {
         const isMobile = this.props.isMobile;
         const Visualizer = this.state.Visualizer;
         return (
-            <MusicDiv onScroll={this.props.isMobile ? this.props.onScroll : null}>
+            <MusicDiv onScroll={this.props.isMobile ? scrollFn(navBarHeight.mobile, this.props.onScroll) : null}>
                 <audio
                     id="audio"
                     crossOrigin="anonymous"
@@ -414,18 +412,16 @@ class Music extends React.Component<MusicProps, MusicState> {
 
 const mapStateToProps = ({
     audio_playlist,
-    navbar,
 }: GlobalStateShape): MusicStateToProps => ({
     items: audio_playlist.items,
     flatItems: audio_playlist.flatItems,
-    onScroll: navbar.onScroll,
 });
 
 const ConnectedMusic = connect<MusicStateToProps, MusicDispatchToProps>(
     mapStateToProps,
     {
         fetchPlaylistAction,
-        setOnScroll,
+        onScroll,
     },
 )(Music);
 

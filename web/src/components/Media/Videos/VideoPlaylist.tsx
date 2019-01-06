@@ -29,14 +29,6 @@ interface VideoOwnProps {
 
 type VideoPlaylistProps = VideoOwnProps & VideoPlaylistStateToProps & VideoPlaylistDispatchToProps;
 
-const videoPlaylistStyle = css`
-    ${screenXSorPortrait} {
-        top: 56.25vw;
-        position: relative;
-        overflow: visible;
-    }
-`;
-
 const StyledPlaylistContainer = styled.div`
     width: fit-content;
     height: 100%;
@@ -45,12 +37,20 @@ const StyledPlaylistContainer = styled.div`
 
     ${screenXSorPortrait} {
         width: 100%;
-        height: auto;
-        position: absolute;
+        height: calc(100% - 56.25vw);
+        top: 56.25vw;
+        position: relative;
         right: unset;
         z-index: 0;
         overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
+    }
+`;
+
+const videoPlaylistStyle = css`
+    ${screenXSorPortrait} {
+        position: relative;
+        overflow: visible;
     }
 `;
 

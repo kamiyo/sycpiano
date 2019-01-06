@@ -7,7 +7,6 @@ export interface LinkShape {
 export interface NavBarLinksProps {
     readonly className?: string;
     readonly currentBasePath: string;
-    readonly links: ReadonlyArray<LinkShape>;
     readonly isMobile: boolean;
 }
 

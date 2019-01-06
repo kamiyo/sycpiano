@@ -3,28 +3,23 @@ import { connect } from 'react-redux';
 
 import styled from '@emotion/styled';
 
-import { setOnScroll } from 'src/components/App/NavBar/actions';
+import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 import StyledContactItem from 'src/components/Contact/ContactItem';
 import contacts from 'src/components/Contact/contacts';
 
 import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
-import { GlobalStateShape } from 'src/types';
 
 interface ContactOwnProps {
     isMobile: boolean;
     className?: string;
 }
 
-interface ContactStateToProps {
-    onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
-}
-
 interface ContactDispatchToProps {
-    setOnScroll: typeof setOnScroll;
+    onScroll: typeof onScroll;
 }
 
-type ContactProps = ContactOwnProps & ContactStateToProps & ContactDispatchToProps;
+type ContactProps = ContactOwnProps & ContactDispatchToProps;
 
 const ContactContainer = styled.div`
     display: flex;
@@ -43,15 +38,11 @@ const ContactContainer = styled.div`
     }
 `;
 
-class Contact extends React.Component<ContactProps> {
-    componentDidMount() {
-        this.props.setOnScroll(navBarHeight.mobile);
-    }
-
+class Contact extends React.PureComponent<ContactProps> {
     render() {
         return (
             <ContactContainer
-                onScroll={this.props.isMobile ? this.props.onScroll : null}
+                onScroll={this.props.isMobile ? scrollFn(navBarHeight.mobile, this.props.onScroll) : null}
             >
                 {contacts.map((contact, i) => (
                     <StyledContactItem {...contact} key={i} />
@@ -61,13 +52,9 @@ class Contact extends React.Component<ContactProps> {
     }
 }
 
-const mapStateToProps = ({ navbar }: GlobalStateShape): ContactStateToProps => ({
-    onScroll: navbar.onScroll,
-});
-
-const ConnectedContact = connect<ContactStateToProps, ContactDispatchToProps>(
-    mapStateToProps,
-    { setOnScroll },
+const ConnectedContact = connect<{}, ContactDispatchToProps>(
+    null,
+    { onScroll },
 )(Contact);
 
 export type ContactType = React.Component<ContactProps>;

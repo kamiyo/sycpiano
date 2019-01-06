@@ -1,4 +1,4 @@
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { ThunkAction } from 'redux-thunk';
 
 import debounce from 'lodash-es/debounce';
 
@@ -59,26 +59,19 @@ const lastScroll = (scrollTop: number): ThunkAction<void, GlobalStateShape, void
         });
     };
 
-const debouncedLastScroll = debounce((dispatch, scrollTop) => {
-    dispatch(lastScroll(scrollTop));
-}, 50, { leading: true });
-
-const onScroll = (triggerHeight: number, dispatch: ThunkDispatch<GlobalStateShape, void, ActionTypes.ToggleNav>, getState: () => GlobalStateShape) => (event: React.UIEvent<HTMLElement> | UIEvent) => {
+export const scrollFn = (triggerHeight: number, action: (tHeight: number, top: number) => ThunkAction<void, GlobalStateShape, void, ActionTypes.ToggleNav & ActionTypes.LastScroll>) => (event: React.UIEvent<HTMLElement> | UIEvent) => {
     const scrollTop = (event.target as HTMLElement).scrollTop;
+    action(triggerHeight, scrollTop);
+};
+
+export const onScroll = (triggerHeight: number, scrollTop: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.ToggleNav & ActionTypes.LastScroll> => (dispatch, getState) => {
+    const lastScrollTop = getState().navbar.lastScrollTop;
     if (typeof triggerHeight === 'number') {
-        if (scrollTop > getState().navbar.lastScrollTop && scrollTop > triggerHeight) {
+        if (scrollTop > lastScrollTop && scrollTop > triggerHeight) {
             dispatch(toggleNavBar(false));
         } else {
             dispatch(toggleNavBar(true));
         }
-        debouncedLastScroll(dispatch, scrollTop);
+        dispatch(lastScroll(scrollTop));
     }
 };
-
-export const setOnScroll = (triggerHeight?: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.SetOnScroll> =>
-    (dispatch, getState) => {
-        dispatch({
-            type: NAV_ACTIONS.NAV_SET_ONSCROLL,
-            onScroll: onScroll(triggerHeight, dispatch, getState),
-        } as ActionTypes.SetOnScroll);
-    };

@@ -5,9 +5,8 @@ import { NavBarStateShape } from 'src/components/App/NavBar/types';
 export const NavBarReducer = (state: NavBarStateShape = {
     isVisible: true,
     isExpanded: false,
-    showSubs: [''],
+    showSubs: [],
     lastScrollTop: 0,
-    onScroll: null,
 }, action: ActionTypes) => {
     switch (action.type) {
         case NAV_ACTIONS.NAV_TOGGLE_NAV:
@@ -24,12 +23,6 @@ export const NavBarReducer = (state: NavBarStateShape = {
             return {
                 ...state,
                 isExpanded: action.show,
-            };
-        case NAV_ACTIONS.NAV_SET_ONSCROLL:
-            return {
-                ...state,
-                lastScrollTop: 0,
-                onScroll: action.onScroll,
             };
         case NAV_ACTIONS.NAV_LAST_SCROLL:
             return {

@@ -15,11 +15,6 @@ export interface ToggleExpanded {
     readonly show: boolean;
 }
 
-export interface SetOnScroll {
-    readonly type: typeof NAV_ACTIONS.NAV_SET_ONSCROLL;
-    readonly onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
-}
-
 export interface LastScroll {
     readonly type: typeof NAV_ACTIONS.NAV_LAST_SCROLL;
     readonly scrollTop: number;
@@ -30,6 +25,6 @@ export interface OtherActions {
 }
 
 type ActionTypes = ToggleSubnav | ToggleNav | ToggleExpanded |
-    LastScroll | SetOnScroll | OtherActions;
+    LastScroll | OtherActions;
 
 export default ActionTypes;

@@ -50,16 +50,16 @@ const LinksContainer = styled.div`
     justify-content: center;
 `;
 
-const ContactSocialMedia = (props: ContactSocialMediaShape) => (
+const ContactSocialMedia = React.memo((props: ContactSocialMediaShape) => (
     <LinksContainer>
         {
-            Object.keys(props.social).map((social, i) => (
-                <SocialMediaLinkContainer key={i}>
+            Object.keys(props.social).map((social) => (
+                <SocialMediaLinkContainer key={social}>
                     <SocialMediaLink url={props.social[social]} social={social}/>
                 </SocialMediaLinkContainer>
             ))
         }
     </LinksContainer>
-);
+));
 
 export { ContactSocialMedia };

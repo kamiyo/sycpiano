@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import styled from '@emotion/styled';
 
 import HamburgerNav from 'src/components/App/NavBar/HamburgerNav';
-import { links } from 'src/components/App/NavBar/links';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import NavBarLogo from 'src/components/App/NavBar/NavBarLogo';
 
@@ -46,11 +45,11 @@ const StyledNavBar = styled.div<{ isHome: boolean; isExpanded: boolean }>`
     box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.3);
 `;
 
-const NavBar: React.FC<NavBarProps & NavBarStateToProps> = ({
+const NavBar = React.memo(({
     currentBasePath,
     isExpanded,
     specificRouteName,
-}) => {
+}: NavBarProps & NavBarStateToProps) => {
     const isHome = currentBasePath === '/';
     return (
         <ReactMedia query={reactMediaMediumQuery}>
@@ -66,12 +65,10 @@ const NavBar: React.FC<NavBarProps & NavBarStateToProps> = ({
                     />
                     {matches ?
                         <HamburgerNav
-                            links={links}
                             currentBasePath={currentBasePath}
                             isMobile={true}
                         /> :
                         <NavBarLinks
-                            links={links}
                             currentBasePath={currentBasePath}
                             isMobile={false}
                         />
@@ -80,7 +77,7 @@ const NavBar: React.FC<NavBarProps & NavBarStateToProps> = ({
             }
         </ReactMedia>
     );
-};
+});
 
 const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
     isExpanded: navbar.isExpanded,

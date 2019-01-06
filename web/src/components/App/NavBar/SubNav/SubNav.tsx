@@ -46,4 +46,4 @@ const SubNav: React.FC<SubNavProps> = ({ links, ...props }) => (
     </SubNavContainer>
 );
 
-export default SubNav;
+export default React.memo(SubNav);

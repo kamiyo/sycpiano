@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
-import { setOnScroll } from 'src/components/App/NavBar/actions';
-import { GlobalStateShape } from 'src/types';
+import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 
 import DropboxButton from 'src/components/Media/Photos/DropboxButton';
 import PhotoListItem from 'src/components/Media/Photos/PhotoListItem';
@@ -64,28 +63,20 @@ interface PhotoListOwnProps {
     selectPhoto: (item: PhotoItem) => void;
 }
 
-interface PhotoListStateToProps {
-    onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
-}
-
 interface PhotoListDispatchToProps {
-    setOnScroll: typeof setOnScroll;
+    onScroll: typeof onScroll;
 }
 
-type PhotoListProps = PhotoListOwnProps & PhotoListStateToProps & PhotoListDispatchToProps;
+type PhotoListProps = PhotoListOwnProps & PhotoListDispatchToProps;
 
-class PhotoList extends React.Component<PhotoListProps> {
-    componentDidMount() {
-        this.props.setOnScroll(navBarHeight.mobile);
-    }
-
+class PhotoList extends React.PureComponent<PhotoListProps> {
     render() {
         const {
             isMobile,
             items,
             currentItem,
             selectPhoto,
-            onScroll,
+            onScroll: propOnScroll,
         } = this.props;
         return (
             <StyledPhotoListContainer>
@@ -96,7 +87,7 @@ class PhotoList extends React.Component<PhotoListProps> {
                     isShow={true}
                     shouldAppear={false}
                     isMobile={isMobile}
-                    onScroll={isMobile ? onScroll : null}
+                    onScroll={isMobile ? scrollFn(navBarHeight.mobile, propOnScroll) : null}
                 >
                     {items.map((item) => (
                         <PhotoListItem
@@ -114,11 +105,7 @@ class PhotoList extends React.Component<PhotoListProps> {
     }
 }
 
-const mapStateToProps = ({ navbar }: GlobalStateShape): PhotoListStateToProps => ({
-    onScroll: navbar.onScroll,
-});
-
-export default connect<PhotoListStateToProps, PhotoListDispatchToProps, PhotoListOwnProps>(
-    mapStateToProps,
-    { setOnScroll },
+export default connect<{}, PhotoListDispatchToProps, PhotoListOwnProps>(
+    null,
+    { onScroll },
 )(PhotoList);

@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import { fetchBioAction } from 'src/components/About/actions';
 import { Blurb } from 'src/components/About/types';
-import { setOnScroll } from 'src/components/App/NavBar/actions';
+// import { setOnScroll } from 'src/components/App/NavBar/actions';
 
 import { easeQuadOut } from 'd3-ease';
 import TweenLite from 'gsap/TweenLite';
@@ -20,6 +20,7 @@ import { pushed } from 'src/styles/mixins';
 import { screenLengths, screenM, screenWidths, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
+import { onScroll, scrollFn } from '../App/NavBar/actions';
 
 const pictureHeight = 250;
 
@@ -79,7 +80,18 @@ const NameSpan = styled.span({
     fontFamily: lato3,
 });
 
-class AboutText extends React.PureComponent<{ bio?: Blurb[] }> {
+interface AboutTextProps {
+    bio?: Blurb[];
+}
+
+class AboutText extends React.Component<AboutTextProps> {
+    shouldComponentUpdate(nextProps: AboutTextProps) {
+        if (this.props.bio.length === nextProps.bio.length) {
+            return false;
+        }
+        return true;
+    }
+
     render() {
         const props = this.props;
         return (
@@ -173,7 +185,7 @@ interface AboutStateToProps {
 }
 
 interface AboutDispatchToProps {
-    readonly setOnScroll: typeof setOnScroll;
+    readonly onScroll: typeof onScroll;
     readonly fetchBioAction: typeof fetchBioAction;
 }
 
@@ -184,13 +196,13 @@ const imageLoaderStyle = css`
 
 type AboutProps = AboutOwnProps & AboutStateToProps & AboutDispatchToProps;
 
-class About extends React.Component<AboutProps, AboutState> {
+class About extends React.PureComponent<AboutProps, AboutState> {
     state: AboutState = { bgImage: '' };
     private bgRef: React.RefObject<HTMLDivElement> = React.createRef();
 
     componentDidMount() {
         this.props.fetchBioAction();
-        this.props.setOnScroll(pictureHeight + navBarHeight.mobile);
+        // this.props.setOnScroll(pictureHeight + navBarHeight.mobile);
     }
 
     onImageLoad = (el: HTMLImageElement) => {
@@ -212,7 +224,7 @@ class About extends React.Component<AboutProps, AboutState> {
 
     render() {
         return (
-            <AboutContainer onScroll={this.props.isMobile ? this.props.onScroll : null}>
+            <AboutContainer onScroll={this.props.isMobile ? scrollFn(pictureHeight + navBarHeight.mobile, this.props.onScroll) : null}>
                 <ImageContainer
                     currScrollTop={this.props.scrollTop}
                     bgImage={this.state.bgImage}
@@ -267,7 +279,7 @@ const mapStateToProps = ({ about, navbar }: GlobalStateShape) => ({
 const connectedAbout = connect<AboutStateToProps, AboutDispatchToProps, AboutProps>(
     mapStateToProps,
     {
-        setOnScroll,
+        onScroll,
         fetchBioAction,
     },
 )(About);

@@ -18,11 +18,9 @@ import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
 interface AudioUIStateToProps {
     readonly isMouseMove: boolean;
-    readonly radii: {
-        inner: number;
-        outer: number;
-        base: number;
-    };
+    readonly innerRad: number;
+    readonly outerRad: number;
+    readonly baseRad: number;
 }
 
 interface AudioUIDispatchToProps {
@@ -42,11 +40,6 @@ interface AudioUIOwnProps {
     readonly seekAudio: (percent: number) => void;
     readonly isMobile: boolean;
     readonly isLoading: boolean;
-    readonly radii: {
-        inner: number;
-        outer: number;
-        base: number;
-    };
 }
 
 type AudioUIProps = AudioUIOwnProps & AudioUIStateToProps & AudioUIDispatchToProps;
@@ -192,9 +185,8 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
 
     isEventInSeekRing = (event: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => {
         const canvasPos = this.getMousePositionInCanvas(event);
-        const { inner, outer } = this.props.radii;
-        const isInOuter = this.isPointInCircle([canvasPos.x, canvasPos.y], outer, [this.centerX, this.centerY]);
-        const isInInner = this.isPointInCircle([canvasPos.x, canvasPos.y], inner, [this.centerX, this.centerY]);
+        const isInOuter = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.outerRad, [this.centerX, this.centerY]);
+        const isInInner = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.innerRad, [this.centerX, this.centerY]);
         return isInOuter && !isInInner;
     }
 
@@ -321,7 +313,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
     }
 
     render() {
-        const buttonLength = this.props.radii.base * Math.SQRT1_2;
+        const buttonLength = this.props.baseRad * Math.SQRT1_2;
         const verticalOffset = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
         return (
             <UIContainer>
@@ -406,9 +398,11 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
     }
 }
 
-const mapStateToProps = ({ audio_ui }: GlobalStateShape) => ({
+const mapStateToProps = ({ audio_ui }: GlobalStateShape): AudioUIStateToProps => ({
     isMouseMove: audio_ui.isMouseMove,
-    radii: audio_ui.radii,
+    innerRad: audio_ui.radii.inner,
+    outerRad: audio_ui.radii.outer,
+    baseRad: audio_ui.radii.base,
 });
 
 const mapDispatchToProps: AudioUIDispatchToProps = {

@@ -6,7 +6,6 @@ import { Transition } from 'react-transition-group';
 
 import { toggleExpanded } from 'src/components/App/NavBar/actions';
 import HamburgerMenu from 'src/components/App/NavBar/HamburgerMenu';
-import { links } from 'src/components/App/NavBar/links';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import { NavBarLinksProps } from 'src/components/App/NavBar/types';
 
@@ -22,12 +21,12 @@ interface HamburgerNavDispatchToProps {
 
 const MenuContainer = styled.div` margin: auto 0; `;
 
-const HamburgerNav: React.FC<NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps> = ({
+const HamburgerNav = React.memo(({
     isExpanded,
     toggleExpanded: toggleExpand,
     currentBasePath,
     isMobile,
-}) => (
+}: NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps) => (
         <MenuContainer>
             <HamburgerMenu
                 isExpanded={isExpanded}
@@ -39,15 +38,16 @@ const HamburgerNav: React.FC<NavBarLinksProps & HamburgerNavDispatchToProps & Ha
                 onEnter={(el) => TweenLite.to(el, 0.25, { autoAlpha: 1 })}
                 onExit={(el) => TweenLite.to(el, 0.25, { autoAlpha: 0 })}
                 timeout={250}
+                unmountOnExit={true}
+                mountOnEnter={true}
             >
                 <NavBarLinks
-                    links={links}
                     currentBasePath={currentBasePath}
                     isMobile={isMobile}
                 />
             </Transition>
         </MenuContainer>
-    );
+    ));
 
 const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
     isExpanded: navbar.isExpanded,

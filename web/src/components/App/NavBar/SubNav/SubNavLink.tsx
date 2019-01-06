@@ -81,4 +81,4 @@ const SubNavLink: React.FC<SubNavLinkProps> = ({ basePath, link, onClick, isHome
     </StyledLi>
 );
 
-export default SubNavLink;
+export default React.memo(SubNavLink);

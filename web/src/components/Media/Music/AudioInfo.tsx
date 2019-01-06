@@ -99,7 +99,7 @@ const ContributingOrDuration = styled.div`
     }
 `;
 
-class AudioInfo extends React.Component<AudioInfoProps> {
+class AudioInfo extends React.PureComponent<AudioInfoProps> {
     private tween: any;
     private titleDiv: React.RefObject<HTMLDivElement> = React.createRef();
     private marquee: React.RefObject<HTMLDivElement> = React.createRef();

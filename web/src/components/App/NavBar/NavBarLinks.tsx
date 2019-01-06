@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { LinkShape, NavBarLinksProps } from 'src/components/App/NavBar/types';
 
+import { links } from 'src/components/App/NavBar/links';
 import NavBarLink from 'src/components/App/NavBar/NavBarLink';
 
 import { noHighlight, pushedDesktop, pushedMobile } from 'src/styles/mixins';
@@ -47,7 +48,7 @@ const LinksDiv = styled.div`
 const NavBarLinks: React.FC<NavBarLinksProps> = (props) => (
     <LinksDiv>
         <StyledUL>
-            {props.links.map((link: LinkShape, i: number): JSX.Element => {
+            {links.map((link: LinkShape, i: number): JSX.Element => {
                 return (
                     <NavBarLink
                         key={i}
@@ -64,4 +65,4 @@ const NavBarLinks: React.FC<NavBarLinksProps> = (props) => (
     </LinksDiv>
 );
 
-export default NavBarLinks;
+export default React.memo(NavBarLinks);
