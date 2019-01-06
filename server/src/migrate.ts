@@ -1,4 +1,4 @@
-import * as Promise from 'bluebird';
+import Promise from 'bluebird';
 import * as child_process from 'child_process';
 import * as path from 'path';
 import * as Umzug from 'umzug';
@@ -133,27 +133,27 @@ const main = async () => {
     console.log(`${cmd.toUpperCase()} BEGIN`);
     switch (cmd) {
         case 'status':
-            executedCmd = cmdStatus();
+            executedCmd = Promise.resolve(cmdStatus());
             break;
 
         case 'up':
         case 'migrate':
-            executedCmd = cmdMigrate(migration);
+            executedCmd = Promise.resolve(cmdMigrate(migration));
             break;
 
         case 'next':
         case 'migrate-next':
-            executedCmd = cmdMigrateNext();
+            executedCmd = Promise.resolve(cmdMigrateNext());
             break;
 
         case 'down':
         case 'reset':
-            executedCmd = cmdReset(migration);
+            executedCmd = Promise.resolve(cmdReset(migration));
             break;
 
         case 'prev':
         case 'reset-prev':
-            executedCmd = cmdResetPrev();
+            executedCmd = Promise.resolve(cmdResetPrev());
             break;
 
         case 'reset-hard':
