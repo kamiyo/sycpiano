@@ -1,4 +1,4 @@
-import Promise from 'bluebird';
+import * as Promise from 'bluebird';
 import * as child_process from 'child_process';
 import * as path from 'path';
 import * as Umzug from 'umzug';
