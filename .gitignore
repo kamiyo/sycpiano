@@ -18,6 +18,7 @@ npm-debug.log
 secret.ts
 web/build/
 web/assets/music/
+web/assets/data/tz*.json
 server/build/
 server/gapi-key.json
 yarn-error.log

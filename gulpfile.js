@@ -10,6 +10,7 @@ const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
 const del = require('del');
+const generateTzData = require('./generateTzData');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -33,6 +34,8 @@ const buildApp = (done) => (
 );
 
 gulp.task('build-app', buildApp);
+
+gulp.task('generate-tz-data', generateTzData);
 
 const cleanServer = async (done) => {
     await del([
@@ -72,7 +75,7 @@ gulp.task('build-server', buildServer);
 gulp.task(
     'build-prod',
     // We don't have enough memory in production to do build-server and build-app in parallel.
-    gulp.series('build-server', 'build-app')
+    gulp.series('build-server', 'generate-tz-data', 'build-app')
 );
 
 // build folder needs to exist when nodemon watch is called

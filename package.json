@@ -10,6 +10,7 @@
     "build-app": "gulp build-app",
     "build-server": "gulp build-server",
     "build-prod": "gulp build-prod",
+    "generate-tz-data": "gulp generate-tz-data",
     "test-build-prod": "cross-env NODE_ENV=production gulp build-prod",
     "test-prod": "cross-env NODE_ENV=production SERVER_ENV=test PORT=8000 gulp run-dev",
     "start": "node app.js",
