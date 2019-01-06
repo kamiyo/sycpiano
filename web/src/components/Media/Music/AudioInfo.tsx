@@ -110,7 +110,7 @@ class AudioInfo extends React.PureComponent<AudioInfoProps> {
         this.marquee.current.removeAttribute('style');
         this.titleDiv.current.removeAttribute('style');
         const divWidth = this.titleDiv.current.offsetWidth;
-        const spanWidth = (this.marquee.current.children[ 0 ] as HTMLDivElement).offsetWidth;
+        const spanWidth = (this.marquee.current.children[0] as HTMLDivElement).offsetWidth;
         if (divWidth > spanWidth) {
             this.marquee.current.style.left = `${(divWidth - spanWidth) / 2}px`;
             this.titleDiv.current.style.padding = '0';
@@ -171,10 +171,15 @@ class AudioInfo extends React.PureComponent<AudioInfoProps> {
         return (
             <>
                 {this.props.matchParams &&
-                    <Helmet>
-                        <title>{`${titleStringBase}${metaTitle}`}</title>
-                        <meta name="description" content={metaDescriptions.getMusic(composerTitleWithMovement, contributors)} />
-                    </Helmet>
+                    <Helmet
+                        title={`${titleStringBase}${metaTitle}`}
+                        meta={[
+                            {
+                                name: 'description',
+                                content: metaDescriptions.getMusic(composerTitleWithMovement, contributors),
+                            },
+                        ]}
+                    />
                 }
                 <AudioInfoContainer>
                     <ComposerTitle ref={this.titleDiv}>

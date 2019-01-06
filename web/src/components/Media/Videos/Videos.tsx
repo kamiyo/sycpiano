@@ -98,10 +98,15 @@ class Videos extends React.Component<VideosProps> {
         return (
             <>
                 {video &&
-                    <Helmet>
-                        <title>{`${titleStringBase} | Videos | ${video.snippet.title}`}</title>
-                        <meta name="description" content={description} />
-                    </Helmet>
+                    <Helmet
+                        title={`${titleStringBase} | Videos | ${video.snippet.title}`}
+                        meta={[
+                            {
+                                name: 'description',
+                                content: description,
+                            },
+                        ]}
+                    />
                 }
                 <StyledVideos
                     ref={this.domElement}

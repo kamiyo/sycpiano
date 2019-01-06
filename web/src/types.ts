@@ -1,12 +1,12 @@
 import { AboutStateShape } from 'src/components/About/types';
-import { AudioPlaylistStateShape, AudioUIStateShape } from 'src/components/Media/Music/types';
+import { AudioPlaylistStateShape } from 'src/components/Media/Music/types';
 import { PhotoListReducerShape, PhotoViewerReducerShape } from 'src/components/Media/Photos/types';
 import { VideoPlayerStateShape, VideoPlaylistStateShape } from 'src/components/Media/Videos/types';
 import { AcclaimsListStateShape } from 'src/components/Press/types';
 import { ScheduleStateShape } from 'src/components/Schedule/types';
 
 import { aboutReducer } from 'src/components/About/reducers';
-import { audioPlaylistReducer, audioUIReducer } from 'src/components/Media/Music/reducers';
+import { audioPlaylistReducer } from 'src/components/Media/Music/reducers';
 import { photoListReducer, photoViewerReducer } from 'src/components/Media/Photos/reducers';
 import { videoPlayerReducer, videoPlaylistReducer } from 'src/components/Media/Videos/reducers';
 import { acclaimsListReducer } from 'src/components/Press/reducers';
@@ -19,7 +19,6 @@ import { NavBarStateShape } from 'src/components/App/NavBar/types';
 export interface GlobalStateShape {
     readonly about?: AboutStateShape;
     readonly audio_playlist?: AudioPlaylistStateShape;
-    readonly audio_ui?: AudioUIStateShape;
     readonly photo_list?: PhotoListReducerShape;
     readonly photo_viewer?: PhotoViewerReducerShape;
     readonly press_acclaimsList?: AcclaimsListStateShape;
@@ -29,14 +28,13 @@ export interface GlobalStateShape {
     readonly navbar: NavBarStateShape;
 }
 
-export type AnyReducerType = typeof aboutReducer | typeof audioPlaylistReducer | typeof audioUIReducer |
+export type AnyReducerType = typeof aboutReducer | typeof audioPlaylistReducer |
     typeof photoListReducer | typeof photoViewerReducer | typeof acclaimsListReducer |
     typeof scheduleReducer | typeof videoPlayerReducer | typeof videoPlaylistReducer;
 
 export interface Reducers {
     readonly about?: typeof aboutReducer;
     readonly audio_playlist?: typeof audioPlaylistReducer;
-    readonly audio_ui?: typeof audioUIReducer;
     readonly photo_list?: typeof photoListReducer;
     readonly photo_viewer?: typeof photoViewerReducer;
     readonly press_acclaimsList?: typeof acclaimsListReducer;

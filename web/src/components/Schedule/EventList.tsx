@@ -262,10 +262,15 @@ class EventList extends React.Component<EventListProps> {
 
         return (
             <React.Fragment>
-                <Helmet>
-                    <title>{title}</title>
-                    <meta name="description" content={description} />
-                </Helmet>
+                <Helmet
+                    title={title}
+                    meta={[
+                        {
+                            name: 'description',
+                            content: description,
+                        },
+                    ]}
+                />
                 <div css={fullWidthHeight}>
                     {
                         <AutoSizer>

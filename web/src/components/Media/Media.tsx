@@ -58,10 +58,15 @@ type MediaProps = { isMobile: boolean; } & RouteComponentProps<{ media: string; 
 
 const Media = ({ isMobile, match, location }: MediaProps) => (
     <>
-        <Helmet>
-            <title>{`${titleStringBase} | ${startCase(match.params.media)}`}</title>
-            <meta name="description" content={metaDescriptions[match.params.media]} />
-        </Helmet>
+        <Helmet
+            title={`${titleStringBase} | ${startCase(match.params.media)}`}
+            meta={[
+                {
+                    name: 'description',
+                    content: metaDescriptions[match.params.media],
+                },
+            ]}
+        />
         <MediaContainer>
             <TransitionGroup component={null}>
                 <Transition

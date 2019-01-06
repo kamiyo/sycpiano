@@ -41,7 +41,15 @@ interface MusicState {
     readonly isShuffle: boolean;
     readonly localFlat: MusicFileItem[];
 
-    Visualizer: AudioVisualizerType;
+    readonly Visualizer: AudioVisualizerType;
+    readonly isHoverSeekring: boolean;
+    readonly isMouseMove: boolean;
+    readonly angle: number;
+    readonly radii: {
+        readonly inner: number;
+        readonly outer: number;
+        readonly base: number;
+    };
 }
 
 interface MusicStateToProps {
@@ -95,6 +103,14 @@ class Music extends React.Component<MusicProps, MusicState> {
         isShuffle: false,
         localFlat: [],
         Visualizer: null,
+        isHoverSeekring: false,
+        isMouseMove: false,
+        angle: 0,
+        radii: {
+            inner: 0,
+            outer: 0,
+            base: 0,
+        },
     };
 
     audioCtx: AudioContext;
@@ -330,6 +346,27 @@ class Music extends React.Component<MusicProps, MusicState> {
         return (gl && gl instanceof WebGLRenderingContext);
     }
 
+    setHoverSeekring = (isHoverSeekring: boolean, angle: number) => {
+        this.setState({
+            isHoverSeekring,
+            angle,
+        });
+    }
+
+    setMouseMove = (isMouseMove: boolean) => {
+        this.setState({ isMouseMove });
+    }
+
+    setRadii = (inner: number, outer: number, base: number) => {
+        this.setState({
+            radii: {
+                inner,
+                outer,
+                base,
+            },
+        });
+    }
+
     async componentDidMount() {
         this.initializeAudioPlayer();
         if (this.detectWebGL()) {
@@ -388,6 +425,11 @@ class Music extends React.Component<MusicProps, MusicState> {
                     currentPosition={this.state.playbackPosition}
                     isMobile={isMobile}
                     isLoading={this.state.isLoading}
+                    isMouseMove={this.state.isMouseMove}
+                    radii={this.state.radii}
+                    setMouseMove={this.setMouseMove}
+                    setRadii={this.setRadii}
+                    setHoverSeekring={this.setHoverSeekring}
                 />
                 <AudioInfo
                     duration={this.state.duration}
@@ -404,6 +446,9 @@ class Music extends React.Component<MusicProps, MusicState> {
                     prevTimestamp={this.state.lastUpdateTimestamp}
                     volume={this.state.volume}
                     isMobile={isMobile}
+                    isHoverSeekring={this.state.isHoverSeekring}
+                    hoverAngle={this.state.angle}
+                    setRadii={this.setRadii}
                 />}
             </MusicDiv>
         );

@@ -1,32 +1,17 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
 import TweenLite from 'gsap/TweenLite';
 import { LoadingInstance } from 'src/components/LoadingSVG';
-import { setHoverSeekring, setMouseMove } from 'src/components/Media/Music/actions';
 import { PauseButton, PauseIcon, PlayButton, PlayIcon, SkipButton } from 'src/components/Media/Music/Buttons';
 import { cartesianToPolar } from 'src/components/Media/Music/utils';
-import { GlobalStateShape } from 'src/types';
 
 import { HEIGHT_ADJUST_DESKTOP, HEIGHT_ADJUST_MOBILE } from 'src/components/Media/Music/audioVisualizerBase';
 import { lightBlue } from 'src/styles/colors';
 import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
-
-interface AudioUIStateToProps {
-    readonly isMouseMove: boolean;
-    readonly innerRad: number;
-    readonly outerRad: number;
-    readonly baseRad: number;
-}
-
-interface AudioUIDispatchToProps {
-    readonly setHoverSeekring: typeof setHoverSeekring;
-    readonly setMouseMove: typeof setMouseMove;
-}
 
 interface AudioUIOwnProps {
     readonly currentPosition: number;
@@ -40,9 +25,18 @@ interface AudioUIOwnProps {
     readonly seekAudio: (percent: number) => void;
     readonly isMobile: boolean;
     readonly isLoading: boolean;
+    readonly isMouseMove: boolean;
+    readonly radii: {
+        readonly inner: number;
+        readonly outer: number;
+        readonly base: number;
+    };
+    readonly setMouseMove: (move: boolean) => void;
+    readonly setRadii: (inner: number, outer: number, base: number) => void;
+    readonly setHoverSeekring: (isHover: boolean, angle: number) => void;
 }
 
-type AudioUIProps = AudioUIOwnProps & AudioUIStateToProps & AudioUIDispatchToProps;
+type AudioUIProps = AudioUIOwnProps;
 
 interface AudioUIState {
     isHoverPlaypause: boolean;
@@ -184,9 +178,10 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
     }
 
     isEventInSeekRing = (event: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => {
+        const { inner, outer } = this.props.radii;
         const canvasPos = this.getMousePositionInCanvas(event);
-        const isInOuter = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.outerRad, [this.centerX, this.centerY]);
-        const isInInner = this.isPointInCircle([canvasPos.x, canvasPos.y], this.props.innerRad, [this.centerX, this.centerY]);
+        const isInOuter = this.isPointInCircle([canvasPos.x, canvasPos.y], outer, [this.centerX, this.centerY]);
+        const isInInner = this.isPointInCircle([canvasPos.x, canvasPos.y], inner, [this.centerX, this.centerY]);
         return isInOuter && !isInInner;
     }
 
@@ -313,7 +308,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
     }
 
     render() {
-        const buttonLength = this.props.baseRad * Math.SQRT1_2;
+        const buttonLength = this.props.radii.base * Math.SQRT1_2;
         const verticalOffset = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
         return (
             <UIContainer>
@@ -398,19 +393,4 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
     }
 }
 
-const mapStateToProps = ({ audio_ui }: GlobalStateShape): AudioUIStateToProps => ({
-    isMouseMove: audio_ui.isMouseMove,
-    innerRad: audio_ui.radii.inner,
-    outerRad: audio_ui.radii.outer,
-    baseRad: audio_ui.radii.base,
-});
-
-const mapDispatchToProps: AudioUIDispatchToProps = {
-    setHoverSeekring,
-    setMouseMove,
-};
-
-export default connect<AudioUIStateToProps, AudioUIDispatchToProps>(
-    mapStateToProps,
-    mapDispatchToProps,
-)(AudioUI);
+export default AudioUI;

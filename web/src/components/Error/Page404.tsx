@@ -19,9 +19,9 @@ const StyledDiv = styled.div`
 
 const Page404: React.FunctionComponent<{}> = () => (
     <>
-        <Helmet>
-            <title>{`${titleStringBase} | 404: Page Not Found`}</title>
-        </Helmet>
+        <Helmet
+            title={`${titleStringBase} | 404: Page Not Found`}
+        />
         <StyledDiv>
             404: Page Not Found
         </StyledDiv>

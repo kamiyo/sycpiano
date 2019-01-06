@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 
 import TweenLite from 'gsap/TweenLite';
 
 import {
-    AudioVisualizerDispatchToProps,
     AudioVisualizerProps,
-    AudioVisualizerStateToProps,
     HALF_PI,
     HEIGHT_ADJUST_DESKTOP,
     HEIGHT_ADJUST_MOBILE,
@@ -19,10 +16,8 @@ import {
     VisualizerContainer,
 } from 'src/components/Media/Music/audioVisualizerBase';
 
-import { storeRadii } from 'src/components/Media/Music/actions';
 import { polarToCartesian, visibilityChangeApi } from 'src/components/Media/Music/utils';
 import { CIRCLE_SAMPLES, constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
-import { GlobalStateShape } from 'src/types';
 
 class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     lastPlayheadPosition = 0;
@@ -330,7 +325,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         const color = `hsl(201, ${36 + lightness * 64}%, ${47 + lightness * 53}%)`;
         // adjust large radius to change with the average of all values
         const radius = this.RADIUS_BASE + lowFreq * this.RADIUS_SCALE;
-        this.props.storeRadii(radius - 2 * this.WAVEFORM_HALF_HEIGHT, radius, this.RADIUS_BASE);
+        this.props.setRadii(radius - 2 * this.WAVEFORM_HALF_HEIGHT, radius, this.RADIUS_BASE);
 
         this.drawConstantQBins(context, values, radius, color);
         drawCircleMask(context, radius + 0.25, [this.width, this.height]);
@@ -435,12 +430,4 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 }
 
-const mapStateToProps = ({ audio_ui }: GlobalStateShape) => ({
-    isHoverSeekring: audio_ui.isHoverSeekring,
-    hoverAngle: audio_ui.angle,
-});
-
-export const Component = connect<AudioVisualizerStateToProps, AudioVisualizerDispatchToProps>(
-    mapStateToProps,
-    { storeRadii },
-)(AudioVisualizer);
+export const Component = AudioVisualizer;

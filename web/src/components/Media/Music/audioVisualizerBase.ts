@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 
-import { storeRadii } from 'src/components/Media/Music/actions';
-
 import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 
@@ -14,16 +12,7 @@ export const HEIGHT_ADJUST_DESKTOP = -100;
 export const HIGH_FREQ_SCALE = 10;
 export const MOBILE_MSPF = 1000 / 30;
 
-export interface AudioVisualizerStateToProps {
-    readonly isHoverSeekring: boolean;
-    readonly hoverAngle: number;
-}
-
-export interface AudioVisualizerDispatchToProps {
-    readonly storeRadii: typeof storeRadii;
-}
-
-export interface AudioVisualizerOwnProps {
+export interface AudioVisualizerProps {
     readonly analyzers: AnalyserNode[];
     readonly currentPosition: number;
     readonly duration: number;
@@ -31,9 +20,10 @@ export interface AudioVisualizerOwnProps {
     readonly prevTimestamp: number;
     readonly volume: number;
     readonly isMobile: boolean;
+    readonly isHoverSeekring: boolean;
+    readonly hoverAngle: number;
+    readonly setRadii: (inner: number, outer: number, base: number) => void;
 }
-
-export type AudioVisualizerProps = AudioVisualizerStateToProps & AudioVisualizerDispatchToProps & AudioVisualizerOwnProps;
 
 export const VisualizerContainer = styled.div`
     position: absolute;
@@ -59,4 +49,4 @@ export const VisualizerCanvas = styled.canvas`
     height: 100%;
 `;
 
-export type AudioVisualizerType = new (props: any) => React.Component<Pick<AudioVisualizerProps, Exclude<keyof AudioVisualizerProps, 'storeRadii' | 'hoverAngle' | 'isHoverSeekring'>>>;
+export type AudioVisualizerType = new (props: any) => React.Component<AudioVisualizerProps>;
