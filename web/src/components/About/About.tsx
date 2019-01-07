@@ -6,7 +6,6 @@ import styled from '@emotion/styled';
 
 import { fetchBioAction } from 'src/components/About/actions';
 import { Blurb } from 'src/components/About/types';
-// import { setOnScroll } from 'src/components/App/NavBar/actions';
 
 import { easeQuadOut } from 'd3-ease';
 import TweenLite from 'gsap/TweenLite';
@@ -202,7 +201,6 @@ class About extends React.PureComponent<AboutProps, AboutState> {
 
     componentDidMount() {
         this.props.fetchBioAction();
-        // this.props.setOnScroll(pictureHeight + navBarHeight.mobile);
     }
 
     onImageLoad = (el: HTMLImageElement) => {

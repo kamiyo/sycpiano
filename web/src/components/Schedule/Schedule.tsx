@@ -24,7 +24,7 @@ const scheduleStyles = css`
     width: 100%;
     box-sizing: border-box;
 
-    ${/* sc-selector */ screenXSorPortrait} {
+    ${screenXSorPortrait} {
         font-size: 80%;
     }
 `;
