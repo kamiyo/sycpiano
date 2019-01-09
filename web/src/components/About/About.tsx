@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
+import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 import { fetchBioAction } from 'src/components/About/actions';
 import { Blurb } from 'src/components/About/types';
 
@@ -19,7 +20,6 @@ import { pushed } from 'src/styles/mixins';
 import { screenLengths, screenM, screenWidths, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
-import { onScroll, scrollFn } from '../App/NavBar/actions';
 
 const pictureHeight = 250;
 
