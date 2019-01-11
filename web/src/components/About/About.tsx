@@ -5,8 +5,8 @@ import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
 import { fetchBioAction } from 'src/components/About/actions';
-import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 import { Blurb } from 'src/components/About/types';
+import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 
 import { easeQuadOut } from 'd3-ease';
 import TweenLite from 'gsap/TweenLite';
