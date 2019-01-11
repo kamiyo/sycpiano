@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
-import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 import { fetchBioAction } from 'src/components/About/actions';
+import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 import { Blurb } from 'src/components/About/types';
 
 import { easeQuadOut } from 'd3-ease';

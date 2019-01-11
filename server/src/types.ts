@@ -219,3 +219,33 @@ export interface TokenAttributes {
 export interface TokenInstance extends Sequelize.Instance<TokenAttributes>, TokenAttributes {}
 
 export interface TokenModel extends Model<TokenInstance, TokenAttributes> {}
+
+export interface DiscAttributes {
+    readonly id?: string;
+    readonly title: string;
+    readonly description: string;
+    readonly label: string;
+    readonly releaseDate: Date | string;
+    readonly thumbnailFile: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+}
+
+export interface DiscInstance extends Sequelize.Instance<DiscAttributes>, DiscAttributes {
+    readonly getDiscLinks: HasManyGetAssociationsMixin<DiscLinkInstance, DiscLinkAttributes>;
+}
+
+export interface DiscModel extends Model<DiscInstance, DiscAttributes> {}
+
+export interface DiscLinkAttributes {
+    readonly id?: string;
+    readonly type: string;
+    readonly url: string;
+    readonly discId: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+}
+
+export interface DiscLinkInstance extends Sequelize.Instance<DiscLinkAttributes>, DiscLinkAttributes {}
+
+export interface DiscLinkModel extends Sequelize.Model<DiscLinkInstance, DiscLinkAttributes> {}
