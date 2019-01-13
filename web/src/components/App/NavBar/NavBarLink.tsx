@@ -12,6 +12,7 @@ import TweenLite from 'gsap/TweenLite';
 
 import { toggleExpanded, toggleSubNav } from 'src/components/App/NavBar/actions';
 import SubNav from 'src/components/App/NavBar/SubNav/SubNav';
+import { LinkShape } from 'src/components/App/NavBar/types';
 import { GlobalStateShape } from 'src/types';
 
 import { lightBlue, logoBlue } from 'src/styles/colors';
@@ -24,7 +25,7 @@ interface HighlightProps {
     readonly active: boolean;
     readonly isMobile: boolean;
     readonly isHome: boolean;
-    readonly link: string;
+    readonly link: LinkShape;
 }
 
 const HighlightDiv = styled.div<{ active: boolean; isHome: boolean }>`
@@ -58,7 +59,7 @@ const HyperlinkText = styled.div`
 const Highlight = ({ active, isHome, link, isMobile }: HighlightProps) => (
     <React.Fragment>
         {!isMobile && <HighlightDiv active={active} isHome={isHome} />}
-        <HyperlinkText>{link}</HyperlinkText>
+        <HyperlinkText>{link.name}</HyperlinkText>
     </React.Fragment>
 );
 
@@ -66,9 +67,8 @@ interface NavBarLinkOwnProps {
     readonly className?: string;
     readonly active: boolean;
     readonly isHome: boolean;
-    readonly link: string;
-    readonly subNavLinks: string[];
-    readonly to: string;
+    readonly link: LinkShape;
+    readonly subNavLinks: LinkShape[];
     readonly isMobile: boolean;
 }
 
@@ -187,7 +187,6 @@ const NavBarLink = ({
     isMobile,
     isExpanded,
     link,
-    to,
     subNavLinks,
     showSubs,
     toggleExpanded: expand,
@@ -202,12 +201,12 @@ const NavBarLink = ({
         active && isHome && !isMobile && linkHomeActiveStyle,
     );
     // add attr's conditionally
-    if (link === 'blog') {
-        attr.href = to;
+    if (link.name === 'blog') {
+        attr.href = link.path;
     } else if (subNavLinks) {
-        attr.onClick = () => toggle(link);
+        attr.onClick = () => toggle(link.name);
     } else {
-        (attr as LinkProps).to = to;
+        (attr as LinkProps).to = link.path;
         attr.onClick = () => {
             toggleSubNav('');
             isMobile && expand(false);
@@ -216,7 +215,7 @@ const NavBarLink = ({
     const HighlightComponent = <Highlight active={active} isHome={isHome} link={link} isMobile={isMobile} />;
     return (
         <StyledLi>
-            {(subNavLinks || link === 'blog') ?
+            {(subNavLinks || link.name === 'blog') ?
                 <a css={style} {...attr}>
                     {HighlightComponent}
                 </a>
@@ -227,7 +226,7 @@ const NavBarLink = ({
             {
                 subNavLinks &&
                 <Transition
-                    in={showSubs.includes(link)}
+                    in={showSubs.includes(link.name)}
                     onEnter={(el, isAppearing) => enterAnimation(el, isAppearing, isMobile)}
                     onExit={(el) => exitAnimation(el, isMobile)}
                     timeout={250}
@@ -235,7 +234,7 @@ const NavBarLink = ({
                 >
                     <SubNavContainer>
                         <SubNav
-                            basePath={to}
+                            basePath={link.path}
                             links={subNavLinks}
                             onClick={() => {
                                 toggle('');

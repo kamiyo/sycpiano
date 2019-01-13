@@ -1,6 +1,5 @@
 import VIDEO_ACTIONS from 'src/components/Media/Videos/actionTypeKeys';
 import { VideoItemShape } from 'src/components/Media/Videos/types';
-import { OtherAction } from 'src/components/Press/actionTypes';
 
 export interface FetchPlaylistRequest {
     readonly type: typeof VIDEO_ACTIONS.FETCH_PLAYLIST_REQUEST;
@@ -39,6 +38,6 @@ export interface OtherActions {
 }
 
 type ActionTypes = FetchPlaylistError | FetchPlaylistRequest | FetchPlaylistSuccess |
-                  PlayItem | TogglePlaylist | PlayerIsReady | ResetPlayer | OtherAction;
+                  PlayItem | TogglePlaylist | PlayerIsReady | ResetPlayer | OtherActions;
 
 export default ActionTypes;

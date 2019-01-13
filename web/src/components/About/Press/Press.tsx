@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 
 import styled from '@emotion/styled';
 
+import AcclaimsList from 'src/components/About/Press/AcclaimsList';
 import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
-import AcclaimsList from 'src/components/Press/AcclaimsList';
 
 import { container, pushed } from 'src/styles/mixins';
 import { screenXSorPortrait } from 'src/styles/screens';

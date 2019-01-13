@@ -1,4 +1,4 @@
-import blurbs from 'src/components/About/blurbs';
+import moment from 'moment-timezone';
 
 export interface FormattedLocationShape {
     venue: string;
@@ -26,19 +26,19 @@ export const titleStringBase = 'Sean Chen: Pianist, Composer, Arranger';
 
 export const metaDescriptions: {
     home: string;
-    about: string;
+    biography: string;
     contact: string;
     upcoming: string;
     archive: string;
     videos: string;
     music: string;
     photos: string;
-    press: string;
+    reviews: string;
     getMusic: (piece: string, contributors?: string) => string;
     [index: string]: any;
 } = {
         home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
-        about: `${blurbs[0]}...`,
+        biography: `Hailed as a charismatic rising star with “an exceptional ability to connect with an audience combined with an easy virtuosity” (Huffington Post), ${moment().diff('1988-08-27', 'year').toString()}-year-old American pianist Sean Chen, third prize winner at the 2013 Van Cliburn International Piano Competition and recipient of the DeHaan Classical Fellowship as the winner of the 2013 American Pianists Awards, has continued to earn accolades for “alluring, colorfully shaded renditions” (New York Times) and “genuinely sensitive” (LA Times) playing. He was named a 2015 fellow by the prestigious Leonore Annenberg Fellowship Fund for the Performing Arts.`,
         contact: `Contact information for Sean Chen and for booking performances.`,
         upcoming: 'Upcoming recitals, concerti, and masterclasses.',
         archive: 'Past recitals, concerti, and masterclasses.',
@@ -47,5 +47,5 @@ export const metaDescriptions: {
         getMusic: (piece: string, contributors?: string) =>
             `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
         photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
-        press: `Reviews of Sean Chen's performances.`,
+        reviews: `Press of Sean Chen's performances.`,
     };

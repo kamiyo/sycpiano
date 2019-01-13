@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import tint from 'polished/lib/color/tint';
 
 import SubNavLink from 'src/components/App/NavBar/SubNav/SubNavLink';
+import { LinkShape } from 'src/components/App/NavBar/types';
 import { lightBlue } from 'src/styles/colors';
 import { screenMorPortrait } from 'src/styles/screens';
 
@@ -11,7 +12,7 @@ interface SubNavProps {
     readonly className?: string;
     readonly isHome: boolean;
     readonly basePath: string;
-    readonly links: string[];
+    readonly links: LinkShape[];
     readonly onClick: () => void;
     readonly isMobile: boolean;
 }

@@ -8,10 +8,12 @@ import { darken } from 'polished';
 import { lightBlue } from 'src/styles/colors';
 import { noHighlight } from 'src/styles/mixins';
 
+import { LinkShape } from 'src/components/App/NavBar/types';
+
 interface SubNavLinkProps {
     readonly isHome: boolean;
     readonly basePath: string;
-    readonly link: string;
+    readonly link: LinkShape;
     readonly onClick: () => void;
     readonly isMobile: boolean;
 }
@@ -53,12 +55,12 @@ const mobileStyle = css`
 `;
 
 const homeStyle = css`
-    color: rgba(200, 200, 200, 1);
+    color: white;
     background-color: transparent;
     box-shadow: none;
 
     :hover {
-        color: rgba(255, 255, 255, 1);
+        text-shadow: 0 0 1px rgba(255, 255, 255, 1);
         background-color: rgba(53, 53, 53, 0.27);
         box-shadow: 0 6px 11px -5px rgba(0, 0, 0, 0.5);
     }
@@ -70,13 +72,13 @@ const SubNavLink: React.FC<SubNavLinkProps> = ({ basePath, link, onClick, isHome
     <StyledLi>
         <StyledSubNavLink
             css={[isHome && homeStyle, isMobile && mobileStyle]}
-            to={`${basePath}/${link}`}
+            to={`${basePath}${link.path}`}
             isMobile={isMobile}
             isHome={isHome}
             activeClassName={'active'}
             onClick={() => { setTimeout(() => onClick(), 250); }}
         >
-            {link}
+            {link.name}
         </StyledSubNavLink>
     </StyledLi>
 );

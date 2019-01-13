@@ -1,7 +1,7 @@
-import PRESS_ACTIONS from 'src/components/Press/actionTypeKeys';
+import PRESS_ACTIONS from 'src/components/About/Press/actionTypeKeys';
 
-import ActionTypes from 'src/components/Press/actionTypes';
-import { AcclaimsListStateShape } from 'src/components/Press/types';
+import ActionTypes from 'src/components/About/Press/actionTypes';
+import { AcclaimsListStateShape } from 'src/components/About/Press/types';
 
 export const acclaimsListReducer = (state: AcclaimsListStateShape = {
     isFetching: false,

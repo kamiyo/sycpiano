@@ -6,12 +6,12 @@ import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
 import { List, ListRowRenderer } from 'react-virtualized/dist/es/List';
 
-import { createFetchAcclaimsAction } from 'src/components/Press/actions';
+import { createFetchAcclaimsAction } from 'src/components/About/Press/actions';
 
-import { AcclaimItemShape } from 'src/components/Press/types';
+import { AcclaimItemShape } from 'src/components/About/Press/types';
 import { GlobalStateShape } from 'src/types';
 
-import AcclaimsListItem from 'src/components/Press/AcclaimsListItem';
+import AcclaimsListItem from 'src/components/About/Press/AcclaimsListItem';
 import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
