@@ -46,7 +46,7 @@ app.get('/health-check', (req, res) => res.sendStatus(200));
 const oldRoutesToRedirectsMap = {
     '/home': '/',
     '/music': '/media/music',
-    '/about': '/about/bio',
+    '/about': '/about/biography',
     '/press': '/about/press',
 };
 
