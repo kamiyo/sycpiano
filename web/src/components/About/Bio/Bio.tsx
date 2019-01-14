@@ -179,7 +179,6 @@ interface BioState {
 
 interface BioStateToProps {
     readonly scrollTop: number;
-    readonly onScroll: (event: React.SyntheticEvent<HTMLElement>) => void;
     readonly bio: Blurb[];
 }
 
@@ -269,7 +268,6 @@ class About extends React.PureComponent<BioProps, BioState> {
 }
 
 const mapStateToProps = ({ bio, navbar }: GlobalStateShape) => ({
-    onScroll: navbar.onScroll,
     scrollTop: navbar.lastScrollTop,
     bio: bio.bio,
 });

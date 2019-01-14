@@ -43,7 +43,7 @@ const StyledImg = styled.img({ display: 'block' });
 const DropboxButton: React.FC<{}> = () => (
     <StyledDiv>
         <StyledLink to={'https://www.dropbox.com/sh/pzou7yeukjktznn/AADNCU7fmgUy_vmA3WioLiria?dl=0'} target="_blank" rel="noopener">
-            <StyledImg width={50} height={50} src={staticImage(`/soc-logos/dropbox.svg`)} />
+            <StyledImg width={50} height={50} src={staticImage(`/logos/dropbox.svg`)} />
         </StyledLink>
     </StyledDiv>
 );

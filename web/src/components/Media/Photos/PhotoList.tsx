@@ -40,7 +40,7 @@ const playlistExtraStyles = ({
     ul: photoULStyle,
 });
 
-const StyledPhotoListContainer = styled('div')`
+const StyledPhotoListContainer = styled.div`
     width: fit-content;
     height: 100%;
     right: 0;

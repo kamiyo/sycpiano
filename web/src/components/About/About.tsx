@@ -13,12 +13,14 @@ import module from 'src/module';
 import store from 'src/store';
 
 import { RequiredProps as BioProps } from 'src/components/About/Bio/Bio';
+import { RequiredProps as DiscsProps } from 'src/components/About/Discs/Discs';
 import { RequiredProps as PressProps } from 'src/components/About/Press/Press';
 
 const register = module(store);
 
 const Bio = () => register('bio', import(/* webpackChunkName: 'bio' */ 'src/components/About/Bio'));
 const Press = () => register('press', import(/* webpackChunkName: 'press' */ 'src/components/About/Press'));
+const Discs = () => register('discs', import(/* webpackChunkName: 'discs' */ 'src/components/About/Discs'));
 
 import { container } from 'src/styles/mixins';
 import { metaDescriptions, titleStringBase } from 'src/utils';
@@ -84,7 +86,13 @@ const About = ({ isMobile, match, location }: AboutProps) => (
                                 exact={true}
                             />
                             <Route
-                                render={() => <Redirect to="/about/bio" />}
+                                path="/about/discography"
+                                render={(childProps) => <AsyncComponent<DiscsProps> moduleProvider={Discs} {...childProps} isMobile={isMobile} />}
+                                exact={true}
+                            />
+                            <Route
+                                path="/about"
+                                render={() => <Redirect to="/about/biography" />}
                             />
                         </Switch>
                     </FadingContainer>

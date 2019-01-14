@@ -1,4 +1,4 @@
-import { startCase, toLower, toUpper } from 'lodash-es';
+import { startCase, toLower } from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import ReactMedia from 'react-media';
@@ -118,7 +118,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
     getMostSpecificRouteName = () => {
         const matches: string[] = this.props.location.pathname.match(/^(\/[^\/]+)?(\/[^\/]+)?/);
         const match = matches[2] || matches[1];
-        return (match ? toUpper(match.slice(1)) : '') || null;
+        return (match ? match.slice(1) : '') || null;
     }
 
     bgLoaded = () => {
@@ -126,8 +126,8 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
     }
 
     render() {
-        let currentPage = this.getRouteBase();
-        currentPage = currentPage === '/' ? 'Home' : startCase(currentPage.replace('/', ''));
+        let currentPage = this.getMostSpecificRouteName();
+        currentPage = currentPage ? 'Home' : startCase(currentPage);
         const description = metaDescriptions[toLower(currentPage)] || 'Welcome to the official website of pianist, composer, and arranger Sean Chen';
         return (
             <>
@@ -188,7 +188,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
                                                     render={(childProps) => <AsyncComponent<ContactProps> moduleProvider={Contact} {...childProps} isMobile={matches} />}
                                                 />
                                                 <Route
-                                                    path="/media/:media/:other*"
+                                                    path="/media/:media?/:other*"
                                                     exact={true}
                                                     render={(childProps) => <AsyncComponent<MediaProps> moduleProvider={Media} {...childProps} isMobile={matches} />}
                                                 />

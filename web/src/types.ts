@@ -1,11 +1,14 @@
 import { BioStateShape } from 'src/components/About/Bio/types';
+import { DiscsStateShape } from 'src/components/About/Discs/types';
 import { AcclaimsListStateShape } from 'src/components/About/Press/types';
+import { NavBarStateShape } from 'src/components/App/NavBar/types';
 import { AudioPlaylistStateShape } from 'src/components/Media/Music/types';
 import { PhotoListReducerShape, PhotoViewerReducerShape } from 'src/components/Media/Photos/types';
 import { VideoPlayerStateShape, VideoPlaylistStateShape } from 'src/components/Media/Videos/types';
 import { ScheduleStateShape } from 'src/components/Schedule/types';
 
 import { bioReducer } from 'src/components/About/Bio/reducers';
+import { discsReducer } from 'src/components/About/Discs/reducers';
 import { acclaimsListReducer } from 'src/components/About/Press/reducers';
 import { audioPlaylistReducer } from 'src/components/Media/Music/reducers';
 import { photoListReducer, photoViewerReducer } from 'src/components/Media/Photos/reducers';
@@ -14,10 +17,9 @@ import { scheduleReducer } from 'src/components/Schedule/reducers';
 
 import { Store } from 'redux';
 
-import { NavBarStateShape } from 'src/components/App/NavBar/types';
-
 export interface GlobalStateShape {
     readonly bio?: BioStateShape;
+    readonly discs?: DiscsStateShape;
     readonly audio_playlist?: AudioPlaylistStateShape;
     readonly photo_list?: PhotoListReducerShape;
     readonly photo_viewer?: PhotoViewerReducerShape;
@@ -28,12 +30,13 @@ export interface GlobalStateShape {
     readonly navbar: NavBarStateShape;
 }
 
-export type AnyReducerType = typeof bioReducer | typeof audioPlaylistReducer |
+export type AnyReducerType = typeof bioReducer | typeof discsReducer | typeof audioPlaylistReducer |
     typeof photoListReducer | typeof photoViewerReducer | typeof acclaimsListReducer |
     typeof scheduleReducer | typeof videoPlayerReducer | typeof videoPlaylistReducer;
 
 export interface Reducers {
     readonly bio?: typeof bioReducer;
+    readonly discs?: typeof discsReducer;
     readonly audio_playlist?: typeof audioPlaylistReducer;
     readonly photo_list?: typeof photoListReducer;
     readonly photo_viewer?: typeof photoViewerReducer;

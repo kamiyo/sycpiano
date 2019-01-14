@@ -27,6 +27,7 @@ const LogoText = styled.div`
     vertical-align: middle;
     line-height: ${navBarHeight.desktop}px;
     height: ${navBarHeight.desktop}px;
+    text-transform: uppercase;
 
     ${screenXSorPortrait} {
         margin-left: 0;
@@ -68,7 +69,9 @@ const NavBarLogo: React.FC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProp
     isHome,
     isExpanded,
     specificRouteName,
-}) => (
+}) => {
+    const displayName = specificRouteName.replace('discography', 'discog').replace('biography', 'bio');
+    return (
         <StyledLink to="/" isHome={isHome} isExpanded={isExpanded}>
             <ReactMedia query={reactMediaMobileQuery}>
                 {(xs: boolean) =>
@@ -78,7 +81,7 @@ const NavBarLogo: React.FC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProp
                                 <SycLogo />
                                 <LogoText>
                                     {!isHome && !xs && <SeanChenText>{'SEAN CHEN' + (medium ? ' |' : '')}</SeanChenText>}
-                                    {!isHome && (xs || medium) && <RouteText>{specificRouteName}</RouteText>}
+                                    {!isHome && (xs || medium) && <RouteText>{displayName}</RouteText>}
                                 </LogoText>
                             </React.Fragment>
                         }
@@ -87,5 +90,6 @@ const NavBarLogo: React.FC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProp
             </ReactMedia>
         </StyledLink>
     );
+};
 
 export default NavBarLogo;

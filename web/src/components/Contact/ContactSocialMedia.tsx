@@ -39,7 +39,7 @@ interface SocialMediaLinkProps {
 const SocialMediaLink: React.FC<SocialMediaLinkProps> = (props) => (
     <StyledLink href={props.url} target="_blank" rel="noopener">
         <SocialMediaImg
-            src={staticImage(`/soc-logos/${props.social}-color.svg`)}
+            src={staticImage(`/logos/${props.social}-color.svg`)}
         />
     </StyledLink>
 );

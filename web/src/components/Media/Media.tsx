@@ -22,7 +22,6 @@ const Music = () => register('music', import(/* webpackChunkName: 'music' */ 'sr
 const Photos = () => register('photos', import(/* webpackChunkName: 'photos' */ 'src/components/Media/Photos'));
 const Videos = () => register('videos', import(/* webpackChunkName: 'videos' */ 'src/components/Media/Videos'));
 
-import { cliburn1 } from 'src/styles/imageUrls';
 import { container } from 'src/styles/mixins';
 import { metaDescriptions, titleStringBase } from 'src/utils';
 
@@ -41,8 +40,6 @@ const fadeOnExit = (element: HTMLElement) => {
 const MediaContainer = styled.div`
     height: 100%;
     width: 100%;
-    background: url(${cliburn1()}) no-repeat;
-    background-size: cover;
     overflow: hidden;
     ${container};
 `;
@@ -113,6 +110,7 @@ const Media = ({ isMobile, match, location }: MediaProps) => (
                                 exact={true}
                             />
                             <Route
+                                path="/media"
                                 render={() => <Redirect to="/media/videos" />}
                             />
                         </Switch>
