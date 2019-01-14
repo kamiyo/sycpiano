@@ -4,7 +4,7 @@ import * as React from 'react';
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
-import { AcclaimItemShape } from 'src/components/Press/types';
+import { AcclaimItemShape } from 'src/components/About/Press/types';
 import { logoBlue } from 'src/styles/colors';
 import { lato1, lato2 } from 'src/styles/fonts';
 import { screenXSorPortrait } from 'src/styles/screens';

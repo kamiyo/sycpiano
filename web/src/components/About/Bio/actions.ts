@@ -1,26 +1,26 @@
 import axios from 'axios';
 import { ThunkAction } from 'redux-thunk';
 
-import ABOUT_ACTIONS from 'src/components/About/actionTypeKeys';
-import * as ActionTypes from 'src/components/About/actionTypes';
-import { Blurb } from 'src/components/About/types';
+import BIO_ACTIONS from 'src/components/About/Bio/actionTypeKeys';
+import * as ActionTypes from 'src/components/About/Bio/actionTypes';
+import { Blurb } from 'src/components/About/Bio/types';
 import { GlobalStateShape } from 'src/types';
 
 const fetchBioRequest = (): ActionTypes.FetchBioRequest => ({
-    type: ABOUT_ACTIONS.FETCH_BIO_REQUEST,
+    type: BIO_ACTIONS.FETCH_BIO_REQUEST,
 });
 
 const fetchBioSuccess = (bio: Blurb[]): ActionTypes.FetchBioSuccess => ({
-    type: ABOUT_ACTIONS.FETCH_BIO_SUCCESS,
+    type: BIO_ACTIONS.FETCH_BIO_SUCCESS,
     bio,
 });
 
 const fetchBioError = (): ActionTypes.FetchBioError => ({
-    type: ABOUT_ACTIONS.FETCH_BIO_ERROR,
+    type: BIO_ACTIONS.FETCH_BIO_ERROR,
 });
 
 const shouldFetchBio = (state: GlobalStateShape) => {
-    return !state.about.isFetching && state.about.bio.length === 0;
+    return !state.bio.isFetching && state.bio.bio.length === 0;
 };
 
 type FetchBioActions = ActionTypes.FetchBioError | ActionTypes.FetchBioRequest | ActionTypes.FetchBioSuccess;

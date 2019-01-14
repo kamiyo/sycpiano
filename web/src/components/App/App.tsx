@@ -1,4 +1,4 @@
-import { startCase, toLower, toUpper } from 'lodash-es';
+import { startCase, toLower } from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import ReactMedia from 'react-media';
@@ -11,8 +11,7 @@ import { RequiredProps as AboutProps } from 'src/components/About/About';
 import { RequiredProps as ContactProps } from 'src/components/Contact/Contact';
 import { RequiredProps as HomeProps } from 'src/components/Home/Home';
 import { RequiredProps as MediaProps } from 'src/components/Media/Media';
-import { RequiredProps as PressProps } from 'src/components/Press/Press';
-import { RequiredProps as ScheduleProps } from 'src/components/schedule/Schedule';
+import { RequiredProps as ScheduleProps } from 'src/components/Schedule/Schedule';
 import { RequiredProps as SycStoreProps } from 'src/components/SycStore/SycStore';
 
 import { Global } from '@emotion/core';
@@ -50,7 +49,6 @@ const About = () => register('about', import(/* webpackChunkName: 'about' */ 'sr
 const Contact = () => register('contact', import(/* webpackChunkName: 'contact' */ 'src/components/Contact'));
 const Home = () => register('home', import(/* webpackChunkName: 'home' */ 'src/components/Home'));
 const Media = () => register('media', import(/* webpackChunkName: 'media' */ 'src/components/Media'));
-const Press = () => register('press', import(/* webpackChunkName: 'press' */ 'src/components/Press'));
 const Schedule = () => register('schedule', import(/* webpackChunkName: 'schedule' */ 'src/components/Schedule'));
 const SycStore = () => register('store', import(/* webpackChunkName: 'sycStore' */ 'src/components/SycStore'));
 const Page404 = () => register('page404', import(/* webpackChunkName: 'page404' */ 'src/components/Error'));
@@ -122,7 +120,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
     getMostSpecificRouteName = () => {
         const matches: string[] = this.props.location.pathname.match(/^(\/[^\/]+)?(\/[^\/]+)?/);
         const match = matches[2] || matches[1];
-        return (match ? toUpper(match.slice(1)) : '') || null;
+        return (match ? match.slice(1) : '') || null;
     }
 
     bgLoaded = () => {
@@ -130,8 +128,8 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
     }
 
     render() {
-        let currentPage = this.getRouteBase();
-        currentPage = currentPage === '/' ? 'Home' : startCase(currentPage.replace('/', ''));
+        let currentPage = this.getMostSpecificRouteName();
+        currentPage = currentPage ? 'Home' : startCase(currentPage);
         const description = metaDescriptions[toLower(currentPage)] || 'Welcome to the official website of pianist, composer, and arranger Sean Chen';
         return (
             <>
@@ -182,7 +180,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
                                         <FadingContainer>
                                             <Switch location={this.props.location}>
                                                 <Route
-                                                    path="/about"
+                                                    path="/about/:about"
                                                     exact={true}
                                                     render={(childProps) => <AsyncComponent<AboutProps> moduleProvider={About} {...childProps} isMobile={matches} />}
                                                 />
@@ -192,14 +190,9 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
                                                     render={(childProps) => <AsyncComponent<ContactProps> moduleProvider={Contact} {...childProps} isMobile={matches} />}
                                                 />
                                                 <Route
-                                                    path="/media/:media/:other*"
+                                                    path="/media/:media?/:other*"
                                                     exact={true}
                                                     render={(childProps) => <AsyncComponent<MediaProps> moduleProvider={Media} {...childProps} isMobile={matches} />}
-                                                />
-                                                <Route
-                                                    path="/press"
-                                                    exact={true}
-                                                    render={(childProps) => <AsyncComponent<PressProps> moduleProvider={Press} {...childProps} isMobile={matches} />}
                                                 />
                                                 <Route
                                                     path="/schedule/:type?/:date?"

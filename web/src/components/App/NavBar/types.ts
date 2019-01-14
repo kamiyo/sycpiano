@@ -1,7 +1,12 @@
-export interface LinkShape {
+export interface LinkBaseShape {
     readonly name: string;
     readonly path: string;
-    readonly subPaths?: string[];
+}
+
+export interface LinkShape extends LinkBaseShape {
+    readonly name: string;
+    readonly path: string;
+    readonly subLinks?: LinkShape[];
 }
 
 export interface NavBarLinksProps {

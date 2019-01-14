@@ -267,7 +267,7 @@ const SocialMediaLink: React.FC<SocialMediaLinkProps> = (props) => (
     <SocialLink canHover={props.canHover} show={props.show} href={props.url} target="_blank">
         <img
             className={''}
-            src={staticImage(`/soc-logos/${props.social}.svg`)}
+            src={staticImage(`/logos/${props.social}.svg`)}
         />
     </SocialLink>
 );

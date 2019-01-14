@@ -32,7 +32,7 @@ interface PhotosOwnProps {
 
 type PhotosProps = PhotosStateToProps & PhotosDispatchToProps & PhotosOwnProps;
 
-const StyledPhotos = styled('div')`
+const StyledPhotos = styled.div`
     ${pushed}
     width: 100%;
     background-color: black;
@@ -46,7 +46,7 @@ const StyledPhotos = styled('div')`
     }
 `;
 
-const StyledPhotoViewer = styled('div')`
+const StyledPhotoViewer = styled.div`
     position: relative;
     width: calc(100% - ${playlistContainerWidth.desktop});
     height: 100%;
@@ -65,7 +65,7 @@ const StyledPhotoViewer = styled('div')`
     }
 `;
 
-const StyledCredit = styled('div') `
+const StyledCredit = styled.div`
     position: absolute;
     bottom: 0;
     right: 0;

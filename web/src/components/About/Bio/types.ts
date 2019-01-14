@@ -3,7 +3,7 @@ export interface Blurb {
     text: string;
 }
 
-export interface AboutStateShape {
+export interface BioStateShape {
     isFetching: boolean;
     bio: Blurb[];
 }

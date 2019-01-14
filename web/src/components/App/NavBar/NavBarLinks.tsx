@@ -52,9 +52,8 @@ const NavBarLinks: React.FC<NavBarLinksProps> = (props) => (
                 return (
                     <NavBarLink
                         key={i}
-                        link={link.name}
-                        to={link.path}
-                        subNavLinks={link.subPaths}
+                        link={link}
+                        subNavLinks={link.subLinks}
                         active={link.path === props.currentBasePath}
                         isHome={props.currentBasePath === '/'}
                         isMobile={props.isMobile}

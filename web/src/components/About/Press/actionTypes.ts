@@ -1,5 +1,5 @@
-import PRESS_ACTIONS from 'src/components/Press/actionTypeKeys';
-import { AcclaimItemShape } from 'src/components/Press/types';
+import PRESS_ACTIONS from 'src/components/About/Press/actionTypeKeys';
+import { AcclaimItemShape } from 'src/components/About/Press/types';
 
 export interface FetchAcclaimsRequest {
     readonly type: typeof PRESS_ACTIONS.FETCH_ACCLAIMS_REQUEST;

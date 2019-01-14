@@ -20,7 +20,8 @@ const baseString = 'Sean Chen: Pianist, Composer, Arranger | ';
 const age = moment().diff('1988-08-27', 'year');
 const descriptions: {
     home: string;
-    about: string;
+    biography: string;
+    discography: string;
     contact: string;
     upcoming: string;
     archive: string;
@@ -34,7 +35,8 @@ const descriptions: {
     [index: string]: any;
 } = {
         home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
-        about: `Hailed as a charismatic rising star with “an exceptional ability to connect with an audience combined with an easy virtuosity” (Huffington Post), ${age.toString()}-year-old American pianist Sean Chen, third prize winner at the 2013 Van Cliburn International Piano Competition and recipient of the DeHaan Classical Fellowship as the winner of the 2013 American Pianists Awards, has continued to earn accolades for “alluring, colorfully shaded renditions” (New York Times) and “genuinely sensitive” (LA Times) playing.`,
+        biography: `Hailed as a charismatic rising star with “an exceptional ability to connect with an audience combined with an easy virtuosity” (Huffington Post), ${age.toString()}-year-old American pianist Sean Chen, third prize winner at the 2013 Van Cliburn International Piano Competition and recipient of the DeHaan Classical Fellowship as the winner of the 2013 American Pianists Awards, has continued to earn accolades for “alluring, colorfully shaded renditions” (New York Times) and “genuinely sensitive” (LA Times) playing.`,
+        discography: 'Complete discography of Sean Chen',
         contact: `Contact information for Sean Chen and for booking performances.`,
         upcoming: 'Upcoming recitals, concerti, and masterclasses.',
         archive: 'Past recitals, concerti, and masterclasses.',
@@ -49,6 +51,7 @@ const descriptions: {
     };
 
 const validFirst = [ '', 'about', 'contact', 'schedule', 'media', 'press', 'store' ];
+const validSecond = [ '', 'biography', 'press', 'music', 'videos', 'photos', 'upcoming', 'archive' ];
 
 export const getMetaFromPathAndSanitize = async (url: string) => {
     const parsed = regex.exec(url);
@@ -69,6 +72,13 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
         return {
             title: baseString + startCase(parsed[1]),
             description: descriptions[parsed[1]],
+        };
+    }
+    if (!validSecond.includes(parsed[2])) {
+        return {
+            title: baseString + '404: Not Found',
+            description: descriptions.home,
+            notFound: true,
         };
     }
     if (parsed[3] === undefined) {

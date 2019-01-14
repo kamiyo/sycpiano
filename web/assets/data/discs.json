@@ -90,6 +90,10 @@
                 "url": "https://www.amazon.com/dp/B07MC9K64C"
             },
             {
+                "type": "itunes",
+                "url": "https://itunes.apple.com/us/album/kaleidoscoping/1449326449"
+            },
+            {
                 "type": "google",
                 "url": "https://play.google.com/store/music/album/Celeste_Johnson_Kaleidoscoping?id=B5a5p25p27lfyqukq4q5jyqnapa"
             },

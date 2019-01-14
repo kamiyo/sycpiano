@@ -2,9 +2,9 @@ import axios from 'axios';
 
 import { ThunkAction } from 'redux-thunk';
 
-import PRESS_ACTIONS from 'src/components/Press/actionTypeKeys';
-import * as ActionTypes from 'src/components/Press/actionTypes';
-import { AcclaimItemShape } from 'src/components/Press/types';
+import PRESS_ACTIONS from 'src/components/About/Press/actionTypeKeys';
+import * as ActionTypes from 'src/components/About/Press/actionTypes';
+import { AcclaimItemShape } from 'src/components/About/Press/types';
 
 import { GlobalStateShape } from 'src/types';
 
