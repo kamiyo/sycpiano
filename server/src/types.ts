@@ -249,3 +249,13 @@ export interface DiscLinkAttributes {
 export interface DiscLinkInstance extends Sequelize.Instance<DiscLinkAttributes>, DiscLinkAttributes {}
 
 export interface DiscLinkModel extends Sequelize.Model<DiscLinkInstance, DiscLinkAttributes> {}
+
+export interface StoreItem {
+    readonly caption: string;
+    readonly created: number;
+    readonly description: string;
+    readonly id: string;
+    readonly images: string[];
+    readonly name: string;
+    readonly updated: number;
+}

@@ -11,7 +11,8 @@ import { RequiredProps as AboutProps } from 'src/components/About/About';
 import { RequiredProps as ContactProps } from 'src/components/Contact/Contact';
 import { RequiredProps as HomeProps } from 'src/components/Home/Home';
 import { RequiredProps as MediaProps } from 'src/components/Media/Media';
-import { RequiredProps as ScheduleProps } from 'src/components/Schedule/Schedule';
+import { RequiredProps as ScheduleProps } from 'src/components/schedule/Schedule';
+import { RequiredProps as SycStoreProps } from 'src/components/SycStore/SycStore';
 
 import { Global } from '@emotion/core';
 import styled from '@emotion/styled';
@@ -49,6 +50,7 @@ const Contact = () => register('contact', import(/* webpackChunkName: 'contact' 
 const Home = () => register('home', import(/* webpackChunkName: 'home' */ 'src/components/Home'));
 const Media = () => register('media', import(/* webpackChunkName: 'media' */ 'src/components/Media'));
 const Schedule = () => register('schedule', import(/* webpackChunkName: 'schedule' */ 'src/components/Schedule'));
+const SycStore = () => register('store', import(/* webpackChunkName: 'sycStore' */ 'src/components/SycStore'));
 const Page404 = () => register('page404', import(/* webpackChunkName: 'page404' */ 'src/components/Error'));
 
 const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
@@ -195,6 +197,11 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
                                                 <Route
                                                     path="/schedule/:type?/:date?"
                                                     render={(childProps) => <AsyncComponent<ScheduleProps> moduleProvider={Schedule} {...childProps} isMobile={matches} />}
+                                                />
+                                                <Route
+                                                    path="/store"
+                                                    exact={true}
+                                                    render={(childProps) => <AsyncComponent<SycStoreProps> moduleProvider={SycStore} {...childProps} isMobile={matches} />}
                                                 />
                                                 <Route
                                                     path="/"

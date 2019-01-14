@@ -24,4 +24,5 @@ export const links: ReadonlyArray<LinkShape> = [
         ],
     },
     { name: 'contact', path: '/contact' },
+    // { name: 'store', path: '/store' },
 ];

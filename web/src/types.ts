@@ -6,6 +6,7 @@ import { AudioPlaylistStateShape } from 'src/components/Media/Music/types';
 import { PhotoListReducerShape, PhotoViewerReducerShape } from 'src/components/Media/Photos/types';
 import { VideoPlayerStateShape, VideoPlaylistStateShape } from 'src/components/Media/Videos/types';
 import { ScheduleStateShape } from 'src/components/Schedule/types';
+import { SycStoreStateShape } from 'src/components/SycStore/types';
 
 import { bioReducer } from 'src/components/About/Bio/reducers';
 import { discsReducer } from 'src/components/About/Discs/reducers';
@@ -14,6 +15,7 @@ import { audioPlaylistReducer } from 'src/components/Media/Music/reducers';
 import { photoListReducer, photoViewerReducer } from 'src/components/Media/Photos/reducers';
 import { videoPlayerReducer, videoPlaylistReducer } from 'src/components/Media/Videos/reducers';
 import { scheduleReducer } from 'src/components/Schedule/reducers';
+import { sycStoreReducer } from 'src/components/SycStore/reducers';
 
 import { Store } from 'redux';
 
@@ -25,6 +27,7 @@ export interface GlobalStateShape {
     readonly photo_viewer?: PhotoViewerReducerShape;
     readonly press_acclaimsList?: AcclaimsListStateShape;
     readonly schedule_eventItems?: ScheduleStateShape;
+    readonly sycStore?: SycStoreStateShape;
     readonly video_player?: VideoPlayerStateShape;
     readonly video_playlist?: VideoPlaylistStateShape;
     readonly navbar: NavBarStateShape;
@@ -32,7 +35,7 @@ export interface GlobalStateShape {
 
 export type AnyReducerType = typeof bioReducer | typeof discsReducer | typeof audioPlaylistReducer |
     typeof photoListReducer | typeof photoViewerReducer | typeof acclaimsListReducer |
-    typeof scheduleReducer | typeof videoPlayerReducer | typeof videoPlaylistReducer;
+    typeof scheduleReducer | typeof videoPlayerReducer | typeof videoPlaylistReducer | typeof sycStoreReducer;
 
 export interface Reducers {
     readonly bio?: typeof bioReducer;
@@ -44,6 +47,7 @@ export interface Reducers {
     readonly schedule_eventItems?: typeof scheduleReducer;
     readonly video_player?: typeof videoPlayerReducer;
     readonly video_playlist?: typeof videoPlaylistReducer;
+    readonly sycStore?: typeof sycStoreReducer;
     readonly [key: string]: AnyReducerType;
 }
 
