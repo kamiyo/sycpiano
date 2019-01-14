@@ -8,4 +8,5 @@ export const links: ReadonlyArray<LinkShape> = [
     { name: 'media', path: '/media', subPaths: ['videos', 'music', 'photos'] },
     { name: 'press', path: '/press' },
     { name: 'contact', path: '/contact' },
+    // { name: 'store', path: '/store' },
 ];
