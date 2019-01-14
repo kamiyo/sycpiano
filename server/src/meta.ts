@@ -29,6 +29,7 @@ const descriptions: {
     music: string;
     photos: string;
     press: string;
+    store: string;
     getMusic: (piece: string, contributors?: string) => string;
     [index: string]: any;
 } = {
@@ -44,9 +45,10 @@ const descriptions: {
             `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
         photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
         press: `Reviews of Sean Chen's performances.`,
+        store: `Buy Sean Chen's sheet music.`,
     };
 
-const validFirst = [ '', 'about', 'contact', 'schedule', 'media', 'press' ];
+const validFirst = [ '', 'about', 'contact', 'schedule', 'media', 'press', 'store' ];
 
 export const getMetaFromPathAndSanitize = async (url: string) => {
     const parsed = regex.exec(url);
