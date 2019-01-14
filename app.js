@@ -1,6 +1,5 @@
 const express = require('express');
 const helmet = require('helmet');
-const morgan = require('morgan');
 const path = require('path');
 const mustacheExpress = require('mustache-express');
 const ApiRouter = require('./server/build/api-router.js').ApiRouter;
@@ -14,6 +13,20 @@ const port = isProduction ? process.env.PORT : 8000;
 const listenAddr = isProduction ? '0.0.0.0' : '127.0.0.1';
 
 const app = express();
+const logger = () => {
+    if (isProduction) {
+        const pino = require('express-pino-logger');
+        return pino({
+            serializers: {
+                req: pino.stdSerializers.req,
+                res: pino.stdSerializers.res,
+                err: pino.stdSerializers.err,
+            }
+        });
+    } else {
+        return require('morgan')('dev');
+    }
+};
 
 // helmet will add HSTS to force HTTPS connections, remove x-powered-by non-standard header,
 // sets x-frame-options header to disallow our content to be rendered in iframes.
@@ -22,7 +35,7 @@ app.use(helmet());
 app.use('/static', express.static(path.join(__dirname, '/web/assets')));
 app.use('/static', express.static(path.join(__dirname, '/web/build')));
 
-app.use(morgan('common'));
+app.use(logger());
 app.engine('html', mustacheExpress());
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '/web/build'));
