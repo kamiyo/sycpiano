@@ -1,7 +1,9 @@
 import * as express from 'express';
 import * as path from 'path';
 
-import Promise from 'bluebird';
+import * as cors from 'cors';
+
+import * as Promise from 'bluebird';
 
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -19,9 +21,13 @@ const adminRest = express.Router();
 adminRest.use(express.json());
 adminRest.use(express.urlencoded({ extended: true }));
 
-adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, async (req, res) => {
-    res.status(200).json({ success: 'successfully queued' });
-    res.end();
+const corsOptions = {
+    origin: (process.env.NODE_ENV === 'production' && process.env.SERVER_ENV !== 'test') ? 'https://app.forestadmin.com' : 'http://app.forestadmin.com',
+    allowedHeaders: ['Authorization', 'X-Requested-With', 'Content-Type'],
+    optionsSuccessStatus: 204,
+};
+
+adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors(corsOptions), async (req, res) => {
     let updated = 0;
     let created = 0;
     let errored = 0;
@@ -124,7 +130,6 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, asyn
             }
         }
     });
-
     const result = `
         updating finished.
         created: ${created}
@@ -132,12 +137,16 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, asyn
         errored: ${errored}
     `;
     console.log(result);
-
+    res.status(200).json({
+        success: [{
+            created,
+            updated,
+            errored,
+        }],
+    });
 });
 
-adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res) => {
-    res.sendStatus(200);
-
+adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOptions), async (_, res) => {
     let events: CalendarInstance[];
     const limit = 10;
     let offset = 0;
@@ -252,6 +261,13 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, async (_, res
         errored: ${errored}
     `;
     console.log(result);
+    res.status(200).json({
+        success: [{
+            created,
+            updated,
+            errored,
+        }],
+    });
 });
 
 const updateMusicFileHash = async (req: express.Request, _: express.Response, next: () => any) => {
