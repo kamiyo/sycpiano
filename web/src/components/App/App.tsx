@@ -11,7 +11,7 @@ import { RequiredProps as AboutProps } from 'src/components/About/About';
 import { RequiredProps as ContactProps } from 'src/components/Contact/Contact';
 import { RequiredProps as HomeProps } from 'src/components/Home/Home';
 import { RequiredProps as MediaProps } from 'src/components/Media/Media';
-import { RequiredProps as ScheduleProps } from 'src/components/schedule/Schedule';
+import { RequiredProps as ScheduleProps } from 'src/components/Schedule/Schedule';
 import { RequiredProps as SycStoreProps } from 'src/components/SycStore/SycStore';
 
 import { Global } from '@emotion/core';
