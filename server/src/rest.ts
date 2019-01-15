@@ -1,14 +1,12 @@
-import * as express from 'express';
-import * as path from 'path';
-
-import * as cors from 'cors';
-
 import * as Promise from 'bluebird';
-
+import * as cors from 'cors';
 import * as dotenv from 'dotenv';
-dotenv.config();
-
+import * as express from 'express';
 import * as forest from 'forest-express-sequelize';
+import * as path from 'path';
+import * as Sequelize from 'sequelize';
+
+dotenv.config();
 
 import { createCalendarEvent, deleteCalendarEvent, getCalendarSingleEvent, getLatLng, getTimeZone, updateCalendar } from './gapi/calendar';
 import { getHash } from './hash';
@@ -27,6 +25,22 @@ const corsOptions = {
     optionsSuccessStatus: 204,
 };
 
+const respondWithError = (error: any, res: express.Response) => {
+    res.header('Access-Control-Allow-Origin', corsOptions.origin);
+    res.header('Access-Control-Allow-Headers', ...corsOptions.allowedHeaders);
+    if (error instanceof Sequelize.ValidationError) {
+        res.status(400).json({
+            error: (error as Sequelize.ValidationError).errors.reduce((reduce, err) => {
+                return reduce + err.message + ',';
+            }, ''),
+        });
+    } else {
+        res.status(400).json({
+            error: error.response.data.error.errors[0].message,
+        });
+    }
+};
+
 adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors(corsOptions), async (req, res) => {
     let updated = 0;
     let created = 0;
@@ -36,129 +50,11 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors
     console.log(`ids: ${ids.toString()}`);
     console.log('Getting local events from db...\n');
     const models = db.models;
-    const events: CalendarInstance[] = await models.calendar.findAll({
-        where: {
-            id: ids,
-        },
-        attributes: {
-            exclude: ['createdAt', 'updatedAt', 'calendarCollaborator', 'calendarPiece'],
-        },
-        include: [
-            {
-                model: models.collaborator,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt', 'calendarCollaborator'],
-                },
-                through: {
-                    attributes: ['order'],
-                },
-                include: [{
-                    model: models.calendarCollaborator,
-                    attributes: ['order'],
-                }],
+    try {
+        const events: CalendarInstance[] = await models.calendar.findAll({
+            where: {
+                id: ids,
             },
-            {
-                model: models.piece,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt', 'calendarPiece'],
-                },
-                through: {
-                    attributes: ['order'],
-                },
-                include: [{
-                    model: models.calendarPiece,
-                    attributes: ['order'],
-                }],
-            },
-        ],
-        order: [
-            ['dateTime', 'DESC'],
-            [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
-            [models.piece, models.calendarPiece, 'order', 'ASC'],
-        ],
-    });
-    console.log('Local events fetched from db.');
-    const prunedEvents = events.map((cal) => {
-        return {
-            id: cal.id,
-            summary: cal.name,
-            location: cal.location,
-            startDatetime: cal.dateTime,
-            endDate: cal.endDate,
-            allDay: cal.allDay,
-            timeZone: cal.timezone,
-            description: JSON.stringify({
-                collaborators: cal.collaborators.map((collab) => {
-                    return {
-                        name: collab.name,
-                        instrument: collab.instrument,
-                    };
-                }),
-                pieces: cal.pieces.map((piece) => {
-                    return {
-                        composer: piece.composer,
-                        piece: piece.piece,
-                    };
-                }),
-                type: cal.type,
-                website: cal.website,
-            }),
-        };
-    });
-
-    await Promise.each(prunedEvents, async (item) => {
-        try {
-            await getCalendarSingleEvent(item.id);
-
-            // if error not thrown, then event exists, update it
-            await updateCalendar(item);
-            console.log(`updated: ${item.id}\n`);
-            updated++;
-        } catch (e) {
-            if (e.response.status === 404) {
-                try {
-                    await createCalendarEvent(item);
-                    console.log(`created: ${item.id}\n`);
-                    created++;
-                } catch (e) {
-                    console.log(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
-                    errored++;
-                }
-            } else {
-                console.log(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
-                errored++;
-            }
-        }
-    });
-    const result = `
-        updating finished.
-        created: ${created}
-        updated: ${updated}
-        errored: ${errored}
-    `;
-    console.log(result);
-    res.status(200).json({
-        success: [{
-            created,
-            updated,
-            errored,
-        }],
-    });
-});
-
-adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOptions), async (_, res) => {
-    let events: CalendarInstance[];
-    const limit = 10;
-    let offset = 0;
-
-    let updated = 0;
-    let created = 0;
-    let errored = 0;
-
-    do {
-        console.log('Getting local events from db...\n');
-        const models = db.models;
-        events = await models.calendar.findAll({
             attributes: {
                 exclude: ['createdAt', 'updatedAt', 'calendarCollaborator', 'calendarPiece'],
             },
@@ -195,10 +91,7 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOpti
                 [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
                 [models.piece, models.calendarPiece, 'order', 'ASC'],
             ],
-            limit,
-            offset,
         });
-        offset += limit;
         console.log('Local events fetched from db.');
         const prunedEvents = events.map((cal) => {
             return {
@@ -249,28 +142,159 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOpti
                 } else {
                     console.log(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
                     errored++;
+                    throw (e);
                 }
             }
         });
-
-    } while (events.length !== 0);
-    const result = `
-        updating finished.
-        created: ${created}
-        updated: ${updated}
-        errored: ${errored}
-    `;
-    console.log(result);
-    res.status(200).json({
-        success: [{
-            created,
-            updated,
-            errored,
-        }],
-    });
+        const result = `
+            updating finished.
+            created: ${created}
+            updated: ${updated}
+            errored: ${errored}
+        `;
+        console.log(result);
+        res.status(200).json({
+            success: JSON.stringify([{
+                created,
+                updated,
+                errored,
+            }]),
+        });
+    } catch (error) {
+        respondWithError(error, res);
+    }
 });
 
-const updateMusicFileHash = async (req: express.Request, _: express.Response, next: () => any) => {
+adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOptions), async (_, res) => {
+    let events: CalendarInstance[];
+    const limit = 10;
+    let offset = 0;
+
+    let updated = 0;
+    let created = 0;
+    let errored = 0;
+
+    try {
+        do {
+            console.log('Getting local events from db...\n');
+            const models = db.models;
+            events = await models.calendar.findAll({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'calendarCollaborator', 'calendarPiece'],
+                },
+                include: [
+                    {
+                        model: models.collaborator,
+                        attributes: {
+                            exclude: ['id', 'createdAt', 'updatedAt', 'calendarCollaborator'],
+                        },
+                        through: {
+                            attributes: ['order'],
+                        },
+                        include: [{
+                            model: models.calendarCollaborator,
+                            attributes: ['order'],
+                        }],
+                    },
+                    {
+                        model: models.piece,
+                        attributes: {
+                            exclude: ['id', 'createdAt', 'updatedAt', 'calendarPiece'],
+                        },
+                        through: {
+                            attributes: ['order'],
+                        },
+                        include: [{
+                            model: models.calendarPiece,
+                            attributes: ['order'],
+                        }],
+                    },
+                ],
+                order: [
+                    ['dateTime', 'DESC'],
+                    [models.collaborator, models.calendarCollaborator, 'order', 'ASC'],
+                    [models.piece, models.calendarPiece, 'order', 'ASC'],
+                ],
+                limit,
+                offset,
+            });
+            offset += limit;
+            console.log('Local events fetched from db.');
+            const prunedEvents = events.map((cal) => {
+                return {
+                    id: cal.id,
+                    summary: cal.name,
+                    location: cal.location,
+                    startDatetime: cal.dateTime,
+                    endDate: cal.endDate,
+                    allDay: cal.allDay,
+                    timeZone: cal.timezone,
+                    description: JSON.stringify({
+                        collaborators: cal.collaborators.map((collab) => {
+                            return {
+                                name: collab.name,
+                                instrument: collab.instrument,
+                            };
+                        }),
+                        pieces: cal.pieces.map((piece) => {
+                            return {
+                                composer: piece.composer,
+                                piece: piece.piece,
+                            };
+                        }),
+                        type: cal.type,
+                        website: cal.website,
+                    }),
+                };
+            });
+
+            await Promise.each(prunedEvents, async (item) => {
+                try {
+                    await getCalendarSingleEvent(item.id);
+
+                    // if error not thrown, then event exists, update it
+                    await updateCalendar(item);
+                    console.log(`updated: ${item.id}\n`);
+                    updated++;
+                } catch (e) {
+                    if (e.response.status === 404) {
+                        try {
+                            await createCalendarEvent(item);
+                            console.log(`created: ${item.id}\n`);
+                            created++;
+                        } catch (e) {
+                            console.log(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
+                            errored++;
+                        }
+                    } else {
+                        console.log(`error: ${item.id}, ${e.response.status} ${e.response.statusText}\n`);
+                        errored++;
+                        throw (e);
+                    }
+                }
+            });
+
+        } while (events.length !== 0);
+        const result = `
+            updating finished.
+            created: ${created}
+            updated: ${updated}
+            errored: ${errored}
+        `;
+        console.log(result);
+        res.status(200).json({
+            success: JSON.stringify([{
+                created,
+                updated,
+                errored,
+            }]),
+        });
+    } catch (error) {
+        respondWithError(error, res);
+    }
+});
+
+const updateMusicFileHash = async (req: express.Request, res: express.Response, next: () => any) => {
     try {
         let {
             name,
@@ -300,8 +324,8 @@ const updateMusicFileHash = async (req: express.Request, _: express.Response, ne
         req.body.data.attributes.hash = hash;
 
         next();
-    } catch (e) {
-        console.log(e);
+    } catch (error) {
+        respondWithError(error, res);
     }
 };
 
@@ -309,7 +333,7 @@ adminRest.post('/forest/musicfile', forest.ensureAuthenticated, updateMusicFileH
 
 adminRest.put('/forest/musicfile/:id', forest.ensureAuthenticated, updateMusicFileHash);
 
-adminRest.put('/forest/music/:id', forest.ensureAuthenticated, async (req, _, next) => {
+adminRest.put('/forest/music/:id', forest.ensureAuthenticated, async (req, res, next) => {
     try {
         const {
             id,
@@ -344,12 +368,13 @@ adminRest.put('/forest/music/:id', forest.ensureAuthenticated, async (req, _, ne
         });
 
         next();
-    } catch (e) {
-        console.log(e);
+    } catch (error) {
+        console.log(error);
+        respondWithError(error, res);
     }
 });
 
-adminRest.post('/forest/calendar', forest.ensureAuthenticated, async (req, _, next) => {
+adminRest.post('/forest/calendar', forest.ensureAuthenticated, async (req, res, next) => {
     try {
         const {
             location,
@@ -391,19 +416,21 @@ adminRest.post('/forest/calendar', forest.ensureAuthenticated, async (req, _, ne
             timezone,
         };
         next();
-    } catch (e) {
-        console.log(e.response.data.error);
+    } catch (error) {
+        console.log(error);
+        respondWithError(error, res);
     }
 });
 
-adminRest.delete('/forest/calendar/:id', forest.ensureAuthenticated, async (req, _, next) => {
+adminRest.delete('/forest/calendar/:id', forest.ensureAuthenticated, async (req, res, next) => {
     const id = req.params.id;
     try {
         await deleteCalendarEvent(id);
-    } catch (e) {
-        console.log(e);
+        next();
+    } catch (error) {
+        console.log(error);
+        respondWithError(error, res);
     }
-    next();
 });
 
 adminRest.use(forest.init({
