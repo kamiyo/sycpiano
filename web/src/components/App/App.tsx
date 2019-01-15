@@ -1,4 +1,5 @@
-import { startCase, toLower } from 'lodash-es';
+import { omit, startCase, toLower } from 'lodash-es';
+import { parse, stringify } from 'qs';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import ReactMedia from 'react-media';
@@ -106,6 +107,13 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
         this.state = {
             homeBgLoaded: this.getRouteBase() !== '/',
         };
+    }
+
+    componentDidMount() {
+        const currentQuery = parse(this.props.location.search, { ignoreQueryPrefix: true });
+        if (currentQuery.fbclid) {
+            this.props.history.push(this.props.location.pathname + stringify(omit(currentQuery, 'fbclid')));
+        }
     }
 
     isSubPath = (testPath: string) => {

@@ -3,6 +3,7 @@ import { css } from '@emotion/core';
 import { logoBlue } from 'src/styles/colors';
 import { link } from 'src/styles/mixins';
 
+// font face helper
 const loadFont = (fileName: string, fontFamily: string) => (
     `@font-face {
     	font-family: ${fontFamily};
@@ -17,6 +18,7 @@ const loadFont = (fileName: string, fontFamily: string) => (
     }`
 );
 
+// global CSS to be injected by <Global> component in App.tsx
 export const globalCss = css`
     * {
         box-sizing: border-box;

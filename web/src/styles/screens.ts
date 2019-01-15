@@ -1,3 +1,4 @@
+// Screen widths for media queries
 const xs = '800px';
 const m = '1200px';
 const xl = '1600px';
@@ -37,6 +38,7 @@ const mediaQuery = (mediaQueryBounds: MediaQueryBounds): string => {
     ), '@media only screen and ');
 };
 
+// various media query selector defines
 export const screenXS = mediaQuery({ maxWidth: xs });
 export const screenM = mediaQuery({ maxWidth: m });
 export const screenXL = mediaQuery({ minWidth: xl });
@@ -46,5 +48,6 @@ export const screenMandPortrait = mediaQuery({ orientation: 'portrait', maxWidth
 export const screenXSorPortrait = `${screenPortrait}, ${screenXS}`;
 export const screenMorPortrait = `${screenM}, ${screenPortrait}`;
 
+// cutoffs for <picture> size queries
 export const screenWidths = [1600, 1440, 1080, 800, 768, 720, 640, 480, 320];
 export const screenLengths = [2560, 2160, 1920, 1600, 1440, 1366, 1280, 1024];
