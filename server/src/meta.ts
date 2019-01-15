@@ -51,7 +51,7 @@ const descriptions: {
     };
 
 const validFirst = [ '', 'about', 'contact', 'schedule', 'media', 'press', 'store' ];
-const validSecond = [ '', 'biography', 'press', 'music', 'videos', 'photos', 'upcoming', 'archive' ];
+const validSecond = [ '', 'biography', 'discography', 'press', 'music', 'videos', 'photos', 'upcoming', 'archive' ];
 
 export const getMetaFromPathAndSanitize = async (url: string) => {
     const parsed = regex.exec(url);
