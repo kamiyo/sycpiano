@@ -24,6 +24,7 @@ export const getViewportSize = () => (
 
 export const titleStringBase = 'Sean Chen: Pianist, Composer, Arranger';
 
+// map of page name to meta title strings
 export const metaDescriptions: {
     home: string;
     biography: string;

@@ -1,3 +1,5 @@
+// Various CSS emotion mixins
+
 import { css } from '@emotion/core';
 import darken from 'polished/lib/color/darken';
 

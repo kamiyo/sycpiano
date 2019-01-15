@@ -1,8 +1,8 @@
 /*
- * This is the global redux store.
+ * This is the global async redux store.
  *
- * It takes reducers from different pages, combines them into a single reducer,
- * and creates a combined store.
+ * Everytime registerReducer is called, it will replace the global store with
+ * a new one that includes the reducer from the new async component.
  *
  * We make sure to namespace the states by their corresponding reducers.
  */

@@ -4,6 +4,13 @@ import { CachedEvent, EventItemType, MonthItem } from 'src/components/Schedule/t
 
 const GOOGLE_MAPS_SEARCH_URL = 'https://www.google.com/maps/search/?api=1';
 
+/*
+ * We want to convert an array of EventItemType, which is raw data from api response
+ * to one that has Month items injected in.
+ * params:
+ *  events - events to parse
+ *  monthsSeen - mutable cache of months, should contain previous months seen, of the format '[month] [year]'
+ */
 export const transformCachedEventsToListItems = (
     events: CachedEvent[],
     monthsSeen: Set<string>,

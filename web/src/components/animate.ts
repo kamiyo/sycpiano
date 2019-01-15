@@ -1,3 +1,6 @@
+// This function is not currently used, but it's a damn good function,
+// so I'm going to leave it for now.
+
 function animateFn(
     startValue = 0,
     endValue = 1,
