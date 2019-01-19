@@ -1,3 +1,8 @@
+/* Umzug Migration
+ * usage: `node /server/build/migrate [status|up|down|prev|next]`
+ * Try to use prev and next, and not down or up.
+ */
+
 import * as Promise from 'bluebird';
 import * as child_process from 'child_process';
 import * as path from 'path';

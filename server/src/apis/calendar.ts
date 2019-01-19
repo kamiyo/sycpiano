@@ -106,6 +106,10 @@ calendarRouter.get('/search', async (req, res) => {
     if (str) {
         const tokens = str.replace(', ', '|').replace(' ', '&');
 
+        // Full text search. Yay!
+        // Basically, create a full join of the calendar model with its associations
+        // Coalesce all the tsv's from the joined associations, and use that to search.
+        // Return the id's.
         const ids: CalendarInstance[] = await db.sequelize.query(`
             SELECT c."id" FROM (
                 SELECT
@@ -134,6 +138,7 @@ calendarRouter.get('/search', async (req, res) => {
         idArray = ids.map(({ id }) => id);
     }
 
+    // this part isn't used right now, but could be used to limit dates for search
     const before = req.query.before ? moment(req.query.before) : undefined;
     const after = req.query.after ? moment(req.query.after) : undefined;
     const date = req.query.date ? moment(req.query.date) : undefined;
@@ -180,6 +185,7 @@ calendarRouter.get('/search', async (req, res) => {
         };
     }
 
+    // Using the returned ID's, fetch the model with the full join.
     const calendarResults: CalendarInstance[] = await db.models.calendar.findAll({
         where: {
             ...where,

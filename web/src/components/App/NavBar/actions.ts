@@ -33,12 +33,14 @@ export const toggleSubNav = (sub = '', isMobile?: boolean): ThunkAction<void, Gl
         const type = NAV_ACTIONS.NAV_TOGGLE_SUBNAV;
         let showSubs = getState().navbar.showSubs;
         if (isMobile) {
+            // in mobile, we can have multiple subs expanded.
             if (showSubs.includes(sub)) {
                 showSubs = showSubs.filter((value) => sub !== value);
             } else {
                 showSubs = [...showSubs, sub];
             }
         } else {
+            // in desktop, only one sub at a time.
             if (sub === showSubs[0]) {
                 showSubs = [];
             } else {
@@ -59,6 +61,7 @@ const lastScroll = (scrollTop: number): ThunkAction<void, GlobalStateShape, void
         });
     };
 
+// Use this function directly, and pass in the onScroll action as the action parameter.
 export const scrollFn = (triggerHeight: number, action: (tHeight: number, top: number) => ThunkAction<void, GlobalStateShape, void, ActionTypes.ToggleNav & ActionTypes.LastScroll>) => (event: React.UIEvent<HTMLElement> | UIEvent) => {
     const scrollTop = (event.target as HTMLElement).scrollTop;
     action(triggerHeight, scrollTop);

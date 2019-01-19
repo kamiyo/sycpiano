@@ -15,9 +15,13 @@ const sequelize = db.sequelize;
 
 const { gte, lt } = sequelize.Op;
 
+// regex for parsing the url into its components
 const regex = pathToRegexp('/:first/:second?/(.*)?');
 const baseString = 'Sean Chen: Pianist, Composer, Arranger | ';
 const age = moment().diff('1988-08-27', 'year');
+
+// map from page name to meta title tags.
+// Manually sync this with the map in /web/src/utils.ts
 const descriptions: {
     home: string;
     biography: string;
@@ -55,12 +59,15 @@ const validSecond = [ '', 'biography', 'discography', 'press', 'music', 'videos'
 
 export const getMetaFromPathAndSanitize = async (url: string) => {
     const parsed = regex.exec(url);
+    // parsed === null means there is no path after host; redirects to home.
     if (parsed === null) {
         return {
             title: baseString + 'Home',
             description: descriptions.home,
         };
     }
+    // If first isn't one of the validFirst names, return 404 as title and notFound as true.
+    // App.tsx will route to 404 frontend page.
     if (!validFirst.includes(parsed[1])) {
         return {
             title: baseString + '404: Not Found',
@@ -68,12 +75,15 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
             notFound: true,
         };
     }
+    // If there is no second part of path, and first part is valid, then
+    // return the meta tags for that first path.
     if (parsed[2] === undefined) {
         return {
             title: baseString + startCase(parsed[1]),
             description: descriptions[parsed[1]],
         };
     }
+    // Check if second part of path is valid.
     if (!validSecond.includes(parsed[2])) {
         return {
             title: baseString + '404: Not Found',
@@ -81,15 +91,22 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
             notFound: true,
         };
     }
+    // If first and second parts are valid, but there isn't a third part, then
+    // return meta tags for the second part.
     if (parsed[3] === undefined) {
         return {
             title: baseString + startCase(parsed[1]) + ' | ' + startCase(parsed[2]),
             description: descriptions[parsed[2]],
         };
     }
+    // If third part is not undefined, that means one of three possibilities:
+    // 1.) music
     if (parsed[2] === 'music') {
+        // Create a hash from the url, which contains the composer and piece name hyphenated
         const hash = createHash('sha1').update('/' + parsed[3]).digest('base64');
         try {
+            // The hash in the DB was generated the same way, so we should look for a match
+            // to pull info of the requested track.
             const musicFile: MusicFileInstance = (await models.musicFile.findAll({
                 where: { hash },
                 attributes: ['name'],
@@ -110,6 +127,7 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
                 description: descriptions.getMusic(composer + ' ' + piece + (musicFile.name ? ' - ' + musicFile.name : ''), contributors),
             };
         } catch (e) {
+            // If we can't find the piece based on the hash, then just return generic music meta tags.
             return {
                 title: baseString + startCase(parsed[1]) + ' | ' + startCase(parsed[2]),
                 description: descriptions[parsed[2]],
@@ -117,6 +135,7 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
             };
         }
     }
+    // Same thing with videos. Fetch the requested video url, and populate the meta tags based on the response.
     if (parsed[2] === 'videos') {
         const videoId = parsed[3];
         try {
@@ -143,6 +162,8 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
             };
         }
     }
+    // Schedule: parse the date with moment. Throw error if not valid date, else fetch the event
+    // on that date, and populate meta tags.
     if (parsed[1] === 'schedule') {
         try {
             const date = moment(parsed[3]);

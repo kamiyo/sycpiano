@@ -5,6 +5,8 @@ const models = db.models;
 const sequelize = db.sequelize;
 
 const getMusicInstancesOfType = (type: string) => {
+    // If fetching compositions or videogames, order by year composed descending
+    // Else, order by last name of composer
     const order = (type === 'videogame' || type === 'composition') ?
         [
             ['year', 'DESC'],
