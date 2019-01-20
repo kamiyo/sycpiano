@@ -14,6 +14,17 @@ export interface FetchItemsError {
     readonly type: typeof STORE_ACTIONS.FETCH_ITEMS_ERROR;
 }
 
-type ActionTypes = FetchItemsRequest | FetchItemsSuccess | FetchItemsError;
+export interface AddToCart {
+    readonly type: typeof STORE_ACTIONS.ADD_TO_CART;
+    readonly skuId: string;
+}
 
-export default ActionTypes;
+export interface RemoveFromCart {
+    readonly type: typeof STORE_ACTIONS.REMOVE_FROM_CART;
+    readonly skuId: string;
+}
+
+export type Types = (
+    FetchItemsRequest | FetchItemsSuccess | FetchItemsError |
+    AddToCart | RemoveFromCart
+);

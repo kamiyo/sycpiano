@@ -1,45 +1,94 @@
 import css from '@emotion/css';
 import styled from '@emotion/styled';
+import mix from 'polished/lib/color/mix';
 import * as React from 'react';
-import { StoreItem } from 'src/components/SycStore/types';
+import { connect } from 'react-redux';
+import { StoreCart, StoreItem } from 'src/components/SycStore/types';
+import { GlobalStateShape } from 'src/types';
 
-import { lato3 } from 'src/styles/fonts';
+import { magenta, textGrey } from 'src/styles/colors';
+import { lato2, lato3 } from 'src/styles/fonts';
+import { addToCartAction, removeFromCartAction } from './actions';
 
-interface StoreListItemProps {
+interface StoreListItemStateToProps {
+    readonly cart: StoreCart;
+}
+
+interface StoreListItemDispatchToProps {
+    readonly addToCartAction: typeof addToCartAction;
+    readonly removeFromCartAction: typeof removeFromCartAction;
+}
+
+interface StoreListItemOwnProps {
     item: StoreItem;
     key: string | number;
     className?: string;
 }
 
-const thumbnailStyle = css({
-    flex: '0 1 300px',
+type StoreListItemProps = StoreListItemOwnProps & StoreListItemStateToProps & StoreListItemDispatchToProps;
+
+const thumbnailStyle = (imageUrl: string) => css({
+    flex: '0 0 300px',
     height: '100%',
     backgroundColor: 'white',
-    padding: '10px',
+    backgroundImage: `url(${imageUrl})`,
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+    maxWidth: '300px',
 });
 
-const contentStyle = css({
+const contentContainerStyle = css({
     flex: '1 1 auto',
     height: '100%',
     padding: '16px',
     backgroundColor: 'white',
 });
 
-let StoreListItem: React.FC<StoreListItemProps> = ({ item, className }) => (
-    <div className={className}>
-        {
-            item.images.length &&
-                <img
-                    css={thumbnailStyle}
-                    src={item.images[0]}
-                />
-        }
-        <div css={contentStyle}>
-            <h2>{item.name}</h2>
-            <span>{item.caption}</span>
+const addToCartButtonStyle = css`
+    font-size: 1.2em;
+    width: 150px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 4px;
+    font-family: ${lato2};
+    background-color: ${magenta};
+    color: ${textGrey};
+    transition: all 0.25s;
+
+    &:hover {
+        background-color: ${mix(0.75, magenta, '#FFF')};
+        color: white;
+        cursor: pointer;
+    }
+`;
+
+let StoreListItem: React.FC<StoreListItemProps> = (props) => {
+    const { className, item } = props;
+    const addToCart = props.addToCartAction;
+    const removeFromCart = props.removeFromCartAction;
+    const isItemInCart = props.cart.itemSet.has(item.skuId);
+
+    return (
+        <div className={className}>
+            {
+                item.images.length &&
+                    <div css={thumbnailStyle(item.images[0])} />
+            }
+            <div css={contentContainerStyle}>
+                <div css={{ marginBottom: '16px' }}>
+                    <h2 css={{ margin: '0 0 10px 0' }}>{item.name}</h2>
+                    <span>{item.caption}</span>
+                </div>
+                <button
+                    css={addToCartButtonStyle}
+                    onClick={() => isItemInCart ? removeFromCart(item.skuId) : addToCart(item.skuId)}
+                >
+                    {isItemInCart ? 'Remove from Cart' : 'Add to Cart'}
+                </button>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 const boxShadow = `
     0px 1px 3px 0px rgba(0, 0, 0, 0.2),
@@ -57,4 +106,11 @@ StoreListItem = styled(StoreListItem)`
     overflow: hidden;
 `;
 
-export { StoreListItem };
+const mapStateToProps = ({ sycStore }: GlobalStateShape) => ({ cart: sycStore.cart });
+
+const connectedStoreListItem = connect<StoreListItemStateToProps, StoreListItemDispatchToProps, {}>(
+    mapStateToProps,
+    { addToCartAction, removeFromCartAction },
+)(StoreListItem);
+
+export default connectedStoreListItem;

@@ -14,7 +14,7 @@ import { pushed } from 'src/styles/mixins';
 const SycStoreContainer = styled.div`
     ${pushed}
     overflow-y: scroll;
-    background-color: #ebebeb;
+    background-color: #f7f7f7;
 `;
 
 const StyledStoreItemsList = styled(StoreItemsList)`
