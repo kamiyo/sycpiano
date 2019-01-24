@@ -22,7 +22,9 @@ function convertSkuToStoreItem(sku: Stripe.skus.ISku): StoreItem {
 }
 
 storeRouter.get('/items', async (_, res) => {
+    console.log('BEFORE REQUEST TO STRIPE');
     const skus = await stripeClient.fetchSkus();
+    console.log('AFTER REQUEST TO STRIPE');
     const storeItems = skus.map(convertSkuToStoreItem);
     res.json(storeItems);
 });

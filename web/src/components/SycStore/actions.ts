@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ThunkAction } from 'redux-thunk';
 import { GlobalStateShape } from 'src/types';
-import { StoreCart, StoreItem } from './types';
+import { StoreItem } from './types';
 
 import STORE_ACTIONS from 'src/components/SycStore/actionTypeKeys';
 import * as ActionTypes from 'src/components/SycStore/actionTypes';
@@ -29,7 +29,7 @@ const fetchItems = (): SycStoreThunkAction => (
     async (dispatch) => {
         try {
             dispatch(fetchItemsRequest());
-            const { data: items }: { data: StoreItem[] } = await axios.get('api/store/items');
+            const { data: items }: { data: StoreItem[] } = await axios.get('/api/store/items');
             dispatch(fetchItemsSuccess(items));
         } catch (err) {
             console.log('fetch products error', err);

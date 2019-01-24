@@ -16,6 +16,6 @@ apiRouter.use(/\/calendar/, calendarRouter);
 apiRouter.get('/music', musicHandler);
 apiRouter.get('/photos', photosHandler);
 apiRouter.get('/discs', discHandler);
-apiRouter.get('/store', storeHandler);
+apiRouter.use('/store', storeHandler);
 
 export const ApiRouter = apiRouter;

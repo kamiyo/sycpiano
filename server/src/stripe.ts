@@ -8,8 +8,7 @@ class StripeClient {
 
     async fetchSkus(): Promise<Stripe.skus.ISku[]> {
         return new Promise((resolve, reject) => StripeClient.stripe.skus.list(
-            { expand: ['product'] },
-            {},
+            { expand: ['data.product'] },
             (err, skus) => {
                 if (err) {
                     reject(err);

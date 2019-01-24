@@ -62,14 +62,30 @@ const addToCartButtonStyle = css`
     }
 `;
 
-let StoreListItem: React.FC<StoreListItemProps> = (props) => {
+const boxShadow = `
+    0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+    0px 2px 1px -1px rgba(0, 0, 0, 0.12)
+`;
+
+const StoreListItemContainer = styled.div`
+    font-family: ${lato3};
+    height: 250px;
+    display: flex;
+    box-shadow: ${boxShadow};
+    border-radius: 4px;
+    margin-top: 15px;
+    overflow: hidden;
+`;
+
+const StoreListItem: React.FC<StoreListItemProps> = (props) => {
     const { className, item } = props;
     const addToCart = props.addToCartAction;
     const removeFromCart = props.removeFromCartAction;
     const isItemInCart = props.cart.itemSet.has(item.skuId);
 
     return (
-        <div className={className}>
+        <StoreListItemContainer className={className}>
             {
                 item.images.length &&
                     <div css={thumbnailStyle(item.images[0])} />
@@ -86,25 +102,9 @@ let StoreListItem: React.FC<StoreListItemProps> = (props) => {
                     {isItemInCart ? 'Remove from Cart' : 'Add to Cart'}
                 </button>
             </div>
-        </div>
+        </StoreListItemContainer>
     );
 };
-
-const boxShadow = `
-    0px 1px 3px 0px rgba(0, 0, 0, 0.2),
-    0px 1px 1px 0px rgba(0, 0, 0, 0.14),
-    0px 2px 1px -1px rgba(0, 0, 0, 0.12)
-`;
-
-StoreListItem = styled(StoreListItem)`
-    font-family: ${lato3};
-    height: 250px;
-    display: flex;
-    box-shadow: ${boxShadow};
-    border-radius: 4px;
-    margin-top: 15px;
-    overflow: hidden;
-`;
 
 const mapStateToProps = ({ sycStore }: GlobalStateShape) => ({ cart: sycStore.cart });
 
