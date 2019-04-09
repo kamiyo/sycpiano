@@ -311,8 +311,10 @@ const updateMusicFileHash = async (req: express.Request, res: express.Response, 
                     id: req.params.id,
                 },
             });
-            name = (name) ? name : musicFile.name;
-            musicId = (musicId) ? musicId : musicFile.musicId;
+            if (musicFile) {
+                name = (name) ? name : musicFile.name;
+                musicId = (musicId) ? musicId : musicFile.musicId;
+            }
         }
 
         const music: MusicInstance = await db.models.music.findOne({
