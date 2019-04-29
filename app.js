@@ -32,6 +32,8 @@ const logger = () => {
 // sets x-frame-options header to disallow our content to be rendered in iframes.
 app.use(helmet());
 
+// only for dev
+// prod uses nginx to serve static files
 app.use('/static', express.static(path.join(__dirname, '/web/assets')));
 app.use('/static', express.static(path.join(__dirname, '/web/build')));
 
@@ -69,7 +71,8 @@ Object.keys(oldRoutesToRedirectsMap).forEach(key => (
 
 // We catch any route first, and then let our front-end routing do the work.
 app.get(/\//, async (req, res) => {
-    const { sanitize = '', notFound = false, ...meta } = await getMetaFromPathAndSanitize(req.url);
+    delete req.query.fbclid;
+    const { sanitize = '', notFound = false, ...meta } = await getMetaFromPathAndSanitize(req.path);
     if (notFound) {
         res.status(404);
     }
@@ -82,7 +85,7 @@ app.get(/\//, async (req, res) => {
         }
         res.render('index', {
             twitter: meta,
-            facebook: { ...meta, url: req.protocol + '://' + req.get('host') + req.originalUrl },
+            facebook: { ...meta, url: 'https://' + req.get('host') + req.originalUrl },
         });
     }
 });
