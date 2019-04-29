@@ -19,6 +19,7 @@ secret.ts
 web/build/
 web/assets/music/
 web/assets/data/tz*.json
+web/assets/scripts/
 server/build/
 server/gapi-key.json
 yarn-error.log
