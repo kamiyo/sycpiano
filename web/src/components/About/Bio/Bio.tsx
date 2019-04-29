@@ -21,6 +21,8 @@ import { screenLengths, screenM, screenWidths, screenXSorPortrait } from 'src/st
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
 
+import ReactMarkdown from 'react-markdown';
+
 const pictureHeight = 250;
 
 const Paragraph = styled.p`
@@ -92,26 +94,19 @@ class BioText extends React.Component<BioTextProps> {
     }
 
     render() {
-        const props = this.props;
         return (
             <TextContainer>
                 <SpaceFiller />
                 <TextGroup>
-                    {props.bio.map(({ text }, i) => {
-                        if (i === 0) {
-                            const nameLocation = text.indexOf('Sean Chen');
-                            const name = text.slice(nameLocation, nameLocation + 9);
-                            const beforeName = text.slice(0, nameLocation);
-                            const afterName = text.slice(nameLocation + 9);
-                            return (
-                                <Paragraph key={i}>
-                                    {beforeName}
-                                    <NameSpan>{name}</NameSpan>
-                                    {afterName}
-                                </Paragraph>
-                            );
-                        }
-                        return <Paragraph key={i}>{text}</Paragraph>;
+                    {this.props.bio.map(({ text }, i) => {
+                        return <ReactMarkdown
+                            key={i}
+                            source={text}
+                            renderers={{
+                                paragraph: props => <Paragraph {...props} />,
+                                strong: props => <NameSpan {...props} />,
+                            }}
+                        />;
                     })}
                 </TextGroup>
             </TextContainer>
