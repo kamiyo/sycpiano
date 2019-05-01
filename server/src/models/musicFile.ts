@@ -1,8 +1,25 @@
-import { DataTypes, Sequelize } from 'sequelize';
-import { MusicFileModel } from 'types';
+import { BelongsToGetAssociationMixin, BelongsToSetAssociationMixin, DataTypes, Sequelize } from 'sequelize';
+import { Model } from '../types';
+import { music } from './music';
 
-const MusicFile = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    const musicfile = sequelize.define('musicFile', {
+export class musicFile extends Model {
+    readonly id?: string;
+    readonly name: string;
+    readonly audioFile: string;
+    readonly waveformFile: string;
+    readonly durationSeconds: number;
+    readonly musicId?: string;
+    readonly hash?: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+
+    readonly getMusics: BelongsToGetAssociationMixin<music>;
+    readonly setMusics: BelongsToSetAssociationMixin<music, music['id']>;
+    readonly music: music;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    musicFile.init({
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,
@@ -28,13 +45,14 @@ const MusicFile = (sequelize: Sequelize, dataTypes: DataTypes) => {
             field: 'music_id',
         },
         hash: dataTypes.STRING,
-    }, { tableName: 'music_file' }) as MusicFileModel;
+    }, {
+            sequelize,
+            tableName: 'music_file',
+        });
 
-    musicfile.associate = (models) => {
-        musicfile.belongsTo(models.music);
+    musicFile.associate = (models) => {
+        musicFile.belongsTo(models.music);
     };
 
-    return musicfile;
+    return musicFile;
 };
-
-export default MusicFile;

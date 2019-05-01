@@ -1,6 +1,6 @@
 import { DataTypes, QueryInterface } from 'sequelize';
 
-export const up = async (queryInterface: QueryInterface, dataTypes: DataTypes) => {
+export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
     const acclaim = await queryInterface.describeTable('acclaim');
     if (!acclaim.hasOwnProperty('website')) {
         await queryInterface.addColumn('acclaim',

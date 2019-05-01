@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import { Dialect } from 'sequelize/types';
 dotenv.config();
 
 export const development = {
@@ -7,7 +8,7 @@ export const development = {
     port: 5432,    // default
     username: require('../secret').default.username,
     password: require('../secret').default.password,
-    dialect: 'postgres',
+    dialect: 'postgres' as Dialect,
     logging: (str: string) => {
         console.log(str);
     },
@@ -20,7 +21,7 @@ const config = () => {
     let host: string;
     let database: string;
     let port: number;
-    let dialect: string;
+    let dialect: Dialect;
     const dbUrl = process.env.DATABASE_URL;
     if (dbUrl) {
         let portString;
@@ -41,7 +42,7 @@ const config = () => {
         host = process.env.DB_HOST;
         database = process.env.DB_NAME;
         port = parseInt(process.env.DB_PORT, 10);
-        dialect = process.env.DB_DIALECT;
+        dialect = process.env.DB_DIALECT as Dialect;
     }
     return {
         username,

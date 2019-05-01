@@ -1,8 +1,17 @@
 import { DataTypes, Sequelize } from 'sequelize';
-import { DiscLinkModel } from 'types';
+import { Model } from '../types';
 
-const DiscLink = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    const discLink = sequelize.define('discLink', {
+export class discLink extends Model {
+    readonly id?: string;
+    readonly type: string;
+    readonly url: string;
+    readonly discId: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    discLink.init({
         id: {
             type: dataTypes.UUID,
             defaultValue: dataTypes.UUIDV4,
@@ -16,7 +25,10 @@ const DiscLink = (sequelize: Sequelize, dataTypes: DataTypes) => {
             type: dataTypes.UUID,
             field: 'disc_id',
         },
-    }, { tableName: 'disc_link' }) as DiscLinkModel;
+    }, {
+        sequelize,
+        tableName: 'disc_link',
+    });
 
     discLink.associate = (models) => {
         discLink.belongsTo(models.disc);
@@ -24,5 +36,3 @@ const DiscLink = (sequelize: Sequelize, dataTypes: DataTypes) => {
 
     return discLink;
 };
-
-export default DiscLink;

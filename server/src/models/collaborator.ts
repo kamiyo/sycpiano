@@ -1,8 +1,18 @@
-import { DataTypes, Sequelize } from 'sequelize';
-import { CollaboratorModel } from 'types';
+import { BelongsToManyCountAssociationsMixin, DataTypes, Sequelize } from 'sequelize';
+import { Model } from '../types';
 
-const Collaborator = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    const collaborator = sequelize.define('collaborator', {
+export class collaborator extends Model {
+    readonly id: string;
+    readonly name: string;
+    readonly instrument: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+
+    countCalendars: BelongsToManyCountAssociationsMixin;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    collaborator.init({
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,
@@ -12,7 +22,10 @@ const Collaborator = (sequelize: Sequelize, dataTypes: DataTypes) => {
         },
         name: dataTypes.STRING,
         instrument: dataTypes.STRING,
-    }) as CollaboratorModel;
+    }, {
+        sequelize,
+        tableName: 'collaborator',
+    });
 
     collaborator.associate = (models) => {
         collaborator.hasMany(models.calendarCollaborator);
@@ -21,5 +34,3 @@ const Collaborator = (sequelize: Sequelize, dataTypes: DataTypes) => {
 
     return collaborator;
 };
-
-export default Collaborator;

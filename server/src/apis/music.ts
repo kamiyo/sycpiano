@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
+import Sequelize from 'sequelize';
 
 import db from '../models';
 const models = db.models;
-const sequelize = db.sequelize;
 
 const getMusicInstancesOfType = (type: string) => {
     const order = (type === 'videogame' || type === 'composition') ?
@@ -11,7 +11,7 @@ const getMusicInstancesOfType = (type: string) => {
             [models.musicFile, 'name', 'ASC'],
         ] :
         [
-            [sequelize.fn('substring', sequelize.col('composer'), '([^\\s]+)\\s?(?:\\(.*\\))?$'), 'ASC'] as any,
+            [Sequelize.fn('substring', Sequelize.col('composer'), '([^\\s]+)\\s?(?:\\(.*\\))?$'), 'ASC'] as any,
             [models.musicFile, 'name', 'ASC'],
         ];
 

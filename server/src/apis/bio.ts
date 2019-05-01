@@ -1,13 +1,11 @@
 import { RequestHandler } from 'express';
 import * as moment from 'moment-timezone';
 
-import { BioInstance } from 'types';
-
 import db from '../models';
 const models = db.models;
 
 const getBio: RequestHandler = async (_, res) => {
-    const bio: BioInstance[] = await models.bio.findAll({
+    const bio = await models.bio.findAll({
         attributes: ['paragraph', 'text'],
         order: [['paragraph', 'ASC']],
     });

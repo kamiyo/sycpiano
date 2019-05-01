@@ -1,8 +1,22 @@
-import { DataTypes, Sequelize } from 'sequelize';
-import { DiscModel } from 'types';
+import { DataTypes, HasManyGetAssociationsMixin, Sequelize } from 'sequelize';
+import { Model } from '../types';
+import { discLink } from './discLink';
 
-const Disc = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    const disc = sequelize.define('disc', {
+export class disc extends Model {
+    readonly id?: string;
+    readonly title: string;
+    readonly description: string;
+    readonly label: string;
+    readonly releaseDate: Date | string;
+    readonly thumbnailFile: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+
+    readonly getDiscLinks: HasManyGetAssociationsMixin<discLink>;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    disc.init({
         id: {
             type: dataTypes.UUID,
             defaultValue: dataTypes.UUIDV4,
@@ -21,7 +35,10 @@ const Disc = (sequelize: Sequelize, dataTypes: DataTypes) => {
             type: dataTypes.STRING,
             field: 'thumbnail_file',
         },
-    }) as DiscModel;
+    }, {
+        sequelize,
+        tableName: 'disc',
+    });
 
     disc.associate = (models) => {
         disc.hasMany(models.discLink);
@@ -29,5 +46,3 @@ const Disc = (sequelize: Sequelize, dataTypes: DataTypes) => {
 
     return disc;
 };
-
-export default Disc;

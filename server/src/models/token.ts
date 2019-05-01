@@ -1,8 +1,16 @@
 import { DataTypes, Sequelize } from 'sequelize';
-import { TokenModel } from 'types';
+import { Model } from '../types';
 
-const Token = (sequelize: Sequelize, dataTypes: DataTypes) => (
-    sequelize.define('token', {
+export class token extends Model {
+    readonly id: string;
+    readonly token: string;
+    readonly expires: Date | string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    token.init({
         id: {
             type: dataTypes.STRING,
             allowNull: false,
@@ -13,7 +21,10 @@ const Token = (sequelize: Sequelize, dataTypes: DataTypes) => (
             type: dataTypes.DATE,
             allowNull: true,
         },
-    }) as TokenModel
-);
+    }, {
+        sequelize,
+        tableName: 'token',
+    });
 
-export default Token;
+    return token;
+};

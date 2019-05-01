@@ -1,8 +1,53 @@
-import { DataTypes, Sequelize } from 'sequelize';
-import { CalendarModel } from 'types';
+import {
+    BelongsToManyAddAssociationMixin,
+    BelongsToManyAddAssociationsMixin,
+    BelongsToManyCountAssociationsMixin,
+    BelongsToManyGetAssociationsMixin,
+    BelongsToManyRemoveAssociationMixin,
+    BelongsToManyRemoveAssociationsMixin,
+    BelongsToManySetAssociationsMixin,
+    DataTypes,
+    Sequelize,
+} from 'sequelize';
 
-const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    const calendar = sequelize.define('calendar', {
+import { Model } from '../types';
+import { collaborator } from './collaborator';
+import { piece } from './piece';
+
+export class calendar extends Model {
+    readonly id?: string;
+    readonly name: string;
+    readonly dateTime: Date | string;
+    readonly allDay: boolean;
+    readonly endDate: Date | string;
+    readonly timezone: string;
+    readonly location: string;
+    readonly type: string;
+    readonly website: string;
+    readonly collaborators?: collaborator[];
+    readonly pieces?: piece[];
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+
+    getPieces: BelongsToManyGetAssociationsMixin<piece>;
+    setPieces: BelongsToManySetAssociationsMixin<piece, piece['id']>;
+    addPiece: BelongsToManyAddAssociationMixin<piece, piece['id']>;
+    addPieces: BelongsToManyAddAssociationsMixin<piece, piece['id']>;
+    removePiece: BelongsToManyRemoveAssociationMixin<piece, piece['id']>;
+    removePieces: BelongsToManyRemoveAssociationsMixin<piece, piece['id']>;
+    countPieces: BelongsToManyCountAssociationsMixin;
+
+    getCollaborators: BelongsToManyGetAssociationsMixin<collaborator>;
+    setCollaborators: BelongsToManySetAssociationsMixin<collaborator, collaborator['id']>;
+    addCollaborator: BelongsToManyAddAssociationMixin<collaborator, collaborator['id']>;
+    addCollaborators: BelongsToManyAddAssociationsMixin<collaborator, collaborator['id']>;
+    removeCollaborator: BelongsToManyRemoveAssociationMixin<collaborator, collaborator['id']>;
+    removeCollaborators: BelongsToManyRemoveAssociationsMixin<collaborator, collaborator['id']>;
+    countCollaborators: BelongsToManyCountAssociationsMixin;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    calendar.init({
         id: {
             allowNull: false,
             autoIncrement: false,
@@ -27,7 +72,10 @@ const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
         location: dataTypes.STRING,
         type: dataTypes.STRING,
         website: dataTypes.STRING,
-    }) as CalendarModel;
+    }, {
+            sequelize,
+            tableName: 'calendar',
+        });
 
     calendar.associate = (models) => {
         calendar.hasMany(models.calendarPiece);
@@ -38,5 +86,3 @@ const Calendar = (sequelize: Sequelize, dataTypes: DataTypes) => {
 
     return calendar;
 };
-
-export default Calendar;

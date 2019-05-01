@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 
 import styled from '@emotion/styled';
 
@@ -36,13 +35,13 @@ const StyledDiv = styled.div`
     }
 `;
 
-const StyledLink = styled(Link)({ display: 'block' });
+const StyledLink = styled.a({ display: 'block' });
 
 const StyledImg = styled.img({ display: 'block' });
 
 const DropboxButton: React.FC<{}> = () => (
     <StyledDiv>
-        <StyledLink to={'https://www.dropbox.com/sh/pzou7yeukjktznn/AADNCU7fmgUy_vmA3WioLiria?dl=0'} target="_blank" rel="noopener">
+        <StyledLink href="https://www.dropbox.com/sh/pzou7yeukjktznn/AADNCU7fmgUy_vmA3WioLiria?dl=0" target="_blank" rel="noopener">
             <StyledImg width={50} height={50} src={staticImage(`/logos/dropbox.svg`)} />
         </StyledLink>
     </StyledDiv>

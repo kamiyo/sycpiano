@@ -17,6 +17,7 @@
         "max-classes-per-file": false,
         "member-ordering": false,
         "no-unused-expression": [true, "allow-fast-null-checks"],
+        "class-name": false,
         "trailing-comma": [
             true,
             {

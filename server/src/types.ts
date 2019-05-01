@@ -1,5 +1,18 @@
 import * as moment from 'moment';
 import { default as Sequelize } from 'sequelize';
+import { acclaim } from './models/acclaim';
+import { bio } from './models/bio';
+import { calendar } from './models/calendar';
+import { calendarCollaborator } from './models/calendarCollaborator';
+import { calendarPiece } from './models/calendarPiece';
+import { collaborator } from './models/collaborator';
+import { disc } from './models/disc';
+import { discLink } from './models/discLink';
+import { music } from './models/music';
+import { musicFile } from './models/musicFile';
+import { photo } from './models/photo';
+import { piece } from './models/piece';
+import { token } from './models/token';
 
 type Moment = moment.Moment;
 
@@ -16,13 +29,27 @@ export interface GCalEvent {
     readonly [key: string]: any; // other params
 }
 
-export interface Model<TI, TA> extends Sequelize.Model<TI, TA> {
-    readonly name: string;
-    associate?(db: {[key: string]: Sequelize.Model<TI, TA>}): void;
+export type ModelCtor<M extends Model> = (new () => M) & typeof Model;
+
+export class Model<T = any, T2 = any> extends Sequelize.Model<T, T2> {
+    static associate?(db: {[key: string]: ModelCtor<any>}): void;
 }
 
 export interface ModelMap {
-    [key: string]: Model<any, any>;
+    acclaim: typeof acclaim;
+    bio: typeof bio;
+    calendar: typeof calendar;
+    calendarCollaborator: typeof calendarCollaborator;
+    calendarPiece: typeof calendarPiece;
+    collaborator: typeof collaborator;
+    disc: typeof disc;
+    discLink: typeof discLink;
+    music: typeof music;
+    musicFile: typeof musicFile;
+    photo: typeof photo;
+    piece: typeof piece;
+    token: typeof token;
+    [key: string]: typeof Model;
 }
 
 export interface DB {
@@ -30,225 +57,6 @@ export interface DB {
     importModels: (seq: Sequelize.Sequelize) => ModelMap;
     readonly models: ModelMap;
 }
-
-export interface BioAttributes {
-    readonly paragraph: number;
-    readonly text: string;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface BioInstance extends Sequelize.Instance<BioAttributes>, BioAttributes {}
-
-export interface BioModel extends Sequelize.Model<BioInstance, BioAttributes> {}
-
-export interface CalendarAttributes {
-    readonly id?: string;
-    readonly name: string;
-    readonly dateTime: Date | string;
-    readonly allDay: boolean;
-    readonly endDate: Date | string;
-    readonly timezone: string;
-    readonly location: string;
-    readonly type: string;
-    readonly website: string;
-    readonly collaborators?: CollaboratorInstance[];
-    readonly pieces?: PieceInstance[];
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface CalendarInstance extends Sequelize.Instance<CalendarAttributes>, CalendarAttributes {
-    getPieces: Sequelize.BelongsToManyGetAssociationsMixin<PieceInstance>;
-    setPieces: Sequelize.BelongsToManySetAssociationsMixin<PieceInstance, PieceAttributes['id'], CalendarPieceAttributes>;
-    addPiece: Sequelize.BelongsToManyAddAssociationMixin<PieceInstance, PieceAttributes['id'], CalendarPieceAttributes>;
-    addPieces: Sequelize.BelongsToManyAddAssociationsMixin<PieceInstance, PieceAttributes['id'], CalendarPieceAttributes>;
-    removePiece: Sequelize.BelongsToManyRemoveAssociationMixin<PieceInstance, PieceAttributes['id']>;
-    removePieces: Sequelize.BelongsToManyRemoveAssociationsMixin<PieceInstance, PieceAttributes['id']>;
-    countPieces: Sequelize.BelongsToManyCountAssociationsMixin;
-
-    getCollaborators: Sequelize.BelongsToManyGetAssociationsMixin<CollaboratorInstance>;
-    setCollaborators: Sequelize.BelongsToManySetAssociationsMixin<CollaboratorInstance, CollaboratorAttributes['id'], CalendarCollaboratorAttributes>;
-    addCollaborator: Sequelize.BelongsToManyAddAssociationMixin<CollaboratorInstance, CollaboratorAttributes['id'], CalendarCollaboratorAttributes>;
-    addCollaborators: Sequelize.BelongsToManyAddAssociationsMixin<CollaboratorInstance, CollaboratorAttributes['id'], CalendarCollaboratorAttributes>;
-    removeCollaborator: Sequelize.BelongsToManyRemoveAssociationMixin<CollaboratorInstance, CollaboratorAttributes['id']>;
-    removeCollaborators: Sequelize.BelongsToManyRemoveAssociationsMixin<CollaboratorInstance, CollaboratorAttributes['id']>;
-    countCollaborators: Sequelize.BelongsToManyCountAssociationsMixin;
-}
-
-export interface CalendarModel extends Model<CalendarInstance, CalendarAttributes> {}
-
-export interface AcclaimAttributes {
-    readonly id?: string;
-    readonly quote: string;
-    readonly short: string;
-    readonly author: string;
-    readonly shortAuthor: string;
-    readonly date: Date | string;
-    readonly oldDate?: string;
-    readonly hasFullDate?: boolean;
-    readonly website: string;
-}
-
-export interface AcclaimInstance extends Sequelize.Instance<AcclaimAttributes>, AcclaimAttributes {}
-
-export interface AcclaimModel extends Model<AcclaimInstance, AcclaimAttributes> {}
-
-export interface MusicFileAttributes {
-    readonly id?: string;
-    readonly name: string;
-    readonly audioFile: string;
-    readonly waveformFile: string;
-    readonly durationSeconds: number;
-    readonly musicId?: string;
-    readonly hash?: string;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface MusicFileInstance extends Sequelize.Instance<MusicFileAttributes>, MusicFileAttributes {
-    readonly getMusics: Sequelize.BelongsToGetAssociationMixin<MusicInstance>;
-    readonly setMusics: Sequelize.BelongsToSetAssociationMixin<MusicInstance, MusicAttributes['id']>;
-    readonly music: MusicInstance;
-}
-
-export interface MusicFileModel extends Model<MusicFileInstance, MusicFileAttributes> {}
-
-export interface MusicAttributes {
-    readonly id: string;
-    readonly composer: string;
-    readonly piece: string;
-    readonly contributors: string;
-    readonly type: string;
-    readonly year: number;
-    readonly musicFiles: MusicFileAttributes[];
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-interface HasManyGetAssociationsMixin<T, U> extends Sequelize.HasManyGetAssociationsMixin<T> {
-    (options?: Sequelize.HasManyGetAssociationsMixinOptions | Sequelize.FindOptions<U>): Promise<T[]>;
-}
-
-export interface MusicInstance extends Sequelize.Instance<MusicAttributes>, MusicAttributes {
-    readonly getMusicFiles: HasManyGetAssociationsMixin<MusicFileInstance, MusicFileAttributes>;
-    readonly setMusicFiles: Sequelize.HasManySetAssociationsMixin<MusicFileInstance, MusicFileAttributes['id']>;
-}
-
-export interface MusicModel extends Model<MusicInstance, MusicAttributes> {
-}
-
-export interface CollaboratorAttributes {
-    readonly id: string;
-    readonly name: string;
-    readonly instrument: string;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface CollaboratorInstance extends Sequelize.Instance<CollaboratorAttributes>, CollaboratorAttributes {
-    countCalendars: Sequelize.BelongsToManyCountAssociationsMixin;
-}
-
-export interface CollaboratorModel extends Model<CollaboratorInstance, CollaboratorAttributes> {}
-
-export interface PieceAttributes {
-    readonly id: string;
-    readonly composer: string;
-    readonly piece: string;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface PieceInstance extends Sequelize.Instance<PieceAttributes>, PieceAttributes {
-    countCalendars: Sequelize.BelongsToManyCountAssociationsMixin;
-}
-
-export interface PieceModel extends Model<PieceInstance, PieceAttributes> {}
-
-export interface CalendarPieceAttributes {
-    readonly id?: string;
-    readonly calendarId?: string;
-    readonly pieceId?: string;
-    readonly order?: number;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface CalendarPieceInstance extends Sequelize.Instance<CalendarPieceAttributes>, CalendarPieceAttributes {}
-
-export interface CalendarPieceModel extends Model<CalendarPieceInstance, CalendarPieceAttributes> {}
-
-export interface CalendarCollaboratorAttributes {
-    readonly id?: string;
-    readonly calendarId?: string;
-    readonly collaboratorId?: string;
-    readonly order?: number;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface CalendarCollaboratorInstance extends Sequelize.Instance<CalendarCollaboratorAttributes>, CalendarCollaboratorAttributes {}
-
-export interface CalendarCollaboratorModel extends Model<CalendarCollaboratorInstance, CalendarCollaboratorAttributes> {}
-
-export interface PhotoAttributes {
-    readonly id?: string;
-    readonly file: string;
-    readonly credit: string;
-    readonly width: number;
-    readonly height: number;
-    readonly thumbnailWidth: number;
-    readonly thumbnailHeight: number;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface PhotoInstance extends Sequelize.Instance<PhotoAttributes>, PhotoAttributes {}
-
-export interface PhotoModel extends Model<PhotoInstance, PhotoAttributes> {}
-
-export interface TokenAttributes {
-    readonly id: string;
-    readonly token: string;
-    readonly expires: Date | string;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface TokenInstance extends Sequelize.Instance<TokenAttributes>, TokenAttributes {}
-
-export interface TokenModel extends Model<TokenInstance, TokenAttributes> {}
-
-export interface DiscAttributes {
-    readonly id?: string;
-    readonly title: string;
-    readonly description: string;
-    readonly label: string;
-    readonly releaseDate: Date | string;
-    readonly thumbnailFile: string;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface DiscInstance extends Sequelize.Instance<DiscAttributes>, DiscAttributes {
-    readonly getDiscLinks: HasManyGetAssociationsMixin<DiscLinkInstance, DiscLinkAttributes>;
-}
-
-export interface DiscModel extends Model<DiscInstance, DiscAttributes> {}
-
-export interface DiscLinkAttributes {
-    readonly id?: string;
-    readonly type: string;
-    readonly url: string;
-    readonly discId: string;
-    readonly createdAt?: Date | string;
-    readonly updatedAt?: Date | string;
-}
-
-export interface DiscLinkInstance extends Sequelize.Instance<DiscLinkAttributes>, DiscLinkAttributes {}
-
-export interface DiscLinkModel extends Sequelize.Model<DiscLinkInstance, DiscLinkAttributes> {}
 
 export interface StoreItem {
     readonly caption: string;

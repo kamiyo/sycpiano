@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 
 import styled from '@emotion/styled';
 
@@ -34,11 +33,11 @@ const StyledDiv = styled.div`
 
 const StyledImg = styled.img` display: block; `;
 
-const StyledLink = styled(Link)` display: block; `;
+const StyledLink = styled.a` display: block; `;
 
 const SpotifyButton: React.FC<{}> = () => (
     <StyledDiv>
-        <StyledLink to={'https://open.spotify.com/artist/6kMZjx0C2LY2v2fUsaN27y?si=8Uxb9kFTQPisQCvAyOybMQ'} target="_blank" rel="noopener">
+        <StyledLink href={'https://open.spotify.com/artist/6kMZjx0C2LY2v2fUsaN27y?si=8Uxb9kFTQPisQCvAyOybMQ'} target="_blank" rel="noopener">
             <StyledImg width={50} height={50} src={staticImage(`/logos/spotify-color.svg`)} />
         </StyledLink>
     </StyledDiv>
