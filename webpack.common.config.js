@@ -54,6 +54,7 @@ const config = () => {
                                     {
                                         targets: "> 0.25%, not dead",
                                         useBuiltIns: 'usage',
+                                        corejs: '3',
                                     }
                                 ],
                                 '@babel/preset-typescript',
@@ -97,7 +98,7 @@ const config = () => {
                 // MUSIC_PATH: JSON.stringify(staticPrefix + '/music'), => see dev and prod files
                 VIDEOS_PATH: JSON.stringify(staticPrefix + '/videos'),
             }),
-            new CleanWebpackPlugin([path.resolve(__dirname, 'web/build/*')]),
+            new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, 'web/partials/index.html'),
                 inject: false,

@@ -1,5 +1,8 @@
 import * as React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { connect } from 'react-redux';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
@@ -20,8 +23,6 @@ import { pushed } from 'src/styles/mixins';
 import { screenLengths, screenM, screenWidths, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
-
-import ReactMarkdown from 'react-markdown';
 
 const pictureHeight = 250;
 
@@ -178,8 +179,8 @@ interface BioStateToProps {
 }
 
 interface BioDispatchToProps {
-    readonly onScroll: typeof onScroll;
-    readonly fetchBioAction: typeof fetchBioAction;
+    readonly onScroll: (triggerHeight: number, scrollTop: number) => void;
+    readonly fetchBioAction: () => Promise<void>;
 }
 
 const imageLoaderStyle = css`
@@ -267,12 +268,14 @@ const mapStateToProps = ({ bio, navbar }: GlobalStateShape) => ({
     bio: bio.bio,
 });
 
+const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>) => ({
+    onScroll: (triggerHeight: number, scrollTop: number) => dispatch(onScroll(triggerHeight, scrollTop)),
+    fetchBioAction: () => dispatch(fetchBioAction()),
+});
+
 const connectedAbout = connect<BioStateToProps, BioDispatchToProps, BioOwnProps>(
     mapStateToProps,
-    {
-        onScroll,
-        fetchBioAction,
-    },
+    mapDispatchToProps,
 )(About);
 
 export type BioType = new (props: any) => React.Component<BioProps>;
