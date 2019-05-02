@@ -97,6 +97,7 @@ class Search extends React.Component<SearchProps, { focused: boolean; }> {
 
     onReset = (event: React.SyntheticEvent<HTMLDivElement>) => {
         this.props.setSearch('');
+        this.props.history.push('/schedule/upcoming');
         event.preventDefault();
     }
 

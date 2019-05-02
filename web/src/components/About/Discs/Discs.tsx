@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import styled from '@emotion/styled';
 
@@ -37,8 +39,8 @@ interface DiscsStateToProps {
 }
 
 interface DiscsDispatchToProps {
-    readonly fetchDiscsAction: typeof fetchDiscsAction;
-    readonly onScroll: typeof onScroll;
+    readonly onScroll: (triggerHeight: number, scrollTop: number) => void;
+    readonly fetchDiscsAction: () => Promise<void>;
 }
 
 type DiscsProps = DiscsOwnProps & DiscsDispatchToProps & DiscsStateToProps;
@@ -66,12 +68,14 @@ const mapStateToProps = ({ discs }: GlobalStateShape): DiscsStateToProps => ({
     items: discs.discs,
 });
 
+const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>) => ({
+    onScroll: (triggerHeight: number, scrollTop: number) => dispatch(onScroll(triggerHeight, scrollTop)),
+    fetchDiscsAction: () => dispatch(fetchDiscsAction()),
+});
+
 const ConnectedDiscs = connect<DiscsStateToProps, DiscsDispatchToProps>(
     mapStateToProps,
-    {
-        onScroll,
-        fetchDiscsAction,
-    },
+    mapDispatchToProps,
 )(Discs);
 
 export type DiscsType = React.Component<DiscsProps>;

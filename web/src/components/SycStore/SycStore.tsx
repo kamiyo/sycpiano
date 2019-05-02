@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+
 import { fetchItemsAction } from 'src/components/SycStore/actions';
 import { StoreItemsList } from 'src/components/SycStore/StoreItemsList';
 import { StoreItem } from 'src/components/SycStore/types';
@@ -23,7 +26,7 @@ interface SycStoreStateToPros {
 }
 
 interface SycStoreDispatchToProps {
-    readonly fetchItemsAction: typeof fetchItemsAction;
+    readonly fetchItemsAction: () => Promise<void>;
 }
 
 interface SycOwnProps { isMobile: boolean; }
@@ -51,9 +54,13 @@ const mapStateToProps = ({ sycStore }: GlobalStateShape) => ({
     items: sycStore.items,
 });
 
+const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>) => ({
+    fetchItemsAction: () => dispatch(fetchItemsAction()),
+});
+
 const connectedSycStore = connect<SycStoreStateToPros, SycStoreDispatchToProps, {}>(
     mapStateToProps,
-    { fetchItemsAction },
+    mapDispatchToProps,
 )(SycStore);
 
 export type SycStoreType = new (props: any) => React.Component<SycStoreProps>;

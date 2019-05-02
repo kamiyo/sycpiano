@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import styled from '@emotion/styled';
 
@@ -22,7 +24,7 @@ interface PhotosStateToProps {
 }
 
 interface PhotosDispatchToProps {
-    readonly createFetchPhotosAction: typeof createFetchPhotosAction;
+    readonly createFetchPhotosAction: () => Promise<void>;
     readonly selectPhotoAction: typeof selectPhoto;
 }
 
@@ -112,10 +114,10 @@ const mapStateToProps = (state: GlobalStateShape): PhotosStateToProps => ({
     currentItem: state.photo_viewer.currentItem,
 });
 
-const mapDispatchToProps: PhotosDispatchToProps = {
-    createFetchPhotosAction,
-    selectPhotoAction: selectPhoto,
-};
+const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>): PhotosDispatchToProps => ({
+    createFetchPhotosAction: () => dispatch(createFetchPhotosAction()),
+    selectPhotoAction: (item: PhotoItem) => dispatch(selectPhoto(item)),
+});
 
 const ConnectedPhotos = connect<PhotosStateToProps, PhotosDispatchToProps>(
     mapStateToProps,

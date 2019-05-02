@@ -59,7 +59,7 @@ const lastScroll = (scrollTop: number): ThunkAction<void, GlobalStateShape, void
         });
     };
 
-export const scrollFn = (triggerHeight: number, action: (tHeight: number, top: number) => ThunkAction<void, GlobalStateShape, void, ActionTypes.ToggleNav & ActionTypes.LastScroll>) => (event: React.UIEvent<HTMLElement> | UIEvent) => {
+export const scrollFn = (triggerHeight: number, action: (tHeight: number, top: number) => void) => (event: React.UIEvent<HTMLElement> | UIEvent) => {
     const scrollTop = (event.target as HTMLElement).scrollTop;
     action(triggerHeight, scrollTop);
 };

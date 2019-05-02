@@ -3,6 +3,8 @@ import shuffle from 'lodash-es/shuffle';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import styled from '@emotion/styled';
 
@@ -58,8 +60,8 @@ interface MusicStateToProps {
 }
 
 interface MusicDispatchToProps {
-    readonly fetchPlaylistAction: typeof fetchPlaylistAction;
-    readonly onScroll: typeof onScroll;
+    readonly fetchPlaylistAction: (composer: string, piece: string, movement?: string) => Promise<MusicFileItem>;
+    readonly onScroll: (triggerHeight: number, scrollTop: number) => void;
 }
 
 interface MusicOwnProps {
@@ -455,19 +457,19 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 }
 
-const mapStateToProps = ({
-    audio_playlist,
-}: GlobalStateShape): MusicStateToProps => ({
+const mapStateToProps = ({ audio_playlist }: GlobalStateShape): MusicStateToProps => ({
     items: audio_playlist.items,
     flatItems: audio_playlist.flatItems,
 });
 
+const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>) => ({
+    onScroll: (triggerHeight: number, scrollTop: number) => dispatch(onScroll(triggerHeight, scrollTop)),
+    fetchPlaylistAction: (composer: string, piece: string, movement?: string) => dispatch(fetchPlaylistAction(composer, piece, movement)),
+});
+
 const ConnectedMusic = connect<MusicStateToProps, MusicDispatchToProps>(
     mapStateToProps,
-    {
-        fetchPlaylistAction,
-        onScroll,
-    },
+    mapDispatchToProps,
 )(Music);
 
 export type MusicType = React.Component<MusicProps>;
