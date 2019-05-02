@@ -11,8 +11,7 @@ dotenv.config();
 import { createCalendarEvent, deleteCalendarEvent, getCalendarSingleEvent, getLatLng, getTimeZone, updateCalendar } from './gapi/calendar';
 import { getHash } from './hash';
 import db from './models';
-
-import { CalendarAttributes, CalendarInstance, MusicAttributes, MusicFileAttributes, MusicFileInstance, MusicFileModel, MusicInstance } from 'types';
+import { calendar } from './models/calendar';
 
 const adminRest = express.Router();
 
@@ -51,7 +50,7 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors
     console.log('Getting local events from db...\n');
     const models = db.models;
     try {
-        const events: CalendarInstance[] = await models.calendar.findAll({
+        const events = await models.calendar.findAll({
             where: {
                 id: ids,
             },
@@ -81,7 +80,7 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors
                         attributes: ['order'],
                     },
                     include: [{
-                        model: models.calendarPiece,
+                        model: models.CalendarPiece,
                         attributes: ['order'],
                     }],
                 },
@@ -166,7 +165,7 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors
 });
 
 adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOptions), async (_, res) => {
-    let events: CalendarInstance[];
+    let events: calendar[];
     const limit = 10;
     let offset = 0;
 
@@ -299,14 +298,14 @@ const updateMusicFileHash = async (req: express.Request, res: express.Response, 
         let {
             name,
             musicId,
-        }: MusicFileAttributes = req.body.data.attributes;
+        } = req.body.data.attributes;
 
         if (!musicId) {
             musicId = req.body.data.relationships.music.data.id;
         }
 
         if (!name || !musicId) {
-            const musicFile: MusicFileInstance = await db.models.musicFile.findOne({
+            const musicFile = await db.models.musicFile.findOne({
                 where: {
                     id: req.params.id,
                 },
@@ -317,7 +316,7 @@ const updateMusicFileHash = async (req: express.Request, res: express.Response, 
             }
         }
 
-        const music: MusicInstance = await db.models.music.findOne({
+        const music = await db.models.music.findOne({
             where: {
                 id: musicId,
             },
@@ -339,15 +338,15 @@ adminRest.put('/forest/music/:id', forest.ensureAuthenticated, async (req, res, 
     try {
         const {
             id,
-        }: MusicAttributes = req.params;
+        } = req.params;
 
         let {
             composer,
             piece,
-        }: MusicAttributes = req.body.data.attributes;
+        } = req.body.data.attributes;
 
         if (!composer || !piece) {
-            const music: MusicInstance = await db.models.music.findOne({
+            const music = await db.models.music.findOne({
                 where: {
                     id,
                 },
@@ -356,7 +355,7 @@ adminRest.put('/forest/music/:id', forest.ensureAuthenticated, async (req, res, 
             piece = (piece) ? piece : music.piece;
         }
 
-        const musicFiles: MusicFileInstance[] = await (db.models.musicFile as MusicFileModel).findAll({
+        const musicFiles = await db.models.musicFile.findAll({
             where: {
                 musicId: id,
             },
@@ -386,7 +385,7 @@ adminRest.post('/forest/calendar', forest.ensureAuthenticated, async (req, res, 
             name,
             type,
             website,
-        }: CalendarAttributes = req.body.data.attributes;
+        } = req.body.data.attributes;
         let timezone = null;
         if (location) {
             const { latlng } = await getLatLng(location);

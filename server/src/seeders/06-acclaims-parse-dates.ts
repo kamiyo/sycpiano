@@ -1,10 +1,10 @@
 import * as Promise from 'bluebird';
 import * as moment from 'moment-timezone';
-import { AcclaimInstance, AcclaimModel, ModelMap } from 'types';
+import { ModelMap } from 'types';
 
 export const up = async (models: ModelMap) => {
-    const model: AcclaimModel = models.acclaim as AcclaimModel;
-    const acclaims: AcclaimInstance[] = await model.findAll({
+    const model = models.acclaim;
+    const acclaims = await model.findAll({
         attributes: ['id', 'oldDate'],
     });
     await Promise.each(acclaims, async (acclaim) => {

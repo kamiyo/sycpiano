@@ -1,4 +1,4 @@
-import Sequelize from 'sequelize';
+import { Sequelize } from 'sequelize';
 import * as Config from './config/config';
 
 const config = (process.env.NODE_ENV === 'production' && process.env.SERVER_ENV !== 'test') ? Config.production : Config.development;
@@ -27,7 +27,6 @@ export default new Sequelize(database, username, password, {
         charSet: 'utf8',
         collate: 'utf8_unicode_ci',
     },
-    operatorsAliases: false,        // need to change if we are using operators
     pool: { max: 5, min: 0, idle: 10000 },
     define,
     logging,                 // change to log to output

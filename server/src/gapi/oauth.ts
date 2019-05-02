@@ -7,11 +7,9 @@ const authInfo = require('../../gapi-key.json');
 import db from '../models/index';
 const models = db.models;
 
-import { TokenModel } from '../types';
-
 export const getToken = async () => {
-    const tokenModel: TokenModel = models.token;
-    const tokenInstance = await tokenModel.findById('access_token');
+    const tokenModel = models.token;
+    const tokenInstance = await tokenModel.findByPk('access_token');
     if (tokenInstance) {
         const expired = Date.now() > tokenInstance.expires.valueOf();
         if (!expired) {

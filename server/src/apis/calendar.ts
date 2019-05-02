@@ -1,11 +1,10 @@
 import * as express from 'express';
 import * as moment from 'moment-timezone';
+import Sequelize from 'sequelize';
 
 import db from '../models';
+import { calendar } from '../models/calendar';
 const models = db.models;
-
-import Sequelize from 'sequelize';
-import { CalendarInstance } from 'types';
 
 const { and, eq, gt, lt, or } = Sequelize.Op;
 
@@ -106,7 +105,7 @@ calendarRouter.get('/search', async (req, res) => {
     if (str) {
         const tokens = str.replace(', ', '|').replace(' ', '&');
 
-        const ids: CalendarInstance[] = await db.sequelize.query(`
+        const ids: calendar[] = await db.sequelize.query(`
             SELECT c."id" FROM (
                 SELECT
                     "calendar"."id",
@@ -180,7 +179,7 @@ calendarRouter.get('/search', async (req, res) => {
         };
     }
 
-    const calendarResults: CalendarInstance[] = await db.models.calendar.findAll({
+    const calendarResults: calendar[] = await db.models.calendar.findAll({
         where: {
             ...where,
         },

@@ -5,7 +5,7 @@ import db from '../models';
 const models = db.models;
 
 const getAcclaims: RequestHandler = async (req, res) => {
-    const params: Sequelize.AnyFindOptions = {
+    const params: Sequelize.FindOptions = {
         attributes: {
             exclude: ['short', 'shortAuthor', 'created_at', 'updated_at'],
         },

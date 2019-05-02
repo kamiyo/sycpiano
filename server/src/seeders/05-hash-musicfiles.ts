@@ -1,9 +1,9 @@
 import * as Promise from 'bluebird';
-import { ModelMap, MusicModel } from 'types';
+import { ModelMap } from 'types';
 import { getHash } from '../hash';
 
 export const up = async (models: ModelMap) => {
-    const model: MusicModel = models.music as MusicModel;
+    const model = models.music;
     const musics = await model.findAll({
         attributes: ['id', 'composer', 'piece'],
     });

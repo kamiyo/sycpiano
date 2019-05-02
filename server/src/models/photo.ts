@@ -1,8 +1,20 @@
 import { DataTypes, Sequelize } from 'sequelize';
-import { PhotoModel } from 'types';
+import { Model } from '../types';
 
-const Photo = (sequelize: Sequelize, dataTypes: DataTypes) => (
-    sequelize.define('photo', {
+export class photo extends Model {
+    readonly id?: string;
+    readonly file: string;
+    readonly credit: string;
+    readonly width: number;
+    readonly height: number;
+    readonly thumbnailWidth: number;
+    readonly thumbnailHeight: number;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    photo.init({
         id: {
             type: dataTypes.UUID,
             defaultValue: dataTypes.UUIDV4,
@@ -22,7 +34,10 @@ const Photo = (sequelize: Sequelize, dataTypes: DataTypes) => (
             type: dataTypes.INTEGER,
             field: 'thumbnail_height',
         },
-    }) as PhotoModel
-);
+    }, {
+        sequelize,
+        tableName: 'photo',
+    });
 
-export default Photo;
+    return photo;
+};

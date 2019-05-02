@@ -4,16 +4,15 @@ import { startCase } from 'lodash';
 import * as moment from 'moment-timezone';
 import * as pathToRegexp from 'path-to-regexp';
 
+import { Op } from 'sequelize';
 import db from './models';
-import { CalendarInstance, MusicFileInstance } from './types';
 
 const YoutubeAPIKey = 'AIzaSyAD_AhLWUhbUCnLBu4VHZR3ecakL2IbhqU';
 const YoutubeVideoUrl = 'https://www.googleapis.com/youtube/v3/playlistItems';
 const playlistId = 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9';
 const models = db.models;
-const sequelize = db.sequelize;
 
-const { gte, lt } = sequelize.Op;
+const { gte, lt } = Op;
 
 const regex = pathToRegexp('/:first/:second?/(.*)?');
 const baseString = 'Sean Chen: Pianist, Composer, Arranger | ';
@@ -90,7 +89,7 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
     if (parsed[2] === 'music') {
         const hash = createHash('sha1').update('/' + parsed[3]).digest('base64');
         try {
-            const musicFile: MusicFileInstance = (await models.musicFile.findAll({
+            const musicFile = (await models.musicFile.findAll({
                 where: { hash },
                 attributes: ['name'],
                 include: [
@@ -149,7 +148,7 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
             if (!date.isValid()) {
                 throw new Error('invalid date');
             }
-            const event: CalendarInstance = (await models.calendar.findAll({
+            const event = (await models.calendar.findAll({
                 where: {
                     dateTime: {
                         [gte]: date.startOf('day').format('YYYY-MM-DD'),

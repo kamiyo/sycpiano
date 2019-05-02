@@ -24,7 +24,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -140,7 +140,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -182,20 +182,6 @@
     "paginationType": "page",
     "fields": [{
       "field": "createdAt",
-      "type": "Date",
-      "defaultValue": null,
-      "enums": null,
-      "integration": null,
-      "isFilterable": true,
-      "isReadOnly": false,
-      "isRequired": false,
-      "isSortable": true,
-      "isVirtual": false,
-      "reference": null,
-      "inverseOf": null,
-      "validations": []
-    }, {
-      "field": "created_at",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -258,20 +244,6 @@
       "reference": null,
       "inverseOf": null,
       "validations": []
-    }, {
-      "field": "updated_at",
-      "type": "Date",
-      "defaultValue": null,
-      "enums": null,
-      "integration": null,
-      "isFilterable": true,
-      "isReadOnly": false,
-      "isRequired": false,
-      "isSortable": true,
-      "isVirtual": false,
-      "reference": null,
-      "inverseOf": null,
-      "validations": []
     }],
     "segments": [],
     "actions": []
@@ -310,7 +282,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "calendarCollaborator.calendar_id",
+      "reference": "calendarCollaborator.calendarId",
       "inverseOf": null,
       "relationship": "HasMany",
       "validations": []
@@ -325,7 +297,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "calendarPiece.calendar_id",
+      "reference": "calendarPiece.calendarId",
       "inverseOf": null,
       "relationship": "HasMany",
       "validations": []
@@ -340,12 +312,12 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "collaborator.calendar_id",
+      "reference": "collaborator.calendarId",
       "inverseOf": null,
       "relationship": "BelongsToMany",
       "validations": []
     }, {
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -443,7 +415,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "piece.calendar_id",
+      "reference": "piece.calendarId",
       "inverseOf": null,
       "relationship": "BelongsToMany",
       "validations": []
@@ -476,7 +448,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -545,7 +517,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "calendar.calendar_id",
+      "reference": "calendar.calendarId",
       "inverseOf": null,
       "relationship": "BelongsTo",
       "validations": []
@@ -560,12 +532,12 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "collaborator.collaborator_id",
+      "reference": "collaborator.collaboratorId",
       "inverseOf": null,
       "relationship": "BelongsTo",
       "validations": []
     }, {
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -607,7 +579,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -644,12 +616,12 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "calendar.calendar_id",
+      "reference": "calendar.calendarId",
       "inverseOf": null,
       "relationship": "BelongsTo",
       "validations": []
     }, {
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -701,12 +673,12 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "piece.piece_id",
+      "reference": "piece.pieceId",
       "inverseOf": null,
       "relationship": "BelongsTo",
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -743,7 +715,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "calendarCollaborator.collaborator_id",
+      "reference": "calendarCollaborator.collaboratorId",
       "inverseOf": null,
       "relationship": "HasMany",
       "validations": []
@@ -758,12 +730,12 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "calendar.collaborator_id",
+      "reference": "calendar.collaboratorId",
       "inverseOf": null,
       "relationship": "BelongsToMany",
       "validations": []
     }, {
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -819,7 +791,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -846,7 +818,7 @@
     "onlyForRelationships": false,
     "paginationType": "page",
     "fields": [{
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -884,7 +856,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "discLink.disc_id",
+      "reference": "discLink.discId",
       "inverseOf": null,
       "relationship": "HasMany",
       "validations": []
@@ -959,7 +931,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -986,7 +958,7 @@
     "onlyForRelationships": false,
     "paginationType": "page",
     "fields": [{
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1010,7 +982,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "disc.disc_id",
+      "reference": "disc.discId",
       "inverseOf": null,
       "relationship": "BelongsTo",
       "validations": []
@@ -1043,7 +1015,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1112,7 +1084,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1150,7 +1122,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "musicFile.music_id",
+      "reference": "musicFile.musicId",
       "inverseOf": null,
       "relationship": "HasMany",
       "validations": []
@@ -1183,7 +1155,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1238,7 +1210,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1304,7 +1276,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "music.music_id",
+      "reference": "music.musicId",
       "inverseOf": null,
       "relationship": "BelongsTo",
       "validations": []
@@ -1323,7 +1295,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1364,7 +1336,7 @@
     "onlyForRelationships": false,
     "paginationType": "page",
     "fields": [{
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1462,7 +1434,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1513,7 +1485,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "calendarPiece.piece_id",
+      "reference": "calendarPiece.pieceId",
       "inverseOf": null,
       "relationship": "HasMany",
       "validations": []
@@ -1528,7 +1500,7 @@
       "isRequired": false,
       "isSortable": true,
       "isVirtual": false,
-      "reference": "calendar.piece_id",
+      "reference": "calendar.pieceId",
       "inverseOf": null,
       "relationship": "BelongsToMany",
       "validations": []
@@ -1547,7 +1519,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1589,7 +1561,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1616,7 +1588,7 @@
     "onlyForRelationships": false,
     "paginationType": "page",
     "fields": [{
-      "field": "created_at",
+      "field": "createdAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1676,7 +1648,7 @@
       "inverseOf": null,
       "validations": []
     }, {
-      "field": "updated_at",
+      "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
       "enums": null,
@@ -1697,6 +1669,6 @@
     "database_type": "postgres",
     "liana": "forest-express-sequelize",
     "liana_version": "3.1.0",
-    "orm_version": "4.42.0"
+    "orm_version": "5.8.0"
   }
 }

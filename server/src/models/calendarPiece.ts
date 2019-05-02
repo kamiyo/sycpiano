@@ -1,8 +1,17 @@
 import { DataTypes, Sequelize } from 'sequelize';
-import { CalendarPieceModel } from 'types';
+import { Model } from '../types';
 
-const CalendarProgram = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    const model = sequelize.define('calendarPiece', {
+export class calendarPiece extends Model {
+    readonly id?: string;
+    readonly CalendarId?: string;
+    readonly PieceId?: string;
+    readonly order?: number;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    calendarPiece.init({
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,
@@ -19,14 +28,15 @@ const CalendarProgram = (sequelize: Sequelize, dataTypes: DataTypes) => {
             field: 'piece_id',
         },
         order: dataTypes.INTEGER,
-    }, { tableName: 'calendar_piece'}) as CalendarPieceModel;
+    }, {
+            sequelize,
+            tableName: 'calendar_piece',
+        });
 
-    model.associate = (models) => {
-        model.belongsTo(models.calendar);
-        model.belongsTo(models.piece);
+    calendarPiece.associate = (models) => {
+        calendarPiece.belongsTo(models.calendar);
+        calendarPiece.belongsTo(models.piece);
     };
 
-    return model;
+    return calendarPiece;
 };
-
-export default CalendarProgram;

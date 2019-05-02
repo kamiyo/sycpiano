@@ -1,8 +1,15 @@
 import { DataTypes, Sequelize } from 'sequelize';
-import { BioModel } from 'types';
+import { Model } from '../types';
 
-const Bio = (sequelize: Sequelize, dataTypes: DataTypes) => (
-    sequelize.define('bio', {
+export class bio extends Model {
+    readonly paragraph!: number;
+    readonly text!: string;
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    bio.init({
         paragraph: {
             type: dataTypes.INTEGER,
             allowNull: false,
@@ -20,7 +27,9 @@ const Bio = (sequelize: Sequelize, dataTypes: DataTypes) => (
             type: dataTypes.DATE,
             field: 'updated_at',
         },
-    }) as BioModel
-);
-
-export default Bio;
+    }, {
+            sequelize,
+            tableName: 'bio',
+        });
+    return bio;
+};

@@ -1,8 +1,20 @@
 import { DataTypes, Sequelize } from 'sequelize';
-import { AcclaimModel } from 'types';
+import { Model } from '../types';
 
-const Acclaim = (sequelize: Sequelize, dataTypes: DataTypes) => (
-    sequelize.define('acclaim', {
+export class acclaim extends Model {
+    readonly id?: string;
+    readonly quote: string;
+    readonly short: string;
+    readonly author: string;
+    readonly shortAuthor: string;
+    readonly date: Date | string;
+    readonly oldDate?: string;
+    readonly hasFullDate?: boolean;
+    readonly website: string;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    acclaim.init({
         id: {
             type: dataTypes.INTEGER,
             autoIncrement: true,
@@ -27,7 +39,10 @@ const Acclaim = (sequelize: Sequelize, dataTypes: DataTypes) => (
             type: dataTypes.BOOLEAN,
             field: 'has_full_date',
         },
-    }) as AcclaimModel
-);
+    }, {
+            sequelize,
+            tableName: 'acclaim',
+        });
 
-export default Acclaim;
+    return acclaim;
+};

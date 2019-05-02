@@ -3,16 +3,8 @@ import * as Promise from 'bluebird';
 import { extractEventDescription, getCalendarEvents } from '../gapi/calendar';
 
 import {
-    CalendarAttributes,
-    CalendarInstance,
-    CalendarModel,
-    CollaboratorAttributes,
-    CollaboratorModel,
     GCalEvent,
     ModelMap,
-    PieceAttributes,
-    PieceModel,
-    TokenModel,
 } from 'types';
 
 export const up = async (models: ModelMap) => {
@@ -27,10 +19,10 @@ export const up = async (models: ModelMap) => {
             syncToken = response.data.nextSyncToken;
         } while (!!nextPageToken && !syncToken);
         console.log(syncToken);
-        const calendarModel: CalendarModel = models.calendar;
-        const pieceModel: PieceModel = models.piece;
-        const collaboratorModel: CollaboratorModel = models.collaborator;
-        const tokenModel: TokenModel = models.token;
+        const calendarModel = models.calendar;
+        const pieceModel = models.piece;
+        const collaboratorModel = models.collaborator;
+        const tokenModel = models.token;
         const items: Array<{
             [key: string]: any,
         }> = responseItems.map((event) => {
@@ -65,16 +57,16 @@ export const up = async (models: ModelMap) => {
             try {
                 const { pieces, collaborators, ...attributes } = item;
 
-                const itemInstance: CalendarInstance = await calendarModel.create(attributes as CalendarAttributes);
+                const itemInstance = await calendarModel.create(attributes);
                 currentItem = itemInstance;
-                await Promise.each(pieces, async ({ composer, piece }: PieceAttributes, index: number) => {
+                await Promise.each(pieces, async ({ composer, piece }, index: number) => {
                     currentItem = { composer, piece };
                     const [ pieceInstance ] = await pieceModel.findOrCreate({
                         where: { composer, piece },
                     });
                     await itemInstance.addPiece(pieceInstance, { through: { order: index }});
                 });
-                await Promise.each(collaborators, async ({ name, instrument }: CollaboratorAttributes, index: number) => {
+                await Promise.each(collaborators, async ({ name, instrument }, index: number) => {
                     currentItem = { name, instrument };
                     const [collaboratorInstance] = await collaboratorModel.findOrCreate({
                         where: { name, instrument },

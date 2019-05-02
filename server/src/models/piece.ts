@@ -1,8 +1,18 @@
-import { DataTypes, Sequelize } from 'sequelize';
-import { PieceModel } from 'types';
+import { BelongsToManyCountAssociationsMixin, DataTypes, Sequelize } from 'sequelize';
+import { Model } from '../types';
 
-const Piece = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    const piece = sequelize.define('piece', {
+export class piece extends Model {
+    public readonly id: string;
+    public readonly composer: string;
+    public readonly piece: string;
+    public readonly createdAt?: Date | string;
+    public readonly updatedAt?: Date | string;
+
+    countCalendars: BelongsToManyCountAssociationsMixin;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    piece.init({
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,
@@ -12,7 +22,10 @@ const Piece = (sequelize: Sequelize, dataTypes: DataTypes) => {
         },
         composer: dataTypes.STRING,
         piece: dataTypes.STRING,
-    }) as PieceModel;
+    }, {
+            sequelize,
+            tableName: 'piece',
+        });
 
     piece.associate = (models) => {
         piece.hasMany(models.calendarPiece);
@@ -21,5 +34,3 @@ const Piece = (sequelize: Sequelize, dataTypes: DataTypes) => {
 
     return piece;
 };
-
-export default Piece;

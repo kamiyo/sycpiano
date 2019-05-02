@@ -1,8 +1,24 @@
-import { DataTypes, Sequelize } from 'sequelize';
-import { MusicModel } from 'types';
+import { DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin, Sequelize } from 'sequelize';
+import { Model } from '../types';
+import { musicFile } from './musicFile';
 
-const Music = (sequelize: Sequelize, dataTypes: DataTypes) => {
-    const music = sequelize.define('music', {
+export class music extends Model {
+    readonly id: string;
+    readonly composer: string;
+    readonly piece: string;
+    readonly contributors: string;
+    readonly type: string;
+    readonly year: number;
+    readonly musicFiles: musicFile[];
+    readonly createdAt?: Date | string;
+    readonly updatedAt?: Date | string;
+
+    readonly getMusicFiles: HasManyGetAssociationsMixin<musicFile>;
+    readonly setMusicFiles: HasManySetAssociationsMixin<musicFile, musicFile['id']>;
+}
+
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+    music.init({
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,
@@ -15,7 +31,10 @@ const Music = (sequelize: Sequelize, dataTypes: DataTypes) => {
         contributors: dataTypes.STRING,
         type: dataTypes.STRING,
         year: dataTypes.INTEGER,
-    }) as MusicModel;
+    }, {
+        sequelize,
+        tableName: 'music',
+    });
 
     music.associate = (models) => {
         music.hasMany(models.musicFile);
@@ -23,5 +42,3 @@ const Music = (sequelize: Sequelize, dataTypes: DataTypes) => {
 
     return music;
 };
-
-export default Music;
