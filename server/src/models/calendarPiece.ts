@@ -19,11 +19,11 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
             type: dataTypes.UUID,
             unique: true,
         },
-        CalendarId: {
+        calendarId: {
             type: dataTypes.STRING,
             field: 'calendar_id',
         },
-        PieceId: {
+        pieceId: {
             type: dataTypes.UUID,
             field: 'piece_id',
         },
