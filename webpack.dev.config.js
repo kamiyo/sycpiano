@@ -40,6 +40,9 @@ const config = () => {
             }),
             new webpack.DefinePlugin({
                 MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music_dev'),
+                // Dev key from google console; make sure it's set in env or .env
+                // Prod key is hardcoded since it is restricted. See webpack.prod.config.js
+                GAPI_KEY: JSON.stringify(process.env.GAPI_KEY_APP),
             }),
             new BundleAnalyzerPlugin({
                 openAnalyzer: false,

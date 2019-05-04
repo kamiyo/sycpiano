@@ -8,7 +8,6 @@ import {
     FetchEventsAPIParams,
     FetchEventsArguments,
     itemIsDay,
-    LatLng,
     SearchEventsArguments,
 } from 'src/components/Schedule/types';
 import { GlobalStateShape } from 'src/types';
@@ -18,7 +17,6 @@ import axios from 'axios';
 import { ThunkAction } from 'redux-thunk';
 
 import { transformCachedEventsToListItems } from 'src/components/Schedule/utils';
-import { geocode } from 'src/services/GoogleAPI';
 
 const FETCH_LIMIT = 25;
 
@@ -96,7 +94,7 @@ const fetchEvents = (name: EventListName, { after, before, date, scrollTo }: Fet
     }
 };
 
-export const createFetchEventsAction = (name: EventListName, args: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void, FetchLatLngActions> => (dispatch, getState) => {
+export const createFetchEventsAction = (name: EventListName, args: FetchEventsArguments): ThunkAction<void, GlobalStateShape, void, FetchEventsActions> => (dispatch, getState) => {
     if (shouldFetchEvents(name, getState())) {
         // need to fetch items
         dispatch(fetchEvents(name, args));
@@ -131,48 +129,6 @@ export const createSearchEventsAction = (name: EventListName, args: SearchEvents
     } catch (err) {
         dispatch(fetchEventsError(name));
         console.log('search events error', err);
-    }
-};
-
-const fetchLatLngRequest = (name: EventListName): ActionTypes.FetchLatLngRequest => ({
-    name,
-    type: SCHEDULE_ACTIONS.FETCH_LAT_LNG_REQUEST,
-});
-
-const fetchLatLngError = (name: EventListName): ActionTypes.FetchLatLngError => ({
-    name,
-    type: SCHEDULE_ACTIONS.FETCH_LAT_LNG_ERROR,
-});
-
-const fetchLatLngSuccess = (name: EventListName, latlng: LatLng): ActionTypes.FetchLatLngSuccess => ({
-    name,
-    type: SCHEDULE_ACTIONS.FETCH_LAT_LNG_SUCCESS,
-    lat: latlng.lat,
-    lng: latlng.lng,
-});
-
-const shouldFetchLatLng = (name: EventListName, state: GlobalStateShape) => {
-    const eventItemsReducer = state.schedule_eventItems[name];
-    return !eventItemsReducer.isFetchingLatLng;
-};
-
-type FetchLatLngActions = ActionTypes.FetchLatLngError | ActionTypes.FetchLatLngRequest | ActionTypes.FetchLatLngSuccess;
-
-const fetchLatLng = (name: EventListName, location: string): ThunkAction<void, GlobalStateShape, void, FetchLatLngActions> => async (dispatch) => {
-    try {
-        dispatch(fetchLatLngRequest(name));
-        const geocodeResponse = await geocode(location);
-        const latlng: LatLng = geocodeResponse.data.results[0].geometry.location;
-        dispatch(fetchLatLngSuccess(name, latlng));
-    } catch (err) {
-        dispatch(fetchLatLngError(name));
-        console.log('failed to fetch geocode', err);
-    }
-};
-
-export const createFetchLatLngAction = (name: EventListName, location: string): ThunkAction<void, GlobalStateShape, void, FetchLatLngActions> => (dispatch, getState) => {
-    if (shouldFetchLatLng(name, getState())) {
-        dispatch(fetchLatLng(name, location));
     }
 };
 
