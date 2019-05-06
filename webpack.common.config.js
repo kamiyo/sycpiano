@@ -98,7 +98,7 @@ const config = () => {
                 IMAGES_PATH: JSON.stringify(staticPrefix + '/images'),
                 // MUSIC_PATH: JSON.stringify(staticPrefix + '/music'), => see dev and prod files
                 VIDEOS_PATH: JSON.stringify(staticPrefix + '/videos'),
-                // TZ_API_KEY, YOUTUBE_API_KEY => see dev and prod files
+                // GAPI_KEY => see dev and prod files
             }),
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
