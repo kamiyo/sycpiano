@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_KEY = 'AIzaSyAD_AhLWUhbUCnLBu4VHZR3ecakL2IbhqU';
+// Restricted API key, okay to commit.
+const API_KEY = GAPI_KEY;
 const PLAYLIST_ID = 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9';
 
 const YOUTUBE_BASE_URL = 'https://www.googleapis.com/youtube/v3';

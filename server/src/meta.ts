@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { createHash } from 'crypto';
+import * as dotenv from 'dotenv';
 import { startCase } from 'lodash';
 import * as moment from 'moment-timezone';
 import * as pathToRegexp from 'path-to-regexp';
@@ -7,7 +8,9 @@ import * as pathToRegexp from 'path-to-regexp';
 import { Op } from 'sequelize';
 import db from './models';
 
-const YoutubeAPIKey = 'AIzaSyAD_AhLWUhbUCnLBu4VHZR3ecakL2IbhqU';
+dotenv.config();
+
+const YoutubeAPIKey = process.env.GAPI_KEY_SERVER;
 const YoutubeVideoUrl = 'https://www.googleapis.com/youtube/v3/playlistItems';
 const playlistId = 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9';
 const models = db.models;

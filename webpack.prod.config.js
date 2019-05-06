@@ -25,6 +25,7 @@ const config = merge(common.config, {
     plugins: [
         new webpack.DefinePlugin({
             MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music'),
+            GAPI_KEY: JSON.stringify('AIzaSyAD_AhLWUhbUCnLBu4VHZR3ecakL2IbhqU'), // restricted key, okay to publish
         }),
         new webpack.NormalModuleReplacementPlugin(
             /moment-timezone\/data\/packed\/latest\.json/,

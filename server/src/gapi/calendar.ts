@@ -4,7 +4,10 @@ import { getToken } from './oauth';
 
 import { GCalEvent } from '../types';
 
-const timeZoneKey = 'AIzaSyDEs770cNo7P5z0Szrysv0T5c-l9HT3cnc';
+// From google api console; use general dev or server prod keys for respective environments.
+// Make sure it's set in .env
+const gapiKey = process.env.GAPI_KEY_SERVER;
+
 const calendarId = (process.env.NODE_ENV === 'production' && process.env.SERVER_ENV !== 'test')
     ? 'qdoiu1uovuc05c4egu65vs9uck@group.calendar.google.com'
     : 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
@@ -172,7 +175,7 @@ export const getLatLng = async (address: string) => {
         const response = await axios.get(geocodeUrl, {
             params: {
                 address,
-                key: timeZoneKey,
+                key: gapiKey,
             },
         });
         return {
@@ -192,7 +195,7 @@ export const getTimeZone = async (lat: number, lng: number, timestamp?: string |
             params: {
                 location: loc,
                 timestamp: moment(timestamp).unix(),
-                key: timeZoneKey,
+                key: gapiKey,
             },
         });
         return response.data.timeZoneId;
