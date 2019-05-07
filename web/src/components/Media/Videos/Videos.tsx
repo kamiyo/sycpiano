@@ -84,7 +84,7 @@ class Videos extends React.Component<VideosProps> {
     domElement: React.RefObject<HTMLDivElement> = React.createRef();
 
     componentDidMount() {
-        this.props.createFetchPlaylistAction();
+        this.props.createFetchPlaylistAction(this.props.isMobile, this.props.match.params.videoId);
         this.props.initializeYoutubeElement(this.domElement.current, this.props.match.params.videoId, this.props.isMobile);
     }
 
