@@ -7,13 +7,13 @@ import youTube from 'src/services/YouTube';
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { GlobalStateShape } from 'src/types';
 
-export const initializeYoutubeElement = (el: HTMLElement, videoId?: string, isMobile?: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.PlayerIsReady> => (dispatch) => {
+export const initializeYoutubeElement = (el: HTMLElement, videoId?: string, isMobile?: boolean): ThunkAction<void, GlobalStateShape, void, ActionTypes.PlayerIsReady> => (dispatch, getState) => {
     youTube.initializePlayerOnElement(el);
     youTube.executeWhenPlayerReady(() => {
         dispatch({
             type: VIDEO_ACTIONS.PLAYER_IS_READY,
         });
-        videoId && dispatch(playVideo(isMobile, videoId));
+        getState().video_playlist.items.length && videoId && dispatch(playVideo(isMobile, videoId));
     });
 };
 
@@ -21,10 +21,10 @@ const fetchPlaylistRequest = (): ActionTypes.FetchPlaylistRequest => ({
     type: VIDEO_ACTIONS.FETCH_PLAYLIST_REQUEST,
 });
 
-const fetchPlaylistSuccess = (videos: VideoItemShape[]): ActionTypes.FetchPlaylistSuccess => ({
+const fetchPlaylistSuccess = (videos: VideoItemShape[], videoId: string): ActionTypes.FetchPlaylistSuccess => ({
     type: VIDEO_ACTIONS.FETCH_PLAYLIST_SUCCESS,
     videos,
-    videoId: videos[0].id,
+    videoId,
 });
 
 const fetchPlaylistError = (): ActionTypes.FetchPlaylistError => ({
@@ -34,7 +34,7 @@ const fetchPlaylistError = (): ActionTypes.FetchPlaylistError => ({
 type FetchPlaylistActions = ActionTypes.FetchPlaylistError | ActionTypes.FetchPlaylistRequest | ActionTypes.FetchPlaylistSuccess;
 
 // need two separate api requests, because statistics is only available when fetching videos
-const fetchPlaylist = (): ThunkAction<void, GlobalStateShape, void, FetchPlaylistActions> => async (dispatch) => {
+const fetchPlaylist = (isMobile: boolean, videoId?: string): ThunkAction<Promise<void>, GlobalStateShape, void, FetchPlaylistActions> => async (dispatch, getState) => {
     try {
         dispatch(fetchPlaylistRequest());
         const playlistResponse = await youTube.getPlaylistItems();
@@ -46,7 +46,9 @@ const fetchPlaylist = (): ThunkAction<void, GlobalStateShape, void, FetchPlaylis
         await videosResponse.data.items.forEach((item: Youtube.Video, i: number) => {
             videoItems[i] = { ...videoItems[i], ...item };
         });
-        dispatch(fetchPlaylistSuccess(videoItems));
+        const id = videoId || videoItems[0].id;
+        dispatch(fetchPlaylistSuccess(videoItems, id));
+        getState().video_player.isPlayerReady && videoId && dispatch(playVideo(isMobile, videoId));
     } catch (err) {
         dispatch(fetchPlaylistError());
         console.log('fetch videos error', err);
@@ -58,9 +60,9 @@ const shouldFetchPlaylist = (state: GlobalStateShape) => {
     return (playlistReducer.items.length === 0 && !playlistReducer.isFetching);
 };
 
-export const createFetchPlaylistAction = (): ThunkAction<void, GlobalStateShape, void, FetchPlaylistActions | ActionTypes.TogglePlaylist> => (dispatch, getState) => {
+export const createFetchPlaylistAction = (isMobile: boolean, videoId?: string): ThunkAction<void, GlobalStateShape, void, FetchPlaylistActions | ActionTypes.TogglePlaylist> => (dispatch, getState) => {
     if (shouldFetchPlaylist(getState())) {
-        dispatch(fetchPlaylist());
+        dispatch(fetchPlaylist(isMobile, videoId));
     } else {
         dispatch(togglePlaylist(true, getState()));
     }
