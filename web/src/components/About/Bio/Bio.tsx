@@ -14,6 +14,7 @@ import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 import { easeQuadOut } from 'd3-ease';
 import TweenLite from 'gsap/TweenLite';
 
+import PortfolioButton from 'src/components/About/Bio/PortfolioButton';
 import { LazyImage } from 'src/components/LazyImage';
 
 import { offWhite } from 'src/styles/colors';
@@ -61,7 +62,7 @@ const TextContainer = styled.div`
     box-sizing: border-box;
     flex: 0 0 45%;
     height: auto;
-    padding: 20px 40px 20px 60px;
+    padding: 20px 40px 80px 60px;
     background-color: ${offWhite};
     color: black;
     overflow-y: scroll;
@@ -258,6 +259,7 @@ class About extends React.PureComponent<BioProps, BioState> {
                     />
                 </ImageContainer>
                 <BioText bio={this.props.bio} />
+                <PortfolioButton />
             </BioContainer>
         );
     }

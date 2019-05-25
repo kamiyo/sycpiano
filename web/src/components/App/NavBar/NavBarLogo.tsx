@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import { SycLogo } from 'src/components/App/NavBar/SycLogo';
 
-import { logoBlue } from 'src/styles/colors';
+import { lightBlue, logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
 import { reactMediaMediumQuery, reactMediaMobileQuery, screenXSorPortrait } from 'src/styles/screens';
@@ -51,6 +51,11 @@ const StyledLink = styled(Link, {
     cursor: pointer;
     align-items: center;
     -webkit-tap-highlight-color: transparent;
+
+    &:hover {
+        fill: ${lightBlue};
+        color: ${lightBlue};
+    }
 
     ${screenXSorPortrait} {
         font-size: ${navBarFontSizeREM * 0.75}rem;
