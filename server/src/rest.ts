@@ -8,8 +8,10 @@ import * as Sequelize from 'sequelize';
 
 dotenv.config();
 
-import { createCalendarEvent, deleteCalendarEvent, getCalendarSingleEvent, getLatLng, getTimeZone, updateCalendar } from './gapi/calendar';
-import { getHash } from './hash';
+import {
+    createCalendarEvent,
+    getCalendarSingleEvent,
+    updateCalendar } from './gapi/calendar';
 import db from './models';
 import { calendar } from './models/calendar';
 
@@ -122,16 +124,16 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors
 
         await Promise.each(prunedEvents, async (item) => {
             try {
-                await getCalendarSingleEvent(item.id);
+                await getCalendarSingleEvent(db.sequelize, item.id);
 
                 // if error not thrown, then event exists, update it
-                await updateCalendar(item);
+                await updateCalendar(db.sequelize, item);
                 console.log(`updated: ${item.id}\n`);
                 updated++;
             } catch (e) {
                 if (e.response.status === 404) {
                     try {
-                        await createCalendarEvent(item);
+                        await createCalendarEvent(db.sequelize, item);
                         console.log(`created: ${item.id}\n`);
                         created++;
                     } catch (e) {
@@ -249,16 +251,16 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOpti
 
             await Promise.each(prunedEvents, async (item) => {
                 try {
-                    await getCalendarSingleEvent(item.id);
+                    await getCalendarSingleEvent(db.sequelize, item.id);
 
                     // if error not thrown, then event exists, update it
-                    await updateCalendar(item);
+                    await updateCalendar(db.sequelize, item);
                     console.log(`updated: ${item.id}\n`);
                     updated++;
                 } catch (e) {
                     if (e.response.status === 404) {
                         try {
-                            await createCalendarEvent(item);
+                            await createCalendarEvent(db.sequelize, item);
                             console.log(`created: ${item.id}\n`);
                             created++;
                         } catch (e) {
@@ -289,147 +291,6 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOpti
             }]),
         });
     } catch (error) {
-        respondWithError(error, res);
-    }
-});
-
-const updateMusicFileHash = async (req: express.Request, res: express.Response, next: () => any) => {
-    try {
-        let {
-            name,
-            musicId,
-        } = req.body.data.attributes;
-
-        if (!musicId) {
-            musicId = req.body.data.relationships.music.data.id;
-        }
-
-        if (!name || !musicId) {
-            const musicFile = await db.models.musicFile.findOne({
-                where: {
-                    id: req.params.id,
-                },
-            });
-            if (musicFile) {
-                name = (name) ? name : musicFile.name;
-                musicId = (musicId) ? musicId : musicFile.musicId;
-            }
-        }
-
-        const music = await db.models.music.findOne({
-            where: {
-                id: musicId,
-            },
-        });
-        const hash = getHash(music.composer, music.piece, name);
-        req.body.data.attributes.hash = hash;
-
-        next();
-    } catch (error) {
-        respondWithError(error, res);
-    }
-};
-
-adminRest.post('/forest/musicfile', forest.ensureAuthenticated, updateMusicFileHash);
-
-adminRest.put('/forest/musicfile/:id', forest.ensureAuthenticated, updateMusicFileHash);
-
-adminRest.put('/forest/music/:id', forest.ensureAuthenticated, async (req, res, next) => {
-    try {
-        const {
-            id,
-        } = req.params;
-
-        let {
-            composer,
-            piece,
-        } = req.body.data.attributes;
-
-        if (!composer || !piece) {
-            const music = await db.models.music.findOne({
-                where: {
-                    id,
-                },
-            });
-            composer = (composer) ? composer : music.composer;
-            piece = (piece) ? piece : music.piece;
-        }
-
-        const musicFiles = await db.models.musicFile.findAll({
-            where: {
-                musicId: id,
-            },
-        });
-        await Promise.each(musicFiles, async (musicFile) => {
-            const {
-                name,
-            } = musicFile;
-            const hash = getHash(composer, piece, name);
-            await musicFile.update({ hash });
-        });
-
-        next();
-    } catch (error) {
-        console.log(error);
-        respondWithError(error, res);
-    }
-});
-
-adminRest.post('/forest/calendar', forest.ensureAuthenticated, async (req, res, next) => {
-    try {
-        const {
-            location,
-            dateTime,
-            allDay,
-            endDate,
-            name,
-            type,
-            website,
-        } = req.body.data.attributes;
-        let timezone = null;
-        if (location) {
-            const { latlng } = await getLatLng(location);
-            timezone = await getTimeZone(latlng.lat, latlng.lng, dateTime);
-        }
-
-        const description = JSON.stringify({
-            collaborators: [],
-            pieces: [],
-            type,
-            website: encodeURI(website) || '',
-        });
-
-        const createResponse = await createCalendarEvent({
-            summary: name,
-            description,
-            location,
-            startDatetime: dateTime,
-            endDate,
-            allDay,
-            timeZone: timezone,
-        });
-        const id = createResponse.data.id;
-
-        req.body.data.attributes = {
-            ...req.body.data.attributes,
-            id,
-            location,
-            timezone,
-        };
-        next();
-    } catch (error) {
-        console.log(error);
-        respondWithError(error, res);
-    }
-});
-
-adminRest.delete('/forest/calendar/:id', forest.ensureAuthenticated, async (req, res, next) => {
-    const id = req.params.id;
-    try {
-        await deleteCalendarEvent(id);
-        next();
-    } catch (error) {
-        console.log(error);
         respondWithError(error, res);
     }
 });

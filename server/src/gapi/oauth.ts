@@ -1,14 +1,13 @@
 import { JWT } from 'google-auth-library';
+import { Sequelize } from 'sequelize/types';
+import { ModelMap } from 'types';
 
 /*tslint:disable:no-var-requires*/
 const authInfo = require('../../gapi-key.json');
 /*tslint:enable:no-var-requires*/
 
-import db from '../models/index';
-const models = db.models;
-
-export const getToken = async () => {
-    const tokenModel = models.token;
+export const getToken = async (sequelize: Sequelize) => {
+    const tokenModel = (sequelize.models as ModelMap).token;
     const tokenInstance = await tokenModel.findByPk('access_token');
     if (tokenInstance) {
         const expired = Date.now() > tokenInstance.expires.valueOf();
