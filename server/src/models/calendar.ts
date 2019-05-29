@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import {
     BelongsToManyAddAssociationMixin,
     BelongsToManyAddAssociationsMixin,
@@ -10,20 +11,21 @@ import {
     Sequelize,
 } from 'sequelize';
 
+import { createCalendarEvent, deleteCalendarEvent, getLatLng, getTimeZone, updateCalendar } from '../gapi/calendar';
 import { Model } from '../types';
 import { collaborator } from './collaborator';
 import { piece } from './piece';
 
 export class calendar extends Model {
-    readonly id?: string;
-    readonly name: string;
-    readonly dateTime: Date | string;
-    readonly allDay: boolean;
-    readonly endDate: Date | string;
-    readonly timezone: string;
-    readonly location: string;
-    readonly type: string;
-    readonly website: string;
+    id?: string;
+    name: string;
+    dateTime: Date;
+    allDay: boolean;
+    endDate: Date;
+    timezone: string;
+    location: string;
+    type: string;
+    website: string;
     readonly collaborators?: collaborator[];
     readonly pieces?: piece[];
     readonly createdAt?: Date | string;
@@ -46,10 +48,107 @@ export class calendar extends Model {
     countCollaborators: BelongsToManyCountAssociationsMixin;
 }
 
+const beforeCreateHook = async (c: calendar, _: any) => {
+    console.log(`[Calendar Hook beforeCreate]`);
+    const {
+        location,
+        dateTime,
+        allDay,
+        endDate,
+        name,
+        type,
+        website,
+    } = c;
+
+    console.log(`Fetching coord and tz.`);
+    let timezone = null;
+    if (location) {
+        const { latlng } = await getLatLng(location);
+        timezone = await getTimeZone(latlng.lat, latlng.lng, dateTime);
+    }
+    console.log(`Done fetching.`);
+    const description = JSON.stringify({
+        collaborators: [],
+        pieces: [],
+        type,
+        website: encodeURI(website) || '',
+    });
+
+    const dateString = moment(c.dateTime).format('YYYY-MM-DD HH:mm');
+    const dateWithTz = moment.tz(dateString, timezone).toDate();
+
+    if (allDay) {
+        const endDateString = moment(c.endDate).format('YYYY-MM-DD');
+        const endDateWithTz = moment.tz(endDateString, timezone).toDate();
+        c.endDate = endDateWithTz;
+    }
+
+    console.log(`Creating google calendar event '${name}' on ${dateTime}.\n`);
+    const createResponse = await createCalendarEvent(c.sequelize, {
+        summary: name,
+        description,
+        location,
+        startDatetime: dateWithTz,
+        endDate,
+        allDay,
+        timeZone: timezone,
+    });
+
+    const id = createResponse.data.id;
+    console.log(`Received response id: ${id}.`);
+
+    c.id = id;
+    c.location = location;
+    c.timezone = timezone;
+    c.dateTime = dateWithTz;
+    console.log(`[End Hook]\n`);
+};
+
+const beforeUpdateHook = async (c: calendar, _: any) => {
+    console.log(`[Calendar Hook afterUpdate]`);
+    console.log(`Fetching coord and tz.`);
+    let timezone = null;
+    const location = c.location;
+    if (location) {
+        const { latlng } = await getLatLng(location);
+        timezone = await getTimeZone(latlng.lat, latlng.lng, c.dateTime);
+    }
+    const dateString = moment(c.dateTime).format('YYYY-MM-DD HH:mm');
+    const dateWithTz = moment.tz(dateString, timezone).toDate();
+    c.dateTime = dateWithTz;
+    c.timezone = timezone;
+
+    const collaborators = await c.getCollaborators();
+    const pieces = await c.getPieces();
+    const data = {
+        id: c.id,
+        summary: c.name,
+        location: c.location,
+        startDatetime: dateWithTz,
+        endDate: c.endDate,
+        allDay: c.allDay,
+        timeZone: timezone,
+        description: JSON.stringify({
+            collaborators: collaborators.map((collab) => ({
+                name: collab.name,
+                instrument: collab.instrument,
+            })),
+            pieces: pieces.map((pie) => ({
+                composer: pie.composer,
+                piece: pie.piece,
+            })),
+            type: c.type,
+            website: c.website,
+        }),
+    };
+    console.log(`Updating google calendar event: ${c.id}.`);
+    await updateCalendar(c.sequelize, data);
+    console.log(`[End Hook]\n`);
+};
+
 export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
     calendar.init({
         id: {
-            allowNull: false,
             autoIncrement: false,
             primaryKey: true,
             type: dataTypes.STRING,
@@ -73,6 +172,15 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
         type: dataTypes.STRING,
         website: dataTypes.STRING,
     }, {
+            hooks: {
+                beforeCreate: beforeCreateHook,
+                afterDestroy: async (c: calendar, _: any) => {
+                    console.log(`[Calendar Hook afterDestroy]`);
+                    await deleteCalendarEvent(c.sequelize, c.id);
+                    console.log(`[End Hook]\n`);
+                },
+                beforeUpdate: beforeUpdateHook,
+            },
             sequelize,
             tableName: 'calendar',
         });

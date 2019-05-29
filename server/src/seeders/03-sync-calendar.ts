@@ -7,13 +7,15 @@ import {
     ModelMap,
 } from 'types';
 
+import db from '../models';
+
 export const up = async (models: ModelMap) => {
     try {
         let responseItems: GCalEvent[] = [];
         let nextPageToken: string;
         let syncToken: string;
         do {
-            const response = await getCalendarEvents(nextPageToken, syncToken);
+            const response = await getCalendarEvents(db.sequelize, nextPageToken, syncToken);
             responseItems = responseItems.concat(response.data.items);
             nextPageToken = response.data.nextPageToken;
             syncToken = response.data.nextSyncToken;

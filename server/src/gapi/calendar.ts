@@ -2,6 +2,7 @@ import axios from 'axios';
 import * as moment from 'moment';
 import { getToken } from './oauth';
 
+import { Sequelize } from 'sequelize/types';
 import { GCalEvent } from '../types';
 
 // From google api console; use general dev or server prod keys for respective environments.
@@ -13,8 +14,8 @@ const calendarId = (process.env.NODE_ENV === 'production' && process.env.SERVER_
     : 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
 const uriEncCalId = encodeURIComponent(calendarId);
 
-export const getCalendarSingleEvent = async (id: string) => {
-    const token = await getToken();
+export const getCalendarSingleEvent = async (sequelize: Sequelize, id: string) => {
+    const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${id}`;
     return axios.get(url, {
         headers: {
@@ -23,8 +24,8 @@ export const getCalendarSingleEvent = async (id: string) => {
     });
 };
 
-export const getCalendarEvents = async (nextPageToken: string = null, syncToken: string = null) => {
-    const token = await getToken();
+export const getCalendarEvents = async (sequelize: Sequelize, nextPageToken: string = null, syncToken: string = null) => {
+    const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
     return axios.get(url, {
         params: {
@@ -38,8 +39,8 @@ export const getCalendarEvents = async (nextPageToken: string = null, syncToken:
     });
 };
 
-export const deleteCalendarEvent = async (id: string) => {
-    const token = await getToken();
+export const deleteCalendarEvent = async (sequelize: Sequelize, id: string) => {
+    const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${id}`;
     return axios.delete(url, {
         headers: {
@@ -59,7 +60,7 @@ export interface GoogleCalendarParams {
     endDate: Date | string;
 }
 
-export const createCalendarEvent = async ({
+export const createCalendarEvent = async (sequelize: Sequelize, {
     summary,
     description,
     location,
@@ -68,7 +69,7 @@ export const createCalendarEvent = async ({
     allDay,
     endDate,
 }: GoogleCalendarParams) => {
-    const token = await getToken();
+    const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
     const startMoment = moment(startDatetime);
     const endMoment = moment(endDate);
@@ -92,7 +93,7 @@ export const createCalendarEvent = async ({
     });
 };
 
-export const updateCalendar = async ({
+export const updateCalendar = async (sequelize: Sequelize, {
     id,
     summary,
     description,
@@ -102,7 +103,7 @@ export const updateCalendar = async ({
     allDay,
     endDate,
 }: GoogleCalendarParams) => {
-    const token = await getToken();
+    const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${id}`;
     const startMoment = moment(startDatetime);
     const endMoment = moment(endDate);
@@ -136,38 +137,6 @@ export const extractEventDescription = (event: GCalEvent) => {
         return {};
     }
 };
-
-// export const programToPieceModel = (program: string) => {
-//     const out = {
-//         composer: '',
-//         piece: '',
-//     };
-//     // check if TBD
-//     if (!program.length || program.toLowerCase() === 'tbd') {
-//         return out;
-//     }
-
-//     // check if has semicolon (separating composer from piece)
-//     let index = program.indexOf(':');
-//     if (index !== -1) {
-//         const [composer, piece = ''] = program.split(':');
-//         out.composer = composer;
-//         out.piece = piece;
-//         return out;
-//     }
-
-//     index = program.indexOf(' ');
-//     if (index !== -1) {
-//         const composer = program.substr(0, index);
-//         const piece = program.substring(index + 1);
-//         out.composer = composer;
-//         out.piece = piece;
-//         return out;
-//     }
-
-//     out.composer = program;
-//     return out;
-// };
 
 export const getLatLng = async (address: string) => {
     const geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';

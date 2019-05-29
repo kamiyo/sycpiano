@@ -1,22 +1,37 @@
 import { BelongsToGetAssociationMixin, BelongsToSetAssociationMixin, DataTypes, Sequelize } from 'sequelize';
+import { getHash } from '../hash';
 import { Model } from '../types';
 import { music } from './music';
 
 export class musicFile extends Model {
     readonly id?: string;
-    readonly name: string;
+    name: string;
     readonly audioFile: string;
     readonly waveformFile: string;
     readonly durationSeconds: number;
     readonly musicId?: string;
-    readonly hash?: string;
+    hash?: string;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
 
-    readonly getMusics: BelongsToGetAssociationMixin<music>;
-    readonly setMusics: BelongsToSetAssociationMixin<music, music['id']>;
+    readonly getMusic: BelongsToGetAssociationMixin<music>;
+    readonly setMusic: BelongsToSetAssociationMixin<music, music['id']>;
     readonly music: music;
 }
+
+const hookFn = async (mFile: musicFile, _: any) => {
+    console.log(`[musicFile Hook beforeCreate/Update]`);
+    try {
+        if (mFile.musicId) {
+            const m: music = await mFile.getMusic();
+            console.log(`Updating hash for ${mFile.id}.`);
+            mFile.hash = getHash(m.composer, m.piece, mFile.name);
+        }
+    } catch (error) {
+        console.log('error beforecreate hook', error);
+    }
+    console.log(`[End Hook]\n`);
+};
 
 export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
     musicFile.init({
@@ -46,6 +61,10 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
         },
         hash: dataTypes.STRING,
     }, {
+            hooks: {
+                beforeCreate: hookFn,
+                beforeUpdate: hookFn,
+            },
             sequelize,
             tableName: 'music_file',
         });
