@@ -18,7 +18,9 @@ forest.collection('calendar', {
             return moment(cal.dateTime).tz(cal.timezone).format('YYYY-MM-DD HH:mm');
         },
         set: (cal: calendar, input: string) => {
-            cal.dateTime = moment(input).toDate();
+            // Creates moment in UTC from input by passing in null
+            // This is necessary because of how forest/sequelize detects changes in values.
+            cal.dateTime = moment.tz(input, null).toDate();
             return cal;
         },
     }],

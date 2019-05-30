@@ -258,7 +258,7 @@
     "onlyForRelationships": false,
     "paginationType": "page",
     "fields": [{
-      "field": "Time Input",
+      "field": "DateTime Input",
       "type": "String",
       "defaultValue": null,
       "enums": null,
