@@ -9,22 +9,30 @@ import {
 import { SortedArraySet } from 'collections/sorted-array-set';
 import { default as moment, Moment } from 'moment';
 
+const dateTimeFormat = 'YYYY-MM-DDTHH:mm';
+const dateFormat = 'YYYY-MM-DD';
+
 function equals(a: EventItemType, b: EventItemType) {
-    return a.dateTime.isSame(b.dateTime, 'minute');
+    // return a.dateTime.isSame(b.dateTime, 'minute');
+    return (a.dateTime.format(dateTimeFormat) === b.dateTime.format(dateTimeFormat));
 }
 
 function ascendCompare(a: EventItemType, b: EventItemType) {
-    if (a.dateTime.isSame(b.dateTime, 'minute')) { return 0; }
-    if (a.dateTime.isBefore(b.dateTime, 'minute')) { return -1; }
-    if (a.dateTime.isAfter(b.dateTime, 'minute')) { return 1; }
+    // if (a.dateTime.isSame(b.dateTime, 'minute')) { return 0; }
+    // if (a.dateTime.isBefore(b.dateTime, 'minute')) { return -1; }
+    // if (a.dateTime.isAfter(b.dateTime, 'minute')) { return 1; }
+    const aTime = (a.type === 'month') ? a.dateTime.startOf('month').format(dateFormat) : a.dateTime.format(dateTimeFormat);
+    const bTime = (b.type === 'month') ? b.dateTime.startOf('month').format(dateFormat) : b.dateTime.format(dateTimeFormat);
+    return aTime.localeCompare(bTime);
 }
 
 function descendCompare(a: EventItemType, b: EventItemType) {
-    const aTime = (a.type === 'month') ? moment(a.dateTime).endOf('month') : a.dateTime;
-    const bTime = (b.type === 'month') ? moment(b.dateTime).endOf('month') : b.dateTime;
-    if (aTime.isSame(bTime, 'minute')) { return 0; }
-    if (aTime.isBefore(bTime, 'minute')) { return 1; }
-    if (aTime.isAfter(bTime, 'minute')) { return -1; }
+    const aTime = (a.type === 'month') ? a.dateTime.endOf('month').format(dateFormat) : a.dateTime.format(dateTimeFormat);
+    const bTime = (b.type === 'month') ? b.dateTime.endOf('month').format(dateFormat) : b.dateTime.format(dateTimeFormat);
+    // if (aTime.isSame(bTime, 'minute')) { return 0; }
+    // if (aTime.isBefore(bTime, 'minute')) { return 1; }
+    // if (aTime.isAfter(bTime, 'minute')) { return -1; }
+    return bTime.localeCompare(aTime);
 }
 
 const initialState: EventItemsStateShape = {
@@ -40,7 +48,7 @@ const initialState: EventItemsStateShape = {
     isFetchingLatLng: false,
     minDate: undefined as Moment,
     maxDate: undefined as Moment,
-    setOfMonths: new Set(),
+    setOfMonths: new Set<string>(),
     hasMore: true,
 };
 
@@ -91,6 +99,7 @@ const eventItemsReducer = (
                 hasMore: true,
                 isFetchingList: false,
                 items: new SortedArraySet<EventItemType>([], equals, descendCompare),
+                setOfMonths: new Set<string>(),
                 itemArray: [],
                 lastQuery: '',
             };
@@ -104,6 +113,7 @@ const eventItemsReducer = (
                 // because of sorting mechanism, reverse list has min and max reversed
                 minDate: state.items.length ? moment.min(state.items.min().dateTime, state.items.max().dateTime) : moment(),
                 maxDate: state.items.length ? moment.max(state.items.min().dateTime, state.items.max().dateTime) : moment(),
+                setOfMonths: action.setOfMonths,
                 hasMore: action.hasMore,
                 lastQuery: action.lastQuery,
             };

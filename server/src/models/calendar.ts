@@ -50,30 +50,30 @@ export class calendar extends Model {
 
 const transformModelToGoogle = async (c: calendar) => {
     const collaborators = await c.getCollaborators();
-        const pieces = await c.getPieces();
-        const data = {
-            id: c.id,
-            summary: c.name,
-            location: c.location,
-            startDatetime: c.dateTime,
-            endDate: c.endDate,
-            allDay: c.allDay,
-            timeZone: c.timezone,
-            description: JSON.stringify({
-                collaborators: collaborators.map((collab) => ({
-                    name: collab.name,
-                    instrument: collab.instrument,
-                })),
-                pieces: pieces.map((pie) => ({
-                    composer: pie.composer,
-                    piece: pie.piece,
-                })),
-                type: c.type,
-                website: c.website,
-            }),
-        };
-        return data;
-}
+    const pieces = await c.getPieces();
+    const data = {
+        id: c.id,
+        summary: c.name,
+        location: c.location,
+        startDatetime: c.dateTime,
+        endDate: c.endDate,
+        allDay: c.allDay,
+        timeZone: c.timezone,
+        description: JSON.stringify({
+            collaborators: collaborators.map((collab) => ({
+                name: collab.name,
+                instrument: collab.instrument,
+            })),
+            pieces: pieces.map((pie) => ({
+                composer: pie.composer,
+                piece: pie.piece,
+            })),
+            type: c.type,
+            website: c.website,
+        }),
+    };
+    return data;
+};
 
 const beforeCreateHook = async (c: calendar, _: any) => {
     console.log(`[Calendar Hook beforeCreate]`);

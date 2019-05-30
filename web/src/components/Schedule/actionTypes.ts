@@ -10,6 +10,7 @@ export interface FetchEventsSuccess extends EventsBaseAction {
     readonly listItems: EventItemType[];
     readonly currentItem: DayItem;
     readonly hasMore: boolean;
+    readonly setOfMonths?: Set<string>;
     readonly lastQuery?: string;
 }
 

@@ -35,16 +35,18 @@ type FetchEventsSuccess = (
     listItems: EventItemType[],
     currentItem: DayItem,
     hasMore: boolean,
+    monthsSeen: Set<string>,
     lastQuery?: string,
 ) => ActionTypes.FetchEventsSuccess;
 
-const fetchEventsSuccess: FetchEventsSuccess = (name, listItems, currentItem, hasMore, lastQuery) => ({
+const fetchEventsSuccess: FetchEventsSuccess = (name, listItems, currentItem, hasMore, monthsSeen, lastQuery) => ({
     name,
     type: SCHEDULE_ACTIONS.FETCH_EVENTS_SUCCESS,
     listItems,
     currentItem,
     hasMore,
     lastQuery,
+    setOfMonths: monthsSeen,
 });
 
 const shouldFetchEvents = (name: EventListName, state: GlobalStateShape) => {
@@ -73,8 +75,7 @@ const fetchEvents = (name: EventListName, { after, before, date, scrollTo }: Fet
         const calendarResponse = await axios.get('/api/calendar', { params });
         const data: CachedEvent[] = calendarResponse.data;
         const state = getState().schedule_eventItems;
-        const listItems = transformCachedEventsToListItems(data, state[name].setOfMonths);
-
+        const { events: listItems, monthsSeen } = transformCachedEventsToListItems(data, state[name].setOfMonths);
         let currentItem: DayItem;
         const desiredDate = date || after || before;
         // find closest event to desired date.
@@ -87,7 +88,7 @@ const fetchEvents = (name: EventListName, { after, before, date, scrollTo }: Fet
             }, undefined) as DayItem;
         }
         const hasMore = !!listItems.length;
-        dispatch(fetchEventsSuccess(name, listItems, currentItem, hasMore));
+        dispatch(fetchEventsSuccess(name, listItems, currentItem, hasMore, monthsSeen));
     } catch (err) {
         dispatch(fetchEventsError(name));
         console.log('fetch events error', err);
@@ -117,15 +118,15 @@ export const createSearchEventsAction = (name: EventListName, args: SearchEvents
         }
         dispatch(clearList(name));
         if (args.q === '') {
-            dispatch(fetchEventsSuccess(name, [], undefined, false, args.q));
+            dispatch(fetchEventsSuccess(name, [], undefined, false, new Set<string>(), args.q));
             return;
         }
         dispatch(fetchEventsRequest(name));
 
         const { data }: { data: CachedEvent[]; } = await axios.get('/api/calendar/search', { params });
-        const listItems = transformCachedEventsToListItems(data, new Set<string>());
+        const { events: listItems, monthsSeen } = transformCachedEventsToListItems(data, new Set<string>());
 
-        dispatch(fetchEventsSuccess(name, listItems, undefined, false, args.q));
+        dispatch(fetchEventsSuccess(name, listItems, undefined, false, monthsSeen, args.q));
     } catch (err) {
         dispatch(fetchEventsError(name));
         console.log('search events error', err);
