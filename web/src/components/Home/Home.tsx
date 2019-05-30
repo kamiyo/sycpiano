@@ -32,6 +32,7 @@ const HomeContainer = styled('div')`
 `;
 
 const Content = styled('div')`
+    ${noHighlight}
     position: absolute;
     width: 100%;
     text-align: center;
