@@ -53,8 +53,9 @@ const StyledLink = styled(Link, {
     -webkit-tap-highlight-color: transparent;
 
     &:hover {
-        fill: ${lightBlue};
-        color: ${lightBlue};
+        ${props => !props.isHome ?
+            'fill: ' + lightBlue :
+            'filter: drop-shadow(0px 0px 4px white)'};
     }
 
     ${screenXSorPortrait} {

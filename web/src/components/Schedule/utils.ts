@@ -9,13 +9,19 @@ const GOOGLE_MAPS_SEARCH_URL = 'https://www.google.com/maps/search/?api=1';
  * to one that has Month items injected in.
  * params:
  *  events - events to parse
- *  monthsSeen - mutable cache of months, should contain previous months seen, of the format '[month] [year]'
+ *  monthsSeen - immutable cache of months, should contain previous months seen, of the format '[month] [year]'.
+ *
+ * returns: map of {
+ *  events: EventItemType[]
+ *  monthsSeens: Set<string>
+ * }
  */
 export const transformCachedEventsToListItems = (
     events: CachedEvent[],
     monthsSeen: Set<string>,
-): EventItemType[] => (
-    events.reduce((runningEventsArr: EventItemType[], event) => {
+): { events: EventItemType[], monthsSeen: Set<string> } => {
+    const monthsSet = new Set<string>(monthsSeen);
+    const eventsList = events.reduce((runningEventsArr: EventItemType[], event) => {
         let eventDateTime = moment(event.dateTime);
         if (event.timezone) {
             eventDateTime = eventDateTime.tz(event.timezone);
@@ -26,8 +32,8 @@ export const transformCachedEventsToListItems = (
 
         const nextEventsArr: EventItemType[] = [];
         const monthYearString = `${month} ${year}`;
-        if (!monthsSeen.has(monthYearString)) {
-            monthsSeen.add(monthYearString);
+        if (!monthsSet.has(monthYearString)) {
+            monthsSet.add(monthYearString);
             const monthMoment = moment(monthYearString, 'MMMM YYYY');
             nextEventsArr.push({
                 type: 'month',
@@ -54,8 +60,13 @@ export const transformCachedEventsToListItems = (
         });
 
         return [ ...runningEventsArr, ...nextEventsArr ];
-    }, [])
-);
+    }, []);
+
+    return {
+        events: eventsList,
+        monthsSeen: monthsSet,
+    };
+};
 
 export const getGoogleMapsSearchUrl = (query: string) => `
     ${GOOGLE_MAPS_SEARCH_URL}&query=${encodeURIComponent(query)}

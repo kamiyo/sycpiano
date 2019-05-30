@@ -48,6 +48,33 @@ export class calendar extends Model {
     countCollaborators: BelongsToManyCountAssociationsMixin;
 }
 
+const transformModelToGoogle = async (c: calendar) => {
+    const collaborators = await c.getCollaborators();
+    const pieces = await c.getPieces();
+    const data = {
+        id: c.id,
+        summary: c.name,
+        location: c.location,
+        startDatetime: c.dateTime,
+        endDate: c.endDate,
+        allDay: c.allDay,
+        timeZone: c.timezone,
+        description: JSON.stringify({
+            collaborators: collaborators.map((collab) => ({
+                name: collab.name,
+                instrument: collab.instrument,
+            })),
+            pieces: pieces.map((pie) => ({
+                composer: pie.composer,
+                piece: pie.piece,
+            })),
+            type: c.type,
+            website: c.website,
+        }),
+    };
+    return data;
+};
+
 const beforeCreateHook = async (c: calendar, _: any) => {
     console.log(`[Calendar Hook beforeCreate]`);
     const {
@@ -74,10 +101,13 @@ const beforeCreateHook = async (c: calendar, _: any) => {
         website: encodeURI(website) || '',
     });
 
-    const dateString = moment(c.dateTime).format('YYYY-MM-DD HH:mm');
+    // dateTime passed to hooks are in UTC. So we create a null-timezone moment with dateTime,
+    // so that we can extract HH:mm that was put in on the GUI.
+    const dateString = moment.tz(c.dateTime, null).format('YYYY-MM-DD HH:mm');
+    // Using the extract string, now create that time in the actual desired timezone.
     const dateWithTz = moment.tz(dateString, timezone).toDate();
 
-    if (allDay) {
+    if (allDay && c.endDate) {
         const endDateString = moment(c.endDate).format('YYYY-MM-DD');
         const endDateWithTz = moment.tz(endDateString, timezone).toDate();
         c.endDate = endDateWithTz;
@@ -105,44 +135,46 @@ const beforeCreateHook = async (c: calendar, _: any) => {
 };
 
 const beforeUpdateHook = async (c: calendar, _: any) => {
-    console.log(`[Calendar Hook afterUpdate]`);
-    console.log(`Fetching coord and tz.`);
-    let timezone = null;
-    const location = c.location;
-    if (location) {
+    console.log(`[Calendar Hook beforeUpdate]`);
+
+    const dateTimeChanged = c.changed('dateTime');
+    const locationChanged = c.changed('location');
+
+    let timezone = c.timezone;
+    // If location has changed, fetch the new timezone.
+    if (locationChanged) {
+        console.log(`Fetching new coord and tz.`);
+        const location = c.location;
         const { latlng } = await getLatLng(location);
         timezone = await getTimeZone(latlng.lat, latlng.lng, c.dateTime);
     }
-    const dateString = moment(c.dateTime).format('YYYY-MM-DD HH:mm');
-    const dateWithTz = moment.tz(dateString, timezone).toDate();
-    c.dateTime = dateWithTz;
-    c.timezone = timezone;
 
-    const collaborators = await c.getCollaborators();
-    const pieces = await c.getPieces();
-    const data = {
-        id: c.id,
-        summary: c.name,
-        location: c.location,
-        startDatetime: dateWithTz,
-        endDate: c.endDate,
-        allDay: c.allDay,
-        timeZone: timezone,
-        description: JSON.stringify({
-            collaborators: collaborators.map((collab) => ({
-                name: collab.name,
-                instrument: collab.instrument,
-            })),
-            pieces: pieces.map((pie) => ({
-                composer: pie.composer,
-                piece: pie.piece,
-            })),
-            type: c.type,
-            website: c.website,
-        }),
-    };
-    console.log(`Updating google calendar event: ${c.id}.`);
-    await updateCalendar(c.sequelize, data);
+    // See create hook for dateTime parsing logic.
+    if (dateTimeChanged) {
+        console.log(`New dateTime.`);
+        console.log(c.dateTime);
+        const dateString = moment.tz(c.dateTime, null).format('YYYY-MM-DD HH:mm');
+        const dateWithTz = moment.tz(dateString, timezone).toDate();
+        c.dateTime = dateWithTz;
+        c.timezone = timezone;
+    } else {
+        // Here, since dateTime was unchanged, we're not being fed an input number, forced into UTC.
+        // Instead, we have a time in a destination timezone. So, we extract the number we want, then
+        // create a new time in the new timezone.
+        if (locationChanged) {
+            console.log(`Updating dateTime with new tz.`);
+            const dateString = moment(c.dateTime).tz(c.timezone).format('YYYY-MM-DD HH:mm');
+            const dateWithTz = moment.tz(dateString, timezone).toDate();
+            c.dateTime = dateWithTz;
+            c.timezone = timezone;
+        }
+    }
+
+    if (c.changed()) {
+        const data = await transformModelToGoogle(c);
+        console.log(`Updating google calendar event: ${c.id}.`);
+        await updateCalendar(c.sequelize, data);
+    }
     console.log(`[End Hook]\n`);
 };
 
