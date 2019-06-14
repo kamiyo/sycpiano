@@ -85,7 +85,11 @@ app.get(/\//, async (req, res) => {
         }
         res.render('index', {
             twitter: meta,
-            facebook: { ...meta, url: 'https://' + req.get('host') + req.originalUrl },
+            facebook: {
+                ...meta,
+                image: meta.image.replace('https', 'http'),
+                secure_image: meta.image,
+                url: 'https://' + req.get('host') + req.originalUrl },
         });
     }
 });
