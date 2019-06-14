@@ -1,9 +1,9 @@
 {
   "name": "seanchenpiano",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "engines": {
-    "node": ">=8.3.x"
+    "node": ">=12.4.0"
   },
   "main": "index.js",
   "scripts": {
@@ -19,12 +19,12 @@
     "test": "jest --config='__tests__/' --coverage",
     "test-watch": "jest --config='__tests__/' --coverage --watchAll"
   },
-  "author": "",
+  "author": "Sean Chen, Andrew Chen, and Jason Chen",
   "repository": {
     "type": "git",
-    "url": "git@github.com:kamiyo/sycpiano.git"
+    "url": "git@github.com:jasboys/sycpiano.git"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.4.5",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
