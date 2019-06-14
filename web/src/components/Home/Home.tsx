@@ -15,10 +15,10 @@ import { container, noHighlight } from 'src/styles/mixins';
 import { navBarHeight } from 'src/styles/variables';
 
 import { DesktopBackgroundPreview, MobileBackgroundPreview } from 'src/components/Home/PreviewSVGs';
+import Social from 'src/components/Home/Social';
+import socials from 'src/components/Home/socials';
 import { LazyImage } from 'src/components/LazyImage';
 import { screenLengths, screenXSandPortrait, screenXSorPortrait } from 'src/styles/screens';
-import socials from 'src/components/Home/socials';
-import Social from 'src/components/Home/Social';
 
 const textShadowColor = 'rgba(0, 0, 0, 0.75)';
 
