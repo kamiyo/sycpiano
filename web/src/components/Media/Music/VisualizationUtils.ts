@@ -1,9 +1,13 @@
-/* tslint:disable:no-var-requires */
-const mathCore: any = require('mathjs/core');
-const math = mathCore.create();
-math.import(require('mathjs/lib/type/matrix'));
-math.import(require('mathjs/lib/function/arithmetic/multiply'));
-/* tslint:enable:no-var-requires */
+import {
+    create,
+    DenseMatrixDependencies,
+    multiplyDependencies,
+    SparseMatrixDependencies } from 'mathjs';
+const { multiply, DenseMatrix,  SparseMatrix } = create({
+    multiplyDependencies,
+    DenseMatrixDependencies,
+    SparseMatrixDependencies,
+}, {});
 
 import jBinary from 'jbinary';
 import jDataView from 'jdataview';
@@ -201,7 +205,7 @@ class ConstantQ {
                 this.numCols = header.numCols;
                 this.minF = header.minFreq;
                 this.maxF = header.maxFreq;
-                this.matrix = math.type.SparseMatrix.fromJSON(o);
+                this.matrix = SparseMatrix.fromJSON(o);
 
                 const cqBins = 2 * this.numCols;
                 const invCqBins = 1 / cqBins;
@@ -213,13 +217,13 @@ class ConstantQ {
 
     apply(input: Float32Array): Float32Array {
         if (this.matrix) {
-            const inputMatrix = new math.type.DenseMatrix.fromJSON({
+            const inputMatrix = DenseMatrix.fromJSON({
                 mathjs: 'DenseMatrix',
                 data: [input],
                 size: [1, input.length],
                 datatype: 'number',
             });
-            return Float32Array.from(math.multiply(inputMatrix, this.matrix).toArray()[0]);
+            return Float32Array.from(multiply(inputMatrix, this.matrix).toArray()[0]);
         }
         return input;
     }

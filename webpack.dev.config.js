@@ -6,7 +6,6 @@ const merge = require('webpack-merge');
 const common = require('./webpack.common.config.js');
 const webpack = require('webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const os = require('os');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const config = () => {

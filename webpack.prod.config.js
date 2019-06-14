@@ -6,7 +6,6 @@ const merge = require('webpack-merge');
 const common = require('./webpack.common.config.js');
 const Minimizer = require('terser-webpack-plugin');
 const webpack = require('webpack');
-const os = require('os');
 
 const config = merge(common.config, {
     mode: 'production',
@@ -28,8 +27,8 @@ const config = merge(common.config, {
             GAPI_KEY: JSON.stringify('AIzaSyAD_AhLWUhbUCnLBu4VHZR3ecakL2IbhqU'), // restricted key, okay to publish
         }),
         new webpack.NormalModuleReplacementPlugin(
-            /moment-timezone\/data\/packed\/latest\.json/,
-            path.resolve(__dirname, 'web/assets/data/tz-2000-2050.json'),
+            /data[\\\/]packed[\\\/]latest.json$/,
+            path.resolve(__dirname, './web/assets/data/tz-2000-2050.json'),
         ),
     ],
 });
