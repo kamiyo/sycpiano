@@ -1,9 +1,9 @@
 # The official web page of pianist Sean Chen.
 
-It is an [express](http://expressjs.com/) app with a PostgreSQL database, with the express app serving very little HTML. In fact, most of the app is on the client, built with [react](https://facebook.github.io/react/) and bundled with [webpack](https://webpack.github.io/). Use [yarn](https://yarnpkg.com/en/) for package management. Code is in [typescript](https://www.typescriptlang.org/) and [less](http://lesscss.org/).
+This website backend is an [express](http://expressjs.com/) app with a PostgreSQL database. The frontend is built with [react](https://facebook.github.io/react/) and bundled with [webpack](https://webpack.github.io/). Use [yarn](https://yarnpkg.com/en/) or npm for package management. Code is in [typescript](https://www.typescriptlang.org/) and styling is done by [emotion](https://github.com/emotion-js/emotion). Admin of the database is administered by [ForestAdmin](https://github.com/ForestAdmin).
 
 ## Getting Started
-Make sure at least version 8.4.0 of Node.js is installed.
+Make sure at least version 12.4.0 of Node.js is installed.
 After you've cloned the repository and have navigated to the project root, run:
 ```
 $ yarn
@@ -16,8 +16,9 @@ et Voila! This command will run a gulp task that starts the server and watches f
 
 N.B. make sure you add %LocalAppData%\Yarn to your whitelist for antivirus and/or Windows Defender, or else installs take forever!
 
+The app will be served on `localhost:8000` and the webpack-bundle-analyzer will be on `localhost:8888`.
+
 ## Production
-TODO: MORE
 First, setup a .env file with at least these entries:
 ```
 DB_NAME=<database name, probably sycpiano>
@@ -29,20 +30,17 @@ DB_DIALECT=<sql dialect>
 PORT=<http production port number>
 FOREST_ENV_SECRET=<secret for using forest admin>
 FOREST_AUTH_SECRET=<secret for auth forest admin>
+GAPI_KEY_SERVER=<from google develoepr console>
+GAPI_KEY_APP=<from google develoepr console>
 ```
-If deploying on heroku, make sure `DB_URL` is set, which contains the above info.
-
 Then, run:
 ```
 $ yarn run start-prod
 ```
-
-Make sure: disable happyPack thread pools if you only have one core. Because of that, it might be better to directly run npm start or node app.js, after setting the correct environmental variabls.
-Also, make sure that it is not in a subPath, (i.e. project root must be /, not /somePath relative to the domain).
-Change database type to match the server (mddhosting uses MariaDB, heroku uses Postgres).
+Automation on the server is done by [pm2](http://pm2.keymetrics.io/). Further, bash scripts for building and running the app are included in `./bin`.
 
 ## Initializing the database
-sycpiano uses a PostgreSQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).
+The website uses a PostgreSQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).
 Here are the steps for seeding the database:
 * Install PostgreSQL for your OS
 * Using the root user, open up a psql shell. On windows, the user's name will be `postgres`. On OSX, if you installed postgres through `brew`, then it'll be whatever your root user's name is. One way to find out is to do `psql -l` and see who the owner of the `postgres` database is. Once you've figured out the root user, run this command:
@@ -59,7 +57,7 @@ postgres=# \connect sycpiano;
 ```
 create role <username> with login password '<quoted password>'
 ```
-* Make a copy of the `secret.sample.ts` file under `server/src/` and rename it to `secret.ts`. Update the username and password to reflect that of the new user. Don't worry, this file is in our `.gitignore`! This file will be used when connecting to the database to create tables that do not exist.
+* Make a copy of the `secret.sample.ts` file under `server/src/` and rename it to `secret.ts`. Update the username and password to reflect that of the new user. This file is in `.gitignore`. This file will be used when connecting to the database to create tables that do not exist.
 
 ## Migrations and Seeding
 Before seeding the calendar, make sure to obtain a service account key file (json) from google developer console. Save the key under `server/gapi-key.json`. This file is also in our `.gitignore`.
@@ -70,7 +68,7 @@ $ node server/build/migrate [up|down|prev|next] [(if up or down) migration-file]
 $ node server/build/seed [up|down|prev|next] [(if up or down) seeder-file]
 ```
 
-Run `yarn run start-dev` or at least `yarn run build-server` so that the server/build folder actually has .js files!
+Run `yarn run start-dev` or at least `yarn run build-server`.
 
 Remember, before running `yarn run start-dev`, make sure the postgres server is running.
 
@@ -78,8 +76,6 @@ Remember, before running `yarn run start-dev`, make sure the postgres server is 
 sycpiano uses the Forest admin for managing the database.
 
 Going to `/admin` will forward you to the forest admin website.
-
-Use `/admin/sync` to upload/update calendar to Google calendar.
 
 ## Utilities
 
@@ -93,6 +89,6 @@ Must have the [audiowaveform](https://github.com/bbc/audiowaveform) package inst
 ### Picture Thumbnails
 There is a thumbanil generation utility (and creates .json file for seeding the photos table in the database) in web/assets/images called generateThumbnails.js
 ```
-$ node generateThumbnails
+$ node web/assets/images/generateThumbnails
 ```
-Must have [graphicsmagick](http://www.graphicsmagick.org/) and [imagemagick](https://www.imagemagick.org/script/index.php) installed, as well as [opencv](https://github.com/opencv).
+Must have [graphicsmagick](http://www.graphicsmagick.org/) and [imagemagick](https://www.imagemagick.org/script/index.php) installed, as well as [opencv](https://github.com/opencv), which are not included in the `package.json`.
