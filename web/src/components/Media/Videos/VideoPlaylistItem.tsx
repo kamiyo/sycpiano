@@ -124,6 +124,7 @@ const VideoPlaylistItem: React.FC<VideoPlaylistItemProps> = ({ item, currentItem
         </ImageContainer>
         <VideoInfo>
             <TextTop
+                id={`${item.id}-info`}
                 text={item.snippet.title}
                 lines={2}
                 ellipsis="..."

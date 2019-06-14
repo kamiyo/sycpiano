@@ -1,7 +1,7 @@
 /* eslint-disable no-var, strict, prefer-arrow-callback */
 'use strict';
 
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
