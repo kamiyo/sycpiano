@@ -1,7 +1,7 @@
 {
   "name": "seanchenpiano",
-  "version": "2.0.0",
-  "description": "",
+  "version": "2.0.1",
+  "description": "Website Sean Chen Piano",
   "engines": {
     "node": ">=12.4.0"
   },
