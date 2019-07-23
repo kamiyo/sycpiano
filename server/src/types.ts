@@ -32,7 +32,7 @@ export interface GCalEvent {
 export type ModelCtor<M extends Model> = (new () => M) & typeof Model;
 
 export class Model<T = any, T2 = any> extends Sequelize.Model<T, T2> {
-    static associate?(db: {[key: string]: ModelCtor<any>}): void;
+    static associate?(db: { [key: string]: ModelCtor<any> }): void;
 }
 
 export interface ModelMap {
@@ -63,7 +63,20 @@ export interface StoreItem {
     readonly created: number;
     readonly description: string;
     readonly id: string;
-    readonly images: string[];
+    readonly image: string;
     readonly name: string;
     readonly updated: number;
+}
+
+export interface OrderItem {
+    readonly amount: number;
+    readonly quantity?: number;
+    readonly type: 'sku' | 'tax' | 'shipping' | 'discount';
+    readonly parent?: string;
+}
+
+export interface Order {
+    readonly id: string;
+    readonly amount: number;
+    readonly items: OrderItem[];
 }

@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { fetchItemsAction } from 'src/components/SycStore/actions';
+import { addItemToCartAction, fetchItemsAction } from 'src/components/SycStore/actions';
+import { ConnectedCart as Cart } from 'src/components/SycStore/Cart';
 import { StoreItemsList } from 'src/components/SycStore/StoreItemsList';
 import { StoreItem } from 'src/components/SycStore/types';
 import { GlobalStateShape } from 'src/types';
@@ -27,6 +28,7 @@ interface SycStoreStateToPros {
 
 interface SycStoreDispatchToProps {
     readonly fetchItemsAction: () => Promise<void>;
+    readonly addItemToCart: (sku: string) => void;
 }
 
 interface SycOwnProps { isMobile: boolean; }
@@ -44,7 +46,9 @@ class SycStore extends React.PureComponent<SycStoreProps, {}> {
                 <StyledStoreItemsList
                     isMobile={this.props.isMobile}
                     items={this.props.items}
+                    addItemToCart={this.props.addItemToCart}
                 />
+                <Cart />
             </SycStoreContainer>
         );
     }
@@ -56,6 +60,7 @@ const mapStateToProps = ({ sycStore }: GlobalStateShape) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>) => ({
     fetchItemsAction: () => dispatch(fetchItemsAction()),
+    addItemToCart: (sku: string) => dispatch(addItemToCartAction(sku)),
 });
 
 const connectedSycStore = connect<SycStoreStateToPros, SycStoreDispatchToProps, {}>(

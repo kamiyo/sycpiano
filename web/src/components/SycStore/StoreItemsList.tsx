@@ -10,6 +10,7 @@ interface StoreItemsListProps {
     className?: string;
     isMobile: boolean;
     items: StoreItem[];
+    addItemToCart: (sku: string) => void;
 }
 
 const listStyle = css({
@@ -27,6 +28,7 @@ const StoreItemsList: React.FC<StoreItemsListProps> = (props) => (
                 <StoreListItem
                     item={item}
                     key={idx}
+                    addItemToCart={props.addItemToCart}
                 />
             ))
         }

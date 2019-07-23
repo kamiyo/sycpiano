@@ -22,4 +22,14 @@ apiRouter.get('/storeItems', async (_, res) => {
     res.json(storeItems);
 });
 
+apiRouter.get('/order/:id', async (req, res) => {
+    const order = await stripeClient.fetchOrder(req.params.id);
+    res.json(order);
+});
+
+// apiRouter.put('/order/:id', async (req, res) => {
+//     const id = req.params.id;
+//     const sku = req.query.sku;
+// })
+
 export const ApiRouter = apiRouter;

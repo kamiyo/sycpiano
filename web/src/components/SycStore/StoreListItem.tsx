@@ -9,6 +9,7 @@ interface StoreListItemProps {
     item: StoreItem;
     key: string | number;
     className?: string;
+    addItemToCart: (sku: string) => void;
 }
 
 const thumbnailStyle = css({
@@ -25,18 +26,19 @@ const contentStyle = css({
     backgroundColor: 'white',
 });
 
-let StoreListItem: React.FC<StoreListItemProps> = ({ item, className }) => (
+let StoreListItem: React.FC<StoreListItemProps> = ({ item, className, addItemToCart }) => (
     <div className={className}>
         {
-            item.images.length &&
-                <img
-                    css={thumbnailStyle}
-                    src={item.images[0]}
-                />
+            item.image &&
+            <img
+                css={thumbnailStyle}
+                src={item.image}
+            />
         }
         <div css={contentStyle}>
             <h2>{item.name}</h2>
             <span>{item.caption}</span>
+            <button onClick={() => addItemToCart(item.id)}>{'Add to Cart'}</button>
         </div>
     </div>
 );

@@ -1678,7 +1678,7 @@
   "meta": {
     "database_type": "postgres",
     "liana": "forest-express-sequelize",
-    "liana_version": "3.1.1",
-    "orm_version": "5.8.9"
+    "liana_version": "3.2.4",
+    "orm_version": "5.10.1"
   }
 }
