@@ -6,6 +6,7 @@ export interface StoreItem {
     readonly image: string;
     readonly name: string;
     readonly updated: number;
+    readonly price: number;
 }
 
 export interface OrderItem {

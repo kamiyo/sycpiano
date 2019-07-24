@@ -9,9 +9,9 @@ class StripeClient {
     private static stripe: Stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     convertIProductToStoreItem(isku: Stripe.skus.ISku): StoreItem {
-        const { created, id, updated, image, product } = isku;
+        const { created, id, updated, image, product, price } = isku;
         const { caption, description, name } = product as Stripe.products.IProduct;
-        return { caption, created, description, id, image, name, updated };
+        return { caption, created, description, id, image, name, updated, price };
     }
 
     convertIOrderItemToOrderItem(iorderItem: Stripe.orders.IOrderItem): OrderItem {

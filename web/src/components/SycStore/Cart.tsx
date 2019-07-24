@@ -2,15 +2,24 @@ import css from '@emotion/css';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
-import { initCartAction, syncLocalStorage } from './actions';
+import { initCartAction, removeItemFromCartAction, syncLocalStorage } from './actions';
 import { StoreItem } from './types';
 
+import { screenXSorPortrait } from 'src/styles/screens';
+import { navBarHeight } from 'src/styles/variables';
+
 const cartStyle = css({
-    maxWidth: '300px',
-    width: '100%',
+    backgroundColor: 'white',
+    width: '300px',
     position: 'fixed',
     right: 0,
+    top: 0,
+    height: '100vh',
+    paddingTop: navBarHeight.desktop,
     zIndex: 10,
+    [screenXSorPortrait]: {
+        paddingTop: navBarHeight.mobile,
+    },
 });
 
 interface CartStateToProps {
@@ -21,6 +30,7 @@ interface CartStateToProps {
 interface CartDispatchToProps {
     readonly initCartAction: () => void;
     readonly syncLocalStorage: () => void;
+    readonly removeItemFromCartAction: (sku: string) => void;
 }
 
 type CartProps = CartStateToProps & CartDispatchToProps;
@@ -45,23 +55,32 @@ class Cart extends React.Component<CartProps, {}> {
         const { cartItems, storeItems } = this.props;
         return (
             <div css={cartStyle}>
-                <ul>
-                    {storeItems.length && cartItems.length
-                        ? cartItems.map((sku) => {
-                            const { id, name, description } = storeItems.find((el) => el.id === sku);
-                            return (
-                                <li key={id}>
-                                    <div>{id}</div>
-                                    <div>{name}</div>
-                                    <div>{description}</div>
-                                </li>
-                            );
-                        })
-                        : <li>
-                            <div>{'Cart is empty.'}</div>
-                        </li>
-                    }
-                </ul>
+                {storeItems.length && cartItems.length
+                    ? (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {cartItems.map((sku) => {
+                                    const { id, name, description, price } = storeItems.find((el) => el.id === sku);
+                                    return (
+                                        <tr key={id}>
+                                            <td>{name}</td>
+                                            <td>{description}</td>
+                                            <td>{price}</td>
+                                            <td><button onClick={() => removeItemFromCartAction(sku)}></button></td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    ) : <div>{'Cart is empty.'}</div>
+                }
             </div>
         );
     }
@@ -72,7 +91,7 @@ const mapStateToProps = (store: GlobalStateShape) => {
     return ({
         storeItems: store.sycStore.items,
         cartItems: store.cart.items,
-    })
+    });
 };
 
 export const ConnectedCart = connect<CartStateToProps, CartDispatchToProps, {}>(
@@ -80,6 +99,7 @@ export const ConnectedCart = connect<CartStateToProps, CartDispatchToProps, {}>(
     {
         syncLocalStorage,
         initCartAction,
+        removeItemFromCartAction,
     },
 )(Cart);
 
