@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
 import { initCartAction, removeItemFromCartAction, syncLocalStorage } from './actions';
-import { StoreItem } from './types';
+import { StoreItem, Order } from './types';
 
 import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
@@ -23,7 +23,7 @@ const cartStyle = css({
 });
 
 interface CartStateToProps {
-    readonly cartItems: string[];
+    readonly order: Order;
     readonly storeItems: StoreItem[];
 }
 
@@ -46,39 +46,44 @@ class Cart extends React.Component<CartProps, {}> {
 
     componentDidUpdate(prevProps: CartProps) {
         console.log(this.props);
-        if (this.props.cartItems !== prevProps.cartItems) {
+        if (this.props.order !== prevProps.order) {
             this.props.syncLocalStorage();
         }
     }
 
     render() {
-        const { cartItems, storeItems } = this.props;
+        const { order } = this.props;
+        let subtotal = 0;
         return (
             <div css={cartStyle}>
-                {storeItems.length && cartItems.length
+                {order.items.length
                     ? (
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Description</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {cartItems.map((sku) => {
-                                    const { id, name, description, price } = storeItems.find((el) => el.id === sku);
-                                    return (
-                                        <tr key={id}>
-                                            <td>{name}</td>
-                                            <td>{description}</td>
-                                            <td>{price}</td>
-                                            <td><button onClick={() => removeItemFromCartAction(sku)}></button></td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                        <>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {order.items.filter((orderItem) => orderItem.type === 'sku').map((orderItem) => {
+                                        const { description, parent: id, amount: price } = orderItem;
+                                        subtotal += price;
+                                        return (
+                                            <tr key={id}>
+                                                <td>{name}</td>
+                                                <td>{description}</td>
+                                                <td>{`$${(price / 100).toFixed(2)}`}</td>
+                                                <td><button onClick={() => { }}>Remove</button></td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                            <div>{`$${(subtotal / 100).toFixed(2)}`}</div>
+                        </>
                     ) : <div>{'Cart is empty.'}</div>
                 }
             </div>
@@ -87,10 +92,10 @@ class Cart extends React.Component<CartProps, {}> {
 }
 
 const mapStateToProps = (store: GlobalStateShape) => {
-    console.log(store.cart.items);
+    console.log(store.cart.order);
     return ({
         storeItems: store.sycStore.items,
-        cartItems: store.cart.items,
+        order: store.cart.order,
     });
 };
 

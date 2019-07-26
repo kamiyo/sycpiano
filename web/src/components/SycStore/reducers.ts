@@ -33,33 +33,41 @@ export const sycStoreReducer = (state: SycStoreStateShape = {
 
 export const cartReducer = (state: CartStateShape = {
     cartError: false,
-    items: [],
+    isFetching: false,
+    order: null,
 }, action: ActionTypes.FetchCartActions | ActionTypes.UpdateCartOptions) => {
     let notExists;
     switch (action.type) {
+        case STORE_ACTIONS.FETCH_CART_REQUEST:
+            return {
+                ...state,
+                isFetching: true,
+            };
         case STORE_ACTIONS.FETCH_CART_ERROR:
             return {
                 ...state,
+                isFetching: false,
                 cartError: true,
             };
         case STORE_ACTIONS.FETCH_CART_SUCCESS:
             return {
                 ...state,
                 cartError: false,
-                items: action.cart,
+                isFetching: false,
+                items: action.order,
             };
-        case STORE_ACTIONS.ADD_ITEM_TO_CART:
-            notExists = state.items.indexOf(action.sku) === -1;
-            return {
-                ...state,
-                items: notExists ? [...state.items, action.sku] : state.items,
-            };
-        case STORE_ACTIONS.REMOVE_ITEM_FROM_CART:
-            notExists = state.items.indexOf(action.sku) === -1;
-            return {
-                ...state,
-                items: notExists ? state.items : state.items.filter(sku => sku !== action.sku),
-            };
+        // case STORE_ACTIONS.ADD_ITEM_TO_CART:
+        //     notExists = state.items.indexOf(action.sku) === -1;
+        //     return {
+        //         ...state,
+        //         items: notExists ? [...state.items, action.sku] : state.items,
+        //     };
+        // case STORE_ACTIONS.REMOVE_ITEM_FROM_CART:
+        //     notExists = state.items.indexOf(action.sku) === -1;
+        //     return {
+        //         ...state,
+        //         items: notExists ? state.items : state.items.filter(sku => sku !== action.sku),
+        //     };
         default:
             return state;
     }

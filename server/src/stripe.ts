@@ -24,7 +24,7 @@ class StripeClient {
         return { id, amount, items: items.map(this.convertIOrderItemToOrderItem) };
     }
 
-    async fetchStoreItems(): Promise<StoreItem[]> {
+    fetchStoreItems = async (): Promise<StoreItem[]> => {
         return new Promise((resolve, reject) => StripeClient.stripe.skus.list(
             { expand: ['data.product'] },
             (err, products) => {
@@ -34,11 +34,28 @@ class StripeClient {
                     const storeItems = products.data.map(this.convertIProductToStoreItem);
                     resolve(storeItems);
                 }
+            },
+        ));
+    };
+
+    createOrder = async (): Promise<Order> => {
+        return new Promise((resolve, reject) => StripeClient.stripe.orders.create(
+            { currency: 'usd' },
+            {},
+            (err, orderResponse) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const order = this.convertIOrderToOrder(orderResponse);
+                    resolve(order);
+                }
             })
         );
     }
 
-    async fetchOrder(orderId: string): Promise<Order> {
+
+    fetchOrder = async (orderId: string): Promise<Order> => {
+        console.log(orderId);
         if (orderId) {
             return new Promise((resolve, reject) => StripeClient.stripe.orders.retrieve(
                 orderId,
@@ -52,19 +69,9 @@ class StripeClient {
                     }
                 }
             ));
+
         } else {
-            return new Promise((resolve, reject) => StripeClient.stripe.orders.create(
-                { currency: 'usd' },
-                {},
-                (err, orderResponse) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        const order = this.convertIOrderToOrder(orderResponse);
-                        resolve(order);
-                    }
-                }
-            ));
+            return this.createOrder();
         }
     }
 }

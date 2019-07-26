@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ThunkAction } from 'redux-thunk';
 import { GlobalStateShape } from 'src/types';
-import { StoreItem } from './types';
+import { StoreItem, Order } from './types';
 
 import STORE_ACTIONS from 'src/components/SycStore/actionTypeKeys';
 import * as ActionTypes from 'src/components/SycStore/actionTypes';
@@ -45,22 +45,50 @@ export const fetchItemsAction = (): ThunkAction<Promise<void>, GlobalStateShape,
     }
 );
 
+const fetchCartRequest = (): ActionTypes.FetchCartRequest => ({
+    type: STORE_ACTIONS.FETCH_CART_REQUEST,
+});
+
 const fetchCartError = (): ActionTypes.FetchCartError => ({
     type: STORE_ACTIONS.FETCH_CART_ERROR,
 });
 
-const fetchCartSuccess = (cart: string[]): ActionTypes.FetchCartSuccess => ({
+const fetchCartSuccess = (order: Order): ActionTypes.FetchCartSuccess => ({
     type: STORE_ACTIONS.FETCH_CART_SUCCESS,
-    cart,
+    order,
 });
 
-export const initCartAction = (): ThunkAction<void, GlobalStateShape, void, ActionTypes.FetchCartActions> => (
-    (dispatch) => {
-        if (storageAvailable()) {
-            const cart: string[] = JSON.parse(window.localStorage.getItem('seanchenpiano_cart') || '[]');
-            dispatch(fetchCartSuccess(cart));
-        } else {
+const shouldFetchOrder = (state: GlobalStateShape) => {
+    return !state.cart.isFetching;
+};
+
+const fetchOrder = (orderId: string): ThunkAction<Promise<void>, GlobalStateShape, void, ActionTypes.FetchCartActions> => (
+    async (dispatch) => {
+        try {
+            if (orderId) {
+                dispatch(fetchCartRequest());
+                const url = 'api/order/' + orderId;
+                const { data: order }: { data: Order } = await axios.get(url);
+                dispatch(fetchCartSuccess(order));
+            } else {
+                console.log('no order to fetch');
+                dispatch(fetchCartSuccess(null));
+            }
+        } catch (e) {
+            console.log('fetch order error', e);
             dispatch(fetchCartError());
+        }
+    }
+)
+
+export const initCartAction = (): ThunkAction<Promise<void>, GlobalStateShape, void, ActionTypes.FetchCartActions> => (
+    async (dispatch, getState) => {
+        if (shouldFetchOrder(getState())) {
+            let orderId: string = null;
+            if (storageAvailable()) {
+                orderId = JSON.parse(window.localStorage.getItem('seanchenpiano_orderId') || '""');
+            }
+            await dispatch(fetchOrder(orderId));
         }
     }
 );
@@ -72,9 +100,19 @@ const addItemToCart = (sku: string): ActionTypes.AddItemToCart => ({
     sku,
 });
 
-export const addItemToCartAction = (sku: string): CartThunkAction<void> => (
+const addItemToCart = (sku: string): CartThunkAction<void> => (
     (dispatch) => {
-        dispatch(addItemToCart(sku));
+        dispatch(fetchCartRequest());
+        const { data: order }: { data: Order } = await axios.get(url);
+    }
+)
+
+export const addItemToCartAction = (sku: string): CartThunkAction<void> => (
+    async (dispatch, getState) => {
+        if (shouldFetchOrder(getState())) {
+
+            dispatch(addItemToCart(sku));
+        }
     }
 );
 
@@ -92,8 +130,8 @@ export const removeItemFromCartAction = (sku: string): CartThunkAction<void> => 
 export const syncLocalStorage = (): ThunkAction<void, GlobalStateShape, void, any> => (
     (_, getState) => {
         if (storageAvailable()) {
-            const cart = getState().cart.items;
-            window.localStorage.setItem('seanchenpiano_cart', JSON.stringify(cart));
+            const orderId = getState().cart.order.id;
+            window.localStorage.setItem('seanchenpiano_orderId', JSON.stringify(orderId));
         }
     }
 );

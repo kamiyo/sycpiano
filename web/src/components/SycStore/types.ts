@@ -12,6 +12,7 @@ export interface StoreItem {
 export interface OrderItem {
     readonly amount: number;
     readonly quantity?: number;
+    readonly description: string;
     readonly type: 'sku' | 'tax' | 'shipping' | 'discount';
     readonly parent?: string;
 }
@@ -30,5 +31,6 @@ export interface SycStoreStateShape {
 
 export interface CartStateShape {
     cartError: boolean;
-    items: string[];
+    isFetching: boolean;
+    order: Order;
 }

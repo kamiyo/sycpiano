@@ -1,5 +1,5 @@
 import STORE_ACTIONS from 'src/components/SycStore/actionTypeKeys';
-import { StoreItem } from './types';
+import { StoreItem, Order } from './types';
 
 export interface FetchItemsRequest {
     readonly type: typeof STORE_ACTIONS.FETCH_ITEMS_REQUEST;
@@ -14,13 +14,17 @@ export interface FetchItemsError {
     readonly type: typeof STORE_ACTIONS.FETCH_ITEMS_ERROR;
 }
 
+export interface FetchCartRequest {
+    readonly type: typeof STORE_ACTIONS.FETCH_CART_REQUEST;
+}
+
 export interface FetchCartError {
     readonly type: typeof STORE_ACTIONS.FETCH_CART_ERROR;
 }
 
 export interface FetchCartSuccess {
     readonly type: typeof STORE_ACTIONS.FETCH_CART_SUCCESS;
-    readonly cart: string[];
+    readonly order: Order;
 }
 
 export interface AddItemToCart {
@@ -34,7 +38,7 @@ export interface RemoveItemFromCart {
 }
 
 export type UpdateCartOptions = AddItemToCart | RemoveItemFromCart;
-export type FetchCartActions = FetchCartError | FetchCartSuccess;
+export type FetchCartActions = FetchCartError | FetchCartSuccess | FetchCartRequest;
 export type FetchItemsActions = FetchItemsRequest | FetchItemsSuccess | FetchItemsError;
 
 type ActionTypes = FetchCartActions | FetchItemsActions | UpdateCartOptions;
