@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { StoreCart, StoreItem } from 'src/components/SycStore/types';
 import { GlobalStateShape } from 'src/types';
 
-import { magenta, textGrey } from 'src/styles/colors';
+import { magenta } from 'src/styles/colors';
 import { lato2, lato3 } from 'src/styles/fonts';
 import { addToCartAction, removeFromCartAction } from './actions';
 
@@ -30,7 +30,7 @@ type StoreListItemProps = StoreListItemOwnProps & StoreListItemStateToProps & St
 const thumbnailStyle = (imageUrl: string) => css({
     flex: '0 0 300px',
     height: '100%',
-    backgroundColor: 'white',
+    backgroundColor: 'fff',
     backgroundImage: `url(${imageUrl})`,
     backgroundPosition: 'center',
     backgroundSize: 'cover',
@@ -41,19 +41,26 @@ const contentContainerStyle = css({
     flex: '1 1 auto',
     height: '100%',
     padding: '16px',
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
 });
+
+const buttonBoxShadow = `
+    0px 1px 5px 0px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 3px 1px -2px rgba(0, 0, 0, 0.12)
+`;
 
 const addToCartButtonStyle = css`
     font-size: 1.2em;
-    width: 150px;
+    width: 230px;
     padding: 10px;
     text-align: center;
     border-radius: 4px;
     font-family: ${lato2};
     background-color: ${magenta};
-    color: ${textGrey};
+    color: #fff;
     transition: all 0.25s;
+    box-shadow: ${buttonBoxShadow};
 
     &:hover {
         background-color: ${mix(0.75, magenta, '#FFF')};

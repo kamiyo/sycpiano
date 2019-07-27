@@ -9,6 +9,8 @@ export const sycStoreReducer = (state: SycStoreStateShape = {
     fetchSuccess: false,
     items: [],
     cart: { items: [], itemSet: new Set() },
+    isSubmitting: false,
+    submitSuccess: false,
 }, action: ActionTypes.Types) => {
     switch (action.type) {
         case STORE_ACTIONS.FETCH_ITEMS_REQUEST:

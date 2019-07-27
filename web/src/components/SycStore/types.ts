@@ -20,6 +20,8 @@ export interface StoreCart {
 export interface SycStoreStateShape {
     isFetching: boolean;
     fetchSuccess: boolean;
+    isSubmitting: boolean;
+    submitSuccess: boolean;
     items: StoreItem[];
     cart: StoreCart;
 }
