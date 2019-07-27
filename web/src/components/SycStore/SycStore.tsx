@@ -2,14 +2,11 @@ import styled from '@emotion/styled';
 import mix from 'polished/lib/color/mix';
 import * as React from 'react';
 import { connect } from 'react-redux';
-<<<<<<< HEAD
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-=======
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch, withRouter } from 'react-router-dom';
->>>>>>> WIP: adding a bunch of components.
 import { fetchItemsAction } from 'src/components/SycStore/actions';
 import { StoreItemsList } from 'src/components/SycStore/StoreItemsList';
 import { StoreCart, StoreItem } from 'src/components/SycStore/types';
