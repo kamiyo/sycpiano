@@ -1,6 +1,7 @@
 import { DataTypes, Sequelize } from 'sequelize';
 import { Model } from '../types';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class calendarPiece extends Model {
     readonly id?: string;
     readonly CalendarId?: string;

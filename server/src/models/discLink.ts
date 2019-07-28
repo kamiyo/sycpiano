@@ -1,6 +1,7 @@
 import { DataTypes, Sequelize } from 'sequelize';
 import { Model } from '../types';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class discLink extends Model {
     readonly id?: string;
     readonly type: string;
@@ -26,9 +27,9 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
             field: 'disc_id',
         },
     }, {
-        sequelize,
-        tableName: 'disc_link',
-    });
+            sequelize,
+            tableName: 'disc_link',
+        });
 
     discLink.associate = (models) => {
         discLink.belongsTo(models.disc);

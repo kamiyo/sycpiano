@@ -51,7 +51,7 @@ const FadingContainer = styled.div`
     position: absolute;
 `;
 
-type AboutProps = { isMobile: boolean; } & RouteComponentProps<{ about: string; }>;
+type AboutProps = { isMobile: boolean } & RouteComponentProps<{ about: string }>;
 
 const About = ({ isMobile, match, location }: AboutProps) => (
     <>

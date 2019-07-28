@@ -53,11 +53,12 @@ const StyledLink = styled(Link, {
     -webkit-tap-highlight-color: transparent;
 
     &:hover {
-        /* stylelint-disable-next-line declaration-colon-newline-after */
+        /* stylelint-disable */
         ${props => !props.isHome ?
-            `fill: ${lightBlue}` :
-            'filter: drop-shadow(0px 0px 4px white)'};
+        `fill: ${lightBlue}` :
+        'filter: drop-shadow(0px 0px 4px white)'};
         color: ${lightBlue};
+        /* stylelint-enable */
     }
 
     ${screenXSorPortrait} {

@@ -2,6 +2,7 @@ import { DataTypes, HasManyGetAssociationsMixin, Sequelize } from 'sequelize';
 import { Model } from '../types';
 import { discLink } from './discLink';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class disc extends Model {
     readonly id?: string;
     readonly title: string;
@@ -36,9 +37,9 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
             field: 'thumbnail_file',
         },
     }, {
-        sequelize,
-        tableName: 'disc',
-    });
+            sequelize,
+            tableName: 'disc',
+        });
 
     disc.associate = (models) => {
         disc.hasMany(models.discLink);

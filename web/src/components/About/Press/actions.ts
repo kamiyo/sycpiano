@@ -17,7 +17,7 @@ const fetchAcclaimsError = (): ActionTypes.FetchAcclaimsError => ({
 });
 
 const shouldFetchAcclaims = (state: GlobalStateShape) => {
-    const acclaimsReducer = state.press_acclaimsList;
+    const acclaimsReducer = state.pressAcclaimsList;
     return (acclaimsReducer.items.length === 0 && !acclaimsReducer.isFetching);
 };
 
@@ -26,9 +26,7 @@ const fetchAcclaimsSuccess = (items: AcclaimItemShape[]): ActionTypes.FetchAccla
     items,
 });
 
-type FetchAcclaimsActions = ActionTypes.FetchAcclaimsError | ActionTypes.FetchAcclaimsRequest | ActionTypes.FetchAcclaimsSuccess;
-
-const fetchAcclaims = (): ThunkAction<void, GlobalStateShape, void, FetchAcclaimsActions> => async (dispatch) => {
+const fetchAcclaims = (): ThunkAction<void, GlobalStateShape, void, ActionTypes.ActionTypes> => async (dispatch) => {
     try {
         dispatch(fetchAcclaimsRequest());
         const response = await axios.get('/api/acclaims');
@@ -39,7 +37,7 @@ const fetchAcclaims = (): ThunkAction<void, GlobalStateShape, void, FetchAcclaim
     }
 };
 
-export const createFetchAcclaimsAction = (): ThunkAction<void, GlobalStateShape, void, FetchAcclaimsActions> => (dispatch, getState) => {
+export const createFetchAcclaimsAction = (): ThunkAction<void, GlobalStateShape, void, ActionTypes.ActionTypes> => (dispatch, getState) => {
     if (shouldFetchAcclaims(getState())) {
         dispatch(fetchAcclaims());
     }

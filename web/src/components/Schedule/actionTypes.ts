@@ -49,8 +49,6 @@ export interface OtherAction extends EventsBaseAction {
     readonly type: typeof SCHEDULE_ACTIONS.OTHER_ACTION;
 }
 
-type ScheduleActionsTypes = FetchEventsError | FetchEventsRequest | ClearList |
+export type ActionTypes = FetchEventsError | FetchEventsRequest | ClearList |
     FetchEventsSuccess | FetchLatLngError | FetchLatLngRequest | FetchLatLngSuccess |
     SelectEvent | OtherAction;
-
-export default ScheduleActionsTypes;

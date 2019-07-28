@@ -130,10 +130,10 @@ class Videos extends React.Component<VideosProps> {
     }
 }
 
-const mapStateToProps = ({ video_player, video_playlist }: GlobalStateShape): VideosStateToProps => ({
-    videos: video_playlist.items,
-    videoId: video_player.videoId,
-    isPlayerReady: video_player.isPlayerReady,
+const mapStateToProps = ({ videoPlayer, videoPlaylist }: GlobalStateShape): VideosStateToProps => ({
+    videos: videoPlaylist.items,
+    videoId: videoPlayer.videoId,
+    isPlayerReady: videoPlayer.isPlayerReady,
 });
 
 const mapDispatchToProps: VideosDispatchToProps = {

@@ -11,6 +11,27 @@ import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 import { lato1, lato2 } from 'src/styles/fonts';
 
+// Helper functions
+
+function videoDurationToDisplay(durationString: string) {
+    const duration = moment.duration(durationString);
+    const s = duration.seconds();
+    const m = duration.minutes();
+    const h = duration.hours();
+
+    const sString = `${s < 10 ? '0' : ''}${s}`;
+    const mString = `${m < 10 ? '0' : ''}${m}`;
+    const hString = h > 0 ? `${h}:` : '';
+
+    return `${hString}${mString}:${sString}`;
+}
+
+function publishedDateToDisplay(publishedAt: string) {
+    return moment(publishedAt).format('MMM D, YYYY');
+}
+
+// Start component
+
 type VideoPlaylistItemProps = RouteComponentProps<{}> & {
     readonly item: VideoItemShape;
     readonly currentItemId: number | string;
@@ -24,7 +45,7 @@ const itemHeight = 100;
 const aspectRatio = 4 / 3;
 const thumbnailWidth = (itemHeight - padding * 2) * aspectRatio;
 
-const section = ` vertical-align: middle; `;
+const section = ' vertical-align: middle; ';
 
 const ImageContainer = styled.div`
     ${section}
@@ -139,22 +160,3 @@ const VideoPlaylistItem: React.FC<VideoPlaylistItemProps> = ({ item, currentItem
 );
 
 export default withRouter(VideoPlaylistItem);
-
-// Helper functions
-
-function videoDurationToDisplay(durationString: string) {
-    const duration = moment.duration(durationString);
-    const s = duration.seconds();
-    const m = duration.minutes();
-    const h = duration.hours();
-
-    const sString = `${s < 10 ? '0' : ''}${s}`;
-    const mString = `${m < 10 ? '0' : ''}${m}`;
-    const hString = h > 0 ? `${h}:` : '';
-
-    return `${hString}${mString}:${sString}`;
-}
-
-function publishedDateToDisplay(publishedAt: string) {
-    return moment(publishedAt).format('MMM D, YYYY');
-}

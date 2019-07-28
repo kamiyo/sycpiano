@@ -2,8 +2,9 @@ import {
     create,
     DenseMatrixDependencies,
     multiplyDependencies,
-    SparseMatrixDependencies } from 'mathjs';
-const { multiply, DenseMatrix,  SparseMatrix } = create({
+    SparseMatrixDependencies,
+} from 'mathjs';
+const { multiply, DenseMatrix, SparseMatrix } = create({
     multiplyDependencies,
     DenseMatrixDependencies,
     SparseMatrixDependencies,
@@ -34,10 +35,10 @@ export const drawCircleMask: DrawCircleMaskShape = (context, radius, dimensions,
 };
 
 const getCirclePoints = (points: number, offset: number = 0) => {
-    const pointArray: Array<{
+    const pointArray: {
         x: number;
         y: number;
-    }> = new Array();
+    }[] = [];
 
     const twoPiPerPoints = 2 * Math.PI / points;
     for (let i = 0; i < points; i++) {
@@ -70,7 +71,7 @@ export class WaveformLoader {
         length: number;
     } = undefined;
     waveform: Float32Array = undefined;
-    angles: Array<{ x: number; y: number; }>;
+    angles: { x: number; y: number; }[];
 
     loaded: Promise<any>;
 
@@ -175,7 +176,7 @@ class ConstantQ {
     numRows = 0;
     numCols = 0;
     sampleRate: number;
-    angles: Array<{ x: number; y: number; }>;
+    angles: { x: number; y: number; }[];
 
     constructor(sampleRate: number) {
         this.matrix = undefined;

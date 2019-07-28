@@ -24,7 +24,5 @@ export interface OtherActions {
     readonly type: typeof NAV_ACTIONS.NAV_OTHER_ACTIONS;
 }
 
-type ActionTypes = ToggleSubnav | ToggleNav | ToggleExpanded |
+export type ActionTypes = ToggleSubnav | ToggleNav | ToggleExpanded |
     LastScroll | OtherActions;
-
-export default ActionTypes;

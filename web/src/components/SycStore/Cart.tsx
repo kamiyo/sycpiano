@@ -56,7 +56,7 @@ class Cart extends React.Component<CartProps, {}> {
         let subtotal = 0;
         return (
             <div css={cartStyle}>
-                {order.items.length
+                {order && order.items.length
                     ? (
                         <>
                             <table>
@@ -109,4 +109,4 @@ export const ConnectedCart = connect<CartStateToProps, CartDispatchToProps, {}>(
 )(Cart);
 
 export type CartType = new (props: any) => React.Component<CartProps>;
-export interface RequiredProps { }
+// export interface RequiredProps {}

@@ -14,13 +14,13 @@ import { noHighlight } from 'src/styles/mixins';
 import { screenM, screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight, playlistContainerWidth } from 'src/styles/variables';
 import { metaDescriptions, titleStringBase } from 'src/utils';
+import { Tween } from 'gsap';
 
 interface AudioInfoProps {
     currentTrack: MusicFileItem;
     duration: number;
     currentPosition: number;
     isMobile: boolean;
-    dispatch: any;
     matchParams: boolean;
 }
 
@@ -100,7 +100,7 @@ const ContributingOrDuration = styled.div`
 `;
 
 class AudioInfo extends React.PureComponent<AudioInfoProps> {
-    private tween: any;
+    private tween: Tween;
     private titleDiv: React.RefObject<HTMLDivElement> = React.createRef();
     private marquee: React.RefObject<HTMLDivElement> = React.createRef();
     private secondSpan: React.RefObject<HTMLSpanElement> = React.createRef();

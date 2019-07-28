@@ -63,7 +63,7 @@ const DiscItem = styled.div<{ isMobile: boolean }>`
     }
 `;
 
-const DiscImageContainer = styled.div<{ bgImage: string; }>`
+const DiscImageContainer = styled.div<{ bgImage: string }>`
     flex: 0 0 300px;
     background-image: url(${props => props.bgImage});
     background-size: cover;

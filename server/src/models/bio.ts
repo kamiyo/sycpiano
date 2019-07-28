@@ -1,6 +1,7 @@
 import { DataTypes, Sequelize } from 'sequelize';
 import { Model } from '../types';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class bio extends Model {
     readonly paragraph!: number;
     readonly text!: string;

@@ -54,7 +54,7 @@ const PortfolioButton: React.FC<{}> = () => (
     <StyledDiv>
         <StyledLink href="https://www.dropbox.com/sh/zv4q9qchzn83i4q/AABecbr-vlVemO-nrHeHyCVQa?dl=0" target="_blank" rel="noopener">
             <StyledText>Repertoire</StyledText>
-            <StyledImg width={50} height={50} src={staticImage(`/logos/dropbox-nobg.svg`)} />
+            <StyledImg width={50} height={50} src={staticImage('/logos/dropbox-nobg.svg')} />
         </StyledLink>
     </StyledDiv>
 );

@@ -7,6 +7,9 @@ const common = require('./webpack.common.config.js');
 const webpack = require('webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const SpeedPlugin = require('speed-measure-webpack-plugin');
+
+const smp = new SpeedPlugin();
 
 const config = () => {
     return merge(common.config, {
@@ -22,17 +25,12 @@ const config = () => {
                 include: [
                     path.resolve(__dirname, 'web/src'),
                 ],
-                use: [
-                    { loader: 'cache-loader' },
-                    { loader: 'thread-loader' },
-                    { loader: 'stylelint-custom-processor-loader' },
-                ],
             }],
         },
         plugins: [
             new ForkTsCheckerWebpackPlugin({
                 checkSyntacticErrors: true,
-                tslint: path.resolve(__dirname, 'tslint.json'),
+                eslint: true,
                 watch: [
                     path.resolve(__dirname, 'web/src'),
                 ],
@@ -43,11 +41,11 @@ const config = () => {
                 // Prod key is hardcoded since it is restricted. See webpack.prod.config.js
                 GAPI_KEY: JSON.stringify(process.env.GAPI_KEY_APP),
             }),
-            new BundleAnalyzerPlugin({
-                openAnalyzer: false,
-            }),
+            // new BundleAnalyzerPlugin({
+            //     openAnalyzer: false,
+            // }),
         ],
     });
 }
 
-module.exports = config();
+module.exports = smp.wrap(config());

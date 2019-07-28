@@ -1,6 +1,7 @@
 import { BelongsToManyCountAssociationsMixin, DataTypes, Sequelize } from 'sequelize';
 import { Model } from '../types';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class collaborator extends Model {
     readonly id: string;
     readonly name: string;
@@ -23,9 +24,9 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
         name: dataTypes.STRING,
         instrument: dataTypes.STRING,
     }, {
-        sequelize,
-        tableName: 'collaborator',
-    });
+            sequelize,
+            tableName: 'collaborator',
+        });
 
     collaborator.associate = (models) => {
         collaborator.hasMany(models.calendarCollaborator);

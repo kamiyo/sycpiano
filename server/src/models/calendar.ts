@@ -16,6 +16,7 @@ import { Model } from '../types';
 import { collaborator } from './collaborator';
 import { piece } from './piece';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class calendar extends Model {
     id?: string;
     name: string;
@@ -75,7 +76,7 @@ const transformModelToGoogle = async (c: calendar) => {
     return data;
 };
 
-const beforeCreateHook = async (c: calendar, _: any) => {
+const beforeCreateHook = async (c: calendar) => {
     console.log(`[Calendar Hook beforeCreate]`);
     const {
         location,
@@ -134,7 +135,7 @@ const beforeCreateHook = async (c: calendar, _: any) => {
     console.log(`[End Hook]\n`);
 };
 
-const beforeUpdateHook = async (c: calendar, _: any) => {
+const beforeUpdateHook = async (c: calendar) => {
     console.log(`[Calendar Hook beforeUpdate]`);
 
     const dateTimeChanged = c.changed('dateTime');
@@ -206,7 +207,7 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
     }, {
             hooks: {
                 beforeCreate: beforeCreateHook,
-                afterDestroy: async (c: calendar, _: any) => {
+                afterDestroy: async (c: calendar) => {
                     console.log(`[Calendar Hook afterDestroy]`);
                     await deleteCalendarEvent(c.sequelize, c.id);
                     console.log(`[End Hook]\n`);

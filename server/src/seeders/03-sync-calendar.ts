@@ -25,9 +25,9 @@ export const up = async (models: ModelMap) => {
         const pieceModel = models.piece;
         const collaboratorModel = models.collaborator;
         const tokenModel = models.token;
-        const items: Array<{
+        const items: {
             [key: string]: any,
-        }> = responseItems.map((event) => {
+        }[] = responseItems.map((event) => {
             const dateTime = event.start.dateTime ? event.start.dateTime : event.start.date;
             const timezone = event.start.dateTime ? event.start.timeZone : '';
             const {

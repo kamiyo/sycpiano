@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import TweenLite from 'gsap/TweenLite';
 
 import { playVideo } from 'src/components/Media/Videos/actions';
-import { cliburn1, generateSrcsetWidths, resizedImage} from 'src/styles/imageUrls';
+import { cliburn1, generateSrcsetWidths, resizedImage } from 'src/styles/imageUrls';
 import { screenLengths, screenWidths, screenXS } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 import { GlobalStateShape } from 'src/types';
@@ -143,7 +143,7 @@ class PreviewOverlay extends React.Component<PreviewOverlayProps, { bgImage: str
 }
 
 const mapStateToProps = (state: GlobalStateShape): PreviewOverlayStateToProps => ({
-    isPreviewOverlay: state.video_player.isPreviewOverlay,
+    isPreviewOverlay: state.videoPlayer.isPreviewOverlay,
 });
 
 const mapDispatchToProps: PreviewOverlayDispatchToProps = {

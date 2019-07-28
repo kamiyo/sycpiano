@@ -2,7 +2,7 @@ import { DataTypes, QueryInterface } from 'sequelize';
 
 export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
     const acclaim = await queryInterface.describeTable('acclaim');
-    if (!acclaim.hasOwnProperty('website')) {
+    if (!Object.prototype.hasOwnProperty.call(acclaim, 'website')) {
         await queryInterface.addColumn('acclaim',
             'website',
             {
@@ -11,7 +11,7 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
             },
         );
     }
-    if (!acclaim.hasOwnProperty('has_full_date')) {
+    if (!Object.prototype.hasOwnProperty.call(acclaim, 'has_full_date')) {
         await queryInterface.addColumn('acclaim',
             'has_full_date',
             {
@@ -21,7 +21,7 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
             },
         );
     }
-    if (!acclaim.hasOwnProperty('old_date')) {
+    if (!Object.prototype.hasOwnProperty.call(acclaim, 'old_date')) {
         await queryInterface.renameColumn('acclaim', 'date', 'old_date');
         await queryInterface.addColumn('acclaim',
             'date',
@@ -31,7 +31,7 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
             },
         );
     } else {
-        if (!acclaim.hasOwnProperty('date')) {
+        if (!Object.prototype.hasOwnProperty.call(acclaim, 'date')) {
             await queryInterface.addColumn('acclaim',
                 'date',
                 {
@@ -45,8 +45,8 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
 
 export const down = async (queryInterface: QueryInterface) => {
     const acclaim = await queryInterface.describeTable('acclaim');
-    acclaim.hasOwnProperty('website') && await queryInterface.removeColumn('acclaim', 'website');
-    acclaim.hasOwnProperty('has_full_date') && await queryInterface.removeColumn('acclaim', 'has_full_date');
-    acclaim.hasOwnProperty('date') && await queryInterface.removeColumn('acclaim', 'date');
-    acclaim.hasOwnProperty('old_date') && await queryInterface.renameColumn('acclaim', 'old_date', 'date');
+    Object.prototype.hasOwnProperty.call(acclaim, 'website') && await queryInterface.removeColumn('acclaim', 'website');
+    Object.prototype.hasOwnProperty.call(acclaim, 'has_full_date') && await queryInterface.removeColumn('acclaim', 'has_full_date');
+    Object.prototype.hasOwnProperty.call(acclaim, 'date') && await queryInterface.removeColumn('acclaim', 'date');
+    Object.prototype.hasOwnProperty.call(acclaim, 'old_date') && await queryInterface.renameColumn('acclaim', 'old_date', 'date');
 };

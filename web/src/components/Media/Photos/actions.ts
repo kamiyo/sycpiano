@@ -31,9 +31,9 @@ export const selectPhoto = (item: PhotoItem): PhotoActions.SelectPhoto => ({
     item,
 });
 
-export const createFetchPhotosAction = (): ThunkAction<Promise<void>, GlobalStateShape, void, PhotoActions.default> =>
+export const createFetchPhotosAction = (): ThunkAction<Promise<void>, GlobalStateShape, void, PhotoActions.ActionTypes> =>
     async (dispatch, getState) => {
-        if (shouldFetchPhotos(getState().photo_list)) {
+        if (shouldFetchPhotos(getState().photoList)) {
             try {
                 dispatch(fetchPhotosRequest());
                 const response = await axios.get('/api/photos');
@@ -44,6 +44,6 @@ export const createFetchPhotosAction = (): ThunkAction<Promise<void>, GlobalStat
                 dispatch(fetchPhotosError());
             }
         } else {
-            dispatch(selectPhoto(getState().photo_list.items[0]));
+            dispatch(selectPhoto(getState().photoList.items[0]));
         }
     };

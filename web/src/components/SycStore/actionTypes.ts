@@ -41,6 +41,4 @@ export type UpdateCartOptions = AddItemToCart | RemoveItemFromCart;
 export type FetchCartActions = FetchCartError | FetchCartSuccess | FetchCartRequest;
 export type FetchItemsActions = FetchItemsRequest | FetchItemsSuccess | FetchItemsError;
 
-type ActionTypes = FetchCartActions | FetchItemsActions | UpdateCartOptions;
-
-export default ActionTypes;
+export type ActionTypes = FetchCartActions | FetchItemsActions | UpdateCartOptions;

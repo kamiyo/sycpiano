@@ -1,11 +1,11 @@
 import PHOTO_ACTIONS from 'src/components/Media/Photos/actionTypeKeys';
-import PhotoActions from 'src/components/Media/Photos/actionTypes';
+import { ActionTypes } from 'src/components/Media/Photos/actionTypes';
 import { PhotoListReducerShape, PhotoViewerReducerShape } from 'src/components/Media/Photos/types';
 
 export const photoListReducer = (state: PhotoListReducerShape = {
     items: [],
     isFetching: false,
-}, action: PhotoActions) => {
+}, action: ActionTypes) => {
     switch (action.type) {
         case PHOTO_ACTIONS.FETCH_PHOTOS_REQUEST:
             return {
@@ -29,7 +29,7 @@ export const photoListReducer = (state: PhotoListReducerShape = {
 
 export const photoViewerReducer = (state: PhotoViewerReducerShape = {
     currentItem: null,
-}, action: PhotoActions) => {
+}, action: ActionTypes) => {
     switch (action.type) {
         case PHOTO_ACTIONS.SELECT_PHOTO:
             return {

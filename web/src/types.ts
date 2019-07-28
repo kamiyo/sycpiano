@@ -22,15 +22,15 @@ import { Store } from 'redux';
 export interface GlobalStateShape {
     readonly bio?: BioStateShape;
     readonly discs?: DiscsStateShape;
-    readonly audio_playlist?: AudioPlaylistStateShape;
-    readonly photo_list?: PhotoListReducerShape;
-    readonly photo_viewer?: PhotoViewerReducerShape;
-    readonly press_acclaimsList?: AcclaimsListStateShape;
-    readonly schedule_eventItems?: ScheduleStateShape;
+    readonly audioPlaylist?: AudioPlaylistStateShape;
+    readonly photoList?: PhotoListReducerShape;
+    readonly photoViewer?: PhotoViewerReducerShape;
+    readonly pressAcclaimsList?: AcclaimsListStateShape;
+    readonly scheduleEventItems?: ScheduleStateShape;
     readonly sycStore?: SycStoreStateShape;
     readonly cart?: CartStateShape;
-    readonly video_player?: VideoPlayerStateShape;
-    readonly video_playlist?: VideoPlaylistStateShape;
+    readonly videoPlayer?: VideoPlayerStateShape;
+    readonly videoPlaylist?: VideoPlaylistStateShape;
     readonly navbar: NavBarStateShape;
 }
 
@@ -41,13 +41,13 @@ export type AnyReducerType = typeof bioReducer | typeof discsReducer | typeof au
 export interface Reducers {
     readonly bio?: typeof bioReducer;
     readonly discs?: typeof discsReducer;
-    readonly audio_playlist?: typeof audioPlaylistReducer;
-    readonly photo_list?: typeof photoListReducer;
-    readonly photo_viewer?: typeof photoViewerReducer;
-    readonly press_acclaimsList?: typeof acclaimsListReducer;
-    readonly schedule_eventItems?: typeof scheduleReducer;
-    readonly video_player?: typeof videoPlayerReducer;
-    readonly video_playlist?: typeof videoPlaylistReducer;
+    readonly audioPlaylist?: typeof audioPlaylistReducer;
+    readonly photoList?: typeof photoListReducer;
+    readonly photoViewer?: typeof photoViewerReducer;
+    readonly pressAcclaimsList?: typeof acclaimsListReducer;
+    readonly scheduleEventItems?: typeof scheduleReducer;
+    readonly videoPlayer?: typeof videoPlayerReducer;
+    readonly videoPlaylist?: typeof videoPlaylistReducer;
     readonly sycStore?: typeof sycStoreReducer;
     readonly cart?: typeof cartReducer;
     readonly [key: string]: AnyReducerType;

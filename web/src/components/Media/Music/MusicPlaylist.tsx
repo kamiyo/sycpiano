@@ -101,8 +101,8 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
         </PlaylistContainer>
     );
 
-const mapStateToProps = ({ audio_playlist }: GlobalStateShape) => ({
-    items: audio_playlist.items,
+const mapStateToProps = ({ audioPlaylist }: GlobalStateShape) => ({
+    items: audioPlaylist.items,
 });
 
 export default connect<MusicPlaylistStateToProps, {}, MusicPlaylistOwnProps>(

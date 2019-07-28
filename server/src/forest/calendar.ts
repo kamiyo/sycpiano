@@ -3,7 +3,7 @@
 import { calendar } from 'models/calendar';
 import * as moment from 'moment';
 
-/* tslint:disable-next-line:no-var-requires */
+/* eslint-disable-next-line */
 const forest = require('forest-express-sequelize');
 
 forest.collection('calendar', {
@@ -26,4 +26,4 @@ forest.collection('calendar', {
     }],
 });
 
-export {};
+export { };

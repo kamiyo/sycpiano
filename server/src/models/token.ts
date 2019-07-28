@@ -1,6 +1,7 @@
 import { DataTypes, Sequelize } from 'sequelize';
 import { Model } from '../types';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class token extends Model {
     readonly id: string;
     readonly token: string;
@@ -22,9 +23,9 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
             allowNull: true,
         },
     }, {
-        sequelize,
-        tableName: 'token',
-    });
+            sequelize,
+            tableName: 'token',
+        });
 
     return token;
 };

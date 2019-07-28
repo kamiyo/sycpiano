@@ -1,12 +1,12 @@
 {
-    "parser": "babel-eslint",
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
+        "project": "./tsconfig.json",
+        "tsconfigRootDir": "./",
+        "ecmaVersion": 2019,
         "sourceType": "module",
-        "ecmaVersion": 6,
         "ecmaFeatures": {
-            "jsx": true,
-            "modules": true,
-            "experimentalObjectRestSpread ": true
+            "jsx": true
         }
     },
     "env": {
@@ -15,13 +15,66 @@
         "es6": true
     },
     "plugins": [
-        "react"
+        "@typescript-eslint"
     ],
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended"
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/recommended"
     ],
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
+    "globals": {
+        "BINARY_PATH": "readonly",
+        "IMAGES_PATH": "readonly",
+        "MUSIC_PATH": "readonly",
+        "VIDEOS_PATH": "readonly",
+        "GAPI_KEY": "readonly"
+    },
     "rules": {
-        "no-console": 0
+        "no-console": 0,
+        "quotes": [
+            "warn",
+            "single",
+            {
+                "avoidEscape": true,
+                "allowTemplateLiterals": true
+            }
+        ],
+        "jsx-quotes": [
+            "warn",
+            "prefer-double"
+        ],
+        "no-var-requires": 0,
+        "comma-dangle": [
+            "warn",
+            "always-multiline"
+        ],
+        "@typescript-eslint/explicit-function-return-type": 0,
+        "@typescript-eslint/explicit-member-accessibility": 0,
+        "react/prop-types": 0,
+        "@typescript-eslint/indent": 0,
+        "react/display-name": 0,
+        "@typescript-eslint/no-object-literal-type-assertion": 0,
+        "require-atomic-updates": 0,
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/member-delimiter-style": 0,
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                "ignoreRestSiblings": true,
+            }
+        ],
+        "@typescript-eslint/camelcase": [
+            "warn",
+            {
+                "allow": [
+                    "child_process"
+                ]
+            }
+        ]
     }
 }

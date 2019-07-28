@@ -48,7 +48,7 @@ const SocialContainer = styled('div')`
     }
 `;
 
-const SocialLink = styled.a<{ show: boolean; canHover: boolean; }>`
+const SocialLink = styled.a<{ show: boolean; canHover: boolean }>`
     padding: 1.5rem 0;
     width: calc(100vw / ${Object.keys(socials).length});
     max-width: 120px;
@@ -94,7 +94,7 @@ const SocialMediaLink: React.FC<SocialMediaLinkProps> = (props) => (
 
 interface SocialState {
     show: boolean;
-    canHover: { [key: string]: boolean; };
+    canHover: { [key: string]: boolean };
 }
 
 class Social extends React.PureComponent<{}, SocialState> {
@@ -119,12 +119,12 @@ class Social extends React.PureComponent<{}, SocialState> {
         TweenLite.fromTo(el, 0.25,
             {
                 opacity: 0,
-                y: `-50%`,
+                y: '-50%',
                 x: `${relative * -100}%`,
             }, {
                 opacity: 1,
-                y: `0%`,
-                x: `0%`,
+                y: '0%',
+                x: '0%',
                 delay: .05 * id,
                 ease: Elastic.easeOut.config(1, 0.75),
                 clearProps: 'transform',
@@ -136,11 +136,11 @@ class Social extends React.PureComponent<{}, SocialState> {
         TweenLite.fromTo(el, 0.25,
             {
                 opacity: 1,
-                y: `0%`,
-                x: `0%`,
+                y: '0%',
+                x: '0%',
             }, {
                 opacity: 0,
-                y: `-50%`,
+                y: '-50%',
                 x: `${relative * -100}%`,
                 delay: .05 * id,
                 ease: Elastic.easeOut.config(1, 0.75),

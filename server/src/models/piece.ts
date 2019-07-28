@@ -1,6 +1,7 @@
 import { BelongsToManyCountAssociationsMixin, DataTypes, Sequelize } from 'sequelize';
 import { Model } from '../types';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class piece extends Model {
     public readonly id: string;
     public readonly composer: string;

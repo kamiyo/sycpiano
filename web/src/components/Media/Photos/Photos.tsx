@@ -110,8 +110,8 @@ class Photos extends React.Component<PhotosProps> {
 }
 
 const mapStateToProps = (state: GlobalStateShape): PhotosStateToProps => ({
-    items: state.photo_list.items,
-    currentItem: state.photo_viewer.currentItem,
+    items: state.photoList.items,
+    currentItem: state.photoViewer.currentItem,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>): PhotosDispatchToProps => ({

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Restricted API key, okay to commit.
-const API_KEY = GAPI_KEY;
+const API_KEY = GAPI_KEY; // eslint-disable-line no-undef
 const PLAYLIST_ID = 'PLzauXr_FKIlhzArviStMMK08Xc4iuS0n9';
 
 const YOUTUBE_BASE_URL = 'https://www.googleapis.com/youtube/v3';
@@ -40,26 +40,26 @@ class YouTube {
 
     public initializePlayerOnElement(el: HTMLElement, id = 'player') {
         // reinitiaize playerReady deferred
-        this.playerReady = new Promise(async (resolve) => {
-            await this.apiReady;
+        this.playerReady = this.apiReady.then(() => {
+            return new Promise(resolve => {
+                // For now, only allow one player at a time.
+                this.destroyPlayer();
 
-            // For now, only allow one player at a time.
-            this.destroyPlayer();
+                // element to be replace by iframe
+                const div = document.createElement('div');
+                div.id = id;
+                el.appendChild(div);
 
-            // element to be replace by iframe
-            const div = document.createElement('div');
-            div.id = id;
-            el.appendChild(div);
-
-            // create youtube player
-            this.player = new YT.Player(id, {
-                events: {
-                    onReady: () => resolve(),
-                },
-                playerVars: {
-                    rel: 0,
-                },
-                videoId: undefined,
+                // create youtube player
+                this.player = new YT.Player(id, { // eslint-disable-line no-undef
+                    events: {
+                        onReady: () => resolve(),
+                    },
+                    playerVars: {
+                        rel: 0,
+                    },
+                    videoId: undefined,
+                });
             });
         });
     }

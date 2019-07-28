@@ -1,5 +1,5 @@
 import NAV_ACTIONS from 'src/components/App/NavBar/actionTypeKeys';
-import ActionTypes from 'src/components/App/NavBar/actionTypes';
+import { ActionTypes } from 'src/components/App/NavBar/actionTypes';
 import { NavBarStateShape } from 'src/components/App/NavBar/types';
 
 export const NavBarReducer = (state: NavBarStateShape = {

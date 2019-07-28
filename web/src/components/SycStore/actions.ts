@@ -100,12 +100,12 @@ const addItemToCart = (sku: string): ActionTypes.AddItemToCart => ({
     sku,
 });
 
-const addItemToCart = (sku: string): CartThunkAction<void> => (
-    (dispatch) => {
-        dispatch(fetchCartRequest());
-        const { data: order }: { data: Order } = await axios.get(url);
-    }
-)
+// const addItemToCart = (sku: string): CartThunkAction<void> => (
+//     (dispatch) => {
+//         dispatch(fetchCartRequest());
+//         const { data: order }: { data: Order } = await axios.get(url);
+//     }
+// )
 
 export const addItemToCartAction = (sku: string): CartThunkAction<void> => (
     async (dispatch, getState) => {

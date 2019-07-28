@@ -25,12 +25,10 @@ import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 import CSSPlugin from 'gsap/CSSPlugin';
 import TweenLite from 'gsap/TweenLite';
 
-/* tslint:disable:no-unused-var */
 // @ts-ignore
-const activated = [
+const activated = [ // eslint-disable-line @typescript-eslint/no-unused-vars
     CSSPlugin,
 ];
-/* tslint:enable:no-unused-var */
 
 import moment from 'moment-timezone';
 
@@ -101,7 +99,7 @@ interface AppDispatchToProps {
 
 type AppProps = RouteComponentProps<{}> & AppStateToProps & AppDispatchToProps;
 
-class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?: boolean; }> {
+class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?: boolean }> {
     constructor(props: AppProps) {
         super(props);
         this.state = {
@@ -121,12 +119,12 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
     }
 
     getRouteBase = () => {
-        const matches: string[] = this.props.location.pathname.match(/^(\/[^\/]+)?(\/[^\/]+)?/);
+        const matches: string[] = this.props.location.pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
         return matches[1] || '/';
     }
 
     getMostSpecificRouteName = () => {
-        const matches: string[] = this.props.location.pathname.match(/^(\/[^\/]+)?(\/[^\/]+)?/);
+        const matches: string[] = this.props.location.pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
         const match = matches[2] || matches[1];
         return (match ? match.slice(1) : '') || null;
     }

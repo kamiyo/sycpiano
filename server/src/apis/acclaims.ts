@@ -13,7 +13,7 @@ const getAcclaims: RequestHandler = async (req, res) => {
             ['date', 'DESC'],
         ],
     };
-    if (req.query.hasOwnProperty('count')) {
+    if (Object.prototype.hasOwnProperty.call(req.query, 'count')) {
         params.limit = req.params.count;
     }
     const acclaims = await models.acclaim.findAll(params);

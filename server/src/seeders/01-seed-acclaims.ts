@@ -10,9 +10,9 @@ export const up = async (models: ModelMap) => {
         if (err) {
             console.log(err);
         }
-        const json: Array<{
+        const json: {
             [key: string]: any,
-        }> = JSON.parse(content);
+        }[] = JSON.parse(content);
 
         const items = json.map((obj) => omit(obj, ['ID']));
         return model.bulkCreate(items);

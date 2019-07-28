@@ -4,8 +4,7 @@ const gulp = require('gulp');
 const fancyLog = require('fancy-log');
 const PluginError = require('plugin-error');
 const ts = require('gulp-typescript');
-const tslint = require('gulp-tslint');
-const linter = require('tslint');
+const eslint = require('gulp-eslint');
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
@@ -26,7 +25,7 @@ const buildApp = (done) => (
         } else {
             fancyLog('[webpack]', stats.toString({
                 chunks: false, // Makes the build much quieter
-                colors: true
+                colors: true,
             }));
         }
         done();
@@ -46,15 +45,9 @@ const cleanServer = async (done) => {
 };
 
 const lintServer = () => {
-    const program = linter.Linter.createProgram("server/tsconfig.json");
     return gulp.src('server/src/**/*.ts')
-        .pipe(tslint({
-            formatter: 'stylish',
-            program,
-        }))
-        .pipe(tslint.report({
-            emitError: false,
-        }));
+        .pipe(eslint({ cache: true }))
+        .pipe(eslint.formatEach('visualstudio'));
 };
 
 const compileServer = () => (
@@ -66,11 +59,12 @@ const compileServer = () => (
 
 const buildServer = gulp.series(
     // We don't need linting in production.
-    isProduction ? cleanServer : gulp.parallel(lintServer, cleanServer),
-    compileServer
+    cleanServer,
+    compileServer,
 );
 
 gulp.task('build-server', buildServer);
+gulp.task('lint-server', lintServer);
 
 gulp.task(
     'build-prod',
@@ -102,7 +96,7 @@ const webpackWatch = (done) => {
 
         fancyLog('[webpack]', stats.toString({
             chunks: false, // Makes the build much quieter
-            colors: true
+            colors: true,
         }));
     });
     done();
@@ -135,5 +129,8 @@ gulp.task('run-dev', gulp.series(
         checkAndMakeBuildDir,
         webpackWatch,
     ),
-    startNodemon,
+    gulp.parallel(
+        startNodemon,
+        lintServer
+    ),
 ));

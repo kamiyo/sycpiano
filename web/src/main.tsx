@@ -11,8 +11,6 @@ import store from 'src/store';
 
 import App from 'src/components/App/App';
 
-main();
-
 function main() {
     ReactDOM.render((
         <Provider store={store}>
@@ -22,3 +20,5 @@ function main() {
         </Provider>
     ), document.getElementById('hero-container') as HTMLElement);
 }
+
+main();

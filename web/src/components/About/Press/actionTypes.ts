@@ -18,6 +18,4 @@ export interface OtherAction {
     readonly type: typeof PRESS_ACTIONS.OTHER_ACTION;
 }
 
-type ActionType = FetchAcclaimsError | FetchAcclaimsRequest | FetchAcclaimsSuccess | OtherAction;
-
-export default ActionType;
+export type ActionTypes = FetchAcclaimsError | FetchAcclaimsRequest | FetchAcclaimsSuccess | OtherAction;

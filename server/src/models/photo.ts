@@ -1,6 +1,7 @@
 import { DataTypes, Sequelize } from 'sequelize';
 import { Model } from '../types';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class photo extends Model {
     readonly id?: string;
     readonly file: string;
@@ -35,9 +36,9 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
             field: 'thumbnail_height',
         },
     }, {
-        sequelize,
-        tableName: 'photo',
-    });
+            sequelize,
+            tableName: 'photo',
+        });
 
     return photo;
 };

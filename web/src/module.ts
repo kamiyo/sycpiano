@@ -9,7 +9,7 @@ const modules: {
 // This function checks if module is cached, if is, returns the cached module;
 // otherwise, registers the reducer of the (new) module, and caches it.
 const extractModule = (store: AsyncStore) => async (name: string, moduleProvider: Promise<AsyncModule>) => {
-    if (modules.hasOwnProperty(name)) {
+    if (Object.prototype.hasOwnProperty.call(modules, name)) {
         return Promise.resolve(modules[name]);
     } else {
         const mod = await moduleProvider;

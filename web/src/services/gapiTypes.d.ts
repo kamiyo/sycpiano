@@ -1,4 +1,4 @@
-namespace Youtube {
+declare namespace Youtube {
     export interface ContentRating {
         /*
          * The video's Australian Classification Board (ACB) or Australian Communications and Media Authority (ACMA) rating. ACMA ratings are used to classify
@@ -725,7 +725,7 @@ namespace Youtube {
     }
 }
 
-namespace GoogleCalendar {
+declare namespace GoogleCalendar {
     export interface Event {
         kind: 'calendar#event';
         etag: etag;

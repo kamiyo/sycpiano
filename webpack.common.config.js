@@ -58,15 +58,20 @@ const config = () => {
                                         corejs: '3',
                                     }
                                 ],
-                                '@babel/preset-typescript',
                             ],
                             plugins: [
-                                'syntax-dynamic-import',
+                                '@babel/syntax-dynamic-import',
                                 '@babel/proposal-class-properties',
                                 '@babel/proposal-object-rest-spread',
                             ],
                         },
                     },
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            happyPackMode: true,
+                        }
+                    }
                 ]
             }, {
                 test: /\.(ttf|eot|woff|woff2|svg|png|jpg)$/,
@@ -92,7 +97,7 @@ const config = () => {
             },
         },
         plugins: [
-            new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /^en$/),
+            new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /^en$/),
             new webpack.DefinePlugin({
                 BINARY_PATH: JSON.stringify(staticPrefix + '/binary'),
                 IMAGES_PATH: JSON.stringify(staticPrefix + '/images'),

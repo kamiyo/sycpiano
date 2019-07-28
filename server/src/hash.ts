@@ -5,7 +5,7 @@ const getLastName = (name: string) => {
 };
 
 const normalizeString = (str: string) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f":()',\.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
+    return str.normalize('NFD').replace(/[\u0300-\u036f":()',.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
 };
 
 export const getHash = (composer: string, piece: string, name?: string) => {

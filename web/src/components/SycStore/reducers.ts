@@ -36,7 +36,7 @@ export const cartReducer = (state: CartStateShape = {
     isFetching: false,
     order: null,
 }, action: ActionTypes.FetchCartActions | ActionTypes.UpdateCartOptions) => {
-    let notExists;
+    // let notExists;
     switch (action.type) {
         case STORE_ACTIONS.FETCH_CART_REQUEST:
             return {

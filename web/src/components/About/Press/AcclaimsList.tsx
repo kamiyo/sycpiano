@@ -77,7 +77,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
         return <AcclaimsListItem acclaim={acclaim} key={key} style={style} />;
     }
 
-    private rowItemRenderer: ListRowRenderer = ({key, index, parent, style}) => {
+    private rowItemRenderer: ListRowRenderer = ({ key, index, parent, style }) => {
         return (
             <CellMeasurer
                 cache={this.cache}
@@ -93,7 +93,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
 }
 
 const mapStateToProps = (state: GlobalStateShape): AcclaimsListStateToProps => ({
-    acclaims: state.press_acclaimsList.items,
+    acclaims: state.pressAcclaimsList.items,
 });
 
 const mapDispatchToProps: AcclaimsListDispatchToProps = {

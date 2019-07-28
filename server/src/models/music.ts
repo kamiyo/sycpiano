@@ -4,6 +4,7 @@ import { DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin, Se
 import { Model } from '../types';
 import { musicFile } from './musicFile';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class music extends Model {
     readonly id: string;
     readonly composer: string;
@@ -19,7 +20,7 @@ export class music extends Model {
     readonly setMusicFiles: HasManySetAssociationsMixin<musicFile, musicFile['id']>;
 }
 
-const hookFn = async (m: music, _: any) => {
+const hookFn = async (m: music) => {
     console.log(`[Music Hook afterCreate/Update]\n`);
     const mFiles = await m.getMusicFiles();
     if (mFiles.length !== 0) {
@@ -45,13 +46,13 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
         type: dataTypes.STRING,
         year: dataTypes.INTEGER,
     }, {
-        hooks: {
-            afterCreate: hookFn,
-            afterUpdate: hookFn,
-        },
-        sequelize,
-        tableName: 'music',
-    });
+            hooks: {
+                afterCreate: hookFn,
+                afterUpdate: hookFn,
+            },
+            sequelize,
+            tableName: 'music',
+        });
 
     music.associate = (models) => {
         music.hasMany(models.musicFile);

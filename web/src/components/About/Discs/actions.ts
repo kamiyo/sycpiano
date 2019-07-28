@@ -23,9 +23,7 @@ const shouldFetchDiscs = (state: GlobalStateShape) => {
     return !state.discs.isFetching && state.discs.discs.length === 0;
 };
 
-type FetchDiscsActions = ActionTypes.FetchDiscsError | ActionTypes.FetchDiscsRequest | ActionTypes.FetchDiscsSuccess;
-
-const fetchDiscs = (): ThunkAction<Promise<void>, GlobalStateShape, void, FetchDiscsActions> =>
+const fetchDiscs = (): ThunkAction<Promise<void>, GlobalStateShape, void, ActionTypes.ActionTypes> =>
     async (dispatch) => {
         try {
             dispatch(fetchDiscsRequest());
@@ -37,7 +35,7 @@ const fetchDiscs = (): ThunkAction<Promise<void>, GlobalStateShape, void, FetchD
         }
     };
 
-export const fetchDiscsAction = (): ThunkAction<Promise<void>, GlobalStateShape, void, FetchDiscsActions> =>
+export const fetchDiscsAction = (): ThunkAction<Promise<void>, GlobalStateShape, void, ActionTypes.ActionTypes> =>
     async (dispatch, getState) => {
         if (shouldFetchDiscs(getState())) {
             await dispatch(fetchDiscs());

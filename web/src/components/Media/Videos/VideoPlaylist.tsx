@@ -85,9 +85,9 @@ const VideoPlaylist: React.FC<VideoPlaylistProps> = ({
     );
 
 const mapStateToProps = (state: GlobalStateShape): VideoPlaylistStateToProps => ({
-    videos: state.video_playlist.items,
-    videoId: state.video_player.videoId,
-    isShow: state.video_playlist.isShow,
+    videos: state.videoPlaylist.items,
+    videoId: state.videoPlayer.videoId,
+    isShow: state.videoPlaylist.isShow,
 });
 
 const mapDispatchToProps: VideoPlaylistDispatchToProps = {

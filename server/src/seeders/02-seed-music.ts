@@ -11,9 +11,9 @@ export const up = async (models: ModelMap) => {
         if (err) {
             console.log(err);
         }
-        const json: Array<{
+        const json: {
             [key: string]: any,
-        }> = JSON.parse(content);
+        }[] = JSON.parse(content);
 
         json.forEach(async (item) => {
             try {

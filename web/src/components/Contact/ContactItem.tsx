@@ -22,7 +22,7 @@ import { screenWidths, screenXSorPortrait } from 'src/styles/screens';
 const imageInsetShadowColor = '#222';
 const alternateBackgroundColor = '#eee';
 
-const photosAttributesMap = new Map<string, { jpg: string; webp: string; css: SerializedStyles; }>([
+const photosAttributesMap = new Map<string, { jpg: string; webp: string; css: SerializedStyles }>([
     ['Sean Chen', {
         jpg: seanChenContactPhotoUrl(),
         webp: seanChenContactPhotoUrl('webp'),
@@ -41,7 +41,7 @@ const photosAttributesMap = new Map<string, { jpg: string; webp: string; css: Se
     }],
 ]);
 
-interface ImageContainerProps { bgImage?: string; contact: string; }
+interface ImageContainerProps { bgImage?: string; contact: string }
 
 const ImageContainer = styled.div<ImageContainerProps>`
     ${props => photosAttributesMap.get(props.contact).css}

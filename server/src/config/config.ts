@@ -31,8 +31,7 @@ const config = () => {
             password,
             host,
             portString,
-            /* tslint:disable-next-line:trailing-comma */
-            database
+            database    // eslint-disable-line comma-dangle
         ] = dbUrl.match(/postgres:\/\/(.+):(.+)@(.+):(.+)\/(.+)/);
         port = parseInt(portString, 10);
         dialect = 'postgres';

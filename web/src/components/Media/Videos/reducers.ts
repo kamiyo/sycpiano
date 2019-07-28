@@ -1,5 +1,5 @@
 import VIDEO_ACTIONS from 'src/components/Media/Videos/actionTypeKeys';
-import ActionTypes from 'src/components/Media/Videos/actionTypes';
+import { ActionTypes } from 'src/components/Media/Videos/actionTypes';
 
 import { VideoPlayerStateShape, VideoPlaylistStateShape } from 'src/components/Media/Videos/types';
 

@@ -47,7 +47,7 @@ const radii: {
     both: '50%',
 };
 
-EventDate = styled(EventDate)<EventDateTimeProps>`
+EventDate = styled(EventDate) <EventDateTimeProps>`
     text-align: center;
     background-color: ${lightBlue};
     color: white;
@@ -97,7 +97,7 @@ class EventName extends React.Component<EventNameProps & RouteComponentProps<{}>
             <CopyToClipboard onCopy={this.onCopy} text={`${window.location.host}${this.props.permaLink}`}>
                 <div css={eventNameStyle}>
                     <span>{this.props.name}</span>
-                    {this.props.eventType === 'masterclass' && <span>{`: Masterclass`}</span>}
+                    {this.props.eventType === 'masterclass' && <span>{': Masterclass'}</span>}
                     <LinkIconInstance css={linkIconStyle} />
                     <span
                         css={css`
@@ -144,11 +144,11 @@ let EventLocation: React.FC<EventLocationProps> = ({ location, className, isMobi
     });
 
     return (
-        <a href={getGoogleMapsSearchUrl(location)} className={className} target="_blank" rel="noopener">
+        <a href={getGoogleMapsSearchUrl(location)} className={className} target="_blank" rel="noopener noreferrer">
             <LocationIconInstance css={locationIconStyle} />
 
             <strong
-                css={{ marginLeft: isMobile ? 0 : 10}}
+                css={{ marginLeft: isMobile ? 0 : 10 }}
             >
                 {getVenueName(location)}
             </strong>
@@ -224,8 +224,8 @@ interface EventWebsiteButtonProps {
 }
 
 let EventWebsiteButton: React.FC<EventWebsiteButtonProps> = ({ website, className }) => (
-    <a href={website} target="_blank" rel="noopener" className={className}>
-        {`Tickets & Info`}
+    <a href={website} target="_blank" rel="noopener noreferrer" className={className}>
+        {'Tickets & Info'}
     </a>
 );
 

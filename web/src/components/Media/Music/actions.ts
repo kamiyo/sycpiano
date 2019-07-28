@@ -24,7 +24,7 @@ const fetchPlaylistError = (): ActionTypes.FetchPlaylistError => ({
 });
 
 const shouldFetchPlaylist = (state: GlobalStateShape) => {
-    return !state.audio_playlist.isFetching && state.audio_playlist.items.length === 0;
+    return !state.audioPlaylist.isFetching && state.audioPlaylist.items.length === 0;
 };
 
 const musicListIfExists = (response: MusicResponse, category: MusicCategories) => (
@@ -34,13 +34,11 @@ const musicListIfExists = (response: MusicResponse, category: MusicCategories) =
     ] : []
 );
 
-type FetchPlaylistActions = ActionTypes.FetchPlaylistError | ActionTypes.FetchPlaylistRequest | ActionTypes.FetchPlaylistSuccess;
-
-const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape, void, FetchPlaylistActions> => async (dispatch) => {
+const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape, void, ActionTypes.ActionTypes> => async (dispatch) => {
     try {
         dispatch(fetchPlaylistRequest());
         const { data: response }: { data: MusicResponse } = await axios.get('/api/music');
-        const flatItems: MusicFileItem[] = new Array();
+        const flatItems: MusicFileItem[] = [];
         Object.keys(response).forEach((currKey: MusicCategories) => {
             response[currKey].forEach((_, idx) => {
                 response[currKey][idx].musicFiles.forEach((__, idy) => {
@@ -52,12 +50,14 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
                 });
             });
         });
-        response.concerto.push({
+        const moreConcerti: MusicItem = {
             composer: 'For more recordings of concerti, please contact Sean Chen directly',
             piece: '',
             id: 'more_concerti',
             musicFiles: [],
-        } as MusicItem);
+            type: 'concerto',
+        };
+        response.concerto.push(moreConcerti);
         const items: MusicListItem[] = compact([
             ...musicListIfExists(response, 'solo'),
             ...musicListIfExists(response, 'concerto'),
@@ -73,13 +73,13 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
     }
 };
 
-export const fetchPlaylistAction = (composer: string, piece: string, movement: string = ''): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void, FetchPlaylistActions> =>
+export const fetchPlaylistAction = (composer: string, piece: string, movement: string = ''): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void, ActionTypes.ActionTypes> =>
     async (dispatch, getState) => {
         let items: MusicListItem[];
         if (shouldFetchPlaylist(getState())) {
             items = await dispatch(fetchPlaylist());
         } else {
-            items = getState().audio_playlist.items;
+            items = getState().audioPlaylist.items;
         }
         let firstTrack = (items.find((item) => isMusicItem(item)) as MusicItem).musicFiles[0];
 

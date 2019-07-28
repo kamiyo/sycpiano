@@ -3,6 +3,7 @@ import { getHash } from '../hash';
 import { Model } from '../types';
 import { music } from './music';
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 export class musicFile extends Model {
     readonly id?: string;
     name: string;
@@ -19,13 +20,13 @@ export class musicFile extends Model {
     readonly music: music;
 }
 
-const hookFn = async (mFile: musicFile, _: any) => {
+const hookFn = async (mFile: musicFile) => {
     console.log(`[musicFile Hook beforeCreate/Update]`);
     try {
         if (mFile.musicId) {
             const m: music = await mFile.getMusic();
             console.log(`Updating hash for ${mFile.id}.`);
-            mFile.hash = getHash(m.composer, m.piece, mFile.name);
+            mFile.hash = getHash(m.composer, m.piece, mFile.name);  // eslint-disable-line require-atomic-updates
         }
     } catch (error) {
         console.log('error beforecreate hook', error);
