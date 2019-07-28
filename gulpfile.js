@@ -8,14 +8,15 @@ const eslint = require('gulp-eslint');
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
+const cache = require('gulp-cached');
 const del = require('del');
 const generateTzData = require('./generateTzData');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 const webpackConfig = isProduction ? require('./webpack.prod.config.js') : require('./webpack.dev.config.js');
-
 const tsProject = ts.createProject('server/tsconfig.json');
+const serverLintCache = './.server-lint.json';
 
 const buildApp = (done) => (
     webpack(webpackConfig, (err, stats) => {
@@ -44,10 +45,60 @@ const cleanServer = async (done) => {
     done();
 };
 
-const lintServer = () => {
-    return gulp.src('server/src/**/*.ts')
-        .pipe(eslint({ cache: true }))
-        .pipe(eslint.formatEach('visualstudio'));
+const initCache = (done) => {
+    fs.stat(serverLintCache, (err) => {
+        if (!err) {
+            cache.caches.eslint = require(serverLintCache) || {};
+        }
+        done();
+    });
+};
+
+const saveLintCache = () => {
+    const json = JSON.stringify(cache.caches.eslint);
+    return new Promise((resolve, reject) => {
+        fs.writeFile(serverLintCache, json, (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    })
+}
+
+const cachedLint = () => {
+    return tsProject.src()
+        .pipe(cache('eslint', {
+            optimizeMemory: true,
+            cwd: __dirname,
+        }))
+        .pipe(eslint())
+        .pipe(eslint.formatEach())
+        .pipe(eslint.result(async result => {
+            if (result.warningCount > 0 || result.errorCount > 0) {
+                delete cache.caches.eslint[path.relative(__dirname, result.filePath)];
+            }
+            await saveLintCache();
+        }));
+};
+
+const lintWatchServer = () => {
+    const watcher = gulp.watch(
+        'server/src/**/*.ts',
+        {
+            ignoreInitial: false,
+            cwd: __dirname,
+        },
+        cachedLint
+    );
+    watcher.on('unlink', async (filePath) => {
+        if (cache.caches.eslint) {
+            delete cache.caches.eslint[path.relative(__dirname, filePath)];
+        }
+        await saveLintCache();
+    });
+    return watcher;
 };
 
 const compileServer = () => (
@@ -64,7 +115,7 @@ const buildServer = gulp.series(
 );
 
 gulp.task('build-server', buildServer);
-gulp.task('lint-server', lintServer);
+gulp.task('lint-server', gulp.series(initCache, cachedLint));
 
 gulp.task(
     'build-prod',
@@ -90,7 +141,9 @@ const checkAndMakeBuildDir = (done) => {
 }
 
 const webpackWatch = (done) => {
-    webpack(webpackConfig).watch({}, (err, stats) => {
+    webpack(webpackConfig).watch({
+        ignored: /node_modules/,
+    }, (err, stats) => {
         if (err)
             throw new PluginError('webpack', err);
 
@@ -131,6 +184,9 @@ gulp.task('run-dev', gulp.series(
     ),
     gulp.parallel(
         startNodemon,
-        lintServer
+        gulp.series(
+            initCache,
+            lintWatchServer,
+        ),
     ),
 ));
