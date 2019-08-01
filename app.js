@@ -2,6 +2,7 @@ const express = require('express');
 const helmet = require('helmet');
 const path = require('path');
 const mustacheExpress = require('mustache-express');
+const bodyParser = require('body-parser');
 const ApiRouter = require('./server/build/api-router.js').ApiRouter;
 const AdminRest = require('./server/build/rest.js').AdminRest;
 const Resized = require('./server/build/resized.js').Resized;
@@ -32,8 +33,11 @@ const logger = () => {
 // sets x-frame-options header to disallow our content to be rendered in iframes.
 app.use(helmet());
 
+app.use(bodyParser.json());
+
 // only for dev
 // prod uses nginx to serve static files
+
 app.use('/static', express.static(path.join(__dirname, '/web/assets')));
 app.use('/static', express.static(path.join(__dirname, '/web/build')));
 

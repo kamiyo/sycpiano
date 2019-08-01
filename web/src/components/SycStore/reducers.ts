@@ -1,12 +1,25 @@
+import * as _ from 'lodash';
+
 import STORE_ACTIONS from 'src/components/SycStore/actionTypeKeys';
 import * as ActionTypes from 'src/components/SycStore/actionTypes';
+<<<<<<< HEAD
 import { CartStateShape, SycStoreStateShape } from 'src/components/SycStore/types';
+=======
+import { SycStoreStateShape } from 'src/components/SycStore/types';
+>>>>>>> origin/add_store_checkout
 
 export const sycStoreReducer = (state: SycStoreStateShape = {
     isFetching: false,
     fetchSuccess: false,
     items: [],
+<<<<<<< HEAD
 }, action: ActionTypes.FetchItemsActions) => {
+=======
+    cart: { items: [], itemSet: new Set() },
+    isSubmitting: false,
+    submitSuccess: false,
+}, action: ActionTypes.Types) => {
+>>>>>>> origin/add_store_checkout
     switch (action.type) {
         case STORE_ACTIONS.FETCH_ITEMS_REQUEST:
             return {
@@ -25,6 +38,24 @@ export const sycStoreReducer = (state: SycStoreStateShape = {
                 isFetching: false,
                 fetchSuccess: true,
                 items: action.items,
+            };
+        case STORE_ACTIONS.ADD_TO_CART:
+            const newItems = [...state.cart.items, action.skuId];
+            return {
+                ...state,
+                cart: {
+                    items: newItems,
+                    itemSet: new Set(newItems),
+                },
+            };
+        case STORE_ACTIONS.REMOVE_FROM_CART:
+            const itemsWithout = _.without(state.cart.items, action.skuId);
+            return {
+                ...state,
+                cart: {
+                    items: itemsWithout,
+                    itemSet: new Set(itemsWithout),
+                },
             };
         default:
             return state;

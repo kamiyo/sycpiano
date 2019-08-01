@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
-import { StoreListItem } from './StoreListItem';
+import ConnectedStoreListItem from './StoreListItem';
 import { StoreItem } from './types';
 
 interface StoreItemsListProps {
@@ -18,14 +18,14 @@ const listStyle = css({
         paddingTop: navBarHeight.mobile,
     },
     height: '100%',
-    width: '665px',
+    width: '800px',
 });
 
 const StoreItemsList: React.FC<StoreItemsListProps> = (props) => (
     <div className={props.className} css={listStyle}>
         {
             props.items.map((item: StoreItem, idx: number) => (
-                <StoreListItem
+                <ConnectedStoreListItem
                     item={item}
                     key={idx}
                     addItemToCart={props.addItemToCart}
