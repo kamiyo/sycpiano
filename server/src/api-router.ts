@@ -7,6 +7,7 @@ import discHandler from './apis/disc';
 import musicHandler from './apis/music';
 import photosHandler from './apis/photos';
 import storeHandler from './apis/store';
+import { stripeClient } from './stripe';
 
 const apiRouter = Router();
 
@@ -20,7 +21,7 @@ apiRouter.use('/store', storeHandler);
 
 apiRouter.get('/order/:id?', async (req, res) => {
     try {
-        const order = await stripeClient.fetchOrder(req.params.id);
+        const order = await stripeClient.fetchSkus(req.params.id);
         res.json(order);
     } catch (err) {
         res.json({});

@@ -3,30 +3,29 @@ import styled from '@emotion/styled';
 import mix from 'polished/lib/color/mix';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { StoreCart, StoreItem } from 'src/components/SycStore/types';
+import { ShoppingCart, ShopItem } from 'src/components/Shop/types';
 import { GlobalStateShape } from 'src/types';
 
 import { magenta } from 'src/styles/colors';
 import { lato2, lato3 } from 'src/styles/fonts';
 import { addToCartAction, removeFromCartAction } from './actions';
 
-interface StoreListItemStateToProps {
-    readonly cart: StoreCart;
+interface ShopItemStateToProps {
+    readonly cart: ShoppingCart;
 }
 
-interface StoreListItemDispatchToProps {
+interface ShopItemDispatchToProps {
     readonly addToCartAction: typeof addToCartAction;
     readonly removeFromCartAction: typeof removeFromCartAction;
 }
 
-interface StoreListItemOwnProps {
-    item: StoreItem;
+interface ShopItemOwnProps {
+    item: ShopItem;
     key: string | number;
     className?: string;
-    addItemToCart: (sku: string) => void;
 }
 
-type StoreListItemProps = StoreListItemOwnProps & StoreListItemStateToProps & StoreListItemDispatchToProps;
+type ShopItemProps = ShopItemOwnProps & ShopItemStateToProps & ShopItemDispatchToProps;
 
 const thumbnailStyle = (imageUrl: string) => css({
     flex: '0 0 300px',
@@ -45,24 +44,6 @@ const contentContainerStyle = css({
     backgroundColor: '#fff',
 });
 
-<<<<<<< HEAD
-let StoreListItem: React.FC<StoreListItemProps> = ({ item, className, addItemToCart }) => (
-    <div className={className}>
-        {
-            item.image &&
-            <img
-                css={thumbnailStyle}
-                src={item.image}
-            />
-        }
-        <div css={contentStyle}>
-            <h2>{item.name}</h2>
-            <span>{item.caption}</span>
-            <button onClick={() => addItemToCart(item.id)}>{'Add to Cart'}</button>
-        </div>
-    </div>
-);
-=======
 const buttonBoxShadow = `
     0px 1px 5px 0px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14),
@@ -87,7 +68,6 @@ const addToCartButtonStyle = css`
         cursor: pointer;
     }
 `;
->>>>>>> origin/add_store_checkout
 
 const boxShadow = `
     0px 1px 3px 0px rgba(0, 0, 0, 0.2),
@@ -95,7 +75,7 @@ const boxShadow = `
     0px 2px 1px -1px rgba(0, 0, 0, 0.12)
 `;
 
-const StoreListItemContainer = styled.div`
+const ShopItemContainer = styled.div`
     font-family: ${lato3};
     height: 250px;
     display: flex;
@@ -105,14 +85,14 @@ const StoreListItemContainer = styled.div`
     overflow: hidden;
 `;
 
-const StoreListItem: React.FC<StoreListItemProps> = (props) => {
+const ShopItem: React.FC<ShopItemProps> = (props) => {
     const { className, item } = props;
     const addToCart = props.addToCartAction;
     const removeFromCart = props.removeFromCartAction;
-    const isItemInCart = props.cart.itemSet.has(item.skuId);
+    const isItemInCart = props.cart.items.has(item.skuId);
 
     return (
-        <StoreListItemContainer className={className}>
+        <ShopItemContainer className={className}>
             {
                 item.images.length &&
                     <div css={thumbnailStyle(item.images[0])} />
@@ -129,15 +109,15 @@ const StoreListItem: React.FC<StoreListItemProps> = (props) => {
                     {isItemInCart ? 'Remove from Cart' : 'Add to Cart'}
                 </button>
             </div>
-        </StoreListItemContainer>
+        </ShopItemContainer>
     );
 };
 
 const mapStateToProps = ({ sycStore }: GlobalStateShape) => ({ cart: sycStore.cart });
 
-const connectedStoreListItem = connect<StoreListItemStateToProps, StoreListItemDispatchToProps, {}>(
+const connectedShopItem = connect<ShopItemStateToProps, ShopItemDispatchToProps, {}>(
     mapStateToProps,
     { addToCartAction, removeFromCartAction },
-)(StoreListItem);
+)(ShopItem);
 
-export default connectedStoreListItem;
+export default connectedShopItem;

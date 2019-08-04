@@ -3,14 +3,13 @@ import * as React from 'react';
 
 import { screenXSorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
-import ConnectedStoreListItem from './StoreListItem';
-import { StoreItem } from './types';
+import ConnectedShopListItem from './ShopListItem';
+import { ShopItem } from './types';
 
-interface StoreItemsListProps {
+interface ShopItemsListProps {
     className?: string;
     isMobile: boolean;
-    items: StoreItem[];
-    addItemToCart: (sku: string) => void;
+    items: ShopItem[];
 }
 
 const listStyle = css({
@@ -21,18 +20,17 @@ const listStyle = css({
     width: '800px',
 });
 
-const StoreItemsList: React.FC<StoreItemsListProps> = (props) => (
+const ShopItemsList: React.FC<ShopItemsListProps> = (props) => (
     <div className={props.className} css={listStyle}>
         {
-            props.items.map((item: StoreItem, idx: number) => (
-                <ConnectedStoreListItem
+            props.items.map((item: ShopItem, idx: number) => (
+                <ConnectedShopListItem
                     item={item}
                     key={idx}
-                    addItemToCart={props.addItemToCart}
                 />
             ))
         }
     </div>
 );
 
-export { StoreItemsList };
+export { ShopItemsList };

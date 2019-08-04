@@ -6,7 +6,7 @@ import { AudioPlaylistStateShape } from 'src/components/Media/Music/types';
 import { PhotoListReducerShape, PhotoViewerReducerShape } from 'src/components/Media/Photos/types';
 import { VideoPlayerStateShape, VideoPlaylistStateShape } from 'src/components/Media/Videos/types';
 import { ScheduleStateShape } from 'src/components/Schedule/types';
-import { CartStateShape, SycStoreStateShape } from 'src/components/SycStore/types';
+import { ShopStateShape } from 'src/components/Shop/types';
 
 import { bioReducer } from 'src/components/About/Bio/reducers';
 import { discsReducer } from 'src/components/About/Discs/reducers';
@@ -15,7 +15,7 @@ import { audioPlaylistReducer } from 'src/components/Media/Music/reducers';
 import { photoListReducer, photoViewerReducer } from 'src/components/Media/Photos/reducers';
 import { videoPlayerReducer, videoPlaylistReducer } from 'src/components/Media/Videos/reducers';
 import { scheduleReducer } from 'src/components/Schedule/reducers';
-import { cartReducer, sycStoreReducer } from 'src/components/SycStore/reducers';
+import { shopReducer } from 'src/components/Shop/reducers';
 
 import { Store } from 'redux';
 
@@ -27,16 +27,15 @@ export interface GlobalStateShape {
     readonly photoViewer?: PhotoViewerReducerShape;
     readonly pressAcclaimsList?: AcclaimsListStateShape;
     readonly scheduleEventItems?: ScheduleStateShape;
-    readonly sycStore?: SycStoreStateShape;
-    readonly cart?: CartStateShape;
+    readonly shop?: ShopStateShape;
     readonly videoPlayer?: VideoPlayerStateShape;
     readonly videoPlaylist?: VideoPlaylistStateShape;
     readonly navbar: NavBarStateShape;
 }
 
 export type AnyReducerType = typeof bioReducer | typeof discsReducer | typeof audioPlaylistReducer |
-    typeof photoListReducer | typeof photoViewerReducer | typeof acclaimsListReducer | typeof cartReducer |
-    typeof scheduleReducer | typeof videoPlayerReducer | typeof videoPlaylistReducer | typeof sycStoreReducer;
+    typeof photoListReducer | typeof photoViewerReducer | typeof acclaimsListReducer |
+    typeof scheduleReducer | typeof videoPlayerReducer | typeof videoPlaylistReducer | typeof shopReducer;
 
 export interface Reducers {
     readonly bio?: typeof bioReducer;
@@ -48,8 +47,7 @@ export interface Reducers {
     readonly scheduleEventItems?: typeof scheduleReducer;
     readonly videoPlayer?: typeof videoPlayerReducer;
     readonly videoPlaylist?: typeof videoPlaylistReducer;
-    readonly sycStore?: typeof sycStoreReducer;
-    readonly cart?: typeof cartReducer;
+    readonly shop?: typeof shopReducer;
     readonly [key: string]: AnyReducerType;
 }
 

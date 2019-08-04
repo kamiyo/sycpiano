@@ -58,11 +58,12 @@ export interface DB {
     readonly models: ModelMap;
 }
 
-export interface StoreItem {
+export interface ShopItem {
     readonly caption: string;
     readonly created: number;
     readonly description: string;
-    readonly id: string;
+    readonly productId: string;
+    readonly skuId: string;
     readonly image: string;
     readonly name: string;
     readonly updated: number;
