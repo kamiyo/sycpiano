@@ -12,7 +12,7 @@ import { LazyImage } from 'src/components/LazyImage';
 
 import {
     generateSrcsetWidths,
-    joelHarrisonContactPhotoUrl,
+    marthaWoodsContactPhotoUrl,
     resizedImage,
     seanChenContactPhotoUrl,
 } from 'src/styles/imageUrls';
@@ -31,12 +31,20 @@ const photosAttributesMap = new Map<string, { jpg: string; webp: string; css: Se
             backgroundPosition: '0 28%',
         }),
     }],
-    ['Joel Harrison', {
-        jpg: joelHarrisonContactPhotoUrl(),
-        webp: joelHarrisonContactPhotoUrl('webp'),
+    // ['Joel Harrison', {
+    //     jpg: joelHarrisonContactPhotoUrl(),
+    //     webp: joelHarrisonContactPhotoUrl('webp'),
+    //     css: css({
+    //         backgroundSize: '125%',
+    //         backgroundPosition: 'center 40%',
+    //     }),
+    // }],
+    ['Martha Woods', {
+        jpg: marthaWoodsContactPhotoUrl(),
+        webp: marthaWoodsContactPhotoUrl('webp'),
         css: css({
-            backgroundSize: '125%',
-            backgroundPosition: 'center 40%',
+            backgroundSize: 'unset',
+            backgroundPosition: '0 0',
         }),
     }],
 ]);
@@ -123,7 +131,8 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
             email,
             social,
             isMobile,
-        } = this.props;
+            website,
+        }: Partial<ContactItemShape> = this.props;
         return (
             <StyledContactItem>
                 <ImageContainer
@@ -172,6 +181,7 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
                     organization={organization}
                     phone={phone}
                     email={email}
+                    website={website}
                 />
 
                 <StyledContactSocialMedia social={social} />
