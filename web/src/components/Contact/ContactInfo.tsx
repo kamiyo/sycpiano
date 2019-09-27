@@ -84,13 +84,6 @@ const PersonalContact: React.FC<PersonalContactShape> = (props) => (
                 {props.email}
             </a>
         </ContactMethod>
-        {(props.website) && (
-            <ContactMethod>
-                <a href={props.website} css={link(contactPageLinkColor)}>
-                    {props.website}
-                </a>
-            </ContactMethod>
-        )}
     </div>
 );
 
@@ -126,7 +119,6 @@ const ContactInfo = React.memo((props: ContactInfoProps) => (
         <StyledPersonalContact
             phone={props.phone}
             email={props.email}
-            website={props.website}
         />
     </InfoContainer>
 ));
