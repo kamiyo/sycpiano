@@ -15,6 +15,7 @@ import {
     marthaWoodsContactPhotoUrl,
     resizedImage,
     seanChenContactPhotoUrl,
+    staticImage,
 } from 'src/styles/imageUrls';
 import { pushed } from 'src/styles/mixins';
 import { screenWidths, screenXSorPortrait } from 'src/styles/screens';
@@ -22,7 +23,7 @@ import { screenWidths, screenXSorPortrait } from 'src/styles/screens';
 const imageInsetShadowColor = '#222';
 const alternateBackgroundColor = '#eee';
 
-const photosAttributesMap = new Map<string, { jpg: string; webp: string; css: SerializedStyles; }>([
+const photosAttributesMap = new Map<string, { jpg?: string; webp?: string; svg?: string; css: SerializedStyles; imgCss?: SerializedStyles}>([
     ['Sean Chen', {
         jpg: seanChenContactPhotoUrl(),
         webp: seanChenContactPhotoUrl('webp'),
@@ -39,12 +40,27 @@ const photosAttributesMap = new Map<string, { jpg: string; webp: string; css: Se
     //         backgroundPosition: 'center 40%',
     //     }),
     // }],
+    // ['Martha Woods', {
+    //     jpg: marthaWoodsContactPhotoUrl(),
+    //     webp: marthaWoodsContactPhotoUrl('webp'),
+    //     css: css({
+    //         backgroundSize: 'unset',
+    //         backgroundPosition: '0 0',
+    //     }),
+    // }],
     ['Martha Woods', {
-        jpg: marthaWoodsContactPhotoUrl(),
-        webp: marthaWoodsContactPhotoUrl('webp'),
+        svg: marthaWoodsContactPhotoUrl(),
         css: css({
             backgroundSize: 'unset',
             backgroundPosition: '0 0',
+            backgroundColor: 'white',
+            visibility: 'visible',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        }),
+        imgCss: css({
+            width: '90%',
         }),
     }],
 ]);
@@ -52,7 +68,6 @@ const photosAttributesMap = new Map<string, { jpg: string; webp: string; css: Se
 interface ImageContainerProps { bgImage?: string; contact: string; }
 
 const ImageContainer = styled.div<ImageContainerProps>`
-    ${props => photosAttributesMap.get(props.contact).css}
     background-image: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
     background-attachment: initial;
     background-repeat: no-repeat;
@@ -60,6 +75,7 @@ const ImageContainer = styled.div<ImageContainerProps>`
     visibility: hidden;
     flex: 0 0 55%;
     box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
+    ${props => photosAttributesMap.get(props.contact).css}
 
     ${screenXSorPortrait} {
         height: 75vw;
@@ -125,8 +141,7 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
     render() {
         const {
             name,
-            title,
-            organization,
+            position,
             phone,
             email,
             social,
@@ -135,50 +150,57 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
         }: Partial<ContactItemShape> = this.props;
         return (
             <StyledContactItem>
+
                 <ImageContainer
                     bgImage={this.state.bgImage}
                     ref={this.bgRef}
                     contact={name}
                 >
-                    <LazyImage
-                        isMobile={isMobile}
-                        id={`contact_lazy_image_${name.replace(/ /g, '_')}`}
-                        csss={{
-                            mobile: imageLoaderStyle,
-                            desktop: imageLoaderStyle,
-                        }}
-                        mobileAttributes={{
-                            webp: {
-                                srcset: generateSrcsetWidths(photosAttributesMap.get(name).webp, screenWidths),
-                                sizes: '100vw',
-                            },
-                            jpg: {
-                                srcset: generateSrcsetWidths(photosAttributesMap.get(name).jpg, screenWidths),
-                                sizes: '100vw',
-                            },
-                            src: resizedImage(photosAttributesMap.get(name).jpg, { width: 640 }),
-                        }}
-                        desktopAttributes={{
-                            webp: {
-                                srcset: generateSrcsetWidths(photosAttributesMap.get(name).webp, screenWidths),
-                                sizes: '100vh',
-                            },
-                            jpg: {
-                                srcset: generateSrcsetWidths(photosAttributesMap.get(name).jpg, screenWidths),
-                                sizes: '100vh',
-                            },
-                            src: resizedImage(photosAttributesMap.get(name).jpg, { height: 1080 }),
-                        }}
-                        alt={`${name}`}
-                        successCb={this.onImageLoad}
-                        destroyCb={this.onImageDestroy}
-                    />
+                    {(!photosAttributesMap.get(name).svg) ? (
+                        <LazyImage
+                            isMobile={isMobile}
+                            id={`contact_lazy_image_${name.replace(/ /g, '_')}`}
+                            csss={{
+                                mobile: imageLoaderStyle,
+                                desktop: imageLoaderStyle,
+                            }}
+                            mobileAttributes={{
+                                webp: {
+                                    srcset: generateSrcsetWidths(photosAttributesMap.get(name).webp, screenWidths),
+                                    sizes: '100vw',
+                                },
+                                jpg: {
+                                    srcset: generateSrcsetWidths(photosAttributesMap.get(name).jpg, screenWidths),
+                                    sizes: '100vw',
+                                },
+                                src: resizedImage(photosAttributesMap.get(name).jpg, { width: 640 }),
+                            }}
+                            desktopAttributes={{
+                                webp: {
+                                    srcset: generateSrcsetWidths(photosAttributesMap.get(name).webp, screenWidths),
+                                    sizes: '100vh',
+                                },
+                                jpg: {
+                                    srcset: generateSrcsetWidths(photosAttributesMap.get(name).jpg, screenWidths),
+                                    sizes: '100vh',
+                                },
+                                src: resizedImage(photosAttributesMap.get(name).jpg, { height: 1080 }),
+                            }}
+                            alt={`${name}`}
+                            successCb={this.onImageLoad}
+                            destroyCb={this.onImageDestroy}
+                        />
+                    ) : (
+                            <img
+                                src={staticImage(`/logos${photosAttributesMap.get(name).svg}`)}
+                                css={photosAttributesMap.get(name).imgCss}
+                            />
+                        )}
                 </ImageContainer>
 
                 <StyledContactInfo
                     name={name}
-                    title={title}
-                    organization={organization}
+                    position={position}
                     phone={phone}
                     email={email}
                     website={website}

@@ -101,14 +101,16 @@ class BioText extends React.Component<BioTextProps> {
                 <SpaceFiller />
                 <TextGroup>
                     {this.props.bio.map(({ text }, i) => {
-                        return <ReactMarkdown
-                            key={i}
-                            source={text}
-                            renderers={{
-                                paragraph: props => <Paragraph {...props} />,
-                                strong: props => <NameSpan {...props} />,
-                            }}
-                        />;
+                        return (
+                            <ReactMarkdown
+                                key={i}
+                                source={text}
+                                renderers={{
+                                    paragraph: props => <Paragraph {...props} />,
+                                    strong: props => <NameSpan {...props} />,
+                                }}
+                            />
+                        );
                     })}
                 </TextGroup>
             </TextContainer>

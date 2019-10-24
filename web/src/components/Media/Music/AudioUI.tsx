@@ -312,7 +312,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
         const verticalOffset = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
         return (
             <UIContainer>
-                {this.props.isLoading &&
+                {this.props.isLoading && (
                     <LoadingOverlay>
                         <LoadingInstance
                             width={200}
@@ -320,7 +320,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                             css={loadingInstanceStyle}
                         />
                     </LoadingOverlay>
-                }
+                )}
                 <PauseIcon
                     setRef={this.setPauseButtonRef}
                     width={buttonLength}
@@ -345,7 +345,7 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                     verticalOffset={verticalOffset}
                     css={css` transform: scaleX(-1); `}
                 />
-                {(this.props.isPlaying) ?
+                {(this.props.isPlaying) ? (
                     <PauseButton
                         onClick={this.togglePlaying}
                         isHovering={this.state.isHoverPlaypause}
@@ -356,18 +356,20 @@ class AudioUI extends React.Component<AudioUIProps, AudioUIState> {
                         width={buttonLength}
                         height={buttonLength}
                         verticalOffset={verticalOffset}
-                    /> : <PlayButton
-                        onClick={this.togglePlaying}
-                        isHovering={this.state.isHoverPlaypause}
-                        onMouseMove={this.handleMousemove}
-                        onMouseOver={this.handleMouseover('isHoverPlaypause')}
-                        onMouseOut={this.handleMouseout('isHoverPlaypause')}
-                        onMouseUp={this.handleMouseup}
-                        width={buttonLength}
-                        height={buttonLength}
-                        verticalOffset={verticalOffset}
                     />
-                }
+                ) : (
+                        <PlayButton
+                            onClick={this.togglePlaying}
+                            isHovering={this.state.isHoverPlaypause}
+                            onMouseMove={this.handleMousemove}
+                            onMouseOver={this.handleMouseover('isHoverPlaypause')}
+                            onMouseOut={this.handleMouseout('isHoverPlaypause')}
+                            onMouseUp={this.handleMouseup}
+                            width={buttonLength}
+                            height={buttonLength}
+                            verticalOffset={verticalOffset}
+                        />
+                    )}
                 <SkipButton
                     onClick={this.props.next}
                     isHovering={this.state.isHoverNext}

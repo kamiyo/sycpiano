@@ -98,10 +98,12 @@ const EventItemBody: React.FC<EventItemBodyProps> = ({
             <FlexEventInfoContainer>
                 <EventNameWithRouter css={detailSectionMargin()} name={name} isMobile={isMobile} permaLink={permaLink} eventType={eventType} />
 
-                {!allDay && <EventTime
-                    css={detailSectionMargin()}
-                    dateTime={dateTime}
-                />}
+                {!allDay && (
+                    <EventTime
+                        css={detailSectionMargin()}
+                        dateTime={dateTime}
+                    />
+                )}
 
                 <EventLocation location={location} css={detailSectionMargin()} isMobile={isMobile} />
                 <EventCollaborators collaborators={collaborators} css={detailSectionMargin()} />

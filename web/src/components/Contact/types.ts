@@ -1,14 +1,16 @@
 export interface PersonalInfoShape {
     className?: string;
-    organization?: string;
+    position: Array<{
+        title?: string;
+        organization?: string;
+    }>;
     name: string;
-    title: string;
 }
 
 export interface PersonalContactShape {
     className?: string;
-    phone?: string;
-    email: string;
+    phone?: string[];
+    email?: string[];
     website?: string;
 }
 
