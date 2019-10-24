@@ -22,20 +22,6 @@ const contacts: ContactItemShape[] = [
             instagram: 'https://www.instagram.com/seanchenpiano',
         },
     },
-    // {
-    //     name: 'Joel Harrison',
-    //     className: 'joelHarrison',
-    //     title: 'Artistic Director, President/CEO',
-    //     organization: 'American Pianists Association',
-    //     phone: '317.940.9947',
-    //     email: 'joel@americanpianists.org',
-    //     social: {
-    //         facebook: 'https://www.facebook.com/AmericanPianistsAssociation/?ref=search',
-    //         twitter: 'https://twitter.com/APApianists',
-    //         youtube: 'https://www.youtube.com/user/apaPianists',
-    //         instagram: 'https://www.instagram.com/apapianists/',
-    //     },
-    // },
     {
         name: 'Martha Woods',
         className: 'marthaWoods',

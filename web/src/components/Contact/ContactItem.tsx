@@ -12,7 +12,7 @@ import { LazyImage } from 'src/components/LazyImage';
 
 import {
     generateSrcsetWidths,
-    marthaWoodsContactPhotoUrl,
+    joelHarrisonContactPhotoUrl,
     resizedImage,
     seanChenContactPhotoUrl,
     staticImage,
@@ -156,7 +156,7 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
         } = attributes;
         const webpSrcSet = generateSrcsetWidths(webp, screenWidths);
         const jpgSrcSet = generateSrcsetWidths(jpg, screenWidths);
-
+            
         return (
             <StyledContactItem>
 
@@ -212,7 +212,6 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
                     position={position}
                     phone={phone}
                     email={email}
-                    website={website}
                 />
 
                 <StyledContactSocialMedia social={social} />

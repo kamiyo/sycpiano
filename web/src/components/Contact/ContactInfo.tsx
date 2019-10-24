@@ -135,7 +135,6 @@ const ContactInfo = React.memo((props: ContactInfoProps) => (
         <StyledPersonalContact
             phone={props.phone}
             email={props.email}
-            website={props.website}
         />
     </InfoContainer>
 ));

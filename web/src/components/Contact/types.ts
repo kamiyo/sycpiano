@@ -21,9 +21,9 @@ export interface ContactSocialMediaShape {
 
 export type ContactItemShape = (
     PersonalInfoShape
-    & PersonalContactShape
-    & ContactSocialMediaShape
-    & {
-        isMobile?: boolean;
-    }
+        & PersonalContactShape
+        & ContactSocialMediaShape
+        & {
+            isMobile?: boolean;
+        }
 );
