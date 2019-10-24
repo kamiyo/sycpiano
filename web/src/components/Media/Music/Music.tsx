@@ -440,18 +440,20 @@ class Music extends React.Component<MusicProps, MusicState> {
                     isMobile={isMobile}
                     matchParams={!isEmpty(this.props.match.params)}
                 />
-                {Visualizer && <Visualizer
-                    currentPosition={this.state.playbackPosition}
-                    analyzers={[this.analyzerL, this.analyzerR]}
-                    isPlaying={this.state.isPlaying}
-                    duration={this.state.duration}
-                    prevTimestamp={this.state.lastUpdateTimestamp}
-                    volume={this.state.volume}
-                    isMobile={isMobile}
-                    isHoverSeekring={this.state.isHoverSeekring}
-                    hoverAngle={this.state.angle}
-                    setRadii={this.setRadii}
-                />}
+                {Visualizer && (
+                    <Visualizer
+                        currentPosition={this.state.playbackPosition}
+                        analyzers={[this.analyzerL, this.analyzerR]}
+                        isPlaying={this.state.isPlaying}
+                        duration={this.state.duration}
+                        prevTimestamp={this.state.lastUpdateTimestamp}
+                        volume={this.state.volume}
+                        isMobile={isMobile}
+                        isHoverSeekring={this.state.isHoverSeekring}
+                        hoverAngle={this.state.angle}
+                        setRadii={this.setRadii}
+                    />
+                )}
             </MusicDiv>
         );
     }

@@ -89,7 +89,7 @@ class Photos extends React.Component<PhotosProps> {
     render() {
         return (
             <StyledPhotos>
-                {!this.props.isMobile &&
+                {!this.props.isMobile && (
                     <StyledPhotoViewer>
                         {this.props.items.map((item, idx) => {
                             const isCurrent = this.isCurrentItem(item);
@@ -97,7 +97,7 @@ class Photos extends React.Component<PhotosProps> {
                         })}
                         {this.props.currentItem && <StyledCredit>{`credit: ${this.props.currentItem.credit}`}</StyledCredit>}
                     </StyledPhotoViewer>
-                }
+                )}
                 <PhotoList
                     items={this.props.items}
                     currentItem={this.props.currentItem}

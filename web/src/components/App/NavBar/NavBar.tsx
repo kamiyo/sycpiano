@@ -53,7 +53,7 @@ const NavBar = React.memo(({
     const isHome = currentBasePath === '/';
     return (
         <ReactMedia query={reactMediaMediumQuery}>
-            {(matches: boolean) =>
+            {(matches: boolean) => (
                 <StyledNavBar
                     isHome={isHome}
                     isExpanded={isExpanded}
@@ -63,18 +63,19 @@ const NavBar = React.memo(({
                         isExpanded={isExpanded}
                         specificRouteName={specificRouteName}
                     />
-                    {matches ?
+                    {matches ? (
                         <HamburgerNav
                             currentBasePath={currentBasePath}
                             isMobile={true}
-                        /> :
+                        />
+                    ) : (
                         <NavBarLinks
                             currentBasePath={currentBasePath}
                             isMobile={false}
                         />
-                    }
+                    )}
                 </StyledNavBar >
-            }
+            )}
         </ReactMedia>
     );
 });
