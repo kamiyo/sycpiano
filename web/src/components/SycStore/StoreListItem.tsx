@@ -27,13 +27,12 @@ const contentStyle = css({
 
 let StoreListItem: React.FC<StoreListItemProps> = ({ item, className }) => (
     <div className={className}>
-        {
-            item.images.length &&
-                <img
-                    css={thumbnailStyle}
-                    src={item.images[0]}
-                />
-        }
+        {item.images.length && (
+            <img
+                css={thumbnailStyle}
+                src={item.images[0]}
+            />
+        )}
         <div css={contentStyle}>
             <h2>{item.name}</h2>
             <span>{item.caption}</span>

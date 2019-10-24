@@ -160,8 +160,8 @@ const StyledLi = styled.li`
 `;
 
 const subsAreEqual = (prev: NavBarLinkProps, next: NavBarLinkProps) => {
-    const { showSubs: prevShowSubs, ...prevWithoutShowSubs} = prev;
-    const { showSubs: nextShowSubs, ...nextWithoutShowSubs} = next;
+    const { showSubs: prevShowSubs, ...prevWithoutShowSubs } = prev;
+    const { showSubs: nextShowSubs, ...nextWithoutShowSubs } = next;
     let basicCompare = true;
     Object.keys(prevWithoutShowSubs).forEach((key: keyof typeof prevWithoutShowSubs) => {
         if (prevWithoutShowSubs[key] !== nextWithoutShowSubs[key]) {
@@ -215,16 +215,16 @@ const NavBarLink = ({
     const HighlightComponent = <Highlight active={active} isHome={isHome} link={link} isMobile={isMobile} />;
     return (
         <StyledLi>
-            {(subNavLinks || link.name === 'blog') ?
+            {(subNavLinks || link.name === 'blog') ? (
                 <a css={style} {...attr}>
                     {HighlightComponent}
                 </a>
-                : <Link css={style} {...(attr as LinkProps)}>
-                    {HighlightComponent}
-                </Link>
-            }
-            {
-                subNavLinks &&
+            ) : (
+                    <Link css={style} {...(attr as LinkProps)}>
+                        {HighlightComponent}
+                    </Link>
+                )}
+            {subNavLinks && (
                 <Transition
                     in={showSubs.includes(link.name)}
                     onEnter={(el, isAppearing) => enterAnimation(el, isAppearing, isMobile)}
@@ -245,7 +245,7 @@ const NavBarLink = ({
                         />
                     </SubNavContainer>
                 </Transition>
-            }
+            )}
         </StyledLi>
     );
 };

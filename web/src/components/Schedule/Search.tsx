@@ -137,13 +137,14 @@ class Search extends React.Component<SearchProps, { focused: boolean; }> {
                             onBlur={this.onBlur}
                             onKeyPress={this.onSubmit}
                         />
-                        {this.props.search !== '' &&
+                        {(this.props.search !== '') && (
                             <ResetButton
                                 focused={this.state.focused}
                                 onClick={this.onReset}
                             >
                                 {'\u00D7'}
-                            </ResetButton>}
+                            </ResetButton>
+                        )}
                     </Span>
                     <a
                         href={`/schedule/search${stringify(
