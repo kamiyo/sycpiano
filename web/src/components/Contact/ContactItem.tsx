@@ -146,7 +146,17 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
             email,
             social,
             isMobile,
-        } = this.props;
+            website,
+        }: Partial<ContactItemShape> = this.props;
+
+        const attributes = photosAttributesMap.get(name);
+        const {
+            webp,
+            jpg,
+        } = attributes;
+        const webpSrcSet = generateSrcsetWidths(webp, screenWidths);
+        const jpgSrcSet = generateSrcsetWidths(jpg, screenWidths);
+
         return (
             <StyledContactItem>
 
@@ -155,7 +165,7 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
                     ref={this.bgRef}
                     contact={name}
                 >
-                    {(!photosAttributesMap.get(name).svg) ? (
+                    {(!attributes.svg) ? (
                         <LazyImage
                             isMobile={isMobile}
                             id={`contact_lazy_image_${name.replace(/ /g, '_')}`}
@@ -165,25 +175,25 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
                             }}
                             mobileAttributes={{
                                 webp: {
-                                    srcset: generateSrcsetWidths(photosAttributesMap.get(name).webp, screenWidths),
+                                    srcset: webpSrcSet,
                                     sizes: '100vw',
                                 },
                                 jpg: {
-                                    srcset: generateSrcsetWidths(photosAttributesMap.get(name).jpg, screenWidths),
+                                    srcset: jpgSrcSet,
                                     sizes: '100vw',
                                 },
-                                src: resizedImage(photosAttributesMap.get(name).jpg, { width: 640 }),
+                                src: resizedImage(jpg, { width: 640 }),
                             }}
                             desktopAttributes={{
                                 webp: {
-                                    srcset: generateSrcsetWidths(photosAttributesMap.get(name).webp, screenWidths),
+                                    srcset: webpSrcSet,
                                     sizes: '100vh',
                                 },
                                 jpg: {
-                                    srcset: generateSrcsetWidths(photosAttributesMap.get(name).jpg, screenWidths),
+                                    srcset: jpgSrcSet,
                                     sizes: '100vh',
                                 },
-                                src: resizedImage(photosAttributesMap.get(name).jpg, { height: 1080 }),
+                                src: resizedImage(jpg, { height: 1080 }),
                             }}
                             alt={`${name}`}
                             successCb={this.onImageLoad}
@@ -191,8 +201,8 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
                         />
                     ) : (
                             <img
-                                src={staticImage(`/logos${photosAttributesMap.get(name).svg}`)}
-                                css={photosAttributesMap.get(name).imgCss}
+                                src={staticImage(`/logos${attributes.svg}`)}
+                                css={attributes.imgCss}
                             />
                         )}
                 </ImageContainer>
@@ -202,6 +212,7 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
                     position={position}
                     phone={phone}
                     email={email}
+                    website={website}
                 />
 
                 <StyledContactSocialMedia social={social} />
