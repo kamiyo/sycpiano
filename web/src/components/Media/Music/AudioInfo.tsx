@@ -170,7 +170,7 @@ class AudioInfo extends React.PureComponent<AudioInfoProps> {
         const marqueeText = this.props.isMobile ? composerTitleWithMovement : composerTitle;
         return (
             <>
-                {this.props.matchParams && (
+                {this.props.matchParams &&
                     <Helmet
                         title={`${titleStringBase}${metaTitle}`}
                         meta={[
@@ -180,7 +180,7 @@ class AudioInfo extends React.PureComponent<AudioInfoProps> {
                             },
                         ]}
                     />
-                )}
+                }
                 <AudioInfoContainer>
                     <ComposerTitle ref={this.titleDiv}>
                         <Marquee ref={this.marquee}>

@@ -317,7 +317,7 @@
       "validations": []
     }, {
       "field": "collaborators",
-      "type": ["String"],
+      "type": ["Number"],
       "defaultValue": null,
       "enums": null,
       "integration": null,
@@ -416,7 +416,7 @@
       "validations": []
     }, {
       "field": "pieces",
-      "type": ["String"],
+      "type": ["Number"],
       "defaultValue": null,
       "enums": null,
       "integration": null,
@@ -731,7 +731,7 @@
       "validations": []
     }, {
       "field": "calendars",
-      "type": ["String"],
+      "type": ["Number"],
       "defaultValue": null,
       "enums": null,
       "integration": null,
@@ -1501,7 +1501,7 @@
       "validations": []
     }, {
       "field": "calendars",
-      "type": ["String"],
+      "type": ["Number"],
       "defaultValue": null,
       "enums": null,
       "integration": null,
@@ -1678,7 +1678,7 @@
   "meta": {
     "database_type": "postgres",
     "liana": "forest-express-sequelize",
-    "liana_version": "4.0.2",
-    "orm_version": "5.21.1"
+    "liana_version": "3.1.1",
+    "orm_version": "5.8.9"
   }
 }

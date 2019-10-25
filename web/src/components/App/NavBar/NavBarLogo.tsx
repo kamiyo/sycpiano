@@ -55,8 +55,8 @@ const StyledLink = styled(Link, {
     &:hover {
         /* stylelint-disable-next-line declaration-colon-newline-after */
         ${props => !props.isHome ?
-        `fill: ${lightBlue}` :
-        'filter: drop-shadow(0px 0px 4px white)'};
+            `fill: ${lightBlue}` :
+            'filter: drop-shadow(0px 0px 4px white)'};
         color: ${lightBlue};
     }
 
@@ -82,9 +82,9 @@ const NavBarLogo: React.FC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProp
     return (
         <StyledLink to="/" isHome={isHome} isExpanded={isExpanded}>
             <ReactMedia query={reactMediaMobileQuery}>
-                {(xs: boolean) => (
+                {(xs: boolean) =>
                     <ReactMedia query={reactMediaMediumQuery}>
-                        {(medium: boolean) => (
+                        {(medium: boolean) =>
                             <React.Fragment>
                                 <SycLogo />
                                 <LogoText>
@@ -92,9 +92,9 @@ const NavBarLogo: React.FC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProp
                                     {!isHome && (xs || medium) && <RouteText>{displayName}</RouteText>}
                                 </LogoText>
                             </React.Fragment>
-                        )}
+                        }
                     </ReactMedia>
-                )}
+                }
             </ReactMedia>
         </StyledLink>
     );

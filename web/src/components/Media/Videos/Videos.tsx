@@ -97,7 +97,7 @@ class Videos extends React.Component<VideosProps> {
         const description = video && video.snippet.description;
         return (
             <>
-                {video && (
+                {video &&
                     <Helmet
                         title={`${titleStringBase} | Videos | ${video.snippet.title}`}
                         meta={[
@@ -107,7 +107,7 @@ class Videos extends React.Component<VideosProps> {
                             },
                         ]}
                     />
-                )}
+                }
                 <StyledVideos
                     ref={this.domElement}
                 >

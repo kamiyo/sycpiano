@@ -87,14 +87,14 @@ class Playlist extends React.Component<PlaylistProps> {
                         props.extraStyles && props.extraStyles.div,
                     ]}
                 >
-                    {props.hasToggler && (
+                    {props.hasToggler &&
                         <PlaylistToggler
                             isPlaylistVisible={props.isShow}
                             onClick={() => {
                                 props.togglePlaylist();
                             }}
                         />
-                    )}
+                    }
                     <ul
                         id={props.id}
                         ref={this.ulRef}

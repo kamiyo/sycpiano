@@ -82,7 +82,7 @@ const Media = ({ isMobile, match, location }: MediaProps) => (
                             />
                             <Route
                                 path="/media/music"
-                                render={({ match: subMatch }) => (
+                                render={({ match: subMatch }) =>
                                     <Switch location={location}>
                                         <Route
                                             path="/media/music/:composer?/:piece?/:movement?"
@@ -102,8 +102,7 @@ const Media = ({ isMobile, match, location }: MediaProps) => (
                                                 <AsyncComponent<MusicProps> moduleProvider={Music} {...childProps} baseRoute={subMatch.url} isMobile={isMobile} />
                                             )}
                                         />
-                                    </Switch>
-                                )}
+                                    </Switch>}
                             />
                             <Route
                                 path="/media/photos"
