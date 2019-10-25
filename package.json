@@ -159,11 +159,5 @@
     "stylelint-custom-processor-loader": "^0.6.0",
     "stylelint-processor-styled-components": "^1.8.0",
     "webpack-bundle-analyzer": "^3.6.0"
-  },
-  "resolutions": {
-    "forest-express-equelize/**/lodash.merge": "^4.6.2",
-    "@emotion/**/js-yaml": "^3.13.1",
-    "braces/**/mixin-deep": "^2.0.1",
-    "braces/**/set-value": "^3.0.1"
   }
 }
