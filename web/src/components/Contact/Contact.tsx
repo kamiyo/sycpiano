@@ -21,42 +21,37 @@ interface ContactDispatchToProps {
 
 type ContactProps = ContactOwnProps & ContactDispatchToProps;
 
-const ContactContainer = styled.div`
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    overflow-x: hidden;
-    overflow-y: unset;
+const ContactContainer = styled.div({
+    display: 'flex',
+    flexFlow: 'row wrap',
+    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    top: 0,
+    overflowX: 'hidden',
+    overflowY: 'unset',
+    [screenXSorPortrait]: {
+        overflowY: 'scroll',
+        justifyContent: 'space-around',
+    },
+});
 
-    ${screenXSorPortrait} {
-        overflow-y: scroll;
-        justify-content: space-around;
-    }
-`;
-
-class Contact extends React.PureComponent<ContactProps> {
-    render() {
-        return (
-            <ContactContainer
-                onScroll={this.props.isMobile ? scrollFn(navBarHeight.mobile, this.props.onScroll) : null}
-            >
-                {contacts.map((contact, i) => (
-                    <StyledContactItem {...contact} key={i} />
-                ))}
-            </ContactContainer>
-        );
-    }
-}
+const Contact: React.FC<ContactProps> = ({ isMobile, onScroll: onScrollAction }) => (
+    <ContactContainer
+        onScroll={isMobile ? scrollFn(navBarHeight.mobile, onScrollAction) : null}
+    >
+        {contacts.map((contact, i) => (
+            <StyledContactItem {...contact} key={i} />
+        ))}
+    </ContactContainer>
+);
 
 const ConnectedContact = connect<{}, ContactDispatchToProps>(
     null,
     { onScroll },
 )(Contact);
 
-export type ContactType = React.PureComponent<ContactProps>;
+export type ContactType = typeof Contact;
 export type RequiredProps = ContactOwnProps;
 export default ConnectedContact;

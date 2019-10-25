@@ -23,7 +23,15 @@ import { screenWidths, screenXSorPortrait } from 'src/styles/screens';
 const imageInsetShadowColor = '#222';
 const alternateBackgroundColor = '#eee';
 
-const photosAttributesMap = new Map<string, { jpg?: string; webp?: string; svg?: string; css: SerializedStyles; imgCss?: SerializedStyles}>([
+interface PhotoAttributes {
+    jpg?: string;
+    webp?: string;
+    svg?: string;
+    css: SerializedStyles;
+    imgCss?: SerializedStyles;
+}
+
+const photosAttributesMap = new Map<string, PhotoAttributes>([
     ['Sean Chen', {
         jpg: seanChenContactPhotoUrl(),
         webp: seanChenContactPhotoUrl('webp'),
@@ -32,22 +40,6 @@ const photosAttributesMap = new Map<string, { jpg?: string; webp?: string; svg?:
             backgroundPosition: '0 28%',
         }),
     }],
-    // ['Joel Harrison', {
-    //     jpg: joelHarrisonContactPhotoUrl(),
-    //     webp: joelHarrisonContactPhotoUrl('webp'),
-    //     css: css({
-    //         backgroundSize: '125%',
-    //         backgroundPosition: 'center 40%',
-    //     }),
-    // }],
-    // ['Martha Woods', {
-    //     jpg: marthaWoodsContactPhotoUrl(),
-    //     webp: marthaWoodsContactPhotoUrl('webp'),
-    //     css: css({
-    //         backgroundSize: 'unset',
-    //         backgroundPosition: '0 0',
-    //     }),
-    // }],
     ['Martha Woods', {
         svg: marthaWoodsContactPhotoUrl(),
         css: css({
@@ -113,112 +105,106 @@ const StyledContactItem = styled.div`
     }
 `;
 
-interface ContactItemState {
-    bgImage: string;
-}
+const ContactItem: React.FC<ContactItemShape> = (props) => {
+    const [bgImage, setBgImage] = React.useState('');
+    const bgRef = React.useRef<HTMLDivElement>();
 
-class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
-    state: ContactItemState = { bgImage: '' };
-    private bgRef: React.RefObject<HTMLDivElement> = React.createRef();
+    const onImageLoad = (el: HTMLImageElement) => setBgImage(el.currentSrc);
 
-    onImageLoad = (el: HTMLImageElement) => {
-        this.setState({ bgImage: el.currentSrc }, () => {
-            TweenLite.to(
-                this.bgRef.current,
-                0.3,
-                { autoAlpha: 1, delay: 0.2, clearProps: 'opacity' });
-        });
-    }
-
-    onImageDestroy = () => {
+    React.useEffect(() => {
         TweenLite.to(
-            this.bgRef.current,
+            bgRef.current,
+            0.3,
+            { autoAlpha: 1, delay: 0.2, clearProps: 'opacity' },
+        );
+    }, [bgImage]);
+
+    const onImageDestroy = () => {
+        TweenLite.to(
+            bgRef.current,
             0.1,
             { autoAlpha: 0 },
         );
-    }
+    };
 
-    render() {
-        const {
-            name,
-            position,
-            phone,
-            email,
-            social,
-            isMobile,
-            website,
-        }: Partial<ContactItemShape> = this.props;
+    const {
+        name,
+        position,
+        phone,
+        email,
+        social,
+        isMobile,
+        website,
+    }: Partial<ContactItemShape> = props;
 
-        const attributes = photosAttributesMap.get(name);
-        const {
-            webp,
-            jpg,
-        } = attributes;
-        const webpSrcSet = generateSrcsetWidths(webp, screenWidths);
-        const jpgSrcSet = generateSrcsetWidths(jpg, screenWidths);
+    const attributes = photosAttributesMap.get(name);
+    const {
+        webp,
+        jpg,
+    } = attributes;
+    const webpSrcSet = generateSrcsetWidths(webp, screenWidths);
+    const jpgSrcSet = generateSrcsetWidths(jpg, screenWidths);
 
-        return (
-            <StyledContactItem>
-
-                <ImageContainer
-                    bgImage={this.state.bgImage}
-                    ref={this.bgRef}
-                    contact={name}
-                >
-                    {(!attributes.svg) ? (
-                        <LazyImage
-                            isMobile={isMobile}
-                            id={`contact_lazy_image_${name.replace(/ /g, '_')}`}
-                            csss={{
-                                mobile: imageLoaderStyle,
-                                desktop: imageLoaderStyle,
-                            }}
-                            mobileAttributes={{
-                                webp: {
-                                    srcset: webpSrcSet,
-                                    sizes: '100vw',
-                                },
-                                jpg: {
-                                    srcset: jpgSrcSet,
-                                    sizes: '100vw',
-                                },
-                                src: resizedImage(jpg, { width: 640 }),
-                            }}
-                            desktopAttributes={{
-                                webp: {
-                                    srcset: webpSrcSet,
-                                    sizes: '100vh',
-                                },
-                                jpg: {
-                                    srcset: jpgSrcSet,
-                                    sizes: '100vh',
-                                },
-                                src: resizedImage(jpg, { height: 1080 }),
-                            }}
-                            alt={`${name}`}
-                            successCb={this.onImageLoad}
-                            destroyCb={this.onImageDestroy}
+    return (
+        <StyledContactItem>
+            <ImageContainer
+                bgImage={bgImage}
+                ref={bgRef}
+                contact={name}
+            >
+                {(!attributes.svg) ? (
+                    <LazyImage
+                        isMobile={isMobile}
+                        id={`contact_lazy_image_${name.replace(/ /g, '_')}`}
+                        csss={{
+                            mobile: imageLoaderStyle,
+                            desktop: imageLoaderStyle,
+                        }}
+                        mobileAttributes={{
+                            webp: {
+                                srcset: webpSrcSet,
+                                sizes: '100vw',
+                            },
+                            jpg: {
+                                srcset: jpgSrcSet,
+                                sizes: '100vw',
+                            },
+                            src: resizedImage(jpg, { width: 640 }),
+                        }}
+                        desktopAttributes={{
+                            webp: {
+                                srcset: webpSrcSet,
+                                sizes: '100vh',
+                            },
+                            jpg: {
+                                srcset: jpgSrcSet,
+                                sizes: '100vh',
+                            },
+                            src: resizedImage(jpg, { height: 1080 }),
+                        }}
+                        alt={`${name}`}
+                        successCb={onImageLoad}
+                        destroyCb={onImageDestroy}
+                    />
+                ) : (
+                        <img
+                            src={staticImage(`${attributes.svg}`)}
+                            css={attributes.imgCss}
                         />
-                    ) : (
-                            <img
-                                src={staticImage(`/logos${attributes.svg}`)}
-                                css={attributes.imgCss}
-                            />
-                        )}
-                </ImageContainer>
+                    )}
+            </ImageContainer>
 
-                <StyledContactInfo
-                    name={name}
-                    position={position}
-                    phone={phone}
-                    email={email}
-                    website={website}
-                />
+            <StyledContactInfo
+                name={name}
+                position={position}
+                phone={phone}
+                email={email}
+                website={website}
+            />
 
-                <StyledContactSocialMedia social={social} />
-            </StyledContactItem>
-        );
-    }
-}
+            <StyledContactSocialMedia social={social} />
+        </StyledContactItem>
+    );
+};
 
 export default ContactItem;

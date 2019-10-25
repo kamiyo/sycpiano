@@ -28,5 +28,5 @@ const Page404: React.FunctionComponent<{}> = () => (
     </>
 );
 
-export type Page404Type = React.FunctionComponent<{}>;
+export type Page404Type = typeof Page404;
 export default Page404;
