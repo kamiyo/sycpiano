@@ -57,6 +57,6 @@ const ConnectedContact = connect<{}, ContactDispatchToProps>(
     { onScroll },
 )(Contact);
 
-export type ContactType = React.Component<ContactProps>;
+export type ContactType = React.PureComponent<ContactProps>;
 export type RequiredProps = ContactOwnProps;
 export default ConnectedContact;

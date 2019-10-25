@@ -15,7 +15,11 @@ forest.collection('calendar', {
         field: 'DateTime Input',
         type: 'String',
         get: (cal: calendar) => {
-            return moment(cal.dateTime).tz(cal.timezone).format('YYYY-MM-DD HH:mm');
+            if (cal.dateTime) {
+                return moment(cal.dateTime).tz(cal.timezone).format('YYYY-MM-DD HH:mm');
+            } else {
+                return '';
+            }
         },
         set: (cal: calendar, input: string) => {
             // Creates moment in UTC from input by passing in null

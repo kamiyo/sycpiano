@@ -21,7 +21,8 @@ export default class AsyncComponent<P> extends PureComponent<AsyncComponentProps
 
     constructor(props: AsyncComponentProps<P>) {
         super(props);
-        this.props.moduleProvider().then(({ Component }) => {
+        this.props.moduleProvider().then((res) => {
+            const Component = res.Component;
             this.setState({ Component });
         });
     }

@@ -21,9 +21,24 @@ const tsProject = ts.createProject('server/tsconfig.json');
 const buildApp = (done) => (
     webpack(webpackConfig, (err, stats) => {
         if (err || stats.hasErrors()) {
-            fancyLog.error('[webpack]', err);
-            fancyLog.error('[webpack][stats]', stats.errors);
-        } else {
+            if (err) {
+                fancyLog.error('[webpack]', err.stack || err);
+                if (err.details) {
+                    fancyLog.error('[webpack]', err.details);
+                }
+            }
+
+            const info = stats.toJson();
+
+            if (stats.hasErrors()) {
+                fancyLog.error('[webpack][stats]', info.errors);
+            }
+
+            if (stats.hasWarnings()) {
+                fancyLog.warn('[webpack][stats]', info.warnings);
+            }
+        }
+        else {
             fancyLog('[webpack]', stats.toString({
                 chunks: false, // Makes the build much quieter
                 colors: true

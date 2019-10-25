@@ -142,7 +142,7 @@ const beforeUpdateHook = async (c: calendar, _: any) => {
 
     let timezone = c.timezone;
     // If location has changed, fetch the new timezone.
-    if (locationChanged) {
+    if (locationChanged || timezone === null) {
         console.log(`Fetching new coord and tz.`);
         const location = c.location;
         const { latlng } = await getLatLng(location);
