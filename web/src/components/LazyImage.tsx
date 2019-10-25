@@ -103,56 +103,65 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
     }
 
     render() {
-        const Loading = (this.props.loadingComponent as typeof React.Component);
+        const {
+            mobileAttributes,
+            desktopAttributes,
+            csss,
+            id,
+            isMobile,
+            alt,
+            loadingComponent,
+        } = this.props;
+        const Loading = (loadingComponent as typeof React.Component);
         return (
             <React.Fragment>
                 <Transition
-                    in={this.props.loadingComponent && !this.state.isLoaded}
+                    in={loadingComponent && !this.state.isLoaded}
                     mountOnEnter={true}
                     unmountOnExit={true}
                     onEnter={fadeOnEnter}
                     onExit={fadeOnExit}
                     timeout={250}
                 >
-                    <div css={this.props.csss.loading}>
-                        {this.props.loadingComponent === 'default'
+                    <div css={csss.loading}>
+                        {loadingComponent === 'default'
                             ? <StyledLoadingInstance />
-                            : this.props.loadingComponent
-                                ? <Loading isMobile={this.props.isMobile} />
+                            : loadingComponent
+                                ? <Loading isMobile={isMobile} />
                                 : null
                         }
                     </div>
                 </Transition>
-                {this.props.isMobile ? (
+                {isMobile ? (
                     <picture key="mobile">
                         <source
-                            data-srcset={this.props.mobileAttributes.webp.srcset}
-                            sizes={this.props.mobileAttributes.webp.sizes}
+                            data-srcset={mobileAttributes.webp.srcset}
+                            sizes={mobileAttributes.webp.sizes}
                             type="image/webp"
                         />
                         <img
-                            id={this.props.id}
-                            css={this.props.csss.mobile}
-                            data-srcset={this.props.mobileAttributes.jpg.srcset}
-                            data-src={this.props.mobileAttributes.src}
-                            sizes={this.props.mobileAttributes.jpg.sizes}
-                            alt={this.props.alt}
+                            id={id}
+                            css={csss.mobile}
+                            data-srcset={mobileAttributes.jpg.srcset}
+                            data-src={mobileAttributes.src}
+                            sizes={mobileAttributes.jpg.sizes}
+                            alt={alt}
                         />
                     </picture>
                 ) : (
                         <picture key="desktop">
                             <source
-                                data-srcset={this.props.desktopAttributes.webp.srcset}
-                                sizes={this.props.desktopAttributes.webp.sizes}
+                                data-srcset={desktopAttributes.webp.srcset}
+                                sizes={desktopAttributes.webp.sizes}
                                 type="image/webp"
                             />
                             <img
-                                id={this.props.id}
-                                css={this.props.csss.desktop}
-                                data-srcset={this.props.desktopAttributes.jpg.srcset}
-                                data-src={this.props.desktopAttributes.src}
-                                sizes={this.props.desktopAttributes.jpg.sizes}
-                                alt={this.props.alt}
+                                id={id}
+                                css={csss.desktop}
+                                data-srcset={desktopAttributes.jpg.srcset}
+                                data-src={desktopAttributes.src}
+                                sizes={desktopAttributes.jpg.sizes}
+                                alt={alt}
                             />
                         </picture>
                     )

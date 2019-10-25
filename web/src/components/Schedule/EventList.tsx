@@ -272,7 +272,7 @@ class EventList extends React.Component<EventListProps> {
                     ]}
                 />
                 <div css={fullWidthHeight}>
-                    {
+                    {(
                         <AutoSizer>
                             {({ height, width }) => (
                                 <List
@@ -291,7 +291,7 @@ class EventList extends React.Component<EventListProps> {
                                 />
                             )}
                         </AutoSizer>
-                    }
+                    )}
                 </div>
             </React.Fragment>
         );
@@ -316,11 +316,12 @@ class EventList extends React.Component<EventListProps> {
             return (
                 <div style={style} >
                     {this.props.hasMore && this.props.isFetchingList ?
-                        <StyledLoadingInstance width={80} height={80} /> :
-                        <div css={placeholderStyle}>{
-                            this.props.eventItems.length === 0 ? 'No Events Fetched' : ''
-                        }</div>
-                    }
+                        <StyledLoadingInstance width={80} height={80} />
+                        : (
+                            <div css={placeholderStyle}>
+                                {this.props.eventItems.length === 0 ? 'No Events Fetched' : ''}
+                            </div>
+                        )}
                 </div>
             );
         }

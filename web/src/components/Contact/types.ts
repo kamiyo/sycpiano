@@ -1,14 +1,17 @@
 export interface PersonalInfoShape {
     className?: string;
-    organization?: string;
+    position: Array<{
+        title?: string;
+        organization?: string;
+    }>;
     name: string;
-    title: string;
 }
 
 export interface PersonalContactShape {
     className?: string;
-    phone?: string;
-    email: string;
+    phone?: string[];
+    email?: string[];
+    website?: string;
 }
 
 export interface ContactSocialMediaShape {
@@ -18,9 +21,9 @@ export interface ContactSocialMediaShape {
 
 export type ContactItemShape = (
     PersonalInfoShape
-        & PersonalContactShape
-        & ContactSocialMediaShape
-        & {
-            isMobile?: boolean;
-        }
+    & PersonalContactShape
+    & ContactSocialMediaShape
+    & {
+        isMobile?: boolean;
+    }
 );

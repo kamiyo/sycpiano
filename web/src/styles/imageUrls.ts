@@ -5,10 +5,8 @@ export const sycWithPianoBW = (format: imageFormat = 'jpg') => `/syc_withpiano_b
 export const cliburn1 = (format: imageFormat = 'jpg') => `/gallery/cliburn1.${format}`;
 export const seanChenContactPhotoUrl = (format: imageFormat = 'jpg') => `/gallery/syc_headshot1.${format}`;
 export const joelHarrisonContactPhotoUrl = (format: imageFormat = 'jpg') => `/joel.${format}`;
-<<<<<<< HEAD
-=======
-export const marthaWoodsContactPhotoUrl = (format: imageFormat = 'jpg') => `/wentworth.${format}`;
->>>>>>> parent of 0d9ed3e... finished adding wentworth. Had to add a special case for svgs in the contacts. updated packages for security. Added parentheses for multi-line jsx.
+export const marthaWoodsContactPhotoUrl = () => `/wentworth.svg`;
+// export const marthaWoodsContactPhotoUrl = (format: imageFormat = 'jpg') => `/wentworth.${format}`;
 export const bg1 = `/bg_1.jpg`;
 export const homeBackground = (format: imageFormat = 'jpg') => `/syc_chair_bg_clean.${format}`;
 export const sycChairVertical = (format: imageFormat = 'jpg') => `/syc_chair_vertical.${format}`;

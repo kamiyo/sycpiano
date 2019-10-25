@@ -18,6 +18,7 @@ const NameContainer = styled.div`
     flex: 0 0 auto;
     font-size: 2rem;
     font-weight: bold;
+    margin-bottom: 0.5rem;
 
     ${screenXL} {
         font-size: 2.4rem;
@@ -33,22 +34,25 @@ const SubInfo = styled.div`
 
 const SubInfoTitle = styled.div`
     font-size: 20px;
-    margin-bottom: 10px;
+    margin-top: 0.6rem;
+    margin-bottom: 0.6rem;
 `;
 
 const PersonalInfo: React.FC<PersonalInfoShape> = (props) => (
     <div className={props.className}>
         <NameContainer>{props.name}</NameContainer>
 
-        <SubInfo>
-            <SubInfoTitle><strong>{props.title}</strong></SubInfoTitle>
-            {
-                props.organization &&
-                <div>
-                    <strong>{props.organization}</strong>
-                </div>
-            }
-        </SubInfo>
+        {props.position.map((pos) => (
+            <SubInfo key={pos.title}>
+                <SubInfoTitle><strong>{pos.title}</strong></SubInfoTitle>
+                {pos.organization && (
+                    <div>
+                        <strong>{pos.organization}</strong>
+                    </div>
+                )}
+            </SubInfo>
+        ))}
+
     </div>
 );
 
@@ -56,6 +60,7 @@ const StyledPersonalInfo = styled(React.memo(PersonalInfo))`
     flex: 0 1 125px;
     display: flex;
     flex-direction: column;
+    margin-bottom: 1rem;
 
     ${screenXL} {
         flex: 0 0 150px;
@@ -73,17 +78,29 @@ const ContactMethod = styled.div`
     flex-direction: column;
     justify-content: center;
     display: flex;
+    margin-bottom: 0.5rem;
 `;
 
 const PersonalContact: React.FC<PersonalContactShape> = (props) => (
     <div className={props.className}>
         {props.phone && <ContactMethod>{props.phone}</ContactMethod>}
 
-        <ContactMethod>
-            <a href={`mailto:${props.email}`} css={link(contactPageLinkColor)}>
-                {props.email}
-            </a>
-        </ContactMethod>
+        {props.email.map((em) => (
+            <ContactMethod key={em}>
+                <div>
+                    <a href={`mailto:${em}`} css={link(contactPageLinkColor)}>
+                        {em}
+                    </a>
+                </div>
+            </ContactMethod>
+        ))}
+        {(props.website) && (
+            <ContactMethod>
+                <a href={props.website} css={link(contactPageLinkColor)}>
+                    {props.website}
+                </a>
+            </ContactMethod>
+        )}
     </div>
 );
 
@@ -110,8 +127,7 @@ const ContactInfo = React.memo((props: ContactInfoProps) => (
     <InfoContainer>
         <StyledPersonalInfo
             name={props.name}
-            organization={props.organization}
-            title={props.title}
+            position={props.position}
         />
 
         <Divider />
@@ -119,6 +135,7 @@ const ContactInfo = React.memo((props: ContactInfoProps) => (
         <StyledPersonalContact
             phone={props.phone}
             email={props.email}
+            website={props.website}
         />
     </InfoContainer>
 ));

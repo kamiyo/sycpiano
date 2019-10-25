@@ -1,14 +1,14 @@
-import * as React from 'react';
 import styled from '@emotion/styled';
+import * as React from 'react';
 import { Transition } from 'react-transition-group';
 
 import { Elastic } from 'gsap/EasePack';
 import TweenLite from 'gsap/TweenLite';
 
 import { lato2i } from 'src/styles/fonts';
+import { staticImage } from 'src/styles/imageUrls';
 import { noHighlight } from 'src/styles/mixins';
 import { screenXSandPortrait, screenXSorPortrait } from 'src/styles/screens';
-import { staticImage } from 'src/styles/imageUrls';
 
 import socials from 'src/components/Home/socials';
 
