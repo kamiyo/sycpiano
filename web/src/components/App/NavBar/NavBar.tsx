@@ -45,11 +45,11 @@ const StyledNavBar = styled.div<{ isHome: boolean; isExpanded: boolean }>`
     box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.3);
 `;
 
-const NavBar = React.memo(({
+const NavBar = React.memo(function NavBar({
     currentBasePath,
     isExpanded,
     specificRouteName,
-}: NavBarProps & NavBarStateToProps) => {
+}: NavBarProps & NavBarStateToProps) {
     const isHome = currentBasePath === '/';
     return (
         <ReactMedia query={reactMediaMediumQuery}>

@@ -29,7 +29,7 @@ interface SycStoreDispatchToProps {
     readonly fetchItemsAction: () => Promise<void>;
 }
 
-interface SycOwnProps { isMobile: boolean; }
+interface SycOwnProps { isMobile: boolean }
 
 type SycStoreProps = SycOwnProps & SycStoreStateToPros & SycStoreDispatchToProps;
 
@@ -63,6 +63,6 @@ const connectedSycStore = connect<SycStoreStateToPros, SycStoreDispatchToProps, 
     mapDispatchToProps,
 )(SycStore);
 
-export type SycStoreType = new (props: any) => React.Component<SycStoreProps>;
+export type SycStoreType = typeof connectedSycStore;
 export type RequiredProps = SycOwnProps;
 export default connectedSycStore;

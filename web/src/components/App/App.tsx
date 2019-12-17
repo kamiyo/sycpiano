@@ -22,15 +22,14 @@ import { globalCss } from 'src/styles/global';
 import 'picturefill';
 import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 
-import CSSPlugin from 'gsap/CSSPlugin';
-import TweenLite from 'gsap/TweenLite';
+import { CSSPlugin, gsap } from 'gsap';
 
-/* tslint:disable:no-unused-var */
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-ignore */
 // @ts-ignore
 const activated = [
     CSSPlugin,
 ];
-/* tslint:enable:no-unused-var */
+/* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-ignore */
 
 import moment from 'moment-timezone';
 
@@ -56,26 +55,26 @@ const Page404 = () => register('page404', import(/* webpackChunkName: 'page404' 
 
 const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
     if (element) {
-        TweenLite.to(element, 0.25, { autoAlpha: 1, delay });
+        gsap.to(element, 0.25, { autoAlpha: 1, delay });
     }
 };
 
 const slideOnEnter = (delay: number) => (element: HTMLElement) => {
-    TweenLite.set(element, { autoAlpha: 1 });
+    gsap.set(element, { autoAlpha: 1 });
     if (element) {
-        TweenLite.to(element, 0.25, { y: '0%', delay, clearProps: 'transform', force3D: true });
+        gsap.to(element, 0.25, { y: '0%', delay, clearProps: 'transform', force3D: true });
     }
 };
 
 const fadeOnExit = (delay: number) => (element: HTMLElement) => {
     if (element) {
-        TweenLite.to(element, 0.25, { autoAlpha: 0, delay });
+        gsap.to(element, 0.25, { autoAlpha: 0, delay });
     }
 };
 
 const slideOnExit = (delay: number) => (element: HTMLElement) => {
     if (element) {
-        TweenLite.to(element, 0.25, { y: '-100%', delay, force3D: true });
+        gsap.to(element, 0.25, { y: '-100%', delay, force3D: true });
     }
 };
 
@@ -101,7 +100,7 @@ interface AppDispatchToProps {
 
 type AppProps = RouteComponentProps<{}> & AppStateToProps & AppDispatchToProps;
 
-class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?: boolean; }> {
+class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?: boolean }> {
     constructor(props: AppProps) {
         super(props);
         this.state = {
@@ -121,12 +120,12 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
     }
 
     getRouteBase = () => {
-        const matches: string[] = this.props.location.pathname.match(/^(\/[^\/]+)?(\/[^\/]+)?/);
+        const matches: string[] = this.props.location.pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
         return matches[1] || '/';
     }
 
     getMostSpecificRouteName = () => {
-        const matches: string[] = this.props.location.pathname.match(/^(\/[^\/]+)?(\/[^\/]+)?/);
+        const matches: string[] = this.props.location.pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
         const match = matches[2] || matches[1];
         return (match ? match.slice(1) : '') || null;
     }

@@ -11,7 +11,8 @@ interface IconProps {
     width: number;
     height: number;
     verticalOffset: number;
-    Component?: AnyComponent;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    Component?: AnyComponent<any>;
     className?: string;
 }
 
@@ -73,11 +74,12 @@ interface ButtonProps {
     readonly width: number;
     readonly height: number;
     readonly verticalOffset: number;
-    readonly Component?: AnyComponent;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    readonly Component?: AnyComponent<any>;
     readonly className?: string;
 }
 
-const StyledButton = styled.div<{ verticalOffset: number; height: number; width: number; }>(
+const StyledButton = styled.div<{ verticalOffset: number; height: number; width: number }>(
     (props) => getSharedStyle(props.verticalOffset),
     ({ width, height }) => ({
         width,

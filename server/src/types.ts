@@ -29,7 +29,7 @@ export interface GCalEvent {
     readonly [key: string]: any; // other params
 }
 
-export type ModelCtor<M extends Model> = (new () => M) & typeof Model;
+export type ModelCtor<M extends Model> = (new () => M) & typeof Sequelize.Model;
 
 export class Model<T = any, T2 = any> extends Sequelize.Model<T, T2> {
     static associate?(db: {[key: string]: ModelCtor<any>}): void;

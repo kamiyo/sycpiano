@@ -3,7 +3,7 @@ import * as React from 'react';
 import { css } from '@emotion/core';
 import { Transition } from 'react-transition-group';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import { LazyImage } from 'src/components/LazyImage';
 import { PhotoItem } from 'src/components/Media/Photos/types';

@@ -37,6 +37,7 @@ export const metaDescriptions: {
     photos: string;
     press: string;
     getMusic: (piece: string, contributors?: string) => string;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     [index: string]: any;
 } = {
         home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',

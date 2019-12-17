@@ -1,7 +1,7 @@
 import { parseToRgb } from 'polished';
 import * as React from 'react';
 
-import TweenLite from 'gsap/TweenLite';
+import { gsap } from 'gsap';
 
 import {
     AudioVisualizerProps,
@@ -73,11 +73,11 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     FILTER_SIZE: number;
 
     STEP_SIZE: number;
-    lastIsHover: boolean = false;
-    lastHover: number = 0;
-    lastCurrentPosition: number = 0;
-    idleStart: number = 0;
-    requestId: number = 0;
+    lastIsHover = false;
+    lastHover = 0;
+    lastCurrentPosition = 0;
+    idleStart = 0;
+    requestId = 0;
     lastCallback: number;
 
     internalOffset: number;
@@ -178,7 +178,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.normalizedR = new Float32Array(this.FFT_HALF_SIZE);
             this.idleStart = performance.now();
 
-            TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
+            gsap.ticker.add(this.onAnalyze);
         } catch (err) {
             console.error('visualizer init failed.', err);
         }
@@ -217,7 +217,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
                 this.lastCurrentPosition = this.props.currentPosition;
                 // if has been idle for over 3.5 seconds, cancel animation
                 if (this.idleStart !== 0 && (timestamp - this.idleStart > 3500)) {
-                    TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+                    gsap.ticker.remove(this.onAnalyze);
                     return;
                 }
             }
@@ -503,9 +503,10 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     onVisibilityChange = () => {
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+        gsap.ticker.remove(this.onAnalyze);
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         if (!(document as any)[visibilityChangeApi.hidden]) {
-            TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
+            gsap.ticker.add(this.onAnalyze);
         }
     }
 
@@ -518,14 +519,14 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
         document.removeEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange);
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+        gsap.ticker.remove(this.onAnalyze);
     }
 
     // dunno why it doens't work without this. onResize should be called anyways
     componentDidUpdate(prevProps: AudioVisualizerProps) {
         this.idleStart = performance.now();
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
-        TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
+        gsap.ticker.remove(this.onAnalyze);
+        gsap.ticker.add(this.onAnalyze);
         if (prevProps.isMobile !== this.props.isMobile) {
             this.onResize();
         }

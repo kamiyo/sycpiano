@@ -14,6 +14,4 @@ export interface FetchItemsError {
     readonly type: typeof STORE_ACTIONS.FETCH_ITEMS_ERROR;
 }
 
-type ActionTypes = FetchItemsRequest | FetchItemsSuccess | FetchItemsError;
-
-export default ActionTypes;
+export type ActionTypes = FetchItemsRequest | FetchItemsSuccess | FetchItemsError;

@@ -123,7 +123,7 @@ export const createSearchEventsAction = (name: EventListName, args: SearchEvents
         }
         dispatch(fetchEventsRequest(name));
 
-        const { data }: { data: CachedEvent[]; } = await axios.get('/api/calendar/search', { params });
+        const { data }: { data: CachedEvent[] } = await axios.get('/api/calendar/search', { params });
         const { events: listItems, monthsSeen } = transformCachedEventsToListItems(data, new Set<string>());
 
         dispatch(fetchEventsSuccess(name, listItems, undefined, false, monthsSeen, args.q));

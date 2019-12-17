@@ -6,7 +6,7 @@ import { Transition, TransitionGroup } from 'react-transition-group';
 
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import AsyncComponent from 'src/components/AsyncComponent';
 import module from 'src/module';
@@ -51,7 +51,7 @@ const FadingContainer = styled.div`
     position: absolute;
 `;
 
-type AboutProps = { isMobile: boolean; } & RouteComponentProps<{ about: string; }>;
+type AboutProps = { isMobile: boolean } & RouteComponentProps<{ about: string }>;
 
 const About = ({ isMobile, match, location }: AboutProps) => (
     <>
@@ -102,6 +102,6 @@ const About = ({ isMobile, match, location }: AboutProps) => (
     </>
 );
 
-export type MediaType = React.FunctionComponent<AboutProps>;
+export type AboutType = typeof About;
 export type RequiredProps = AboutProps;
 export default About;

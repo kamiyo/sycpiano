@@ -51,12 +51,12 @@ export interface Reducers {
     readonly [key: string]: AnyReducerType;
 }
 
-export type AnyComponent = (new (props: any) => React.Component<any>) | React.FunctionComponent<any>;
+export type AnyComponent<P> = React.ComponentClass<P> | React.FunctionComponent<P>;
 
 export type AsyncStore = Store<GlobalStateShape | {}> & { async?: Reducers };
 
-export interface AsyncModule {
-    Component: AnyComponent;
+export interface AsyncModule<P> {
+    Component: AnyComponent<P>;
     reducers?: {
         [key: string]: AnyReducerType;
     };

@@ -31,7 +31,7 @@ export const selectPhoto = (item: PhotoItem): PhotoActions.SelectPhoto => ({
     item,
 });
 
-export const createFetchPhotosAction = (): ThunkAction<Promise<void>, GlobalStateShape, void, PhotoActions.default> =>
+export const createFetchPhotosAction = (): ThunkAction<Promise<void>, GlobalStateShape, void, PhotoActions.PhotoActions> =>
     async (dispatch, getState) => {
         if (shouldFetchPhotos(getState().photo_list)) {
             try {

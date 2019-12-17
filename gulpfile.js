@@ -4,8 +4,7 @@ const gulp = require('gulp');
 const fancyLog = require('fancy-log');
 const PluginError = require('plugin-error');
 const ts = require('gulp-typescript');
-const tslint = require('gulp-tslint');
-const linter = require('tslint');
+const eslint = require('gulp-eslint');
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
@@ -61,15 +60,11 @@ const cleanServer = async (done) => {
 };
 
 const lintServer = () => {
-    const program = linter.Linter.createProgram("server/tsconfig.json");
     return gulp.src('server/src/**/*.ts')
-        .pipe(tslint({
-            formatter: 'stylish',
-            program,
+        .pipe(eslint({
+            configFile: 'server/.eslintrc.js'
         }))
-        .pipe(tslint.report({
-            emitError: false,
-        }));
+        .pipe(eslint.formatEach());
 };
 
 const compileServer = () => (

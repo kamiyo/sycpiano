@@ -6,7 +6,7 @@ import { Transition } from 'react-transition-group';
 
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import { LoadingInstance } from 'src/components/LoadingSVG';
 import PreviewOverlay from 'src/components/Media/Videos/PreviewOverlay';
@@ -38,7 +38,7 @@ interface VideosOwnProps {
     readonly isMobile: boolean;
 }
 
-type VideosProps = VideosStateToProps & VideosDispatchToProps & VideosOwnProps & RouteComponentProps<{ videoId?: string; }>;
+type VideosProps = VideosStateToProps & VideosDispatchToProps & VideosOwnProps & RouteComponentProps<{ videoId?: string }>;
 
 const StyledVideos = styled.div`
     ${pushed}

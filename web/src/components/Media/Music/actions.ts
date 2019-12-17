@@ -40,7 +40,7 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
     try {
         dispatch(fetchPlaylistRequest());
         const { data: response }: { data: MusicResponse } = await axios.get('/api/music');
-        const flatItems: MusicFileItem[] = new Array();
+        const flatItems: MusicFileItem[] = [];
         Object.keys(response).forEach((currKey: MusicCategories) => {
             response[currKey].forEach((_, idx) => {
                 response[currKey][idx].musicFiles.forEach((__, idy) => {
@@ -73,7 +73,7 @@ const fetchPlaylist = (): ThunkAction<Promise<MusicListItem[]>, GlobalStateShape
     }
 };
 
-export const fetchPlaylistAction = (composer: string, piece: string, movement: string = ''): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void, FetchPlaylistActions> =>
+export const fetchPlaylistAction = (composer: string, piece: string, movement = ''): ThunkAction<Promise<MusicFileItem>, GlobalStateShape, void, FetchPlaylistActions> =>
     async (dispatch, getState) => {
         let items: MusicListItem[];
         if (shouldFetchPlaylist(getState())) {

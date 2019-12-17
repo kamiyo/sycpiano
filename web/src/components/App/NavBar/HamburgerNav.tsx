@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Transition } from 'react-transition-group';
@@ -21,12 +21,13 @@ interface HamburgerNavDispatchToProps {
 
 const MenuContainer = styled.div` margin: auto 0; `;
 
-const HamburgerNav = React.memo(({
+const HamburgerNav = React.memo(function HamburgerNav({
     isExpanded,
     toggleExpanded: toggleExpand,
     currentBasePath,
     isMobile,
-}: NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps) => (
+}: NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps) {
+    return (
         <MenuContainer>
             <HamburgerMenu
                 isExpanded={isExpanded}
@@ -47,7 +48,8 @@ const HamburgerNav = React.memo(({
                 />
             </Transition>
         </MenuContainer>
-    ));
+    );
+});
 
 const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
     isExpanded: navbar.isExpanded,

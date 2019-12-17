@@ -20,7 +20,7 @@ export const DateIconInstance: React.FC<DateIconProps> = ({ date, ...props }) =>
     const startOfMonth = moment(date).startOf('month');
     const startDay = startOfMonth.isoWeekday() % 7;
     const firstDayOfCalendar = moment(startOfMonth).subtract({ days: startDay });
-    const calendarArray: any[] = new Array(42);
+    const calendarArray: Moment[] = new Array(42);
     for (let i = 0; i < 42; i++) {
         calendarArray[i] = moment(firstDayOfCalendar).add({ days: i });
     }

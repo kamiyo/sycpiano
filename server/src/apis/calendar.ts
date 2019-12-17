@@ -138,8 +138,8 @@ calendarRouter.get('/search', async (req, res) => {
     const date = req.query.date ? moment(req.query.date) : undefined;
 
     let where: {
-        id?: string[],
-        dateTime?: any,
+        id?: string[];
+        dateTime?: any;
     } = (str) ? {
         id: idArray,
     } : {};

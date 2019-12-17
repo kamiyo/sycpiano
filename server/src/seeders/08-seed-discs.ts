@@ -10,7 +10,7 @@ export const up = async (models: ModelMap) => {
             console.log(err);
         }
         const json: Array<{
-            [key: string]: any,
+            [key: string]: any;
         }> = JSON.parse(content);
 
         json.forEach(async (item) => {

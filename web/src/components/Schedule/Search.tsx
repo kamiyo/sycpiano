@@ -83,7 +83,7 @@ const ResetButton = styled.div<{ focused: boolean }>`
     }
 `;
 
-class Search extends React.Component<SearchProps, { focused: boolean; }> {
+class Search extends React.Component<SearchProps, { focused: boolean }> {
     constructor(props: SearchProps) {
         super(props);
         this.state = {

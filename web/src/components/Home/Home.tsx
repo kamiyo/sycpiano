@@ -253,6 +253,6 @@ class Home extends React.Component<HomeProps, {}> {
     }
 }
 
-export type HomeType = React.Component<HomeProps>;
+export type HomeType = typeof Home;
 export type RequiredProps = HomeProps;
 export default Home;

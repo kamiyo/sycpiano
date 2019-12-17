@@ -16,7 +16,7 @@ export const polarToCartesian: PolarToCartesianShape = (radius, angle, offset = 
 type CartesianToPolarShape = (
     x: number,
     y: number,
-) => { radius: number, angle: number };
+) => { radius: number; angle: number };
 
 export const cartesianToPolar: CartesianToPolarShape = (x, y) => (
     {
@@ -36,10 +36,16 @@ export const formatTime = (current: number) => {
     return `${minutesDisplay}:${secondsDisplay}`;
 };
 
-const AudioContextFill = (window as any).AudioContext || (window as any).webkitAudioContext;
+declare global {
+    interface Window {
+        webkitAudioContext?: typeof AudioContext;
+    }
+}
+
+const AudioContextFill = window.AudioContext || window.webkitAudioContext;
 const acx: AudioContext = new AudioContextFill();
 
-export const getAudioContext: any = () => {
+export const getAudioContext = (): AudioContext => {
     if (acx.state === 'suspended') {
         const resume = async () => {
             await acx.resume();
@@ -53,17 +59,24 @@ export const getAudioContext: any = () => {
     return acx;
 };
 
+declare global {
+    interface Document {
+        webkitHidden?: boolean;
+        msHidden?: boolean;
+    }
+}
+
 export const visibilityChangeApi = (typeof document.hidden !== 'undefined') ?
     {
         hidden: 'hidden',
         visibilityChange: 'visibilitychange',
     }
-    : (typeof (document as any).webkitHidden !== 'undefined') ?
+    : (typeof document.webkitHidden !== 'undefined') ?
         {
             hidden: 'webkitHidden',
             visibilityChange: 'webkitvisibilitychange',
         }
-        : (typeof (document as any).msHidden !== 'undefined') ?
+        : (typeof document.msHidden !== 'undefined') ?
             {
                 hidden: 'msHidden',
                 visibilityChange: 'msvisibilitychange',
@@ -75,7 +88,7 @@ export const getLastName = (name: string) => {
 };
 
 export const normalizeString = (str: string) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f":()',\.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
+    return str.normalize('NFD').replace(/[\u0300-\u036f":()',.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
 };
 
 export const getPermaLink = (base: string, composer: string, piece: string, movement?: string) => {

@@ -1,3 +1,4 @@
+/* global IMAGES_PATH */
 type imageFormat = 'jpg' | 'webp';
 
 // Functions to return the correct image url, depending on jpg or webp.

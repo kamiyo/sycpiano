@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 
-/* tslint:disable-next-line */
+/* eslint-disable-next-line @typescript-eslint/no-var-requires */
 const mkdirp = require('mkdirp');
 import * as Sharp from 'sharp';
 

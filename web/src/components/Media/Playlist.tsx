@@ -3,7 +3,7 @@ import { Transition } from 'react-transition-group';
 
 import { css } from '@emotion/core';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import PlaylistToggler from 'src/components/Media/PlaylistToggler';
 import { PlaylistProps } from 'src/components/Media/types';

@@ -12,7 +12,7 @@ import { Blurb } from 'src/components/About/Bio/types';
 import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 
 import { easeQuadOut } from 'd3-ease';
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import PortfolioButton from 'src/components/About/Bio/PortfolioButton';
 import { LazyImage } from 'src/components/LazyImage';

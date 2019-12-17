@@ -40,7 +40,7 @@ const StyledCollectionItem = styled.li(baseItemStyle, css`
     border: none;
 `);
 
-interface HighlightProps { active: boolean; }
+interface HighlightProps { active: boolean }
 
 const Highlight = styled.div<HighlightProps>(({active}) => css`
     padding: 10px 10px 10px 15px;

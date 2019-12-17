@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import * as dotenv from 'dotenv';
 import { startCase } from 'lodash';
 import * as moment from 'moment-timezone';
-import * as pathToRegexp from 'path-to-regexp';
+import * as regexp from 'path-to-regexp';
 
 import { Op } from 'sequelize';
 import db from './models';
@@ -17,7 +17,7 @@ const models = db.models;
 
 const { gte, lt } = Op;
 
-const regex = pathToRegexp('/:first/:second?/(.*)?');
+const regex = regexp.pathToRegexp('/:first/:second?/(.*)?');
 const baseString = 'Sean Chen: Pianist, Composer, Arranger | ';
 const age = moment().diff('1988-08-27', 'year');
 const descriptions: {
@@ -34,7 +34,8 @@ const descriptions: {
     press: string;
     store: string;
     getMusic: (piece: string, contributors?: string) => string;
-    [index: string]: any;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    [key: string]: any;
 } = {
         home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
         biography: `Hailed as a charismatic rising star with “an exceptional ability to connect with an audience combined with an easy virtuosity” (Huffington Post), ${age.toString()}-year-old American pianist Sean Chen, third prize winner at the 2013 Van Cliburn International Piano Competition and recipient of the DeHaan Classical Fellowship as the winner of the 2013 American Pianists Awards, has continued to earn accolades for “alluring, colorfully shaded renditions” (New York Times) and “genuinely sensitive” (LA Times) playing.`,

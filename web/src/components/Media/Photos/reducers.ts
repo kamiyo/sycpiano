@@ -1,5 +1,5 @@
 import PHOTO_ACTIONS from 'src/components/Media/Photos/actionTypeKeys';
-import PhotoActions from 'src/components/Media/Photos/actionTypes';
+import { PhotoActions } from 'src/components/Media/Photos/actionTypes';
 import { PhotoListReducerShape, PhotoViewerReducerShape } from 'src/components/Media/Photos/types';
 
 export const photoListReducer = (state: PhotoListReducerShape = {

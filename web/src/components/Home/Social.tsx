@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
 
-import { Elastic } from 'gsap/EasePack';
-import TweenLite from 'gsap/TweenLite';
+import { Elastic, TweenLite } from 'gsap';
 
 import { lato2i } from 'src/styles/fonts';
 import { staticImage } from 'src/styles/imageUrls';
@@ -48,7 +47,7 @@ const SocialContainer = styled('div')`
     }
 `;
 
-const SocialLink = styled.a<{ show: boolean; canHover: boolean; }>`
+const SocialLink = styled.a<{ show: boolean; canHover: boolean }>`
     padding: 1.5rem 0;
     width: calc(100vw / ${Object.keys(socials).length});
     max-width: 120px;
@@ -94,7 +93,7 @@ const SocialMediaLink: React.FC<SocialMediaLinkProps> = (props) => (
 
 interface SocialState {
     show: boolean;
-    canHover: { [key: string]: boolean; };
+    canHover: { [key: string]: boolean };
 }
 
 class Social extends React.PureComponent<{}, SocialState> {

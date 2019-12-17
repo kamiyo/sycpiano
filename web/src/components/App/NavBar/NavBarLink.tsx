@@ -8,7 +8,7 @@ import mix from 'polished/lib/color/mix';
 import { Link, LinkProps } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 
-import TweenLite from 'gsap/TweenLite';
+import { gsap } from 'gsap';
 
 import { toggleExpanded, toggleSubNav } from 'src/components/App/NavBar/actions';
 import SubNav from 'src/components/App/NavBar/SubNav/SubNav';
@@ -130,18 +130,18 @@ const enterAnimation = (el: HTMLElement, isAppearing: boolean, isMobile: boolean
         if (isAppearing) {
             el.style.height = 'auto';
         } else {
-            TweenLite.set(el, { height: 'auto' });
-            TweenLite.from(el, 0.25, { height: 0 });
+            gsap.set(el, { height: 'auto' });
+            gsap.from(el, 0.25, { height: 0 });
         }
     } else {
-        TweenLite.to(el, 0.25, { autoAlpha: 1 });
+        gsap.to(el, 0.25, { autoAlpha: 1 });
     }
 };
 
 const exitAnimation = (el: HTMLElement, isMobile: boolean) => {
     isMobile ?
-        TweenLite.to(el, 0.25, { height: 0 })
-        : TweenLite.to(el, 0.25, { autoAlpha: 0 });
+        gsap.to(el, 0.25, { height: 0 })
+        : gsap.to(el, 0.25, { autoAlpha: 0 });
 };
 
 const StyledLi = styled.li`

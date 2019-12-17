@@ -11,6 +11,25 @@ import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 import { lato1, lato2 } from 'src/styles/fonts';
 
+// Helper functions
+
+function videoDurationToDisplay(durationString: string) {
+    const duration = moment.duration(durationString);
+    const s = duration.seconds();
+    const m = duration.minutes();
+    const h = duration.hours();
+
+    const sString = `${s < 10 ? '0' : ''}${s}`;
+    const mString = `${m < 10 ? '0' : ''}${m}`;
+    const hString = h > 0 ? `${h}:` : '';
+
+    return `${hString}${mString}:${sString}`;
+}
+
+function publishedDateToDisplay(publishedAt: string) {
+    return moment(publishedAt).format('MMM D, YYYY');
+}
+
 type VideoPlaylistItemProps = RouteComponentProps<{}> & {
     readonly item: VideoItemShape;
     readonly currentItemId: number | string;
@@ -39,7 +58,7 @@ const ImageContainer = styled.div`
     }
 `;
 
-const StyledVideoItem = styled.li<{ active: boolean; }>(
+const StyledVideoItem = styled.li<{ active: boolean }>(
     props => props.active && css`
         ${`${ImageContainer} img`} {
             filter: brightness(60%);
@@ -71,7 +90,7 @@ const StyledVideoItem = styled.li<{ active: boolean; }>(
     `,
 );
 
-const Duration = styled.span<{ active: boolean; children: string; }>(props => css`
+const Duration = styled.span<{ active: boolean; children: string }>(props => css`
     position: absolute;
     right: 0;
     bottom: 0;
@@ -139,22 +158,3 @@ const VideoPlaylistItem: React.FC<VideoPlaylistItemProps> = ({ item, currentItem
 );
 
 export default withRouter(VideoPlaylistItem);
-
-// Helper functions
-
-function videoDurationToDisplay(durationString: string) {
-    const duration = moment.duration(durationString);
-    const s = duration.seconds();
-    const m = duration.minutes();
-    const h = duration.hours();
-
-    const sString = `${s < 10 ? '0' : ''}${s}`;
-    const mString = `${m < 10 ? '0' : ''}${m}`;
-    const hString = h > 0 ? `${h}:` : '';
-
-    return `${hString}${mString}:${sString}`;
-}
-
-function publishedDateToDisplay(publishedAt: string) {
-    return moment(publishedAt).format('MMM D, YYYY');
-}

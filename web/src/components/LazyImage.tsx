@@ -5,7 +5,7 @@ import { Transition } from 'react-transition-group';
 import { SerializedStyles } from '@emotion/core';
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import { LoadingInstance } from 'src/components/LoadingSVG';
 import { lightBlue } from 'src/styles/colors';

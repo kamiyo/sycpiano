@@ -3,7 +3,7 @@ import * as React from 'react';
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 import { LoadingInstance } from 'src/components/LoadingSVG';
 import { PauseButton, PauseIcon, PlayButton, PlayIcon, SkipButton } from 'src/components/Media/Music/Buttons';
 import { cartesianToPolar } from 'src/components/Media/Music/utils';

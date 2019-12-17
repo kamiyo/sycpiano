@@ -32,10 +32,12 @@ const config = () => {
         plugins: [
             new ForkTsCheckerWebpackPlugin({
                 checkSyntacticErrors: true,
-                tslint: path.resolve(__dirname, 'tslint.json'),
-                watch: [
-                    path.resolve(__dirname, 'web/src'),
-                ],
+                eslint: true,
+                eslintOptions: {
+                    configFile: './forker.eslintrc.js',
+                    ignorePattern: ['**/node_modules/**/*']
+                },
+                useTypescriptIncrementalApi: true,
             }),
             new webpack.DefinePlugin({
                 MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music_dev'),

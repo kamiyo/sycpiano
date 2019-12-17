@@ -3,7 +3,7 @@ import * as React from 'react';
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import { LazyImage } from 'src/components/LazyImage';
 import { PhotoItem } from 'src/components/Media/Photos/types';
@@ -50,7 +50,7 @@ const PhotoRow = styled.div<{ isMobile: boolean; isLoaded: boolean }>`
     }
 `;
 
-const Highlight = styled.div<{ active: boolean; }>`
+const Highlight = styled.div<{ active: boolean }>`
     padding-left: 15px;
     transition: border 0.15s;
     border-left: 7px solid ${props => props.active ? lightBlue : 'transparent'};
@@ -64,7 +64,7 @@ const loadingStyle = css`
     position: absolute;
 `;
 
-class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, { isLoaded: boolean; }> {
+class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, { isLoaded: boolean }> {
     state = { isLoaded: false };
 
     successCb = (el: HTMLImageElement) => {

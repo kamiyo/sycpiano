@@ -1,4 +1,4 @@
-import { RequestHandler } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import Sequelize from 'sequelize';
 
 import db from '../models';
@@ -32,7 +32,7 @@ const getMusicInstancesOfType = (type: string) => {
     });
 };
 
-const musicHandler: RequestHandler = async (_, res) => {
+const musicHandler = async (_: Request, res: Response, __: NextFunction) => {
     const [solo, concerto, chamber, composition, videogame] = await Promise.all([
         getMusicInstancesOfType('solo'),
         getMusicInstancesOfType('concerto'),

@@ -1,5 +1,5 @@
 import * as Promise from 'bluebird';
-import * as child_process from 'child_process';
+import * as childProcess from 'child_process';
 import * as path from 'path';
 import * as Umzug from 'umzug';
 
@@ -113,9 +113,9 @@ const cmdHardReset = () => (
                 const dbName = options.database;
                 const dbUser = options.username;
                 console.log(`dropdb ${dbName}`);
-                child_process.spawnSync(`dropdb ${dbName}`);
+                childProcess.spawnSync(`dropdb ${dbName}`);
                 console.log(`createdb ${dbName} --username ${dbUser}`);
-                child_process.spawnSync(`createdb ${dbName} --username ${dbUser}`);
+                childProcess.spawnSync(`createdb ${dbName} --username ${dbUser}`);
                 resolve();
             } catch (e) {
                 console.log(e);

@@ -29,9 +29,9 @@ const scheduleStyles = css`
     }
 `;
 
-type ScheduleProps = { isMobile: boolean; } & RouteComponentProps<{ type: string; }>;
+type ScheduleProps = { isMobile: boolean } & RouteComponentProps<{ type: string }>;
 
-class Schedule extends React.Component<ScheduleProps, { search: string; }> {
+class Schedule extends React.Component<ScheduleProps, { search: string }> {
     constructor(props: ScheduleProps) {
         super(props);
         const q = parse(props.location.search, { ignoreQueryPrefix: true }).q;
@@ -57,7 +57,7 @@ class Schedule extends React.Component<ScheduleProps, { search: string; }> {
                         <Route
                             path="/schedule/upcoming/:date?"
                             exact={true}
-                            render={(routeProps: RouteComponentProps<{ date: string; }>) => (
+                            render={(routeProps: RouteComponentProps<{ date: string }>) => (
                                 <EventList
                                     {...routeProps}
                                     date={routeProps.match.params.date}
@@ -69,7 +69,7 @@ class Schedule extends React.Component<ScheduleProps, { search: string; }> {
                         <Route
                             path="/schedule/archive/:date?"
                             exact={true}
-                            render={(routeProps: RouteComponentProps<{ date: string; }>) => (
+                            render={(routeProps: RouteComponentProps<{ date: string }>) => (
                                 <EventList
                                     {...routeProps}
                                     date={routeProps.match.params.date}
@@ -93,7 +93,7 @@ class Schedule extends React.Component<ScheduleProps, { search: string; }> {
                         <Route
                             path="/schedule/:date"
                             exact={true}
-                            render={(routeProps: RouteComponentProps<{ date: string; }>) => {
+                            render={(routeProps: RouteComponentProps<{ date: string }>) => {
                                 const now = moment().startOf('day');
                                 const momentDate = moment(routeProps.match.params.date, 'YYYY-MM-DD');
                                 const type: EventListName = (momentDate.isBefore(now)) ? 'archive' : 'upcoming';

@@ -1,5 +1,5 @@
 import STORE_ACTIONS from 'src/components/SycStore/actionTypeKeys';
-import ActionTypes from 'src/components/SycStore/actionTypes';
+import { ActionTypes } from 'src/components/SycStore/actionTypes';
 import { SycStoreStateShape } from 'src/components/SycStore/types';
 
 export const sycStoreReducer = (state: SycStoreStateShape = {

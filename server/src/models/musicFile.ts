@@ -19,12 +19,13 @@ export class musicFile extends Model {
     readonly music: music;
 }
 
-const hookFn = async (mFile: musicFile, _: any) => {
+const hookFn = async (mFile: musicFile, _: {}) => {
     console.log(`[musicFile Hook beforeCreate/Update]`);
     try {
         if (mFile.musicId) {
             const m: music = await mFile.getMusic();
             console.log(`Updating hash for ${mFile.id}.`);
+            /* eslint-disable-next-line require-atomic-updates */
             mFile.hash = getHash(m.composer, m.piece, mFile.name);
         }
     } catch (error) {

@@ -42,7 +42,17 @@ const respondWithError = (error: any, res: express.Response) => {
     }
 };
 
-adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors(corsOptions), async (req, res) => {
+interface RequestWithBody extends express.Request {
+    body: {
+        data: {
+            attributes: {
+                ids: string[];
+            };
+        };
+    };
+}
+
+adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors(corsOptions), async (req: RequestWithBody, res: express.Response) => {
     let updated = 0;
     let created = 0;
     let errored = 0;
@@ -166,7 +176,7 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors
     }
 });
 
-adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOptions), async (_, res) => {
+adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOptions), async (_: express.Request, res: express.Response) => {
     let events: calendar[];
     const limit = 10;
     let offset = 0;

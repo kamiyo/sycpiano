@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { gsap } from 'gsap';
 
 import { MusicFileItem } from 'src/components/Media/Music/types';
 import { formatTime } from 'src/components/Media/Music/utils';
@@ -20,7 +20,6 @@ interface AudioInfoProps {
     duration: number;
     currentPosition: number;
     isMobile: boolean;
-    dispatch: any;
     matchParams: boolean;
 }
 
@@ -100,7 +99,7 @@ const ContributingOrDuration = styled.div`
 `;
 
 class AudioInfo extends React.PureComponent<AudioInfoProps> {
-    private tween: any;
+    private tween: gsap.core.Tween;
     private titleDiv: React.RefObject<HTMLDivElement> = React.createRef();
     private marquee: React.RefObject<HTMLDivElement> = React.createRef();
     private secondSpan: React.RefObject<HTMLSpanElement> = React.createRef();
@@ -117,7 +116,7 @@ class AudioInfo extends React.PureComponent<AudioInfoProps> {
             this.secondSpan.current.style.visibility = 'hidden';
         } else {
             const dur = this.marquee.current.offsetWidth / 100;
-            this.tween = TweenLite.fromTo(this.marquee.current, dur,
+            this.tween = gsap.fromTo(this.marquee.current, dur,
                 { x: '0%' },
                 {
                     x: '-50%',

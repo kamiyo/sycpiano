@@ -49,4 +49,4 @@ export const VisualizerCanvas = styled.canvas`
     height: 100%;
 `;
 
-export type AudioVisualizerType = new (props: any) => React.Component<AudioVisualizerProps>;
+export type AudioVisualizerType = new (props: AudioVisualizerProps) => React.Component<AudioVisualizerProps>;

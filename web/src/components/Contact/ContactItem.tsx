@@ -3,7 +3,7 @@ import * as React from 'react';
 import { css, SerializedStyles } from '@emotion/core';
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import { ContactInfo } from 'src/components/Contact/ContactInfo';
 import { ContactSocialMedia } from 'src/components/Contact/ContactSocialMedia';
@@ -57,7 +57,7 @@ const photosAttributesMap = new Map<string, PhotoAttributes>([
     }],
 ]);
 
-interface ImageContainerProps { bgImage?: string; contact: string; }
+interface ImageContainerProps { bgImage?: string; contact: string }
 
 const ImageContainer = styled.div<ImageContainerProps>`
     background-image: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
