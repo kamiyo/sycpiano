@@ -93,7 +93,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
 }
 
 const mapStateToProps = (state: GlobalStateShape): AcclaimsListStateToProps => ({
-    acclaims: state.press_acclaimsList.items,
+    acclaims: state.pressAcclaimsList.items,
 });
 
 const mapDispatchToProps: AcclaimsListDispatchToProps = {

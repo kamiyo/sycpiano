@@ -24,7 +24,7 @@ const fetchPlaylistError = (): ActionTypes.FetchPlaylistError => ({
 });
 
 const shouldFetchPlaylist = (state: GlobalStateShape) => {
-    return !state.audio_playlist.isFetching && state.audio_playlist.items.length === 0;
+    return !state.audioPlaylist.isFetching && state.audioPlaylist.items.length === 0;
 };
 
 const musicListIfExists = (response: MusicResponse, category: MusicCategories) => (
@@ -79,7 +79,7 @@ export const fetchPlaylistAction = (composer: string, piece: string, movement = 
         if (shouldFetchPlaylist(getState())) {
             items = await dispatch(fetchPlaylist());
         } else {
-            items = getState().audio_playlist.items;
+            items = getState().audioPlaylist.items;
         }
         let firstTrack = (items.find((item) => isMusicItem(item)) as MusicItem).musicFiles[0];
 

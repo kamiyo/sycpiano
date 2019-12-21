@@ -379,7 +379,7 @@ class EventList extends React.Component<EventListProps> {
 }
 
 const mapStateToProps = (state: GlobalStateShape, ownProps: EventListOwnProps): EventListStateToProps => {
-    const reducer = state.schedule_eventItems[ownProps.type];
+    const reducer = state.scheduleEventItems[ownProps.type];
     return {
         eventItems: reducer.itemArray,
         hasEventBeenSelected: reducer.hasEventBeenSelected,

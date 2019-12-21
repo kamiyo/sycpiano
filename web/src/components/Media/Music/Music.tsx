@@ -461,9 +461,9 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 }
 
-const mapStateToProps = ({ audio_playlist }: GlobalStateShape): MusicStateToProps => ({
-    items: audio_playlist.items,
-    flatItems: audio_playlist.flatItems,
+const mapStateToProps = ({ audioPlaylist }: GlobalStateShape): MusicStateToProps => ({
+    items: audioPlaylist.items,
+    flatItems: audioPlaylist.flatItems,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>) => ({

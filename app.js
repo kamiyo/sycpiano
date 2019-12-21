@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const path = require('path');
 const mustacheExpress = require('mustache-express');
@@ -31,6 +32,8 @@ const logger = () => {
 // helmet will add HSTS to force HTTPS connections, remove x-powered-by non-standard header,
 // sets x-frame-options header to disallow our content to be rendered in iframes.
 app.use(helmet());
+
+app.use(bodyParser.json())
 
 // only for dev
 // prod uses nginx to serve static files

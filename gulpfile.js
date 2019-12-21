@@ -62,14 +62,16 @@ const cleanServer = async (done) => {
 const lintServer = () => {
     return gulp.src('server/src/**/*.ts')
         .pipe(eslint({
-            configFile: 'server/.eslintrc.js'
+            configFile: 'server/.eslintrc.js',
+            cache: true,
         }))
         .pipe(eslint.formatEach());
 };
 
 const compileServer = () => (
     tsProject.src()
-        .pipe(tsProject())
+        .pipe(tsProject(ts.reporter.defaultReporter()))
+        .on('error', () => {})
         .js
         .pipe(gulp.dest('./server/build'))
 );
@@ -106,7 +108,9 @@ const checkAndMakeBuildDir = (done) => {
 }
 
 const webpackWatch = (done) => {
-    webpack(webpackConfig).watch({}, (err, stats) => {
+    webpack(webpackConfig).watch({
+        ignored: /node_modules/,
+    }, (err, stats) => {
         if (err)
             throw new PluginError('webpack', err);
 

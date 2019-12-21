@@ -6,7 +6,7 @@ import calendarRouter from './apis/calendar';
 import discHandler from './apis/disc';
 import musicHandler from './apis/music';
 import photosHandler from './apis/photos';
-import { stripeClient } from './stripe';
+import shopHandler from './apis/shop';
 
 const apiRouter = Router();
 
@@ -16,10 +16,6 @@ apiRouter.use(/\/calendar/, calendarRouter);
 apiRouter.get('/music', musicHandler);
 apiRouter.get('/photos', photosHandler);
 apiRouter.get('/discs', discHandler);
-
-apiRouter.get('/storeItems', async (_, res) => {
-    const storeItems = await stripeClient.fetchStoreItems();
-    res.json(storeItems);
-});
+apiRouter.use('/shop', shopHandler);
 
 export const ApiRouter = apiRouter;

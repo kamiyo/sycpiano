@@ -25,7 +25,7 @@ const fetchPlaylistError = (): ActionTypes.FetchPlaylistError => ({
 type FetchPlaylistActions = ActionTypes.FetchPlaylistError | ActionTypes.FetchPlaylistRequest | ActionTypes.FetchPlaylistSuccess;
 
 const togglePlaylist = (show: boolean, state: GlobalStateShape): ActionTypes.TogglePlaylist => {
-    const isShow = (show === null) ? !state.video_playlist.isShow : show;
+    const isShow = (show === null) ? !state.videoPlaylist.isShow : show;
     return {
         type: VIDEO_ACTIONS.TOGGLE_PLAYLIST,
         isShow,
@@ -38,8 +38,8 @@ const playItem = (videoId: string = null): ActionTypes.PlayItem => ({
 });
 
 export const playVideo = (isMobile = false, videoId?: string): ThunkAction<void, GlobalStateShape, void, ActionTypes.TogglePlaylist | ActionTypes.PlayItem> => (dispatch, getState) => {
-    const videoPlayerReducer = getState().video_player;
-    if (!getState().video_playlist.items.find((item) => item.id === videoId)) {
+    const videoPlayerReducer = getState().videoPlayer;
+    if (!getState().videoPlaylist.items.find((item) => item.id === videoId)) {
         return;
     }
     if (!isMobile) {
@@ -54,7 +54,7 @@ export const playVideo = (isMobile = false, videoId?: string): ThunkAction<void,
 };
 
 const shouldFetchPlaylist = (state: GlobalStateShape) => {
-    const playlistReducer = state.video_playlist;
+    const playlistReducer = state.videoPlaylist;
     return (playlistReducer.items.length === 0 && !playlistReducer.isFetching);
 };
 // need two separate api requests, because statistics is only available when fetching videos
@@ -72,7 +72,7 @@ const fetchPlaylist = (isMobile: boolean, videoId?: string): ThunkAction<Promise
         });
         const id = videoId || videoItems[0].id;
         dispatch(fetchPlaylistSuccess(videoItems, id));
-        getState().video_player.isPlayerReady && videoId && dispatch(playVideo(isMobile, videoId));
+        getState().videoPlayer.isPlayerReady && videoId && dispatch(playVideo(isMobile, videoId));
     } catch (err) {
         dispatch(fetchPlaylistError());
         console.log('fetch videos error', err);
@@ -104,6 +104,6 @@ export const initializeYoutubeElement = (el: HTMLElement, videoId?: string, isMo
         dispatch({
             type: VIDEO_ACTIONS.PLAYER_IS_READY,
         });
-        getState().video_playlist.items.length && videoId && dispatch(playVideo(isMobile, videoId));
+        getState().videoPlaylist.items.length && videoId && dispatch(playVideo(isMobile, videoId));
     });
 };

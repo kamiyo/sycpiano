@@ -143,7 +143,7 @@ class PreviewOverlay extends React.Component<PreviewOverlayProps, { bgImage: str
 }
 
 const mapStateToProps = (state: GlobalStateShape): PreviewOverlayStateToProps => ({
-    isPreviewOverlay: state.video_player.isPreviewOverlay,
+    isPreviewOverlay: state.videoPlayer.isPreviewOverlay,
 });
 
 const mapDispatchToProps: PreviewOverlayDispatchToProps = {

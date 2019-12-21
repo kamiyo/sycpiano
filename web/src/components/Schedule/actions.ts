@@ -50,7 +50,7 @@ const fetchEventsSuccess: FetchEventsSuccess = (name, listItems, currentItem, ha
 });
 
 const shouldFetchEvents = (name: EventListName, state: GlobalStateShape) => {
-    const eventItemsReducer = state.schedule_eventItems[name];
+    const eventItemsReducer = state.scheduleEventItems[name];
     // should not call, api is fetching, or the last fetch was empty
     return !eventItemsReducer.isFetchingList && eventItemsReducer.hasMore;
 };
@@ -74,7 +74,7 @@ const fetchEvents = (name: EventListName, { after, before, date, scrollTo }: Fet
 
         const calendarResponse = await axios.get('/api/calendar', { params });
         const data: CachedEvent[] = calendarResponse.data;
-        const state = getState().schedule_eventItems;
+        const state = getState().scheduleEventItems;
         const { events: listItems, monthsSeen } = transformCachedEventsToListItems(data, state[name].setOfMonths);
         let currentItem: DayItem;
         const desiredDate = date || after || before;
@@ -112,7 +112,7 @@ export const createSearchEventsAction = (name: EventListName, args: SearchEvents
         const params = {
             q: args.q,
         };
-        const state = getState().schedule_eventItems.search;
+        const state = getState().scheduleEventItems.search;
         if (state.isFetchingList || !state.hasMore && state.lastQuery === args.q) {
             return;
         }

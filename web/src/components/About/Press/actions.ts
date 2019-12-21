@@ -17,7 +17,7 @@ const fetchAcclaimsError = (): ActionTypes.FetchAcclaimsError => ({
 });
 
 const shouldFetchAcclaims = (state: GlobalStateShape) => {
-    const acclaimsReducer = state.press_acclaimsList;
+    const acclaimsReducer = state.pressAcclaimsList;
     return (acclaimsReducer.items.length === 0 && !acclaimsReducer.isFetching);
 };
 
