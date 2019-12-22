@@ -14,13 +14,14 @@ import { ConnectedCart } from 'src/components/Shop/Cart';
 
 const ShopContainer = styled.div`
     ${pushed}
-    background-color: #ebebeb;
+    // background-color: #ebebeb;
     display: flex;
 `;
 
 const StyledShopList = styled(ShopList)`
     margin: 0 auto;
     padding: 2rem;
+    z-index: 10;
 `;
 
 interface ShopStateToProps {

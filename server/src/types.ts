@@ -67,4 +67,6 @@ export interface ShopItem {
     readonly name: string;
     readonly updated: number;
     readonly price: number;
+    readonly format?: string;
+    readonly pages?: number;
 }

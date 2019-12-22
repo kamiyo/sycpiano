@@ -10,6 +10,7 @@ import { magenta } from 'src/styles/colors';
 import { mix } from 'polished';
 import { connect } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
+import toUpper from 'lodash-es/toUpper';
 
 interface ShopItemStateToProps {
     readonly cart: ShoppingCart;
@@ -28,21 +29,48 @@ interface ShopItemOwnProps {
 
 type ShopItemProps = ShopItemStateToProps & ShopItemDispatchToProps & ShopItemOwnProps;
 
-const thumbnailStyle = (imageUrl: string) => css({
-    flex: '0 0 300px',
-    height: '100%',
-    backgroundColor: 'fff',
-    backgroundImage: `url(${imageUrl})`,
-    backgroundPosition: 'center',
-    backgroundSize: 'cover',
-    maxWidth: '300px',
-});
+const Thumbnail = styled('div')<{ imageUrl: string }>(
+    {
+        flex: '0 0 200px',
+        backgroundColor: '#fff',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        position: 'relative',
+        boxShadow: '0 2px 7px -4px rgba(0,0,0,0.8)',
+        '&:before, &:after': {
+            zIndex: -1,
+            position: 'absolute',
+            content: '""',
+            bottom: '16px',
+            left: '0.35rem',
+            width: '50%',
+            top: '85%',
+            maxWidth: '48%',
+            background: 'rgba(0,0,0,0.7)',
+            boxShadow: '0 1.0rem 0.75rem -2px rgba(0, 0, 0, 0.7)',
+            transform: 'rotate(-3deg)'
+        },
+        '&:after': {
+            transform: 'rotate(3deg)',
+            right: '0.35rem',
+            left: 'unset',
+        },
+    },
+    props => ({
+        backgroundImage: `url(${props.imageUrl})`
+    }),
+);
 
 const contentContainerStyle = css({
     flex: '1 1 auto',
-    height: '100%',
-    padding: '16px',
-    backgroundColor: '#fff',
+    height: 'auto',
+    padding: '1rem 1rem 1rem 4rem',
+    backgroundColor: 'transparent',
+    letterSpacing: '0.01rem',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
 });
 
 const buttonBoxShadow = `
@@ -51,26 +79,39 @@ const buttonBoxShadow = `
     0px 3px 1px -2px rgba(0, 0, 0, 0.12)
 `;
 
-const addToCartButtonStyle = css`
-    font-size: 0.8em;
-    width: 230px;
-    padding: 10px;
-    text-align: center;
-    font-family: ${lato3};
-    border: 1px solid ${magenta};
-    border-radius: 20px;
-    color: ${magenta};
-    transition: all 0.25s;
-    box-shadow: ${buttonBoxShadow};
-    background-color: white;
-    letter-spacing: 0.1rem;
-
-    &:hover {
-        background-color: ${mix(0.75, magenta, '#FFF')};
-        color: white;
-        cursor: pointer;
-    }
-`;
+const CartButton = styled.button<{ isItemInCart: boolean }>(
+    {
+        fontSize: '0.8em',
+        width: '230px',
+        padding: '10px',
+        textAlign: 'center',
+        fontFamily: lato3,
+        borderRadius: '20px',
+        transition: 'all 0.25s',
+        boxShadow: buttonBoxShadow,
+        letterSpacing: '0.1rem',
+        '&:hover': {
+            backgroundColor: mix(0.75, magenta, '#FFF'),
+            color: 'white',
+            cursor: 'pointer',
+        },
+    },
+    props => {
+        if (props.isItemInCart) {
+            return {
+                color: 'white',
+                backgroundColor: mix(0.50, magenta, '#FFF'),
+                border: `1px solid ${mix(0.52, magenta, '#FFF')}`
+            }
+        } else {
+            return {
+                color: magenta,
+                backgroundColor: 'white',
+                border: `1px solid ${magenta}`,
+            }
+        }
+    },
+);
 
 const boxShadow = `
     0px 1px 3px 0px rgba(0, 0, 0, 0.2),
@@ -80,14 +121,48 @@ const boxShadow = `
 
 const ShopItemContainer = styled.div`
     font-family: ${lato2};
-    height: 250px;
+    height: auto;
     display: flex;
-    box-shadow: ${boxShadow};
+    // box-shadow: ${boxShadow};
     border-radius: 4px;
-    margin: 1rem auto;
-    overflow: hidden;
+    margin: 5rem auto;
+    flex: 0 1 600px;
     max-width: 600px;
 `;
+
+const ItemName = styled.div({
+    margin: '0 0 0.8rem 0',
+    fontSize: '1.2rem',
+    fontWeight: 'bold'
+});
+
+const ItemDescription = styled.div({
+    margin: '2rem 0',
+    paddingLeft: '1rem',
+});
+
+const ItemDetails = styled.span({
+    margin: '0.2rem 0',
+});
+
+const ItemPrice = styled.span({
+    margin: '0.2rem 0',
+    fontWeight: 'bold',
+});
+
+const DetailContainer = styled.div({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    maxWidth: 500,
+});
+
+const Separator = styled.span({
+    margin: '0.2rem 1rem',
+    fontSize: '1.5rem',
+});
+
+const formatCentsToDollars = (price: number) => `$${(price / 100).toFixed(2)}`;
 
 const ShopItemWithoutConnect: React.FC<ShopItemProps> = ({ item, className, ...props }) => {
     const addToCart = props.addToCartAction;
@@ -95,18 +170,25 @@ const ShopItemWithoutConnect: React.FC<ShopItemProps> = ({ item, className, ...p
     const isItemInCart = props.cart.items.includes(item.id)
     return (
         <ShopItemContainer className={className}>
-            <div css={thumbnailStyle(item.image)} />
+            <Thumbnail imageUrl={item.image} />
             <div css={contentContainerStyle}>
-                <div css={{ marginBottom: '16px' }}>
-                    <h2 css={{ margin: '0 0 10px 0' }}>{item.name}</h2>
-                    <span>{item.caption}</span>
+                <div css={{ marginBottom: '24px' }}>
+                    <ItemName>{item.caption}</ItemName>
+                    <ItemDescription>{item.description}</ItemDescription>
+                    <DetailContainer>
+                        <ItemDetails>{toUpper(item.format)} format</ItemDetails>
+                        <Separator>|</Separator>
+                        <ItemDetails>{item.pages} pages</ItemDetails>
+                        <Separator>|</Separator>
+                        <ItemPrice>{formatCentsToDollars(item.price)}</ItemPrice>
+                    </DetailContainer>
                 </div>
-                <button
-                    css={addToCartButtonStyle}
+                <CartButton
+                    isItemInCart={isItemInCart}
                     onClick={() => isItemInCart ? removeFromCart(item.id) : addToCart(item.id)}
                 >
                     {isItemInCart ? 'Remove from Cart' : 'Add to Cart'}
-                </button>
+                </CartButton>
             </div>
         </ShopItemContainer>
     )

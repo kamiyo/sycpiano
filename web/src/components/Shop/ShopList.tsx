@@ -16,9 +16,8 @@ const listStyle = css({
     [screenXSorPortrait]: {
         paddingTop: navBarHeight.mobile,
     },
-    height: '100%',
     width: `calc(100vw - ${cartWidth}px)`,
-    overflow: 'scroll',
+    overflowY: 'scroll',
 });
 
 const ShopList: React.FC<ShopListProps> = (props) => (

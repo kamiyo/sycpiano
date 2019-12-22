@@ -7,6 +7,8 @@ export interface Sku {
     readonly name: string;
     readonly updated: number;
     readonly price: number;
+    readonly format: string;
+    readonly pages: number;
 }
 
 export interface ShoppingCart {

@@ -9,7 +9,7 @@ const shopRouter = express.Router();
 
 const convertSkuToShopItem = (sku: Stripe.skus.ISku): ShopItem => {
     const product = sku.product as Stripe.products.IProduct;
-    const { caption, created, description, images, name, updated } = product;
+    const { caption, created, description, images, name, updated, metadata } = product;
     return {
         caption,
         created,
@@ -19,6 +19,8 @@ const convertSkuToShopItem = (sku: Stripe.skus.ISku): ShopItem => {
         updated,
         id: sku.id,
         price: sku.price,
+        format: metadata.format,
+        pages: parseInt(metadata.pages),
     };
 };
 

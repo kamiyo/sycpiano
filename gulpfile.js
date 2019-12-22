@@ -133,7 +133,7 @@ const startNodemon = (done) => {
         ext: 'js html',
         watch: [
             'web/build/',
-            'server/build/api-router.js',
+            'server/build/',
             'app.js',
         ],
     });
