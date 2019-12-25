@@ -33,6 +33,7 @@ const logger = () => {
 // sets x-frame-options header to disallow our content to be rendered in iframes.
 app.use(helmet());
 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 
 // only for dev

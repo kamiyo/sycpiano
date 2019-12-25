@@ -9,7 +9,7 @@ export const shopReducer = (state: ShopStateShape = {
     cartIsInit: false,
     cart: { items: [] },
     isCheckingOut: false,
-    // submitSuccess: false,
+    checkOutErrorMessage: '',
 }, action: ActionTypes.Types) => {
     switch (action.type) {
         case STORE_ACTIONS.FETCH_ITEMS_REQUEST:
@@ -51,6 +51,7 @@ export const shopReducer = (state: ShopStateShape = {
                 cart: {
                     items: retArray,
                 },
+                errorMessage: '',
             };
         }
         case STORE_ACTIONS.REMOVE_FROM_CART: {
@@ -62,24 +63,28 @@ export const shopReducer = (state: ShopStateShape = {
                 cart: {
                     items: retArray,
                 },
+                errorMessage: '',
             };
         }
         case STORE_ACTIONS.CHECKOUT_REQUEST: {
             return {
                 ...state,
                 isCheckingOut: true,
+                checkOutErrorMessage: '',
             };
         }
         case STORE_ACTIONS.CHECKOUT_ERROR: {
             return {
                 ...state,
                 isCheckingOut: false,
+                checkOutErrorMessage: action.errorMessage,
             };
         }
         case STORE_ACTIONS.CHECKOUT_SUCCESS: {
             return {
                 ...state,
                 isCheckingOut: false,
+                checkOutErrorMessage: '',
             };
         }
         default:

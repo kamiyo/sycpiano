@@ -1,3 +1,4 @@
+import * as Promise from 'bluebird';
 import * as dotenv from 'dotenv';
 import * as Stripe from 'stripe';
 
@@ -37,8 +38,19 @@ class StripeClient {
         }
     }
 
-    async createCheckoutSession(lineItems: Stripe.checkouts.sessions.ICheckoutLineItems[], customerId: string) {
+    async createCheckoutSession(skus: string[], customerId: string) {
         try {
+            const lineItems: Stripe.checkouts.sessions.ICheckoutLineItems[] = (await this.fetchSkus(skus)).map((sku) => {
+                const product = sku.product as Stripe.products.IProduct;
+                return {
+                    amount: sku.price,
+                    currency: 'USD',
+                    name: product.name,
+                    quantity: 1,
+                    description: product.description,
+                    images: product.images,
+                };
+            });
             const session = await StripeClient.stripe.checkout.sessions.create(
                 {
                     /* eslint-disable @typescript-eslint/camelcase */
@@ -47,12 +59,53 @@ class StripeClient {
                     payment_method_types: ['card'],
                     line_items: lineItems,
                     customer: customerId,
+                    payment_intent_data: {
+                        metadata: skus.reduce((acc, sku, idx) => ({
+                            ...acc,
+                            [idx]: sku,
+                        }), {}),
+                    }
                     /* eslint-enable @typescript-eslint/camelcase */
                 }
             );
             return session.id;
         } catch (e) {
             console.error('Checkout session creation failed.', e);
+        }
+    }
+
+    async getAllSkusPurchasedByCustomer(email: string) {
+        try {
+            const { data: customers }: { data: Stripe.customers.ICustomer[] } = await StripeClient.stripe.customers.list(
+                {
+                    email,
+                    expand: ['data.sources'],
+                },
+            );
+
+            const skus: string[] = await Promise.reduce(customers, async (acc, cust) => {
+                const payments = await StripeClient.stripe.paymentIntents.list({
+                    customer: cust.id,
+                });
+                const succeededPayments = payments.data.filter(pi => pi.status === 'succeeded');
+                const metametadata = succeededPayments.reduce((accc: string[], pi: Stripe.paymentIntents.IPaymentIntent) => {
+                    const metadata = Object.keys(pi.metadata).map(k => pi.metadata[k]);
+                    return [...metadata, ...accc];
+                }, []);
+                return [...metametadata, ...acc];
+            }, []);
+
+            // const skus: string[] = customers.reduce((acc, cust) => {
+            //     const metadata = cust.sources.data.reduce((aacc, source) => {
+            //         const metadatum = Object.keys(source.metadata).map((k) => source.metadata[k]);
+            //         return metadatum.concat(aacc);
+            //     }, []);
+            //     return metadata.concat(acc);
+            // }, []);
+            console.log(skus);
+            return skus;
+        } catch (e) {
+            console.error(`Couldn't get customers from email.`, e)
         }
     }
 }

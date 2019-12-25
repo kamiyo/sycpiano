@@ -1,5 +1,5 @@
 /* global Stripe */
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ThunkAction } from 'redux-thunk';
 import { GlobalStateShape } from 'src/types';
 import { Sku } from './types';
@@ -93,10 +93,8 @@ const shouldCheckout = (state: GlobalStateShape) =>
 
 export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShape, void, ActionTypes.CheckCustomerActions> =>
     async (dispatch, getState) => {
-        console.log('here')
         if (shouldCheckout) {
             try {
-                console.log('inside');
                 dispatch({
                     type: STORE_ACTIONS.CHECKOUT_REQUEST,
                 });
@@ -108,57 +106,25 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
                     sessionId: response.data.sessionId
                 });
                 if (error) {
-                    console.log(error.message);
                     dispatch({
                         type: STORE_ACTIONS.CHECKOUT_ERROR,
+                        errorMessage: 'Stripe redirect failed. Did your internet connection reset?'
                     });
                 }
             } catch (e) {
-                console.log("Checkout Error.", e);
+                const axiosError = e as AxiosError<{ skus: string[] }>;
+                if (axiosError.response && axiosError.response.status === 422) {
+                    const prevPurchasedString = axiosError.response.data.skus.map((sku) =>
+                        `* ${getState().shop.items.find(v => v.id === sku).caption}`
+                    ).join('\n');
+                    dispatch({
+                        type: STORE_ACTIONS.CHECKOUT_ERROR,
+                        errorMessage: `These items have been previously purchased:\n${prevPurchasedString}.`,
+                    });
+                } else {
+                    console.log("Checkout Error.", e);
+                }
             }
         }
 
-    }
-
-// const shouldSubmitCheckout = (state: GlobalStateShape) =>
-//     !state.shop.isSubmitting && !state.shop.submitSuccess;
-
-// const postToCheckoutAPI = async (
-//     skuIds: string[],
-//     tokenPromise: Promise<ReactStripeElements.PatchedTokenResponse>,
-// ): Promise<boolean> => {
-//     const { token } = await tokenPromise;
-//     const { data: { success } }: { data: { success: boolean } } = await axios.post(
-//         'api/store/checkout',
-//         { skuIds, tokenId: token.id },
-//     );
-//     return success;
-// };
-
-// const getCheckoutSubmitAsync = (
-//     skuIds: string[],
-//     tokenPromise: Promise<ReactStripeElements.PatchedTokenResponse>,
-// ): SycStoreThunkAction => async (dispatch) => {
-//     try {
-//         dispatch({ type: STORE_ACTIONS.CHECKOUT_SUBMIT });
-//         const success = await postToCheckoutAPI(skuIds, tokenPromise);
-//         if (success) {
-//             dispatch({ type: STORE_ACTIONS.CHECKOUT_SUCCESS });
-//         } else {
-//             dispatch({ type: STORE_ACTIONS.CHECKOUT_FAILURE });
-//         }
-//     } catch (err) {
-//         console.log('checkout error', err);
-//         dispatch({ type: STORE_ACTIONS.CHECKOUT_FAILURE });
-//     }
-// };
-
-// export const checkoutSubmitAction = (
-//     skuIds: string[],
-//     tokenPromise: Promise<ReactStripeElements.PatchedTokenResponse>,
-// ): SycStoreThunkAction =>
-//     async (dispatch, getState) => {
-//         if (shouldSubmitCheckout(getState())) {
-//             await dispatch(getCheckoutSubmitAsync(skuIds, tokenPromise));
-//         }
-//     };
+    };

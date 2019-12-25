@@ -22,4 +22,5 @@ export interface ShopStateShape {
     cart: ShoppingCart;
     items: Sku[];
     isCheckingOut: boolean;
+    checkOutErrorMessage: string;
 }

@@ -1,5 +1,7 @@
+import styled from '@emotion/styled';
 import css from '@emotion/css';
 import * as React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { connect } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
 import { checkoutAction, initCartAction, removeFromCartAction, syncLocalStorage } from 'src/components/Shop/actions';
@@ -9,7 +11,6 @@ import TextField from '@material-ui/core/TextField';
 
 import { screenXSorPortrait} from 'src/styles/screens';
 import { navBarHeight, cartWidth } from 'src/styles/variables';
-import styled from '@emotion/styled-base';
 import { lato2 } from 'src/styles/fonts';
 import { magenta } from 'src/styles/colors';
 import { mix } from 'polished';
@@ -64,9 +65,16 @@ const StyledCheckoutButton = styled('input')`
     }
 `;
 
+const ErrorMessage = styled.div({
+    color: 'red',
+    fontSize: '0.8rem',
+    margin: '1rem',
+});
+
 interface CartStateToProps {
     readonly shopItems: Sku[];
     readonly cart: string[];
+    readonly errorMessage: string;
 }
 
 interface CartDispatchToProps {
@@ -137,6 +145,12 @@ class Cart extends React.Component<CartProps, { email: string }> {
                                 value={this.state.email}
                                 onChange={(event) => this.setState({ email: event.target.value })}
                             />
+                            {this.props.errorMessage !== '' && (
+                                <ErrorMessage>
+                                    <ReactMarkdown
+                                        source={this.props.errorMessage}/>
+                                </ErrorMessage>
+                            )}
                             <StyledCheckoutButton type="submit" value="Checkout"></StyledCheckoutButton>
                         </form>
                         </>
@@ -153,6 +167,7 @@ const mapStateToProps = (store: GlobalStateShape) => {
     return ({
         shopItems: store.shop.items,
         cart: store.shop.cart.items,
+        errorMessage: store.shop.checkOutErrorMessage,
     });
 };
 

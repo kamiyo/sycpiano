@@ -41,27 +41,50 @@ shopRouter.post('/checkout', async (req, res) => {
 
     try {
         const customer = await stripeClient.getOrCreateCustomer(email);
-        const lineItems: Stripe.checkouts.sessions.ICheckoutLineItems[] = (await stripeClient.fetchSkus(skus)).map((sku) => {
-            const product = sku.product as Stripe.products.IProduct;
-            return {
-                amount: sku.price,
-                currency: 'USD',
-                name: product.name,
-                quantity: 1,
-                description: product.description,
-                images: product.images,
-            };
-        });
+
+        const previouslyPurchased = await stripeClient.getAllSkusPurchasedByCustomer(email);
+
+        const duplicates = skus.reduce((acc, sku) => {
+            if (previouslyPurchased.includes(sku)) {
+                return [sku, ...acc];
+            } else {
+                return acc;
+            }
+        }, []);
+
+        if (duplicates.length !== 0) {
+            res.status(422).json({
+                skus: duplicates,
+            });
+            return;
+        }
+
         const sessionId = await stripeClient.createCheckoutSession(
-            lineItems,
+            skus,
             customer.id,
         );
         res.json({
             sessionId
         });
     } catch (e) {
-        console.error("Checkout error", e);
+        console.error('Checkout error', e);
     }
+});
+
+shopRouter.post('/getPurchased', async (req, res) => {
+    const {
+        email
+    } = req.body;
+
+    try {
+        const skus = await stripeClient.getAllSkusPurchasedByCustomer(email);
+        res.json({
+            skus,
+        });
+    } catch (e) {
+        console.error(`Failed to get skus of customer with email: ${email}`, e);
+    }
+
 });
 
 export default shopRouter;

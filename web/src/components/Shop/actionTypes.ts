@@ -43,6 +43,7 @@ export interface CheckoutSuccess {
 
 export interface CheckoutError {
     readonly type: typeof STORE_ACTIONS.CHECKOUT_ERROR;
+    readonly errorMessage: string;
 }
 
 export type UpdateCartActions = AddToCart | RemoveFromCart;
