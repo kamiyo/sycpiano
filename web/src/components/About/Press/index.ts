@@ -3,5 +3,5 @@ import { acclaimsListReducer } from 'src/components/About/Press/reducers';
 
 export const Component = Press;
 export const reducers = {
-    press_acclaimsList: acclaimsListReducer,
+    pressAcclaimsList: acclaimsListReducer,
 };
