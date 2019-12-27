@@ -60,7 +60,7 @@ create role <username> with login password '<quoted password>'
 * Make a copy of the `secret.sample.ts` file under `server/src/` and rename it to `secret.ts`. Update the username and password to reflect that of the new user. This file is in `.gitignore`. This file will be used when connecting to the database to create tables that do not exist.
 
 ## Migrations and Seeding
-Before seeding the calendar, make sure to obtain a service account key file (json) from google developer console. Save the key under `server/gapi-key.json`. This file is also in our `.gitignore`.
+Before seeding the calendar, make sure to obtain a service account key file (json) from google developer console. Save the key under `server/gapi-key.json`. This file is also in our `.gitignore`. The json file should contain two fields, `client_email` and `private_key`.
 
 sycpiano uses umzug and sequelize for migrations.
 ```
