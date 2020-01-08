@@ -32,6 +32,10 @@ FOREST_ENV_SECRET=<secret for using forest admin>
 FOREST_AUTH_SECRET=<secret for auth forest admin>
 GAPI_KEY_SERVER=<from google develoepr console>
 GAPI_KEY_APP=<from google develoepr console>
+STRIPE_API_KEY=<from stripe dashboard>
+STRIPE_WEBHOOK_KEY=<from stripe dashboard>
+EMAIL_PASSWORD=<your smtp password>
+PRODUCT_DIR=<path to emailable assets>
 ```
 Then, run:
 ```

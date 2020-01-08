@@ -87,4 +87,20 @@ shopRouter.post('/getPurchased', async (req, res) => {
 
 });
 
+shopRouter.post('/webhook', async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+
+    let event;
+
+    try {
+        event = stripeClient.constructEvent(req.body, sig)
+    } catch (e) {
+        return res.status(400).send(`Webhook Error: ${e.message}`);
+    }
+
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+    }
+})
+
 export default shopRouter;

@@ -13,6 +13,7 @@ import { musicFile } from './models/musicFile';
 import { photo } from './models/photo';
 import { piece } from './models/piece';
 import { token } from './models/token';
+import { product } from 'models/product';
 
 type Moment = moment.Moment;
 
@@ -49,6 +50,7 @@ export interface ModelMap {
     photo: typeof photo;
     piece: typeof piece;
     token: typeof token;
+    product: typeof product;
     [key: string]: typeof Model;
 }
 

@@ -1,6 +1,7 @@
 import * as Promise from 'bluebird';
 import * as dotenv from 'dotenv';
 import * as Stripe from 'stripe';
+import uniqid from 'uniqid';
 
 dotenv.config();
 
@@ -44,7 +45,7 @@ class StripeClient {
                 const product = sku.product as Stripe.products.IProduct;
                 return {
                     amount: sku.price,
-                    currency: 'USD',
+                    currency: StripeClient.currency,
                     name: product.name,
                     quantity: 1,
                     description: product.description,
@@ -64,7 +65,8 @@ class StripeClient {
                             ...acc,
                             [idx]: sku,
                         }), {}),
-                    }
+                    },
+                    client_reference_id: uniqid.time(),
                     /* eslint-enable @typescript-eslint/camelcase */
                 }
             );
@@ -95,18 +97,16 @@ class StripeClient {
                 return [...metametadata, ...acc];
             }, []);
 
-            // const skus: string[] = customers.reduce((acc, cust) => {
-            //     const metadata = cust.sources.data.reduce((aacc, source) => {
-            //         const metadatum = Object.keys(source.metadata).map((k) => source.metadata[k]);
-            //         return metadatum.concat(aacc);
-            //     }, []);
-            //     return metadata.concat(acc);
-            // }, []);
             console.log(skus);
             return skus;
         } catch (e) {
             console.error(`Couldn't get customers from email.`, e)
         }
+    }
+
+    constructEvent(body: any, sig: string | string[]) {
+        const event = StripeClient.stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_KEY);
+        return event;
     }
 }
 

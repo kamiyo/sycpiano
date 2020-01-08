@@ -25,3 +25,4 @@ server/gapi-key.json
 yarn-error.log
 sslcert/
 *.sql
+products
