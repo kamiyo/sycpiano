@@ -4,6 +4,7 @@ import { Op } from 'sequelize';
 import * as path from 'path';
 import * as mustache from 'mustache';
 import { promises as fs} from 'fs';
+import * as moment from 'moment';
 
 const models = db.models;
 
@@ -48,7 +49,7 @@ export const mailPDFs = async (skus: string[], email: string, clientRef: string)
         ...attachments,
         {
             filename: 'logo.svg',
-            path: path.resolve(__dirname, '../../web/assets/images/logo.svg'),
+            path: path.resolve(__dirname, '../../web/assets/images/email_logo.svg'),
             cid: 'logo@seanchenpiano.com',
         },
     ];
@@ -58,6 +59,7 @@ export const mailPDFs = async (skus: string[], email: string, clientRef: string)
     const html = mustache.render(template, {
         products: products.map((prod) => prod.title),
         clientRef,
+        year: moment().year(),
     });
     console.log(attachments);
 

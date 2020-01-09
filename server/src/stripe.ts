@@ -1,7 +1,7 @@
 import * as Promise from 'bluebird';
 import * as dotenv from 'dotenv';
 import * as Stripe from 'stripe';
-import uniqid from 'uniqid';
+import * as uniqid from 'uniqid';
 
 dotenv.config();
 
@@ -100,7 +100,26 @@ class StripeClient {
             console.log(skus);
             return skus;
         } catch (e) {
-            console.error(`Couldn't get customers from email.`, e)
+            console.error(`Couldn't get customers from email.`, e);
+        }
+    }
+
+    async getSkusFromPaymentIntent(pi: string) {
+        try {
+            const paymentIntent = await StripeClient.stripe.paymentIntents.retrieve(pi);
+            const metadata = Object.keys(paymentIntent.metadata).map(k => paymentIntent.metadata[k]);
+            return metadata;
+        } catch (e) {
+            console.error(`Couldn't get skus from paymentIntent.`, e);
+        }
+    }
+
+    async getEmailFromCustomer(cid: string) {
+        try {
+            const customer = await StripeClient.stripe.customers.retrieve(cid);
+            return customer.email;
+        } catch (e) {
+            console.error(`Couldn't get email from customer.`, e);
         }
     }
 

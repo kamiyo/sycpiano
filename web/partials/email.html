@@ -4,40 +4,31 @@
 <head></head>
 
 <body
-    style="margin: 0; padding: 0; border: 0; background-color: #f1f1f6;font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Ubuntu,sans-serif;width: 100%;height: 100%;">
+    style="margin: 0; padding: 0; border: 0; background-color: white;font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Ubuntu,sans-serif;width: 100%;height: 100%;">
     <div
         style="width: 600px;min-width: 600px;max-width: 600px;border: 0;border-collapse: collapse;margin: 0 auto !important;text-align: left;font-size: 30px;background-color: #fff;">
-        <table style="border-collapse: collapse;background-color: #f1f1f6; width: 100%;">
+        <table style="border-collapse: collapse;background-color: white; width: 100%;">
             <tr>
                 <td height="10">
                 </td>
             </tr>
         </table>
         <table style="border-collapse: collapse;width: 100%;">
-            <tbody style="margin: 0;padding: 0;border: 0;width: 100%;height: 100%;">
-                <tr style="margin: 0;padding: 0;border: 0;">
-                    <td style="">
-                        <table
-                            style="border-collapse: collapse;width: 100%; background-color: #4e86a4; border-bottom: 1px solid #3d7593;">
-                            <tbody style="">
-                                <tr style="">
-                                    <td style="overflow: hidden;border: 0;margin: 0;padding: 0;width: 100px;">
-                                        <img src="cid:logo@seanchenpiano.com"
-                                            style="width: 100px;margin-top: -25px;margin-bottom: -25px;padding: 0;border: 0;">
+            <tr style="margin: 0;padding: 0;border: 0;">
+                <td style="">
+                    <table
+                        style="border-collapse: collapse;width: 100%; background-color: #4e86a4; border-bottom: 1px solid #3d7593;">
+                        <tr style="">
+                            <td style="overflow: hidden;border: 0;margin: 0;padding: 0;width: 100px;">
+                                <img src="cid:logo@seanchenpiano.com"
+                                    style="margin: 0;padding: 0;border: 0;">
 
-                                    </td>
-                                    <td style="margin-left: 32px;"><span
-                                            style="margin-left: 16px; font-size: 32px; letter-spacing: 2px; color: white">SEAN
-                                            CHEN
-                                            PIANO</span>
-                                    </td>
-                                </tr>
-                                <tr></tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </tbody>
+                            </td>
+                        </tr>
+                        <tr></tr>
+                    </table>
+                </td>
+            </tr>
         </table>
         <table style="border-collapse: collapse;font-size: 16px; width: 100%; margin-top: 16px; margin-bottom: 8px;">
             <tr>
@@ -47,16 +38,39 @@
         </table>
         <table style="border-collapse: collapse;font-size: 16px; width: 100%; margin-top: 16px; margin-bottom: 8px;">
             <tr>
-                <td style="text-align: center;">Thank you for purchasing the following scores. The PDFs are attached.
+                <td style="width: 5%"></td>
+                <td style="text-align: left;">
+                    Thank you for purchasing the following scores. The PDFs are attached.
                 </td>
             </tr>
         </table>
         <table style="border-collapse: collapse;font-size: 16px; width: 100%;">
             {{#products}}
-            <tr>
-                <td>{{.}}</td>
+            <tr style="width: 100%;">
+                <td style="width: 15%"></td>
+                <td style="width: 70%">• {{.}}</td>
+                <td style="width: 15%"></td>
             </tr>
             {{/products}}
+        </table>
+        <table style="border-collapse: collapse;font-size: 16px; width: 100%; margin-top: 16px; margin-bottom: 8px;">
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="text-align: left;">
+                    Enjoy!
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="text-align: left;">
+                    Sean Chen
+                </td>
+            </tr>
+        </table>
+        <table style="border-collapse: collapse;font-size: 16px; width: 100%;">
+            <tr style="width: 100%;">
+                <td>© Sean Chen Piano {{year}}</td>
+            </tr>
         </table>
     </div>
 </body>

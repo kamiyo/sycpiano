@@ -1,11 +1,42 @@
 
+import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import * as Stripe from 'stripe';
 
 import { ShopItem } from 'types';
 import { stripeClient } from '../stripe';
+import { mailPDFs } from '../mailer';
 
 const shopRouter = express.Router();
+
+// add webhook first because it needs raw body
+shopRouter.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+
+    let event;
+    console.log(req.body, sig);
+
+    try {
+        event = stripeClient.constructEvent(req.body, sig);
+    } catch (e) {
+        console.error(e);
+        return res.status(400).send(`Webhook Error: ${e.message}`);
+    }
+
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object as Stripe.checkouts.sessions.ICheckoutSession;
+        try {
+            console.log(session);
+            const skus = await stripeClient.getSkusFromPaymentIntent(session.payment_intent as string);
+            const email = await stripeClient.getEmailFromCustomer(session.customer as string);
+            await mailPDFs(skus, email, session.client_reference_id);
+        } catch (e) {
+            console.error('Failed to send email: ', e);
+        }
+    }
+
+    res.json({ received: true });
+})
 
 const convertSkuToShopItem = (sku: Stripe.skus.ISku): ShopItem => {
     const product = sku.product as Stripe.products.IProduct;
@@ -23,6 +54,8 @@ const convertSkuToShopItem = (sku: Stripe.skus.ISku): ShopItem => {
         pages: parseInt(metadata.pages),
     };
 };
+
+shopRouter.use(bodyParser.json());
 
 shopRouter.get('/items', async (_, res) => {
     const skus = await stripeClient.fetchSkus();
@@ -86,21 +119,5 @@ shopRouter.post('/getPurchased', async (req, res) => {
     }
 
 });
-
-shopRouter.post('/webhook', async (req, res) => {
-    const sig = req.headers['stripe-signature'];
-
-    let event;
-
-    try {
-        event = stripeClient.constructEvent(req.body, sig)
-    } catch (e) {
-        return res.status(400).send(`Webhook Error: ${e.message}`);
-    }
-
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
-    }
-})
 
 export default shopRouter;
