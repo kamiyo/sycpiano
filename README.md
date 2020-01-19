@@ -36,6 +36,7 @@ STRIPE_API_KEY=<from stripe dashboard>
 STRIPE_WEBHOOK_KEY=<from stripe dashboard>
 EMAIL_PASSWORD=<your smtp password>
 PRODUCT_DIR=<path to emailable assets>
+DKIM_PRIVATE_KEY=<path to private PEM formatted key, should be at least 1024bit rsa>
 ```
 Then, run:
 ```

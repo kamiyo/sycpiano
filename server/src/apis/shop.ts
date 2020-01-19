@@ -5,7 +5,7 @@ import * as Stripe from 'stripe';
 
 import { ShopItem } from 'types';
 import { stripeClient } from '../stripe';
-import { mailPDFs } from '../mailer';
+import { emailPDFs } from '../mailer';
 
 const shopRouter = express.Router();
 
@@ -26,10 +26,9 @@ shopRouter.post('/webhook', bodyParser.raw({ type: 'application/json' }), async 
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object as Stripe.checkouts.sessions.ICheckoutSession;
         try {
-            console.log(session);
             const skus = await stripeClient.getSkusFromPaymentIntent(session.payment_intent as string);
             const email = await stripeClient.getEmailFromCustomer(session.customer as string);
-            await mailPDFs(skus, email, session.client_reference_id);
+            await emailPDFs(skus, email, session.client_reference_id);
         } catch (e) {
             console.error('Failed to send email: ', e);
         }
@@ -101,6 +100,7 @@ shopRouter.post('/checkout', async (req, res) => {
         });
     } catch (e) {
         console.error('Checkout error', e);
+        res.sendStatus(400);
     }
 });
 
@@ -116,8 +116,24 @@ shopRouter.post('/getPurchased', async (req, res) => {
         });
     } catch (e) {
         console.error(`Failed to get skus of customer with email: ${email}`, e);
+        res.sendStatus(400);
     }
 
+});
+
+shopRouter.post('/resendPurchased', async (req, res) => {
+    const {
+        email
+    } = req.body;
+
+    try {
+        const skus = await stripeClient.getAllSkusPurchasedByCustomer(email);
+        await emailPDFs(skus, email);
+        res.sendStatus(200);
+    } catch (e) {
+        console.error(`Failed to resend purchased pdfs of email: ${email}`, e);
+        res.sendStatus(400);
+    }
 });
 
 export default shopRouter;

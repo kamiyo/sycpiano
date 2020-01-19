@@ -77,31 +77,27 @@ class StripeClient {
     }
 
     async getAllSkusPurchasedByCustomer(email: string) {
-        try {
-            const { data: customers }: { data: Stripe.customers.ICustomer[] } = await StripeClient.stripe.customers.list(
-                {
-                    email,
-                    expand: ['data.sources'],
-                },
-            );
+        const { data: customers }: { data: Stripe.customers.ICustomer[] } = await StripeClient.stripe.customers.list(
+            {
+                email,
+                expand: ['data.sources'],
+            },
+        );
 
-            const skus: string[] = await Promise.reduce(customers, async (acc, cust) => {
-                const payments = await StripeClient.stripe.paymentIntents.list({
-                    customer: cust.id,
-                });
-                const succeededPayments = payments.data.filter(pi => pi.status === 'succeeded');
-                const metametadata = succeededPayments.reduce((accc: string[], pi: Stripe.paymentIntents.IPaymentIntent) => {
-                    const metadata = Object.keys(pi.metadata).map(k => pi.metadata[k]);
-                    return [...metadata, ...accc];
-                }, []);
-                return [...metametadata, ...acc];
+        const skus: string[] = await Promise.reduce(customers, async (acc, cust) => {
+            const payments = await StripeClient.stripe.paymentIntents.list({
+                customer: cust.id,
+            });
+            const succeededPayments = payments.data.filter(pi => pi.status === 'succeeded');
+            const metametadata = succeededPayments.reduce((accc: string[], pi: Stripe.paymentIntents.IPaymentIntent) => {
+                const metadata = Object.keys(pi.metadata).map(k => pi.metadata[k]);
+                return [...metadata, ...accc];
             }, []);
+            return [...metametadata, ...acc];
+        }, []);
 
-            console.log(skus);
-            return skus;
-        } catch (e) {
-            console.error(`Couldn't get customers from email.`, e);
-        }
+        console.log(skus);
+        return skus;
     }
 
     async getSkusFromPaymentIntent(pi: string) {

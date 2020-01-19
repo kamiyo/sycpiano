@@ -7,13 +7,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="600"
-   height="60"
-   viewBox="0 0 600 60"
+   width="1200"
+   height="120"
+   viewBox="0 0 1200 120"
    version="1.1"
    id="svg4546"
    sodipodi:docname="email_logo.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:export-filename="C:\Programming\sycpiano\web\assets\images\email_logo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <metadata
      id="metadata4552">
     <rdf:RDF>
@@ -50,7 +53,7 @@
     </clipPath>
   </defs>
   <sodipodi:namedview
-     pagecolor="#ffffff"
+     pagecolor="#aba7a7"
      bordercolor="#666666"
      borderopacity="1"
      objecttolerance="10"
@@ -62,25 +65,26 @@
      inkscape:window-height="1361"
      id="namedview4548"
      showgrid="false"
-     showborder="false"
+     showborder="true"
      inkscape:zoom="1.4142136"
      inkscape:cx="341.0224"
      inkscape:cy="9.9294034"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4546" />
+     inkscape:current-layer="svg4546"
+     inkscape:pagecheckerboard="false" />
   <rect
-     style="fill:#4e86a4;fill-opacity:1;stroke:none;stroke-width:4.33012724;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:#4e86a4;fill-opacity:1;stroke:none;stroke-width:8.66025448;stroke-miterlimit:4;stroke-dasharray:none"
      id="rect4602"
-     width="600"
-     height="60"
+     width="1200"
+     height="120"
      x="0"
      y="0" />
   <g
      id="g4544"
      style="display:inline;fill:#ffffff;fill-opacity:1"
-     transform="translate(8,-30)"
+     transform="matrix(2,0,0,2,16,-60)"
      clip-path="url(#clipPath4570)">
     <path
        d="M 55.763,40.858 38,57.038 38.352,57.45 c 2.5,3.478 4.425,6.478 5.775,8.997 1.347,2.52 2.022,4.914 2.022,7.18 a 10.48,10.48 0 0 1 -0.91,4.277 12.493,12.493 0 0 1 -2.434,3.637 11.712,11.712 0 0 1 -3.547,2.52 10.06,10.06 0 0 1 -4.307,0.94 c -1.603,0 -3.09,-0.27 -4.456,-0.82 -1.37,-0.55 -2.562,-1.23 -3.576,-2.052 -1.02,-0.82 -1.816,-1.723 -2.403,-2.695 -0.586,-0.98 -0.88,-1.896 -0.88,-2.757 0,-0.586 0.12,-1.155 0.353,-1.698 0.235,-0.55 0.547,-1.05 0.938,-1.498 0.392,-0.45 0.86,-0.803 1.408,-1.056 a 4,4 0 0 1 1.7,-0.376 c 0.82,0 1.563,0.238 2.226,0.73 a 3.594,3.594 0 0 1 1.35,1.96 c 0.155,0.593 0.136,1.222 -0.06,1.908 a 7.998,7.998 0 0 1 -0.792,1.875 c -0.332,0.567 -0.644,1.008 -0.937,1.32 -0.293,0.314 -0.44,0.395 -0.44,0.235 0,1.13 1.017,1.95 3.05,2.462 l 0.116,0.06 c 0.39,0.116 0.82,0.175 1.29,0.175 0.74,0 1.482,-0.163 2.225,-0.495 a 7.204,7.204 0 0 0 1.993,-1.322 6.74,6.74 0 0 0 1.435,-1.932 c 0.372,-0.745 0.56,-1.526 0.56,-2.348 0,-1.604 -0.715,-3.47 -2.14,-5.6 -1.43,-2.13 -3.51,-4.87 -6.246,-8.234 l -19.05,17.412 -1.23,-1.47 19.05,-17.35 -1.817,-2.286 c -1.328,-1.525 -2.432,-2.938 -3.31,-4.25 -0.88,-1.313 -1.593,-2.543 -2.14,-3.692 -0.548,-1.15 -0.937,-2.248 -1.173,-3.282 a 14.265,14.265 0 0 1 -0.35,-3.134 c 0,-1.49 0.312,-2.833 0.936,-4.046 a 9.392,9.392 0 0 1 2.52,-3.082 c 1.055,-0.84 2.286,-1.493 3.694,-1.96 1.407,-0.47 2.89,-0.7 4.455,-0.7 1.407,0 2.774,0.23 4.103,0.7 1.33,0.468 2.512,1.084 3.547,1.847 1.035,0.763 1.855,1.612 2.462,2.548 0.606,0.94 0.908,1.898 0.908,2.872 0,1.254 -0.382,2.29 -1.143,3.11 -0.765,0.82 -1.674,1.23 -2.73,1.23 -1.13,0 -2.04,-0.333 -2.725,-0.996 -0.685,-0.662 -1.025,-1.68 -1.025,-3.047 0,0.115 -0.02,0.038 -0.057,-0.234 -0.04,-0.27 -0.012,-0.635 0.088,-1.084 0.097,-0.45 0.284,-0.91 0.558,-1.383 0.272,-0.467 0.723,-0.84 1.348,-1.112 0,-0.233 -0.205,-0.485 -0.615,-0.757 -0.41,-0.277 -0.91,-0.52 -1.492,-0.735 a 12.705,12.705 0 0 0 -1.906,-0.525 9.328,9.328 0 0 0 -1.905,-0.21 c -0.508,0 -1.035,0.15 -1.582,0.44 a 6.03,6.03 0 0 0 -1.496,1.145 6.195,6.195 0 0 0 -1.115,1.612 c -0.294,0.605 -0.44,1.202 -0.44,1.788 0,0.98 0.314,2.018 0.94,3.134 0.624,1.116 1.444,2.318 2.46,3.606 0.272,0.315 0.762,0.907 1.465,1.784 0.704,0.883 1.878,2.242 3.518,4.074 l 0.47,0.706 L 54.53,39.45 Z"
@@ -113,17 +117,18 @@
      x="0"
      y="2.6645353e-15"
      ry="0"
-     clip-path="url(#clipPath4578)" />
+     clip-path="url(#clipPath4578)"
+     transform="translate(0,60)" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Lato;-inkscape-font-specification:'Lato Thin';letter-spacing:0px;word-spacing:2px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.5669291;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;"
-     x="152.60274"
-     y="41.200001"
+     style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:80px;line-height:1.25;font-family:Lato;-inkscape-font-specification:'Lato Thin';letter-spacing:0px;word-spacing:4px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.1338582;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     x="305.20547"
+     y="82.399994"
      id="text4600"><tspan
        sodipodi:role="line"
        id="tspan4598"
-       x="152.60274"
-       y="41.200001"
-       style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:32px;font-family:Lato;-inkscape-font-specification:'Lato Thin';word-spacing:2px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.5669291;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;"
-       dx="0 1 1 1 0 0 1 1 1 1 0 1 1 1 1">SEAN CHEN PIANO</tspan></text>
+       x="305.20547"
+       y="82.399994"
+       style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:64px;font-family:Lato;-inkscape-font-specification:'Lato Thin';word-spacing:4px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.1338582;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       dx="0 2 2 2 0 0 2 2 2 2 0 2 2 2 2">SEAN CHEN PIANO</tspan></text>
 </svg>
