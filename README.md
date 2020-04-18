@@ -43,7 +43,11 @@ Automation on the server is done by [pm2](http://pm2.keymetrics.io/). Further, b
 The website uses a PostgreSQL database, and connects to it using [sequelize](http://docs.sequelizejs.com/en/v3/).
 Here are the steps for seeding the database:
 * Install PostgreSQL for your OS
-* Using the root user, open up a psql shell. On windows, the user's name will be `postgres`. On OSX, if you installed postgres through `brew`, then it'll be whatever your root user's name is. One way to find out is to do `psql -l` and see who the owner of the `postgres` database is. Once you've figured out the root user, run this command:
+* Using the root user, open up a psql shell.
+** On windows, the user's name will be `postgres`.
+** On OSX, if you installed postgres through `brew`, then it'll be whatever your root user's name is.
+** On linux, you'll need to switch to the postgres user by doing `su - postgres` in order to connect to the postgres server as the postgres user (i.e. the postgres user and the linux user have to match).
+** One way to find out is to do `psql -l` and see who the owner of the `postgres` database is. Once you've figured out the root user, run this command:
 ```bash
 $ psql -U <username>
 ```
