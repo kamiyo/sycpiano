@@ -118,7 +118,7 @@ class BioText extends React.Component<BioTextProps> {
     }
 }
 
-interface ImageContainerProps { currScrollTop: number; bgImage?: string; }
+interface ImageContainerProps { currScrollTop: number; bgImage?: string }
 
 const ImageContainer = styled.div<ImageContainerProps>`
     flex: 1;
@@ -282,6 +282,6 @@ const connectedAbout = connect<BioStateToProps, BioDispatchToProps, BioOwnProps>
     mapDispatchToProps,
 )(About);
 
-export type BioType = new (props: any) => React.Component<BioProps>;
+export type BioType = new (props: BioProps) => React.Component<BioProps>;
 export type RequiredProps = BioOwnProps;
 export default connectedAbout;

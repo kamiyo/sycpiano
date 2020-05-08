@@ -1,6 +1,6 @@
 import PRESS_ACTIONS from 'src/components/About/Press/actionTypeKeys';
 
-import ActionTypes from 'src/components/About/Press/actionTypes';
+import { ActionTypes } from 'src/components/About/Press/actionTypes';
 import { AcclaimsListStateShape } from 'src/components/About/Press/types';
 
 export const acclaimsListReducer = (state: AcclaimsListStateShape = {

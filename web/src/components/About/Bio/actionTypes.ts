@@ -14,6 +14,4 @@ export interface FetchBioSuccess {
     readonly bio: Blurb[];
 }
 
-type ActionTypes = FetchBioError | FetchBioRequest | FetchBioSuccess;
-
-export default ActionTypes;
+export type ActionTypes = FetchBioError | FetchBioRequest | FetchBioSuccess;

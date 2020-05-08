@@ -7,7 +7,7 @@
     "rules": {
         "indentation": 4,
         "value-keyword-case": ["lower", {
-            ignoreKeywords: ["noHighlight", "placeholderStyle", ]
+            ignoreKeywords: ["dummyValue"]
         }]
     },
     "syntax": "scss"

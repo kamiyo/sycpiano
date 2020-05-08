@@ -1,5 +1,5 @@
 import DISCS_ACTIONS from 'src/components/About/Discs/actionTypeKeys';
-import ActionTypes from 'src/components/About/Discs/actionTypes';
+import { ActionTypes } from 'src/components/About/Discs/actionTypes';
 import { DiscsStateShape } from 'src/components/About/Discs/types';
 
 export const discsReducer = (state: DiscsStateShape = {

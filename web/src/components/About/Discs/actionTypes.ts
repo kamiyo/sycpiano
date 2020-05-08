@@ -14,6 +14,4 @@ export interface FetchDiscsSuccess {
     readonly discs: Disc[];
 }
 
-type ActionTypes = FetchDiscsError | FetchDiscsRequest | FetchDiscsSuccess;
-
-export default ActionTypes;
+export type ActionTypes = FetchDiscsError | FetchDiscsRequest | FetchDiscsSuccess;
