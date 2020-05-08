@@ -181,6 +181,12 @@ const subsAreEqual = (prev: NavBarLinkProps, next: NavBarLinkProps) => {
     return basicCompare;
 };
 
+interface AorLink {
+    href?: string;
+    onClick?: () => void;
+    to?: string;
+}
+
 const NavBarLink = ({
     active,
     isHome,
@@ -193,7 +199,7 @@ const NavBarLink = ({
     toggleSubNav: toggle,
 }: NavBarLinkProps) => {
     // css attr is common
-    const attr: React.LinkHTMLAttributes<HTMLElement> | LinkProps = {};
+    const attr: AorLink = {};
     const style = css(
         linkStyle,
         active && !isHome && linkActiveStyle,
@@ -206,7 +212,7 @@ const NavBarLink = ({
     } else if (subNavLinks) {
         attr.onClick = () => toggle(link.name);
     } else {
-        (attr as LinkProps).to = link.path;
+        attr.to = link.path;
         attr.onClick = () => {
             toggleSubNav('');
             isMobile && expand(false);

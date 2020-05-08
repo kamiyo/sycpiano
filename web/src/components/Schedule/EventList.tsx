@@ -141,7 +141,7 @@ class EventList extends React.Component<EventListProps> {
 
     onMountOrUpdate() {
         const date = moment(this.props.match.params.date, 'YYYY-MM-DD');
-        this.currentQuery = parse(this.props.location.search, { ignoreQueryPrefix: true });
+        this.currentQuery.q = parse(this.props.location.search, { ignoreQueryPrefix: true }).q as string;
         if (this.currentQuery.q) {
             this.props.createSearchEventsAction('search', { q: this.currentQuery.q });
         } else {

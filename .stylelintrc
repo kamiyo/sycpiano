@@ -5,7 +5,10 @@
         "stylelint-config-styled-components"
     ],
     "rules": {
-        "indentation": 4
+        "indentation": 4,
+        "value-keyword-case": ["lower", {
+            ignoreKeywords: ["noHighlight", "placeholderStyle", ]
+        }]
     },
     "syntax": "scss"
 }

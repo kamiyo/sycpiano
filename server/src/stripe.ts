@@ -1,13 +1,19 @@
 import * as Promise from 'bluebird';
 import * as dotenv from 'dotenv';
-import * as Stripe from 'stripe';
+import { Stripe } from 'stripe';
 import * as uniqid from 'uniqid';
 
 dotenv.config();
 
+type CustomerReturn = Stripe.Customer | Stripe.DeletedCustomer;
+
 class StripeClient {
-    private static stripe: Stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    private static stripe: Stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {apiVersion: '2020-03-02'});
     private static currency = 'USD';
+
+    stripeCustomerActive(cr: CustomerReturn): cr is Stripe.Customer {
+        return cr.deleted !== true;
+    }
 
     async fetchSkus(skuIds?: string[]) {
         try {
@@ -41,8 +47,8 @@ class StripeClient {
 
     async createCheckoutSession(skus: string[], customerId: string) {
         try {
-            const lineItems: Stripe.checkouts.sessions.ICheckoutLineItems[] = (await this.fetchSkus(skus)).map((sku) => {
-                const product = sku.product as Stripe.products.IProduct;
+            const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = (await this.fetchSkus(skus)).map((sku) => {
+                const product = sku.product as Stripe.Product;
                 return {
                     amount: sku.price,
                     currency: StripeClient.currency,
@@ -77,7 +83,7 @@ class StripeClient {
     }
 
     async getAllSkusPurchasedByCustomer(email: string) {
-        const { data: customers }: { data: Stripe.customers.ICustomer[] } = await StripeClient.stripe.customers.list(
+        const { data: customers }: { data: Stripe.Customer[] } = await StripeClient.stripe.customers.list(
             {
                 email,
                 expand: ['data.sources'],
@@ -89,7 +95,7 @@ class StripeClient {
                 customer: cust.id,
             });
             const succeededPayments = payments.data.filter(pi => pi.status === 'succeeded');
-            const metametadata = succeededPayments.reduce((accc: string[], pi: Stripe.paymentIntents.IPaymentIntent) => {
+            const metametadata = succeededPayments.reduce((accc: string[], pi: Stripe.PaymentIntent) => {
                 const metadata = Object.keys(pi.metadata).map(k => pi.metadata[k]);
                 return [...metadata, ...accc];
             }, []);
@@ -113,7 +119,9 @@ class StripeClient {
     async getEmailFromCustomer(cid: string) {
         try {
             const customer = await StripeClient.stripe.customers.retrieve(cid);
-            return customer.email;
+            if (this.stripeCustomerActive(customer)) {
+                return customer.email;
+            }
         } catch (e) {
             console.error(`Couldn't get email from customer.`, e);
         }

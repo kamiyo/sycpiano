@@ -305,12 +305,16 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOpti
     }
 });
 
-adminRest.use(forest.init({
-    modelsDir: path.join(__dirname, './models'), // Your models directory.
-    configDir: path.join(__dirname, './forest'),
-    envSecret: process.env.FOREST_ENV_SECRET,
-    authSecret: process.env.FOREST_AUTH_SECRET,
-    sequelize: db.sequelize,
-}));
+const addForest = async () => {
+    adminRest.use(await forest.init({
+        modelsDir: path.join(__dirname, './models'), // Your models directory.
+        configDir: path.join(__dirname, './forest'),
+        envSecret: process.env.FOREST_ENV_SECRET,
+        authSecret: process.env.FOREST_AUTH_SECRET,
+        sequelize: db.sequelize,
+    }));
+};
+
+addForest();
 
 export const AdminRest = adminRest;

@@ -6,7 +6,7 @@ const models = db.models;
 
 interface RequestWithCount extends Request {
     params: {
-        count: number;
+        count: string;
     };
 }
 
@@ -20,7 +20,7 @@ const getAcclaims = async (req: RequestWithCount, res: Response, _: NextFunction
         ],
     };
     if (Object.prototype.hasOwnProperty.call(req.params, 'count')) {
-        params.limit = req.params.count;
+        params.limit = parseInt(req.params.count);
     }
     const acclaims = await models.acclaim.findAll(params);
     res.json(acclaims);

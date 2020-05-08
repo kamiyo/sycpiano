@@ -1,7 +1,7 @@
 
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
-import * as Stripe from 'stripe';
+import { Stripe } from 'stripe';
 
 import { ShopItem } from 'types';
 import { stripeClient } from '../stripe';
@@ -24,7 +24,7 @@ shopRouter.post('/webhook', bodyParser.raw({ type: 'application/json' }), async 
     }
 
     if (event.type === 'checkout.session.completed') {
-        const session = event.data.object as Stripe.checkouts.sessions.ICheckoutSession;
+        const session = event.data.object as Stripe.Checkout.Session;
         try {
             const skus = await stripeClient.getSkusFromPaymentIntent(session.payment_intent as string);
             const email = await stripeClient.getEmailFromCustomer(session.customer as string);
@@ -37,8 +37,8 @@ shopRouter.post('/webhook', bodyParser.raw({ type: 'application/json' }), async 
     res.json({ received: true });
 })
 
-const convertSkuToShopItem = (sku: Stripe.skus.ISku): ShopItem => {
-    const product = sku.product as Stripe.products.IProduct;
+const convertSkuToShopItem = (sku: Stripe.Sku): ShopItem => {
+    const product = sku.product as Stripe.Product;
     const { caption, created, description, images, name, updated, metadata } = product;
     return {
         caption,

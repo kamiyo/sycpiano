@@ -34,7 +34,7 @@ type ScheduleProps = { isMobile: boolean } & RouteComponentProps<{ type: string 
 class Schedule extends React.Component<ScheduleProps, { search: string }> {
     constructor(props: ScheduleProps) {
         super(props);
-        const q = parse(props.location.search, { ignoreQueryPrefix: true }).q;
+        const q = parse(props.location.search, { ignoreQueryPrefix: true }).q as string;
         const search = q || '';
         this.state = {
             search,

@@ -11,7 +11,7 @@ const statAsync = Promise.promisify(fs.stat);
 
 const resized = express();
 
-resized.get('/*', async (req, res) => {
+resized.get('/*', async (req: express.Request<any, any, any, { width?: string; height?: string }>, res) => {
     let imgPath = req.params[0];
     if (!imgPath) {
         res.status(404).end();

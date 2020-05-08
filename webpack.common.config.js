@@ -103,7 +103,8 @@ const config = () => {
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, 'web/partials/index.html'),
-                inject: false,
+                scriptLoading: 'defer',
+                hash: true,
             }),
             new ProgressBarPlugin({
                 format: '[:percent] webpack: :msg... :elapseds \n',

@@ -5,6 +5,7 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { fetchItemsAction, addToCartAction } from 'src/components/Shop/actions';
+import CartButton from 'src/components/Shop/CartButton';
 import { ShopList } from 'src/components/Shop/ShopList';
 import { Sku } from 'src/components/Shop/types';
 import { GlobalStateShape } from 'src/types';
@@ -49,6 +50,9 @@ class Shop extends React.PureComponent<ShopProps, {}> {
                     items={this.props.items}
                 />
                 <ConnectedCart />
+                <CartButton
+                    onClick={() => {}}
+                />
             </ShopContainer>
         );
     }
