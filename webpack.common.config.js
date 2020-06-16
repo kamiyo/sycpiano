@@ -61,7 +61,7 @@ const config = () => {
                                 '@babel/preset-typescript',
                             ],
                             plugins: [
-                                'syntax-dynamic-import',
+                                '@babel/syntax-dynamic-import',
                                 '@babel/proposal-class-properties',
                                 '@babel/proposal-object-rest-spread',
                             ],

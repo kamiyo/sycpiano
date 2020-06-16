@@ -6,7 +6,7 @@ import { addToCartAction, removeFromCartAction } from 'src/components/Shop/actio
 import { ShoppingCart, Sku } from 'src/components/Shop/types';
 
 import { lato3, lato2 } from 'src/styles/fonts';
-import { magenta } from 'src/styles/colors';
+import { logoBlue } from 'src/styles/colors';
 import { mix } from 'polished';
 import { connect } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
@@ -88,10 +88,10 @@ const CartButton = styled.button<{ isItemInCart: boolean }>(
         fontFamily: lato3,
         borderRadius: '20px',
         transition: 'all 0.25s',
-        boxShadow: buttonBoxShadow,
+        // boxShadow: buttonBoxShadow,
         letterSpacing: '0.1rem',
         '&:hover': {
-            backgroundColor: mix(0.75, magenta, '#FFF'),
+            backgroundColor: mix(0.75, logoBlue, '#FFF'),
             color: 'white',
             cursor: 'pointer',
         },
@@ -100,14 +100,14 @@ const CartButton = styled.button<{ isItemInCart: boolean }>(
         if (props.isItemInCart) {
             return {
                 color: 'white',
-                backgroundColor: mix(0.50, magenta, '#FFF'),
-                border: `1px solid ${mix(0.52, magenta, '#FFF')}`
+                backgroundColor: mix(0.50, logoBlue, '#FFF'),
+                border: `1px solid ${mix(0.52, logoBlue, '#FFF')}`
             }
         } else {
             return {
-                color: magenta,
+                color: logoBlue,
                 backgroundColor: 'white',
-                border: `1px solid ${magenta}`,
+                border: `1px solid ${logoBlue}`,
             }
         }
     },

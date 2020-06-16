@@ -17,12 +17,16 @@ import { mix } from 'polished';
 
 const cartStyle = css({
     backgroundColor: 'white',
-    width: cartWidth,
+    position: 'fixed',
+    // width: cartWidth,
+    width: 0,
     right: 0,
     top: 0,
     height: '100vh',
+    overflow: 'hidden',
     // paddingTop: navBarHeight.desktop,
     zIndex: 10,
+    flex: '0 1 auto',
     [screenXSorPortrait]: {
         paddingTop: navBarHeight.mobile,
     },

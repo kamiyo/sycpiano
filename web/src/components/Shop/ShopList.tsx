@@ -16,8 +16,10 @@ const listStyle = css({
     [screenXSorPortrait]: {
         paddingTop: navBarHeight.mobile,
     },
-    width: `calc(100vw - ${cartWidth}px)`,
+    // width: `calc(100vw - ${cartWidth}px)`,
+    // width: '100%',
     overflowY: 'scroll',
+    flex: '1 0 auto',
 });
 
 const ShopList: React.FC<ShopListProps> = (props) => (
