@@ -4,7 +4,7 @@ import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { connect } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
-import { checkoutAction, initCartAction, removeFromCartAction, syncLocalStorage } from 'src/components/Shop/actions';
+import { checkoutAction, initCartAction, removeFromCartAction, syncLocalStorage } from 'src/components/Cart/actions';
 import { Sku } from 'src/components/Shop/types';
 
 import TextField from '@material-ui/core/TextField';

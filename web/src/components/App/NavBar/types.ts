@@ -1,11 +1,11 @@
 export interface LinkBaseShape {
     readonly name: string;
-    readonly path: string;
+    readonly path?: string;
 }
 
 export interface LinkShape extends LinkBaseShape {
     readonly name: string;
-    readonly path: string;
+    readonly path?: string;
     readonly subLinks?: LinkShape[];
 }
 

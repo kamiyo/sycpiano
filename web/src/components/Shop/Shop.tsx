@@ -14,7 +14,7 @@ import { Sku } from 'src/components/Shop/types';
 import { GlobalStateShape } from 'src/types';
 
 import { pushed } from 'src/styles/mixins';
-import { ConnectedCart } from 'src/components/Shop/Cart';
+import { ConnectedCart } from 'src/components/Cart/Cart';
 import { cartWidth } from 'src/styles/variables';
 
 const ShopContainer = styled.div`

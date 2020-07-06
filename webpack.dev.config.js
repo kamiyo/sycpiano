@@ -23,21 +23,17 @@ const config = () => {
                     path.resolve(__dirname, 'web/src'),
                 ],
                 use: [
-                    { loader: 'cache-loader' },
-                    { loader: 'thread-loader' },
-                    { loader: 'stylelint-custom-processor-loader' },
+                    { loader: require.resolve('cache-loader') },
+                    { loader: require.resolve('thread-loader') },
+                    { loader: require.resolve('stylelint-custom-processor-loader') },
                 ],
             }],
         },
         plugins: [
             new ForkTsCheckerWebpackPlugin({
-                checkSyntacticErrors: true,
-                eslint: true,
-                eslintOptions: {
-                    configFile: './forker.eslintrc.js',
-                    ignorePattern: ['**/node_modules/**/*']
+                eslint: {
+                    files: './web/src/**/*.{ts,tsx,js,jsx}',
                 },
-                useTypescriptIncrementalApi: true,
             }),
             new webpack.DefinePlugin({
                 MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music_dev'),

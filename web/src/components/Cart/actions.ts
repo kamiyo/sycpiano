@@ -2,45 +2,18 @@
 import axios, { AxiosError } from 'axios';
 import { ThunkAction } from 'redux-thunk';
 import { GlobalStateShape } from 'src/types';
-import { Sku } from './types';
+import { Sku } from 'src/components/Shop/types';
 
-import STORE_ACTIONS from 'src/components/Shop/actionTypeKeys';
-import * as ActionTypes from 'src/components/Shop/actionTypes';
-import { storageAvailable } from '../../localStorage';
+import CART_ACTIONS from 'src/components/Cart/actionTypeKeys';
+import * as ActionTypes from 'src/components/Cart/actionTypes';
+import { storageAvailable } from 'src/localStorage';
 
 const LOCAL_STORAGE_KEY = 'seanchenpiano_cart';
 
-const stripe = Stripe('pk_test_Fvm56dnar5NlFcwQVEhUvrem');
-
-const shouldFetchItems = (state: GlobalStateShape) =>
-    !state.shop.isFetching && !state.shop.fetchSuccess;
-
-type ShopThunkAction = ThunkAction<Promise<void>, GlobalStateShape, void, ActionTypes.Types>;
-
-const fetchItemsAsync: ShopThunkAction = async (dispatch) => {
-    try {
-        dispatch({ type: STORE_ACTIONS.FETCH_ITEMS_REQUEST });
-        const { data: items }: { data: Sku[] } = await axios.get('/api/shop/items');
-        dispatch({
-            type: STORE_ACTIONS.FETCH_ITEMS_SUCCESS,
-            items,
-        });
-    } catch (err) {
-        console.log('fetch products error', err);
-        dispatch({ type: STORE_ACTIONS.FETCH_ITEMS_ERROR });
-    }
-};
-
-export const fetchItemsAction = (): ShopThunkAction => (
-    async (dispatch, getState) => {
-        if (shouldFetchItems(getState())) {
-            await dispatch(fetchItemsAsync);
-        }
-    }
-);
+const stripe = Stripe(STRIPE_PUBLIC);
 
 const addItemToCart = (skuId: string): ActionTypes.AddToCart => ({
-    type: STORE_ACTIONS.ADD_TO_CART,
+    type: CART_ACTIONS.ADD_TO_CART,
     skuId,
 });
 
@@ -49,7 +22,7 @@ export const addToCartAction = (skuId: string): ThunkAction<void, GlobalStateSha
 );
 
 const removeItemFromCart = (skuId: string): ActionTypes.RemoveFromCart => ({
-    type: STORE_ACTIONS.REMOVE_FROM_CART,
+    type: CART_ACTIONS.REMOVE_FROM_CART,
     skuId,
 });
 
@@ -58,7 +31,7 @@ export const removeFromCartAction = (skuId: string): ThunkAction<void, GlobalSta
 
 
 const initCartSuccess = (items: string[]): ActionTypes.InitCartSuccess => ({
-    type: STORE_ACTIONS.INIT_CART_SUCCESS,
+    type: CART_ACTIONS.INIT_SUCCESS,
     items,
 });
 
@@ -96,7 +69,7 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
         if (shouldCheckout) {
             try {
                 dispatch({
-                    type: STORE_ACTIONS.CHECKOUT_REQUEST,
+                    type: CART_ACTIONS.CHECKOUT_REQUEST,
                 });
                 const response = await axios.post<{ sessionId: string }>('/api/shop/checkout', {
                     email,
@@ -107,7 +80,7 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
                 });
                 if (error) {
                     dispatch({
-                        type: STORE_ACTIONS.CHECKOUT_ERROR,
+                        type: CART_ACTIONS.CHECKOUT_ERROR,
                         errorMessage: 'Stripe redirect failed. Did your internet connection reset?'
                     });
                 }
@@ -118,7 +91,7 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
                         `* ${getState().shop.items.find(v => v.id === sku).caption}`
                     ).join('\n');
                     dispatch({
-                        type: STORE_ACTIONS.CHECKOUT_ERROR,
+                        type: CART_ACTIONS.CHECKOUT_ERROR,
                         errorMessage: `These items have been previously purchased:\n${prevPurchasedString}.`,
                     });
                 } else {

@@ -99,6 +99,7 @@ const config = () => {
                 // MUSIC_PATH: JSON.stringify(staticPrefix + '/music'), => see dev and prod files
                 VIDEOS_PATH: JSON.stringify(staticPrefix + '/videos'),
                 // GAPI_KEY => see dev and prod files
+                STRIPE_PUBLIC: JSON.stringify(process.env.STRIPE_PUBLIC),
             }),
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
