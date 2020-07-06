@@ -10,7 +10,7 @@ import { Sku } from 'src/components/Shop/types';
 import TextField from '@material-ui/core/TextField';
 
 import { screenXSorPortrait} from 'src/styles/screens';
-import { navBarHeight, cartWidth } from 'src/styles/variables';
+import { navBarHeight } from 'src/styles/variables';
 import { lato2 } from 'src/styles/fonts';
 import { magenta } from 'src/styles/colors';
 import { mix } from 'polished';
@@ -170,7 +170,7 @@ class Cart extends React.Component<CartProps, { email: string }> {
 const mapStateToProps = (store: GlobalStateShape) => {
     return ({
         shopItems: store.shop.items,
-        cart: store.shop.cart.items,
+        cart: store.cart.items,
         errorMessage: store.shop.checkOutErrorMessage,
     });
 };

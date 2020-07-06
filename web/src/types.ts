@@ -18,6 +18,8 @@ import { scheduleReducer } from 'src/components/Schedule/reducers';
 import { shopReducer } from 'src/components/Shop/reducers';
 
 import { Store } from 'redux';
+import { CartStateShape } from './components/Cart/types';
+import { cartReducer } from './components/Cart/reducers';
 
 export interface GlobalStateShape {
     readonly bio?: BioStateShape;
@@ -31,10 +33,11 @@ export interface GlobalStateShape {
     readonly videoPlayer?: VideoPlayerStateShape;
     readonly videoPlaylist?: VideoPlaylistStateShape;
     readonly navbar: NavBarStateShape;
+    readonly cart: CartStateShape;
 }
 
 export type AnyReducerType = typeof bioReducer | typeof discsReducer | typeof audioPlaylistReducer |
-    typeof photoListReducer | typeof photoViewerReducer | typeof acclaimsListReducer |
+    typeof photoListReducer | typeof photoViewerReducer | typeof acclaimsListReducer | typeof cartReducer |
     typeof scheduleReducer | typeof videoPlayerReducer | typeof videoPlaylistReducer | typeof shopReducer;
 
 export interface Reducers {

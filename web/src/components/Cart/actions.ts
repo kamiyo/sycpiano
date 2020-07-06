@@ -6,6 +6,7 @@ import { Sku } from 'src/components/Shop/types';
 
 import CART_ACTIONS from 'src/components/Cart/actionTypeKeys';
 import * as ActionTypes from 'src/components/Cart/actionTypes';
+import { fetchItemsAction } from 'src/components/Shop/actions';
 import { storageAvailable } from 'src/localStorage';
 
 const LOCAL_STORAGE_KEY = 'seanchenpiano_cart';
@@ -39,17 +40,22 @@ const shouldInitCart = (state: GlobalStateShape) => {
     return !state.shop.cartIsInit;
 };
 
-export const initCartAction = (): ThunkAction<void, GlobalStateShape, void, ActionTypes.InitCartActions> =>
-    (dispatch, getState) => {
+export const initCartAction = (): ThunkAction<Promise<void>, GlobalStateShape, void, ActionTypes.InitCartActions> =>
+    async (dispatch, getState) => {
         if (shouldInitCart(getState())) {
             if (storageAvailable()) {
-                const cart = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+                const cart: string[] = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+                if (cart.length !== 0) {
+                    await dispatch(fetchItemsAction())
+                }
                 dispatch(initCartSuccess(cart));
+                return Promise.resolve();
             } else {
                 dispatch(initCartSuccess([]));
+                return Promise.resolve();
             }
-        }
-    };
+        };
+    }
 
 export const syncLocalStorage = (): ThunkAction<void, GlobalStateShape, void, null> =>
     (_, getState) => {
@@ -101,3 +107,4 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
         }
 
     };
+
