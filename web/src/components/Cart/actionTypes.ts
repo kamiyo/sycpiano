@@ -32,8 +32,13 @@ export interface CheckoutError {
     readonly errorMessage: string;
 }
 
+export interface ToggleCartList {
+    readonly type: typeof CART_ACTIONS.TOGGLE_CARTLIST;
+    readonly visible?: boolean;
+}
+
 export type UpdateCartActions = AddToCart | RemoveFromCart;
 export type InitCartActions = InitCartError | InitCartSuccess;
 export type CheckCustomerActions = CheckoutRequest | CheckoutSuccess | CheckoutError;
 
-export type Types = InitCartActions | UpdateCartActions | CheckCustomerActions;
+export type Types = InitCartActions | UpdateCartActions | CheckCustomerActions | ToggleCartList;

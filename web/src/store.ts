@@ -12,6 +12,7 @@ import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import thunk from 'redux-thunk';
 
 import { navBarReducer } from 'src/components/App/NavBar/reducers';
+import { cartReducer } from 'src/components/Cart/reducers';
 import { shopReducer } from 'src/components/Shop/reducers';
 
 import { AsyncStore, GlobalStateShape, Reducers } from 'src/types';
@@ -19,6 +20,7 @@ import { AsyncStore, GlobalStateShape, Reducers } from 'src/types';
 const createReducer = (reducers?: Reducers) => {
     return combineReducers<GlobalStateShape>({
         navbar: navBarReducer,
+        cart: cartReducer,
         shop: shopReducer,
         ...reducers,
     });

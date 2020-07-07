@@ -2,7 +2,7 @@ import css from '@emotion/css';
 import styled from '@emotion/styled';
 import * as React from 'react';
 
-import { addToCartAction, removeFromCartAction } from 'src/components/Shop/actions';
+import { addToCartAction, removeFromCartAction } from 'src/components/Cart/actions';
 import { ShoppingCart, Sku } from 'src/components/Shop/types';
 
 import { lato3, lato2 } from 'src/styles/fonts';
@@ -194,7 +194,7 @@ const ShopItemWithoutConnect: React.FC<ShopItemProps> = ({ item, className, ...p
     )
 };
 
-const mapStateToProps = ({ shop }: GlobalStateShape) => ({ cart: shop.cart });
+const mapStateToProps = ({ cart }: GlobalStateShape) => ({ cart });
 
 const ShopItem = connect<ShopItemStateToProps, ShopItemDispatchToProps, ShopItemOwnProps>(
     mapStateToProps,

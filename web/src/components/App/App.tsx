@@ -33,6 +33,7 @@ const activated = [
 
 import moment from 'moment-timezone';
 
+import { Cart } from 'src/components/Cart/Cart';
 import { toggleNavBar } from 'src/components/App/NavBar/actions';
 import NavBar from 'src/components/App/NavBar/NavBar';
 import { LogoSVG } from 'src/components/LogoSVG';
@@ -220,6 +221,7 @@ class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?:
                                         </FadingContainer>
                                     </Transition>
                                 </TransitionGroup>
+                                <Cart />
                             </RootContainer>
                         );
                     }}

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import ReactMedia from 'react-media';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import styled from '@emotion/styled';
 
+import CartButton from 'src/components/App/NavBar/CartButton';
 import HamburgerNav from 'src/components/App/NavBar/HamburgerNav';
 import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import NavBarLogo from 'src/components/App/NavBar/NavBarLogo';
@@ -16,10 +17,6 @@ interface NavBarProps {
     readonly currentBasePath: string;
     readonly className?: string;
     readonly specificRouteName: string;
-}
-
-interface NavBarStateToProps {
-    readonly isExpanded?: boolean;
 }
 
 const StyledNavBar = styled.div<{ isHome: boolean; isExpanded: boolean }>`
@@ -45,15 +42,24 @@ const StyledNavBar = styled.div<{ isHome: boolean; isExpanded: boolean }>`
     box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.3);
 `;
 
-const NavBar = React.memo(function NavBar({
+const StyledNavAndCart = styled.div<{}>({
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+});
+
+const NavBar: React.FC<NavBarProps> = ({
     currentBasePath,
-    isExpanded,
     specificRouteName,
-}: NavBarProps & NavBarStateToProps) {
+}) => {
+    const isExpanded = useSelector(({ navbar }: GlobalStateShape) => navbar.isExpanded);
+    const cartItems = useSelector(({ cart }: GlobalStateShape) => cart.items);
+    console.log(cartItems.length);
+
     const isHome = currentBasePath === '/';
     return (
         <ReactMedia query={reactMediaMediumQuery}>
-            {(matches: boolean) => (
+            {(mobile: boolean) => (
                 <StyledNavBar
                     isHome={isHome}
                     isExpanded={isExpanded}
@@ -63,30 +69,34 @@ const NavBar = React.memo(function NavBar({
                         isExpanded={isExpanded}
                         specificRouteName={specificRouteName}
                     />
-                    {matches ? (
-                        <HamburgerNav
-                            currentBasePath={currentBasePath}
-                            isMobile={true}
-                        />
-                    ) : (
-                        <NavBarLinks
-                            currentBasePath={currentBasePath}
-                            isMobile={false}
-                        />
-                    )}
+                    {mobile ?
+                        (
+                            <>
+                                {cartItems.length !== 0 && <CartButton
+                                    isHome={isHome}
+                                />}
+                                <HamburgerNav
+                                    currentBasePath={currentBasePath}
+                                    isMobile={true}
+                                    key="hamburger-nav"
+                                />
+                            </>
+                        ) : (
+                            <StyledNavAndCart>
+                                <NavBarLinks
+                                    currentBasePath={currentBasePath}
+                                    isMobile={false}
+                                />
+                                {cartItems.length !== 0 && <CartButton
+                                    isHome={isHome}
+                                />}
+                            </StyledNavAndCart>
+                        )
+                    }
                 </StyledNavBar >
             )}
         </ReactMedia>
     );
-});
+};
 
-const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
-    isExpanded: navbar.isExpanded,
-    showSubs: navbar.showSubs,
-});
-
-const connectedNavBar = connect<NavBarStateToProps, {}, NavBarProps>(
-    mapStateToProps,
-)(NavBar);
-
-export default connectedNavBar;
+export default NavBar;
