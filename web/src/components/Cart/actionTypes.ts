@@ -1,4 +1,7 @@
 import CART_ACTIONS from 'src/components/Cart/actionTypeKeys';
+import { ReferenceObject } from 'popper.js'
+import { CheckoutErrorObject } from 'src/components/Cart/types';
+
 
 export interface InitCartError {
     readonly type: typeof CART_ACTIONS.INIT_ERROR;
@@ -29,7 +32,7 @@ export interface CheckoutSuccess {
 
 export interface CheckoutError {
     readonly type: typeof CART_ACTIONS.CHECKOUT_ERROR;
-    readonly errorMessage: string;
+    readonly error: CheckoutErrorObject;
 }
 
 export interface ToggleCartList {
@@ -37,8 +40,24 @@ export interface ToggleCartList {
     readonly visible?: boolean;
 }
 
+export interface PopperSetRef {
+    readonly type: typeof CART_ACTIONS.POPPER_SETREF;
+    readonly el: ReferenceObject;
+}
+
+export interface PopperSetPop {
+    readonly type: typeof CART_ACTIONS.POPPER_SETPOP;
+    readonly el: HTMLDivElement;
+}
+
+export interface PopperSetArrow {
+    readonly type: typeof CART_ACTIONS.POPPER_SETARROW;
+    readonly el: HTMLDivElement;
+}
+
 export type UpdateCartActions = AddToCart | RemoveFromCart;
 export type InitCartActions = InitCartError | InitCartSuccess;
 export type CheckCustomerActions = CheckoutRequest | CheckoutSuccess | CheckoutError;
+export type PopperActions = PopperSetRef | PopperSetPop | PopperSetArrow;
 
-export type Types = InitCartActions | UpdateCartActions | CheckCustomerActions | ToggleCartList;
+export type Types = InitCartActions | UpdateCartActions | CheckCustomerActions | ToggleCartList | PopperActions;

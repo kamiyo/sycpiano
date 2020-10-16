@@ -13,7 +13,7 @@ import { GlobalStateShape } from 'src/types';
 import { pushed } from 'src/styles/mixins';
 const ShopContainer = styled.div`
     ${pushed}
-    // background-color: #ebebeb;
+    background-color: #f4f4f4;
     display: flex;
 `;
 

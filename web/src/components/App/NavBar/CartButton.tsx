@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ReferenceObject } from 'popper.js'
 
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
@@ -48,14 +49,17 @@ const StyledIcon = styled.svg`
 
 interface CartButtonProps {
     isHome?: boolean;
+    setReferenceElement: React.Dispatch<React.SetStateAction<ReferenceObject>>;
 }
 
-const CartButton: React.FC<CartButtonProps> = ({ isHome }) => {
+const CartButton = (
+    { isHome, setReferenceElement }: CartButtonProps,
+) => {
     const cartCount = useSelector(({ cart }: GlobalStateShape) => cart.items.length);
     const dispatch = useDispatch();
 
     return (
-        <StyledCart onClick={() => dispatch(toggleCartListAction())} isHome={isHome}>
+        <StyledCart onClick={() => dispatch(toggleCartListAction())} isHome={isHome} ref={(el) => { console.log(el); setReferenceElement(el); }}>
 
             <StyledIcon
                 xmlns="http://www.w3.org/2000/svg"

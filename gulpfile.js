@@ -1,24 +1,51 @@
 // gulpfile.js
-const nodemon = require('gulp-nodemon');
+const gulpNodemon = require('gulp-nodemon');
 const gulp = require('gulp');
 const fancyLog = require('fancy-log');
 const PluginError = require('plugin-error');
 const ts = require('gulp-typescript');
-const eslint = require('gulp-eslint');
+const { ESLint } = require('eslint');
+const geslint = require('gulp-eslint');
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
 const del = require('del');
 const generateTzData = require('./generateTzData');
+const glob = require('glob');
+const chalk = require('chalk');
+const stylelint = require('stylelint');
+const stylelintFormatter = require('stylelint-formatter-pretty');
+const cliProgress = require('cli-progress');
+const { Transform } = require('stream');
+const { spawn } = require('child_process');
+const treeKill = require('tree-kill');
+const { MultiProgressBars } = require('multi-progress-bars');
+
+let reporter;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-const webpackConfig = isProduction ? require('./webpack.prod.config.js') : require('./webpack.dev.config.js');
+const devWebpackConfig = require('./webpack.dev.config.js');
 
-const tsProject = ts.createProject('server/tsconfig.json');
+const prodWebpackConfig = require('./webpack.prod.config.js');
+
+const serverTsProject = ts.createProject('server/tsconfig.json');
+const appTsProject = ts.createProject('tsconfig.json');
+
+let finishResolve;
+
+const finishPromise = new Promise((res, _) => {
+    finishResolve = res;
+});
+
+const deferredReporter = (message) => {
+    finishPromise.then(() => {
+        console.log(message);
+    });
+};
 
 const buildApp = (done) => (
-    webpack(webpackConfig, (err, stats) => {
+    webpack(prodWebpackConfig, (err, stats) => {
         if (err || stats.hasErrors()) {
             if (err) {
                 fancyLog.error('[webpack]', err.stack || err);
@@ -38,18 +65,15 @@ const buildApp = (done) => (
             }
         }
         else {
-            fancyLog('[webpack]', stats.toString({
-                chunks: false, // Makes the build much quieter
-                colors: true
-            }));
+            fancyLog('[webpack]', stats.toString('minimal'));
         }
         done();
     })
 );
 
-gulp.task('build-app', buildApp);
+exports.buildApp = buildApp;
 
-gulp.task('generate-tz-data', generateTzData);
+exports.generateTzData = generateTzData;
 
 const cleanServer = async (done) => {
     await del([
@@ -61,20 +85,51 @@ const cleanServer = async (done) => {
 
 const lintServer = () => {
     return gulp.src('server/src/**/*.ts')
-        .pipe(eslint({
+        .pipe(geslint({
             configFile: 'server/.eslintrc.js',
             cache: true,
         }))
-        .pipe(eslint.formatEach());
+        .pipe(geslint.formatEach());
 };
 
-const compileServer = () => (
-    tsProject.src()
-        .pipe(tsProject(ts.reporter.defaultReporter()))
-        .on('error', () => {})
+const compileServer = () => {
+    return serverTsProject.src()
+        .pipe(serverTsProject(ts.reporter.defaultReporter()))
+        .on('error', () => { })
+        .js
+        .pipe(gulp.dest('./server/build'));
+};
+
+const checkServer = () => {
+    return serverTsProject.src().pipe(serverTsProject(ts.reporter.defaultReporter()));
+}
+
+const compileServerNoCheck = () => {
+    const count = glob.sync('server/src/**/*.ts').length;
+    reporter.addTask('Compile Server', { type: 'percentage', barColorFn: chalk.blue, index: 1 });
+
+    let counter = 0;
+    const forEach = new Transform({
+        writableObjectMode: true,
+        readableObjectMode: true,
+        transform(chunk, encoding, callback) {
+            counter++;
+            reporter.updateTask('Compile Server', { percentage: counter / count, message: counter + '/' + count });
+            callback(null, chunk);
+        }
+    });
+
+    return serverTsProject.src()
+        .pipe(forEach)
+        .pipe(serverTsProject(ts.reporter.nullReporter()))
+        .on('error', () => { })
         .js
         .pipe(gulp.dest('./server/build'))
-);
+        .on('end', () => {
+            reporter.done('Compile Server');
+            // tscBar.increment(1, { message: 'Finished'.green });
+        });
+};
 
 const buildServer = gulp.series(
     // We don't need linting in production.
@@ -82,13 +137,9 @@ const buildServer = gulp.series(
     compileServer
 );
 
-gulp.task('build-server', buildServer);
+exports.buildServer = buildServer;
 
-gulp.task(
-    'build-prod',
-    // We don't have enough memory in production to do build-server and build-app in parallel.
-    gulp.series('build-server', 'generate-tz-data', 'build-app')
-);
+exports.buildProd = gulp.series(buildServer, generateTzData, buildApp);
 
 // build folder needs to exist when nodemon watch is called
 const checkAndMakeBuildDir = (done) => {
@@ -108,27 +159,45 @@ const checkAndMakeBuildDir = (done) => {
 }
 
 const webpackWatch = (done) => {
-    webpack(webpackConfig).watch({
+    webpack(devWebpackConfig(true, webpackBar)).watch({
         ignored: /node_modules/,
     }, (err, stats) => {
         if (err)
             throw new PluginError('webpack', err);
 
         fancyLog('[webpack]', stats.toString({
-            chunks: false, // Makes the build much quieter
+            assets: true,
+            entrypoints: true,
+            modules: false,
             colors: true
         }));
     });
     done();
-}
+};
+
+const webpackCompileNoCheck = (done) => {
+    reporter.addTask('Webpack', { type: 'percentage', barColorFn: chalk.green, index: 2 });
+    webpack(devWebpackConfig(false, reporter)).run((err, stats) => {
+        if (err)
+            throw new PluginError('webpack', err);
+
+        reporter.done('Webpack');
+
+        // deferredReporter('[webpack]\n'.blue + stats.toString('minimal'));
+        reporter.promise.then(() => {
+            console.log(chalk.blue('[webpack]\n') + stats.toString('minimal'));
+        });
+        done();
+    });
+};
 
 const watchServer = (done) => {
-    gulp.watch('server/src/**/*', buildServer);
+    gulp.watch('server/src/**/*', { ignoreInitial: false }, buildServer);
     done();
-}
+};
 
 const startNodemon = (done) => {
-    nodemon({
+    gulpNodemon({
         script: './app.js',
         ext: 'js html',
         watch: [
@@ -136,11 +205,11 @@ const startNodemon = (done) => {
             'server/build/',
             'app.js',
         ],
+        done,
     });
-    done();
 };
 
-gulp.task('run-dev', gulp.series(
+exports.runDev = gulp.series(
     gulp.parallel(
         gulp.series(
             buildServer,
@@ -150,4 +219,124 @@ gulp.task('run-dev', gulp.series(
         webpackWatch,
     ),
     startNodemon,
-));
+);
+
+exports.doServer = gulp.series(cleanServer, compileServerNoCheck);
+exports.doApp = gulp.series(checkAndMakeBuildDir, webpackCompileNoCheck);
+
+let appPromiseResolve, serverPromiseResolve;
+let appPromise, serverPromise;
+
+const resetServerPromise = (cb) => {
+    serverPromise = new Promise((res, _) => serverPromiseResolve = res);
+    cb();
+};
+
+const resetAppPromise = (cb) => {
+    appPromise = new Promise((res, _) => appPromiseResolve = res);
+    cb();
+};
+
+const resolveServerPromise = (cb) => {
+    serverPromiseResolve();
+    cb();
+};
+
+const resolveAppPromise = (cb) => {
+    appPromiseResolve();
+    cb();
+};
+
+process.on('SIGINT', () => {
+    child && child.kill();
+    watchers.forEach((watcher) => {
+        watcher.close();
+    });
+    treeKill(process.pid);
+});
+
+let child;
+
+const restartApp = async () => {
+    try {
+        reporter.addTask('Overall', { type: 'indefinite', barColorFn: chalk.white, index: 0 });
+        reporter.updateTask('Overall', { message: 'Compiling' });
+        mainDone && mainDone();
+        await Promise.all([appPromise, serverPromise]);
+        finishResolve();
+        reporter.updateTask('Overall', { message: 'Starting App' });
+        child && treeKill(child.pid);
+        child = spawn('node', ['./app.js']);
+        reporter.done('Overall', { message: chalk.yellow('Waiting for Changes...') });
+        child.stdout.setEncoding('utf8');
+        child.stderr.setEncoding('utf8');
+        child.stdout.on('data', (data) => console.log(data));
+        child.stderr.on('data', (data) => console.error(data));
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+let watchers = []
+
+let mainDone;
+
+const watchDev = (done) => {
+    reporter = new MultiProgressBars({ initMessage: 'Watch Dev' });
+    watchers.push(
+        gulp.watch(
+            ['server/src/**/*'],
+            { ignoreInitial: false },
+            gulp.series(resetServerPromise, cleanServer, compileServerNoCheck, resolveServerPromise),
+        )
+    );
+    watchers.push(
+        gulp.watch(
+            ['web/src/**/*', 'web/partials/*'],
+            { ignoreInitial: false },
+            gulp.series(resetAppPromise, checkAndMakeBuildDir, webpackCompileNoCheck, resolveAppPromise),
+        )
+    );
+    watchers.push(
+        gulp.watch(
+            ['server/src/**/*', 'web/src/**/*', 'web/partials/*'],
+            { ignoreInitial: false },
+            restartApp,
+        )
+    );
+    mainDone = done;
+};
+
+exports.watchDev = watchDev;
+
+const watchAndCheckServer = (done) => {
+    gulp.watch('server/src/**/*', { ignoreInitial: false }, gulp.series(lintServer, checkServer));
+    done();
+};
+
+const lintApp = async () => {
+    const styleResult = await stylelint.lint({
+        files: 'web/src/**/*',
+        formatter: stylelintFormatter,
+    });
+    console.log(styleResult.output)
+
+    const eslint = new ESLint();
+    const results = await eslint.lintFiles(['web/src/**/*']);
+    const formatter = await eslint.loadFormatter('stylish');
+    const resultText = formatter.format(results);
+    console.log(resultText);
+};
+
+const checkApp = () => {
+    return appTsProject.src()
+        .pipe(appTsProject(ts.reporter.defaultReporter()));
+}
+
+const watchAndCheckApp = (done) => {
+    gulp.watch('web/src/**/*', { ignoreInitial: false }, gulp.series(lintApp, checkApp));
+    done();
+}
+
+exports.watchAndCheckServer = watchAndCheckServer;
+exports.watchAndCheckApp = watchAndCheckApp;

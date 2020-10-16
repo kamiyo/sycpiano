@@ -6,6 +6,8 @@ export class product extends Model {
     readonly sku: string;
     readonly file: string;
     readonly title: string;
+    readonly description: string;
+    readonly sample: string;
     readonly createdAt?: Date | string;
     readonly updatedAt?: Date | string;
 }
@@ -22,6 +24,8 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
         sku: dataTypes.STRING,
         file: dataTypes.STRING,
         title: dataTypes.TEXT,
+        description: dataTypes.TEXT,
+        sample: dataTypes.STRING,
     }, {
         sequelize,
         tableName: 'product',

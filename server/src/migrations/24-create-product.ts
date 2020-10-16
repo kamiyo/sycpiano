@@ -12,6 +12,8 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
         sku: dataTypes.STRING,
         file: dataTypes.STRING,
         title: dataTypes.TEXT,
+        description: dataTypes.TEXT,
+        sample: dataTypes.STRING,
         createdAt: {
             type: dataTypes.DATE,
             field: 'created_at',

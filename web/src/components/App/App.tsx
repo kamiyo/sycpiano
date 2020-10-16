@@ -1,9 +1,10 @@
 import { omit, startCase, toLower } from 'lodash-es';
+import { ReferenceObject } from 'popper.js'
 import { parse, stringify } from 'qs';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import ReactMedia from 'react-media';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -35,6 +36,7 @@ import moment from 'moment-timezone';
 
 import { Cart } from 'src/components/Cart/Cart';
 import { toggleNavBar } from 'src/components/App/NavBar/actions';
+import { ToggleNav } from 'src/components/App/NavBar/actionTypes';
 import NavBar from 'src/components/App/NavBar/NavBar';
 import { LogoSVG } from 'src/components/LogoSVG';
 
@@ -44,6 +46,9 @@ import store from 'src/store';
 import { reactMediaMobileQuery } from 'src/styles/screens';
 import { GlobalStateShape } from 'src/types';
 import { metaDescriptions, titleStringBase } from 'src/utils';
+import { ThunkDispatch } from 'redux-thunk';
+import { usePopper } from 'react-popper';
+import { reference } from '@popperjs/core';
 
 const register = extractModule(store);
 const About = () => register('about', import(/* webpackChunkName: 'about' */ 'src/components/About'));
@@ -82,7 +87,8 @@ const slideOnExit = (delay: number) => (element: HTMLElement) => {
 const RootContainer = styled.div<{ isHome: boolean }>`
     height: 100%;
     width: 100%;
-    background-color: ${props => props.isHome ? 'black' : 'white'};
+    // background-color: ${props => props.isHome ? 'black' : 'white'};
+    background-color: white;
 `;
 
 const FadingContainer = styled('div')`
@@ -99,143 +105,153 @@ interface AppDispatchToProps {
     toggleNavBar: typeof toggleNavBar;
 }
 
-type AppProps = RouteComponentProps<{}> & AppStateToProps & AppDispatchToProps;
-
-class App extends React.Component<AppProps, { homeBgLoaded: boolean; lastMatch?: boolean }> {
-    constructor(props: AppProps) {
-        super(props);
-        this.state = {
-            homeBgLoaded: this.getRouteBase() !== '/',
-        };
-    }
-
-    componentDidMount() {
-        const currentQuery = parse(this.props.location.search, { ignoreQueryPrefix: true });
-        if (currentQuery.fbclid) {
-            this.props.history.push(this.props.location.pathname + stringify(omit(currentQuery, 'fbclid')));
-        }
-    }
-
-    isSubPath = (testPath: string) => {
-        return testPath === '/photos' || testPath === '/videos' || testPath === '/music';
-    }
-
-    getRouteBase = () => {
-        const matches: string[] = this.props.location.pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
-        return matches[1] || '/';
-    }
-
-    getMostSpecificRouteName = () => {
-        const matches: string[] = this.props.location.pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
-        const match = matches[2] || matches[1];
-        return (match ? match.slice(1) : '') || null;
-    }
-
-    bgLoaded = () => {
-        this.setState({ homeBgLoaded: true });
-    }
-
-    render() {
-        let currentPage = this.getMostSpecificRouteName();
-        currentPage = currentPage ? 'Home' : startCase(currentPage);
-        const description = metaDescriptions[toLower(currentPage)] || 'Welcome to the official website of pianist, composer, and arranger Sean Chen';
-        return (
-            <>
-                <Global styles={globalCss} />
-                <Helmet
-                    title={`${titleStringBase} | ${currentPage}`}
-                    meta={[
-                        {
-                            name: 'description',
-                            content: description,
-                        },
-                        {
-                            name: 'copyright',
-                            content: `copyright Sean Chen ${moment().format('YYYY')}.`,
-                        },
-                    ]}
-                />
-                <ReactMedia query={reactMediaMobileQuery}>
-                    {(matches: boolean) => {
-                        if (!matches) {
-                            if (!this.props.navbarVisible) {
-                                this.props.toggleNavBar(true);
-                            }
-                        }
-                        return (
-                            <RootContainer isHome={this.getRouteBase() === '/'}>
-                                <LogoSVG />
-                                <Transition
-                                    in={this.props.navbarVisible || !matches}
-                                    onEntering={this.getRouteBase() === '/' ? fadeOnEnter(0) : slideOnEnter(0)}
-                                    onExiting={slideOnExit(0)}
-                                    timeout={250}
-                                    appear={true}
-                                >
-                                    <NavBar
-                                        currentBasePath={this.getRouteBase()}
-                                        specificRouteName={this.getMostSpecificRouteName()}
-                                    />
-                                </Transition>
-                                <TransitionGroup component={null}>
-                                    <Transition
-                                        key={this.getRouteBase()}
-                                        onEntering={fadeOnEnter(0.25)}
-                                        onExiting={fadeOnExit(0)}
-                                        timeout={750}
-                                        appear={true}
-                                    >
-                                        <FadingContainer>
-                                            <Switch location={this.props.location}>
-                                                <Route
-                                                    path="/about/:about"
-                                                    exact={true}
-                                                    render={(childProps) => <AsyncComponent<AboutProps> moduleProvider={About} {...childProps} isMobile={matches} />}
-                                                />
-                                                <Route
-                                                    path="/contact"
-                                                    exact={true}
-                                                    render={(childProps) => <AsyncComponent<ContactProps> moduleProvider={Contact} {...childProps} isMobile={matches} />}
-                                                />
-                                                <Route
-                                                    path="/media/:media?/:other*"
-                                                    exact={true}
-                                                    render={(childProps) => <AsyncComponent<MediaProps> moduleProvider={Media} {...childProps} isMobile={matches} />}
-                                                />
-                                                <Route
-                                                    path="/schedule/:type?/:date?"
-                                                    render={(childProps) => <AsyncComponent<ScheduleProps> moduleProvider={Schedule} {...childProps} isMobile={matches} />}
-                                                />
-                                                <Route
-                                                    path="/shop"
-                                                    exact={true}
-                                                    render={(childProps) => <AsyncComponent<ShopProps> moduleProvider={Shop} {...childProps} isMobile={matches} />}
-                                                />
-                                                <Route
-                                                    path="/"
-                                                    exact={true}
-                                                    render={(childProps) => <AsyncComponent<HomeProps> moduleProvider={Home} {...childProps} bgLoaded={this.bgLoaded} isMobile={matches} />}
-                                                />
-                                                <Route render={() => <AsyncComponent<{}> moduleProvider={Page404} />} />
-                                            </Switch>
-                                        </FadingContainer>
-                                    </Transition>
-                                </TransitionGroup>
-                                <Cart />
-                            </RootContainer>
-                        );
-                    }}
-                </ReactMedia>
-            </>
-        );
-    }
+interface AppState {
+    popperReference: ReferenceObject;
+    popperElement: HTMLDivElement;
+    //arrowElement
+    homeBgLoaded: boolean;
 }
 
-const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
-    navbarVisible: navbar.isVisible,
-});
+const isSubPath = (testPath: string) => {
+    return testPath === '/photos' || testPath === '/videos' || testPath === '/music';
+}
 
-export default connect<AppStateToProps, AppDispatchToProps>(
-    mapStateToProps,
-    { toggleNavBar },
-)(App);
+const getRouteBase = (pathname: string) => {
+    const matches: string[] = pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
+    return matches[1] || '/';
+}
+
+const getMostSpecificRouteName = (pathname: string) => {
+    const matches: string[] = pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
+    const match = matches[2] || matches[1];
+    return (match ? match.slice(1) : '') || null;
+}
+
+type AppProps = RouteComponentProps<{}> & AppStateToProps & AppDispatchToProps;
+
+const App: React.FC<AppProps> = ({ location, history, navbarVisible }) => {
+    // const [homeBgLoaded, setHomeBgLoaded] = React.useState(() => (getRouteBase(location.pathname) !== '/'));
+    const dispatch = useDispatch<ThunkDispatch<GlobalStateShape, void, ToggleNav>>();
+    const [referenceElement, setReferenceElement] = React.useState<ReferenceObject>(null);
+    const [popperElement, setPopperElement] = React.useState<HTMLDivElement>(null);
+    const { styles, attributes } = usePopper(referenceElement, popperElement, {
+        modifiers: [
+            {
+                name: 'offset',
+                options: {
+                    offset: [0, 16],
+                },
+            },
+            {
+                name: 'padding',
+                options: {
+                    right: 16,
+                },
+            },
+        ],
+    });
+
+    React.useEffect(() => {
+        const currentQuery = parse(location.search, { ignoreQueryPrefix: true });
+        if (currentQuery.fbclid) {
+            history.push(location.pathname + stringify(omit(currentQuery, 'fbclid')));
+        }
+    }, [location]);
+
+    let currentPage = getMostSpecificRouteName(location.pathname);
+    currentPage = currentPage ? 'Home' : startCase(currentPage);
+    const description =
+        metaDescriptions[toLower(currentPage)] || 'Welcome to the official website of pianist, composer, and arranger Sean Chen';
+    return (
+        <>
+            <Global styles={globalCss} />
+            <Helmet
+                title={`${titleStringBase} | ${currentPage}`}
+                meta={[
+                    {
+                        name: 'description',
+                        content: description,
+                    },
+                    {
+                        name: 'copyright',
+                        content: `copyright Sean Chen ${moment().format('YYYY')}.`,
+                    },
+                ]}
+            />
+            <ReactMedia query={reactMediaMobileQuery}>
+                {(matches: boolean) => {
+                    if (!matches) {
+                        if (!navbarVisible) {
+                            dispatch(toggleNavBar(true));
+                        }
+                    }
+                    return (
+                        <RootContainer isHome={getRouteBase(location.pathname) === '/'}>
+                            <LogoSVG />
+                            <Transition
+                                in={navbarVisible || !matches}
+                                onEntering={getRouteBase(location.pathname) === '/' ? fadeOnEnter(0) : slideOnEnter(0)}
+                                onExiting={slideOnExit(0)}
+                                timeout={250}
+                                appear={true}
+                            >
+                                <NavBar
+                                    currentBasePath={getRouteBase(location.pathname)}
+                                    specificRouteName={getMostSpecificRouteName(location.pathname)}
+                                    setReferenceElement={setReferenceElement}
+                                />
+                            </Transition>
+                            <TransitionGroup component={null}>
+                                <Transition
+                                    key={getRouteBase(location.pathname)}
+                                    onEntering={fadeOnEnter(0.25)}
+                                    onExiting={fadeOnExit(0)}
+                                    timeout={750}
+                                    appear={true}
+                                >
+                                    <FadingContainer>
+                                        <Switch location={location}>
+                                            <Route
+                                                path="/about/:about"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent<AboutProps> moduleProvider={About} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/contact"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent<ContactProps> moduleProvider={Contact} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/media/:media?/:other*"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent<MediaProps> moduleProvider={Media} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/schedule/:type?/:date?"
+                                                render={(childProps) => <AsyncComponent<ScheduleProps> moduleProvider={Schedule} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/shop"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent<ShopProps> moduleProvider={Shop} {...childProps} isMobile={matches} />}
+                                            />
+                                            <Route
+                                                path="/"
+                                                exact={true}
+                                                render={(childProps) => <AsyncComponent<HomeProps> moduleProvider={Home} {...childProps} /*bgLoaded={() => setHomeBgLoaded(true)}*/ isMobile={matches} />}
+                                            />
+                                            <Route render={() => <AsyncComponent<{}> moduleProvider={Page404} />} />
+                                        </Switch>
+                                    </FadingContainer>
+                                </Transition>
+                            </TransitionGroup>
+                            <Cart ref={setPopperElement} styles={styles} attributes={attributes}/>
+                        </RootContainer>
+                    );
+                }}
+            </ReactMedia>
+        </>
+    );
+};
+
+export default App

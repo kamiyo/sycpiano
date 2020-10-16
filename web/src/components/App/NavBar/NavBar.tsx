@@ -1,6 +1,7 @@
+import { ReferenceObject } from 'popper.js';
 import * as React from 'react';
 import ReactMedia from 'react-media';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import styled from '@emotion/styled';
 
@@ -17,6 +18,7 @@ interface NavBarProps {
     readonly currentBasePath: string;
     readonly className?: string;
     readonly specificRouteName: string;
+    setReferenceElement: React.Dispatch<React.SetStateAction<ReferenceObject>>;
 }
 
 const StyledNavBar = styled.div<{ isHome: boolean; isExpanded: boolean }>`
@@ -48,13 +50,13 @@ const StyledNavAndCart = styled.div<{}>({
     alignItems: 'flex-end',
 });
 
-const NavBar: React.FC<NavBarProps> = ({
-    currentBasePath,
-    specificRouteName,
-}) => {
+const NavBar = ({
+        currentBasePath,
+        specificRouteName,
+        setReferenceElement,
+}: NavBarProps) => {
     const isExpanded = useSelector(({ navbar }: GlobalStateShape) => navbar.isExpanded);
     const cartItems = useSelector(({ cart }: GlobalStateShape) => cart.items);
-    console.log(cartItems.length);
 
     const isHome = currentBasePath === '/';
     return (
@@ -72,9 +74,12 @@ const NavBar: React.FC<NavBarProps> = ({
                     {mobile ?
                         (
                             <>
-                                {cartItems.length !== 0 && <CartButton
-                                    isHome={isHome}
-                                />}
+                                {cartItems.length !== 0 &&
+                                    <CartButton
+                                        isHome={isHome}
+                                        setReferenceElement={setReferenceElement}
+                                    />
+                                }
                                 <HamburgerNav
                                     currentBasePath={currentBasePath}
                                     isMobile={true}
@@ -87,9 +92,12 @@ const NavBar: React.FC<NavBarProps> = ({
                                     currentBasePath={currentBasePath}
                                     isMobile={false}
                                 />
-                                {cartItems.length !== 0 && <CartButton
-                                    isHome={isHome}
-                                />}
+                                {cartItems.length !== 0 &&
+                                    <CartButton
+                                        isHome={isHome}
+                                        setReferenceElement={setReferenceElement}
+                                    />
+                                }
                             </StyledNavAndCart>
                         )
                     }

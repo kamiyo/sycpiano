@@ -186,7 +186,7 @@ const srcWidths = screenLengths.map((value) => (
 ));
 
 interface HomeProps {
-    bgLoaded: () => void;
+    // bgLoaded: () => void;
     isMobile: boolean;
 }
 
@@ -200,7 +200,7 @@ class Home extends React.Component<HomeProps, {}> {
     }, {});
 
     onImageLoaded = () => {
-        this.props.bgLoaded();
+        // this.props.bgLoaded();
     }
 
     render() {

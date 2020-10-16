@@ -4,7 +4,6 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const os = require('os');
 require('dotenv').config();
@@ -24,6 +23,33 @@ const workerPool = {
     poolTimeout: isProd ? 2000 : Infinity,
 };
 
+const tsxUse = [
+    { loader: 'cache-loader' },
+    {
+        loader: 'babel-loader',
+        options: {
+            presets: [
+                '@babel/preset-react',
+                '@emotion/babel-preset-css-prop',
+                [
+                    '@babel/preset-env',
+                    {
+                        targets: "> 0.25%, not dead",
+                        useBuiltIns: 'usage',
+                        corejs: '3',
+                    }
+                ],
+                '@babel/preset-typescript',
+            ],
+            plugins: [
+                '@babel/syntax-dynamic-import',
+                '@babel/proposal-class-properties',
+                '@babel/proposal-object-rest-spread',
+            ],
+        },
+    },
+];
+
 const config = () => {
     return {
         cache: true,
@@ -35,55 +61,27 @@ const config = () => {
             publicPath: '/static/',
         },
         module: {
-            rules: [{
-                test: /\.(t|j)sx?$/,
-                include: sourcePaths,
-                use: [
-                    { loader: 'cache-loader' },
-                    {
-                        loader: 'thread-loader',
-                        options: workerPool,
-                    },
-                    {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: [
-                                '@babel/preset-react',
-                                '@emotion/babel-preset-css-prop',
-                                [
-                                    '@babel/preset-env',
-                                    {
-                                        targets: "> 0.25%, not dead",
-                                        useBuiltIns: 'usage',
-                                        corejs: '3',
-                                    }
-                                ],
-                                '@babel/preset-typescript',
-                            ],
-                            plugins: [
-                                '@babel/syntax-dynamic-import',
-                                '@babel/proposal-class-properties',
-                                '@babel/proposal-object-rest-spread',
-                            ],
+            rules: [
+                {
+                    test: /\.(t|j)sx?$/,
+                    include: sourcePaths,
+                    use: tsxUse,
+                }, {
+                    test: /\.(ttf|eot|woff|woff2|svg|png|jpg)$/,
+                    include: [
+                        path.resolve(__dirname, 'web/assets/images'),
+                        path.resolve(__dirname, 'web/assets/fonts')
+                    ],
+                    use: [
+                        {
+                            loader: 'url-loader',
+                            options: {
+                                limit: 2e16,
+                                name: '[name]-[hash].[ext]',
+                            },
                         },
-                    },
-                ]
-            }, {
-                test: /\.(ttf|eot|woff|woff2|svg|png|jpg)$/,
-                include: [
-                    path.resolve(__dirname, 'web/assets/images'),
-                    path.resolve(__dirname, 'web/assets/fonts')
-                ],
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 2e16,
-                            name: '[name]-[hash].[ext]',
-                        },
-                    },
-                ],
-            }]
+                    ],
+                }]
         },
         optimization: {
             runtimeChunk: 'single',
@@ -107,10 +105,6 @@ const config = () => {
                 scriptLoading: 'defer',
                 hash: true,
             }),
-            new ProgressBarPlugin({
-                format: '[:percent] webpack: :msg... :elapseds \n',
-                clear: false,
-            }),
         ],
         resolve: {
             extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
@@ -125,4 +119,6 @@ const config = () => {
 module.exports = {
     config: config(),
     staticPrefix,
+    sourcePaths,
+    tsxUse,
 };

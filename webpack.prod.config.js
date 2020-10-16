@@ -2,7 +2,7 @@
 'use strict';
 
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const common = require('./webpack.common.config.js');
 const Minimizer = require('terser-webpack-plugin');
 const webpack = require('webpack');
@@ -12,6 +12,15 @@ const config = merge(common.config, {
     output: {
         filename: '[name].[chunkhash:8].bundle.js',
         chunkFilename: '[name].[chunkhash:8].chunk.js',
+    },
+    module: {
+        rules: [
+            {
+                test: /\.(t|j)sx?$/,
+                include: common.sourcePaths,
+                use: common.tsxUse,
+            },
+        ],
     },
     optimization: {
         minimizer: [

@@ -18,9 +18,5 @@ export interface ShoppingCart {
 export interface ShopStateShape {
     isFetching: boolean;
     fetchSuccess: boolean;
-    cartIsInit: boolean;
-    cart: ShoppingCart;
     items: Sku[];
-    isCheckingOut: boolean;
-    checkOutErrorMessage: string;
 }

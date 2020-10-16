@@ -1,5 +1,6 @@
 /* global Stripe */
 import axios, { AxiosError } from 'axios';
+import { ReferenceObject } from 'popper.js'
 import { ThunkAction } from 'redux-thunk';
 import { GlobalStateShape } from 'src/types';
 
@@ -92,18 +93,21 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
                 if (error) {
                     dispatch({
                         type: CART_ACTIONS.CHECKOUT_ERROR,
-                        errorMessage: 'Stripe redirect failed. Did your internet connection reset?'
+                        error: {
+                            message: 'Stripe redirect failed. Did your internet connection reset?',
+                        },
                     });
                 }
             } catch (e) {
                 const axiosError = e as AxiosError<{ skus: string[] }>;
                 if (axiosError.response && axiosError.response.status === 422) {
-                    const prevPurchasedString = axiosError.response.data.skus.map((sku) =>
-                        `* ${getState().shop.items.find(v => v.id === sku).caption}`
-                    ).join('\n');
+                    const prevPurchasedData = axiosError.response.data.skus;
                     dispatch({
                         type: CART_ACTIONS.CHECKOUT_ERROR,
-                        errorMessage: `These items have been previously purchased:\n${prevPurchasedString}.`,
+                        error: {
+                            message: `The marked items below have been previously purchased. Please remove them to continue with checkout.`,
+                            data: prevPurchasedData,
+                        },
                     });
                 } else {
                     console.log("Checkout Error.", e);
@@ -113,3 +117,29 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
 
     };
 
+export const setReferenceElement = (el: ReferenceObject): ActionTypes.PopperSetRef => ({
+    type: CART_ACTIONS.POPPER_SETREF,
+    el,
+});
+
+export const setPopperElement = (el: HTMLDivElement): ActionTypes.PopperSetPop => ({
+    type: CART_ACTIONS.POPPER_SETPOP,
+    el,
+});
+
+export const setArrowElement = (el: HTMLDivElement): ActionTypes.PopperSetArrow => ({
+    type: CART_ACTIONS.POPPER_SETARROW,
+    el,
+});
+
+export const setReferenceElementAction = (el: ReferenceObject): ThunkAction<void, GlobalStateShape, void, ActionTypes.PopperSetRef> => (
+    (dispatch) => dispatch(setReferenceElement(el))
+);
+
+export const setPopperElementAction = (el: HTMLDivElement): ThunkAction<void, GlobalStateShape, void, ActionTypes.PopperSetPop> => (
+    (dispatch) => dispatch(setPopperElement(el))
+);
+
+export const setArrowElementAction = (el: HTMLDivElement): ThunkAction<void, GlobalStateShape, void, ActionTypes.PopperSetArrow> => (
+    (dispatch) => dispatch(setArrowElement(el))
+);

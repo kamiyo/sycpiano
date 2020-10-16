@@ -23,4 +23,4 @@ export const playlistWidth = {
 
 export const playlistPadding = 10;
 
-export const cartWidth = 300;
+export const cartWidth = 400;

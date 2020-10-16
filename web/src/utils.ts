@@ -53,3 +53,11 @@ export const metaDescriptions: {
         photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
         press: `Press of Sean Chen's performances.`,
     };
+
+export const formatPrice = (price: number) => (
+    '$' + (price / 100).toFixed(2)
+);
+
+export const validateEmail = (email: string) => {
+    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email);
+};
