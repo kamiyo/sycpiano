@@ -1,4 +1,3 @@
-import { usePopper } from 'react-popper';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { initCartAction, syncLocalStorage } from './actions';
@@ -14,9 +13,13 @@ interface CartProps {
             [key: string]: string;
         };
     };
+    setPopperElement: (el: HTMLDivElement) => void;
+    setArrowElement: (el: HTMLDivElement) => void;
 }
 
-export const Cart = React.forwardRef((props: CartProps, setPopperElement: React.Dispatch<React.SetStateAction<HTMLDivElement>>) => {
+export const Cart = (
+        props: CartProps,
+) => {
     const dispatch = useDispatch();
     const cart = useSelector(({ cart }: GlobalStateShape) => cart.items);
     const visible = useSelector(({ cart }: GlobalStateShape) => cart.visible);
@@ -34,8 +37,8 @@ export const Cart = React.forwardRef((props: CartProps, setPopperElement: React.
     }, [cart.length]);
 
     return (
-        visible && <CartList ref={setPopperElement} {...props}/>
+        visible && <CartList {...props}/>
     );
-});
+};
 
 export type CartType = typeof Cart;

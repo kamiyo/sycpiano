@@ -8,10 +8,14 @@ import CART_ACTIONS from 'src/components/Cart/actionTypeKeys';
 import * as ActionTypes from 'src/components/Cart/actionTypes';
 import { fetchItemsAction } from 'src/components/Shop/actions';
 import { storageAvailable } from 'src/localStorage';
+import { CheckoutErrorObject } from './types';
 
 const LOCAL_STORAGE_KEY = 'seanchenpiano_cart';
 
 const stripe = Stripe(STRIPE_PUBLIC);
+
+const isCheckingOut = (state: GlobalStateShape) =>
+    state.cart.isCheckingOut;
 
 export const toggleCartListAction = (visible?: boolean): ActionTypes.ToggleCartList => ({
     type: CART_ACTIONS.TOGGLE_CARTLIST,
@@ -24,7 +28,11 @@ const addItemToCart = (skuId: string): ActionTypes.AddToCart => ({
 });
 
 export const addToCartAction = (skuId: string): ThunkAction<void, GlobalStateShape, void, ActionTypes.UpdateCartActions> => (
-    (dispatch) => dispatch(addItemToCart(skuId))
+    (dispatch, getState) => {
+        if (!isCheckingOut(getState())) {
+            dispatch(addItemToCart(skuId))
+        }
+    }
 );
 
 const removeItemFromCart = (skuId: string): ActionTypes.RemoveFromCart => ({
@@ -32,9 +40,13 @@ const removeItemFromCart = (skuId: string): ActionTypes.RemoveFromCart => ({
     skuId,
 });
 
-export const removeFromCartAction = (skuId: string): ThunkAction<void, GlobalStateShape, void, ActionTypes.UpdateCartActions> =>
-    (dispatch) => dispatch(removeItemFromCart(skuId));
-
+export const removeFromCartAction = (skuId: string): ThunkAction<void, GlobalStateShape, void, ActionTypes.UpdateCartActions> => (
+    (dispatch, getState) => {
+        if (!isCheckingOut(getState())) {
+            dispatch(removeItemFromCart(skuId));
+        }
+    }
+);
 
 const initCartSuccess = (items: string[]): ActionTypes.InitCartSuccess => ({
     type: CART_ACTIONS.INIT_SUCCESS,
@@ -49,7 +61,7 @@ export const initCartAction = (): ThunkAction<Promise<void>, GlobalStateShape, v
     async (dispatch, getState) => {
         if (shouldInitCart(getState())) {
             if (storageAvailable()) {
-                const cart: string[] = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+                const cart: string[] = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) ?? '[]');
                 if (cart.length !== 0) {
                     await dispatch(fetchItemsAction())
                 }
@@ -73,12 +85,14 @@ export const syncLocalStorage = (): ThunkAction<void, GlobalStateShape, void, nu
         }
     };
 
-const shouldCheckout = (state: GlobalStateShape) =>
-    !state.cart.isCheckingOut;
+export const checkoutErrorAction = (error: CheckoutErrorObject): ActionTypes.CheckoutError => ({
+    type: CART_ACTIONS.CHECKOUT_ERROR,
+    error,
+});
 
 export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShape, void, ActionTypes.CheckCustomerActions> =>
     async (dispatch, getState) => {
-        if (shouldCheckout) {
+        if (!isCheckingOut(getState())) {
             try {
                 dispatch({
                     type: CART_ACTIONS.CHECKOUT_REQUEST,
@@ -91,24 +105,18 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
                     sessionId: response.data.sessionId
                 });
                 if (error) {
-                    dispatch({
-                        type: CART_ACTIONS.CHECKOUT_ERROR,
-                        error: {
-                            message: 'Stripe redirect failed. Did your internet connection reset?',
-                        },
-                    });
+                    dispatch(checkoutErrorAction({
+                        message: 'Stripe redirect failed. Did your internet connection reset?',
+                    }));
                 }
             } catch (e) {
                 const axiosError = e as AxiosError<{ skus: string[] }>;
-                if (axiosError.response && axiosError.response.status === 422) {
+                if (axiosError.response?.status === 422) {
                     const prevPurchasedData = axiosError.response.data.skus;
-                    dispatch({
-                        type: CART_ACTIONS.CHECKOUT_ERROR,
-                        error: {
-                            message: `The marked items below have been previously purchased. Please remove them to continue with checkout.`,
-                            data: prevPurchasedData,
-                        },
-                    });
+                    dispatch(checkoutErrorAction({
+                        message: `The items marked in red below have been previously purchased. Please remove them to continue with checkout.`,
+                        data: prevPurchasedData,
+                    }));
                 } else {
                     console.log("Checkout Error.", e);
                 }

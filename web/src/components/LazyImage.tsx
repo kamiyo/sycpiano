@@ -78,7 +78,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
             success: (el: HTMLImageElement) => {
                 if (this.mounted) {
                     this.timeout = setTimeout(() => this.setState({ isLoaded: true }), 500);
-                    this.props.successCb && this.props.successCb(el);
+                    this.props.successCb?.(el);
                 }
             },
         });

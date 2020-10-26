@@ -134,18 +134,17 @@ const App: React.FC<AppProps> = ({ location, history, navbarVisible }) => {
     const dispatch = useDispatch<ThunkDispatch<GlobalStateShape, void, ToggleNav>>();
     const [referenceElement, setReferenceElement] = React.useState<ReferenceObject>(null);
     const [popperElement, setPopperElement] = React.useState<HTMLDivElement>(null);
+    const [arrowElement, setArrowElement] = React.useState<HTMLDivElement>(null);
     const { styles, attributes } = usePopper(referenceElement, popperElement, {
         modifiers: [
             {
-                name: 'offset',
-                options: {
-                    offset: [0, 16],
-                },
+                name: 'arrow',
+                options: { element: arrowElement },
             },
             {
-                name: 'padding',
+                name: 'offset',
                 options: {
-                    right: 16,
+                    offset: [0, -6],
                 },
             },
         ],
@@ -245,7 +244,12 @@ const App: React.FC<AppProps> = ({ location, history, navbarVisible }) => {
                                     </FadingContainer>
                                 </Transition>
                             </TransitionGroup>
-                            <Cart ref={setPopperElement} styles={styles} attributes={attributes}/>
+                            <Cart
+                                setPopperElement={setPopperElement}
+                                setArrowElement={setArrowElement}
+                                styles={styles}
+                                attributes={attributes}
+                            />
                         </RootContainer>
                     );
                 }}

@@ -13,7 +13,7 @@ export const cartReducer = (state: CartStateShape = {
     referenceElement: null,
     popperElement: null,
     arrowElement: null,
-}, action: ActionTypes.Types) => {
+}, action: ActionTypes.Types): CartStateShape => {
     switch (action.type) {
         case CART_ACTIONS.INIT_SUCCESS:
             return {
@@ -50,14 +50,14 @@ export const cartReducer = (state: CartStateShape = {
             return {
                 ...state,
                 isCheckingOut: false,
-                checkOutError: action.error,
+                checkoutError: action.error,
             };
         }
         case CART_ACTIONS.CHECKOUT_SUCCESS: {
             return {
                 ...state,
                 isCheckingOut: false,
-                checkOutErrorMessage: '',
+                checkoutError: { message: '', data: [] },
             };
         }
         case CART_ACTIONS.TOGGLE_CARTLIST: {
