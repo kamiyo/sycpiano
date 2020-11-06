@@ -5,18 +5,9 @@ import { Transition } from 'react-transition-group';
 import { SerializedStyles } from '@emotion/core';
 import styled from '@emotion/styled';
 
-import { TweenLite } from 'gsap';
-
 import { LoadingInstance } from 'src/components/LoadingSVG';
 import { lightBlue } from 'src/styles/colors';
-
-const fadeOnEnter = (element: HTMLElement) => {
-    TweenLite.to(element.firstChild, 0.25, { autoAlpha: 1 });
-};
-
-const fadeOnExit = (element: HTMLElement) => {
-    TweenLite.to(element.firstChild, 0.25, { autoAlpha: 0 });
-};
+import { fadeOnEnter, fadeOnExit } from 'src/utils';
 
 const StyledLoadingInstance = styled(LoadingInstance) `
     position: absolute;
@@ -119,8 +110,8 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
                     in={loadingComponent && !this.state.isLoaded}
                     mountOnEnter={true}
                     unmountOnExit={true}
-                    onEnter={fadeOnEnter}
-                    onExit={fadeOnExit}
+                    onEnter={fadeOnEnter()}
+                    onExit={fadeOnExit()}
                     timeout={250}
                 >
                     <div css={csss.loading}>

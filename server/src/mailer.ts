@@ -64,7 +64,7 @@ export const emailPDFs = async (skus: string[], email: string, clientRef?: strin
     const template = await fsAsync.readFile(path.resolve(__dirname, '../../web/partials/email.html'), 'utf8');
 
     const html = mustache.render(template, {
-        products: products.map((prod) => prod.title),
+        products: products.map((prod) => prod.name),
         clientRef,
         year: moment().year(),
     });

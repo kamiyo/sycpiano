@@ -1,17 +1,12 @@
 import { DataTypes, QueryInterface } from 'sequelize';
-import { token } from 'models/token';
+import { customer } from '../models/customer';
 
 export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
-    await queryInterface.createTable<token>('token', {
+    await queryInterface.createTable<customer>('customer', {
         id: {
             type: dataTypes.STRING,
-            allowNull: false,
             primaryKey: true,
-        },
-        token: dataTypes.TEXT,
-        expires: {
-            type: dataTypes.DATE,
-            allowNull: true,
+            unique: true,
         },
         createdAt: {
             type: dataTypes.DATE,
@@ -25,5 +20,5 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
 };
 
 export const down = async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable('token');
+    await queryInterface.dropTable('customer');
 };

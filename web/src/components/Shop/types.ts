@@ -1,22 +1,16 @@
-export interface Sku {
-    readonly caption: string;
-    readonly created: number;
-    readonly description: string;
+export interface Product {
     readonly id: string;
-    readonly image: string;
     readonly name: string;
-    readonly updated: number;
+    readonly description: string;
+    readonly images: string[];
     readonly price: number;
+    readonly sample: string;
     readonly format: string;
     readonly pages: number;
-}
-
-export interface ShoppingCart {
-    items: string[];
 }
 
 export interface ShopStateShape {
     isFetching: boolean;
     fetchSuccess: boolean;
-    items: Sku[];
+    items: Product[];
 }

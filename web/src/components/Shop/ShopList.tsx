@@ -2,37 +2,41 @@ import { css } from '@emotion/core';
 import * as React from 'react';
 
 import { screenXSorPortrait } from 'src/styles/screens';
-import { navBarHeight, cartWidth } from 'src/styles/variables';
+import { navBarHeight } from 'src/styles/variables';
 import { ShopItem } from 'src/components/Shop/ShopItem';
-import { Sku } from 'src/components/Shop/types';
+import { Product } from 'src/components/Shop/types';
+import { useSelector } from 'react-redux';
+import { GlobalStateShape } from 'src/types';
 
 interface ShopListProps {
-    className?: string;
     isMobile: boolean;
-    items: Sku[];
 }
 
 const listStyle = css({
     [screenXSorPortrait]: {
         paddingTop: navBarHeight.mobile,
     },
-    // width: `calc(100vw - ${cartWidth}px)`,
-    // width: '100%',
     overflowY: 'scroll',
     flex: '1 0 auto',
+    margin: '0 auto',
+    zIndex: 10,
 });
 
-const ShopList: React.FC<ShopListProps> = (props) => (
-    <div className={props.className} css={listStyle}>
-        {
-            props.items.map((item: Sku, idx: number) => (
-                <ShopItem
-                    item={item}
-                    key={idx}
-                />
-            ))
-        }
-    </div>
-);
+const ShopList: React.FC<ShopListProps> = () => {
+    const items = useSelector(({ shop }: GlobalStateShape) => shop.items);
+
+    return (
+        <div css={listStyle}>
+            {
+                items.map((item: Product, idx: number) => (
+                    <ShopItem
+                        item={item}
+                        key={idx}
+                    />
+                ))
+            }
+        </div>
+    )
+};
 
 export { ShopList };

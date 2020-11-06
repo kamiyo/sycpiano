@@ -17,9 +17,7 @@ interface CartProps {
     setArrowElement: (el: HTMLDivElement) => void;
 }
 
-export const Cart = (
-        props: CartProps,
-) => {
+export const Cart: React.FC<CartProps> = (props) => {
     const dispatch = useDispatch();
     const cart = useSelector(({ cart }: GlobalStateShape) => cart.items);
     const visible = useSelector(({ cart }: GlobalStateShape) => cart.visible);

@@ -4,7 +4,7 @@ import { parse, stringify } from 'qs';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import ReactMedia from 'react-media';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -23,7 +23,7 @@ import { globalCss } from 'src/styles/global';
 import 'picturefill';
 import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 
-import { CSSPlugin, gsap } from 'gsap';
+import { CSSPlugin } from 'gsap';
 
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-ignore */
 // @ts-ignore
@@ -45,10 +45,9 @@ import extractModule from 'src/module';
 import store from 'src/store';
 import { reactMediaMobileQuery } from 'src/styles/screens';
 import { GlobalStateShape } from 'src/types';
-import { metaDescriptions, titleStringBase } from 'src/utils';
+import { metaDescriptions, titleStringBase, slideOnExit, fadeOnEnter, fadeOnExit, slideOnEnter } from 'src/utils';
 import { ThunkDispatch } from 'redux-thunk';
 import { usePopper } from 'react-popper';
-import { reference } from '@popperjs/core';
 
 const register = extractModule(store);
 const About = () => register('about', import(/* webpackChunkName: 'about' */ 'src/components/About'));
@@ -58,31 +57,6 @@ const Media = () => register('media', import(/* webpackChunkName: 'media' */ 'sr
 const Schedule = () => register('schedule', import(/* webpackChunkName: 'schedule' */ 'src/components/Schedule'));
 const Shop = () => register('shop', import(/* webpackChunkName: 'shop' */ 'src/components/Shop'));
 const Page404 = () => register('page404', import(/* webpackChunkName: 'page404' */ 'src/components/Error'));
-
-const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
-    if (element) {
-        gsap.to(element, 0.25, { autoAlpha: 1, delay });
-    }
-};
-
-const slideOnEnter = (delay: number) => (element: HTMLElement) => {
-    gsap.set(element, { autoAlpha: 1 });
-    if (element) {
-        gsap.to(element, 0.25, { y: '0%', delay, clearProps: 'transform', force3D: true });
-    }
-};
-
-const fadeOnExit = (delay: number) => (element: HTMLElement) => {
-    if (element) {
-        gsap.to(element, 0.25, { autoAlpha: 0, delay });
-    }
-};
-
-const slideOnExit = (delay: number) => (element: HTMLElement) => {
-    if (element) {
-        gsap.to(element, 0.25, { y: '-100%', delay, force3D: true });
-    }
-};
 
 const RootContainer = styled.div<{ isHome: boolean }>`
     height: 100%;
@@ -97,24 +71,9 @@ const FadingContainer = styled('div')`
     visibility: hidden;
 `;
 
-interface AppStateToProps {
-    navbarVisible: boolean;
-}
-
-interface AppDispatchToProps {
-    toggleNavBar: typeof toggleNavBar;
-}
-
-interface AppState {
-    popperReference: ReferenceObject;
-    popperElement: HTMLDivElement;
-    //arrowElement
-    homeBgLoaded: boolean;
-}
-
-const isSubPath = (testPath: string) => {
-    return testPath === '/photos' || testPath === '/videos' || testPath === '/music';
-}
+// const isSubPath = (testPath: string) => {
+//     return testPath === '/photos' || testPath === '/videos' || testPath === '/music';
+// }
 
 const getRouteBase = (pathname: string) => {
     const matches: string[] = pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
@@ -127,11 +86,11 @@ const getMostSpecificRouteName = (pathname: string) => {
     return (match ? match.slice(1) : '') || null;
 }
 
-type AppProps = RouteComponentProps<{}> & AppStateToProps & AppDispatchToProps;
+type AppProps = RouteComponentProps<{}>;
 
-const App: React.FC<AppProps> = ({ location, history, navbarVisible }) => {
-    // const [homeBgLoaded, setHomeBgLoaded] = React.useState(() => (getRouteBase(location.pathname) !== '/'));
+const App: React.FC<AppProps> = ({ location, history }) => {
     const dispatch = useDispatch<ThunkDispatch<GlobalStateShape, void, ToggleNav>>();
+    const navbarVisible = useSelector(({ navbar }: GlobalStateShape) => navbar.isVisible);
     const [referenceElement, setReferenceElement] = React.useState<ReferenceObject>(null);
     const [popperElement, setPopperElement] = React.useState<HTMLDivElement>(null);
     const [arrowElement, setArrowElement] = React.useState<HTMLDivElement>(null);

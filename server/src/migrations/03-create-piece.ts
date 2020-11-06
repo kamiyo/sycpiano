@@ -1,7 +1,8 @@
 import { DataTypes, QueryInterface } from 'sequelize';
+import { piece } from 'models/piece';
 
 export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
-    await queryInterface.createTable('piece', {
+    await queryInterface.createTable<piece>('piece', {
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,

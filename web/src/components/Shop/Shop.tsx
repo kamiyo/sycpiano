@@ -1,83 +1,72 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Action } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
-
-import { addToCartAction } from 'src/components/Cart/actions';
+import { useDispatch } from 'react-redux';
 import { fetchItemsAction } from 'src/components/Shop/actions'
 import { ShopList } from 'src/components/Shop/ShopList';
-import { Sku } from 'src/components/Shop/types';
-import { GlobalStateShape } from 'src/types';
 
-import { pushed } from 'src/styles/mixins';
-const ShopContainer = styled.div`
-    ${pushed}
-    background-color: #f4f4f4;
-    display: flex;
-`;
+import { container } from 'src/styles/mixins';
+import { TransitionGroup, Transition } from 'react-transition-group';
+import { RouteComponentProps, Route, Switch } from 'react-router-dom';
+import { fadeOnEnter, fadeOnExit } from 'src/utils';
+import { CheckoutSuccess } from 'src/components/Shop/CheckoutSuccess';
 
-const StyledShopList = styled(ShopList)`
-    margin: 0 auto;
-    // padding: 0 2rem;
-    z-index: 10;
-`;
-
-interface ShopStateToProps {
-    readonly items: Sku[];
-}
-
-interface ShopDispatchToProps {
-    readonly fetchItemsAction: () => Promise<void>;
-}
-
-interface ShopState {
-    cartOpen: boolean;
-}
-
-interface ShopOwnProps { isMobile: boolean }
-
-type ShopProps = ShopOwnProps & ShopStateToProps & ShopDispatchToProps;
-
-class Shop extends React.PureComponent<ShopProps, ShopState> {
-    state: ShopState = {
-        cartOpen: false,
-    };
-
-    componentDidMount() {
-        this.props.fetchItemsAction();
+const ShopContainer = styled.div(
+    container,
+    {
+        height: '100%',
+        width: '100%',
+        overflow: 'hidden',
     }
+);
 
-    toggleCart = () => {
-        this.setState({ cartOpen: !this.state.cartOpen });
-    }
-
-    render() {
-        return (
-            <ShopContainer>
-                <StyledShopList
-                    isMobile={this.props.isMobile}
-                    items={this.props.items}
-                />
-            </ShopContainer>
-        );
-    }
-}
-
-const mapStateToProps = ({ shop }: GlobalStateShape) => ({
-    items: shop.items,
+const FadingContainer = styled.div({
+    height: '100%',
+    width: '100%',
+    visibility: 'hidden',
+    position: 'absolute',
 });
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>) => ({
-    fetchItemsAction: () => dispatch(fetchItemsAction()),
-    addToCart: (sku: string) => dispatch(addToCartAction(sku)),
-});
+interface ShopProps { isMobile: boolean }
 
-const connectedShop = connect<ShopStateToProps, ShopDispatchToProps, ShopOwnProps>(
-    mapStateToProps,
-    mapDispatchToProps,
-)(Shop);
+const Shop: React.FC<ShopProps & RouteComponentProps<{}>> = ({ isMobile, location }) => {
+    const dispatch = useDispatch();
 
-export type ShopType = typeof connectedShop;
-export type RequiredProps = ShopOwnProps;
-export default connectedShop;
+    React.useEffect(() => {
+        dispatch(fetchItemsAction());
+    }, []);
+
+    return (
+        <ShopContainer>
+            <TransitionGroup component={null}>
+                <Transition
+                    key={location.pathname.includes('checkout/success') ? 'checkoutSuccess' : 'shop'}
+                    onEntering={fadeOnEnter(0.25)}
+                    onExiting={fadeOnExit()}
+                    timeout={750}
+                    appear={true}
+                >
+                    <FadingContainer>
+                        <Switch location={location}>
+                            <Route
+                                path="/shop/checkout/success"
+                                render={(childProps) => (
+                                    <CheckoutSuccess {...childProps} isMobile={isMobile} />
+                                )}
+                            />
+                            <Route
+                                path="/shop"
+                                render={(childProps) => (
+                                    <ShopList {...childProps} isMobile={isMobile} />
+                                )}
+                            />
+                        </Switch>
+                    </FadingContainer>
+                </Transition>
+            </TransitionGroup>
+        </ShopContainer>
+    );
+}
+
+export type ShopType = typeof Shop;
+export type RequiredProps = ShopProps;
+export default Shop;

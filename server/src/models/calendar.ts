@@ -60,11 +60,11 @@ const transformModelToGoogle = async (c: calendar) => {
         allDay: c.allDay,
         timeZone: c.timezone,
         description: JSON.stringify({
-            collaborators: collaborators.map((collab) => ({
+            collaborators: collaborators.map((collab: { name: string; instrument: string }) => ({
                 name: collab.name,
                 instrument: collab.instrument,
             })),
-            pieces: pieces.map((pie) => ({
+            pieces: pieces.map((pie: { composer: string; piece: string }) => ({
                 composer: pie.composer,
                 piece: pie.piece,
             })),

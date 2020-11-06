@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Sku } from 'src/components/Shop/types';
+import { Product } from 'src/components/Shop/types';
 import styled from '@emotion/styled'
 import { formatPrice } from 'src/utils';
 import { useDispatch } from 'react-redux';
@@ -41,12 +41,12 @@ const ItemPrice = styled.div({
     display: 'inline',
 });
 
-const Divider = styled.span({
-    margin: '2rem',
-});
+// const Divider = styled.span({
+//     margin: '2rem',
+// });
 
 interface CartProps {
-    item: Sku;
+    item: Product;
     error: boolean;
 }
 
@@ -56,7 +56,7 @@ export const CartItem: React.FC<CartProps> = ({ item, error }) => {
     return (
         <ItemContainer>
                 <ItemThumbnail>
-                    <img src={item.image} />
+                    <img src={item.images[0]} />
                 </ItemThumbnail>
                 <ItemDescription>
                     <div style={{ display: 'flex', justifyContent: 'space-between', }}>
@@ -69,8 +69,5 @@ export const CartItem: React.FC<CartProps> = ({ item, error }) => {
                     </div>
                 </ItemDescription>
         </ItemContainer>
-    )
-                                            {/* <td>
-                                                <button onClick={() => dispatch(removeFromCartAction(item))}>Remove</button>
-                                            </td> */}
+    );
 };

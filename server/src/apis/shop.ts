@@ -4,8 +4,10 @@ import * as express from 'express';
 import { Stripe } from 'stripe';
 
 import { ShopItem } from 'types';
-import { stripeClient } from '../stripe';
+import * as stripeClient from '../stripe';
 import { emailPDFs } from '../mailer';
+import db from '../models';
+import { Op } from 'sequelize';
 
 const shopRouter = express.Router();
 
@@ -26,59 +28,74 @@ shopRouter.post('/webhook', bodyParser.raw({ type: 'application/json' }), async 
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object as Stripe.Checkout.Session;
         try {
-            const skus = await stripeClient.getSkusFromPaymentIntent(session.payment_intent as string);
-            const email = await stripeClient.getEmailFromCustomer(session.customer as string);
-            await emailPDFs(skus, email, session.client_reference_id);
+            const customerID = session.customer as string;
+            const productIDs = await stripeClient.getProductIDsFromPaymentIntent(session.payment_intent as string);
+            const email = await stripeClient.getEmailFromCustomer(customerID);
+            // Add associations to local model
+            const customer = await db.models.customer.findOne({ where: { id: customerID } });
+            customer.addProducts(productIDs);
+
+            await emailPDFs(productIDs, email, session.client_reference_id);
         } catch (e) {
             console.error('Failed to send email: ', e);
         }
     }
 
     res.json({ received: true });
-})
-
-const convertSkuToShopItem = (sku: Stripe.Sku): ShopItem => {
-    const product = sku.product as Stripe.Product;
-    const { caption, created, description, images, name, updated, metadata } = product;
-    return {
-        caption,
-        created,
-        description,
-        image: images[0],
-        name,
-        updated,
-        id: sku.id,
-        price: sku.price,
-        format: metadata.format,
-        pages: parseInt(metadata.pages),
-    };
-};
+});
 
 shopRouter.use(bodyParser.json());
 
 shopRouter.get('/items', async (_, res) => {
-    const skus = await stripeClient.fetchSkus();
-    const storeItems = skus.map(convertSkuToShopItem);
+    const products = await db.models.product.findAll();
+    const storeItems: ShopItem[] = products.map(({ id, name, description, price, images, pages, sample }) => ({
+        id, name, description, price, images, pages, sample
+    }))
     res.json(storeItems);
 });
 
+const getOrCreateLocalCustomer = async (email: string) => {
+    try {
+        const stripeCustomer = await stripeClient.getOrCreateCustomer(email);
+        const localCustomer = await db.models.customer.findAll({
+            where: {
+                id: stripeCustomer.id,
+            },
+        });
+
+        if (localCustomer.length === 0) {
+            return await db.models.customer.create({
+                id: stripeCustomer.id,
+            })
+        } else {
+            return localCustomer[0];
+        }
+    } catch (e) {
+
+    }
+};
+
+// new stripe API: old skus = new prices
+// However, we are using the Product IDs in the front end, so have to fetch
+// Price IDs;
 shopRouter.post('/checkout', async (req, res) => {
     const {
         email,
-        skus,
+        productIDs,
     }: {
         email: string;
-        skus: string[];
+        productIDs: string[];
     } = req.body;
 
     try {
-        const customer = await stripeClient.getOrCreateCustomer(email);
+        const customer = await getOrCreateLocalCustomer(email);
 
-        const previouslyPurchased = await stripeClient.getAllSkusPurchasedByCustomer(email);
+        const previouslyPurchased = await customer.getProducts();
+        const previouslyPurchasedIDs = previouslyPurchased.map((prod) => prod.id);
 
-        const duplicates = skus.reduce((acc, sku) => {
-            if (previouslyPurchased.includes(sku)) {
-                return [sku, ...acc];
+        const duplicates = productIDs.reduce((acc, pID) => {
+            if (previouslyPurchasedIDs.includes(pID)) {
+                return [pID, ...acc];
             } else {
                 return acc;
             }
@@ -91,8 +108,18 @@ shopRouter.post('/checkout', async (req, res) => {
             return;
         }
 
+        const priceIDs = (await db.models.product.findAll({
+            where: {
+                id: {
+                    [Op.or]: productIDs,
+                }
+            },
+            attributes: ['priceID'],
+        })).map((prod) => prod.priceID);
+
         const sessionId = await stripeClient.createCheckoutSession(
-            skus,
+            productIDs,
+            priceIDs,
             customer.id,
         );
         res.json({
@@ -110,9 +137,12 @@ shopRouter.post('/getPurchased', async (req, res) => {
     } = req.body;
 
     try {
-        const skus = await stripeClient.getAllSkusPurchasedByCustomer(email);
+        const stripeCustomer = await stripeClient.getCustomer(email);
+        const localCustomer = await db.models.customer.findAll({ where: { id: stripeCustomer.id }});
+        const purchased = await localCustomer[0].getProducts();
+        const purchasedIDs = purchased.map((prod) => prod.id);
         res.json({
-            skus,
+            skus: purchasedIDs,
         });
     } catch (e) {
         console.error(`Failed to get skus of customer with email: ${email}`, e);
@@ -127,8 +157,11 @@ shopRouter.post('/resendPurchased', async (req, res) => {
     } = req.body;
 
     try {
-        const skus = await stripeClient.getAllSkusPurchasedByCustomer(email);
-        await emailPDFs(skus, email);
+        const stripeCustomer = await stripeClient.getCustomer(email);
+        const localCustomer = await db.models.customer.findAll({ where: { id: stripeCustomer.id }});
+        const purchased = await localCustomer[0].getProducts();
+        const purchasedIDs = purchased.map((prod) => prod.id);
+        await emailPDFs(purchasedIDs, email);
         res.sendStatus(200);
     } catch (e) {
         console.error(`Failed to resend purchased pdfs of email: ${email}`, e);

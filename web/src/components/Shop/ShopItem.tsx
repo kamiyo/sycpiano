@@ -3,31 +3,20 @@ import styled from '@emotion/styled';
 import * as React from 'react';
 
 import { addToCartAction, removeFromCartAction } from 'src/components/Cart/actions';
-import { ShoppingCart, Sku } from 'src/components/Shop/types';
+import { Product } from 'src/components/Shop/types';
 
 import { lato3, lato2 } from 'src/styles/fonts';
 import { logoBlue } from 'src/styles/colors';
 import { mix } from 'polished';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
 import toUpper from 'lodash-es/toUpper';
 
-interface ShopItemStateToProps {
-    readonly cart: ShoppingCart;
-}
-
-interface ShopItemDispatchToProps {
-    readonly addToCartAction: typeof addToCartAction;
-    readonly removeFromCartAction: typeof removeFromCartAction;
-}
-
-interface ShopItemOwnProps {
-    item: Sku;
+interface ShopItemProps {
+    item: Product;
     key: string | number;
     className?: string;
 }
-
-type ShopItemProps = ShopItemStateToProps & ShopItemDispatchToProps & ShopItemOwnProps;
 
 const Thumbnail = styled('div')<{ imageUrl: string }>(
     {
@@ -73,12 +62,6 @@ const contentContainerStyle = css({
     alignItems: 'center',
 });
 
-const buttonBoxShadow = `
-    0px 1px 5px 0px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-    0px 3px 1px -2px rgba(0, 0, 0, 0.12)
-`;
-
 const CartButton = styled.button<{ isItemInCart: boolean }>(
     {
         fontSize: '0.8em',
@@ -113,17 +96,16 @@ const CartButton = styled.button<{ isItemInCart: boolean }>(
     },
 );
 
-const boxShadow = `
-    0px 1px 3px 0px rgba(0, 0, 0, 0.2),
-    0px 1px 1px 0px rgba(0, 0, 0, 0.14),
-    0px 2px 1px -1px rgba(0, 0, 0, 0.12)
-`;
+// const boxShadow = `
+//     0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+//     0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+//     0px 2px 1px -1px rgba(0, 0, 0, 0.12)
+// `;
 
 const ShopItemContainer = styled.div`
     font-family: ${lato2};
     height: auto;
     display: flex;
-    // box-shadow: ${boxShadow};
     border-radius: 4px;
     margin: 5rem auto;
     flex: 0 1 600px;
@@ -164,16 +146,16 @@ const Separator = styled.span({
 
 const formatCentsToDollars = (price: number) => `$${(price / 100).toFixed(2)}`;
 
-const ShopItemWithoutConnect: React.FC<ShopItemProps> = ({ item, className, ...props }) => {
-    const addToCart = props.addToCartAction;
-    const removeFromCart = props.removeFromCartAction;
-    const isItemInCart = props.cart.items.includes(item.id)
+const ShopItem: React.FC<ShopItemProps> = ({ item, className }) => {
+    const isItemInCart = useSelector(({ cart }: GlobalStateShape) => cart.items.includes(item.id));
+
+    const dispatch = useDispatch();
     return (
         <ShopItemContainer className={className}>
-            <Thumbnail imageUrl={item.image} />
+            <Thumbnail imageUrl={item.images[0]} />
             <div css={contentContainerStyle}>
                 <div css={{ marginBottom: '24px' }}>
-                    <ItemName>{item.caption}</ItemName>
+                    <ItemName>{item.name}</ItemName>
                     <ItemDescription>{item.description}</ItemDescription>
                     <DetailContainer>
                         <ItemDetails>{toUpper(item.format)} format</ItemDetails>
@@ -185,7 +167,7 @@ const ShopItemWithoutConnect: React.FC<ShopItemProps> = ({ item, className, ...p
                 </div>
                 <CartButton
                     isItemInCart={isItemInCart}
-                    onClick={() => isItemInCart ? removeFromCart(item.id) : addToCart(item.id)}
+                    onClick={() => isItemInCart ? dispatch(removeFromCartAction(item.id)) : dispatch(addToCartAction(item.id))}
                 >
                     {isItemInCart ? 'Remove from Cart' : 'Add to Cart'}
                 </CartButton>
@@ -193,12 +175,5 @@ const ShopItemWithoutConnect: React.FC<ShopItemProps> = ({ item, className, ...p
         </ShopItemContainer>
     )
 };
-
-const mapStateToProps = ({ cart }: GlobalStateShape) => ({ cart });
-
-const ShopItem = connect<ShopItemStateToProps, ShopItemDispatchToProps, ShopItemOwnProps>(
-    mapStateToProps,
-    { addToCartAction, removeFromCartAction },
-)(ShopItemWithoutConnect)
 
 export { ShopItem };

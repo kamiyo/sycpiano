@@ -11,11 +11,9 @@ import {
 } from 'src/components/Cart/actions';
 
 import TextField from '@material-ui/core/TextField';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
-import { screenXSorPortrait } from 'src/styles/screens';
-import { navBarHeight, cartWidth } from 'src/styles/variables';
+import { cartWidth } from 'src/styles/variables';
 import { lato2 } from 'src/styles/fonts';
 import { magenta, lightBlue } from 'src/styles/colors';
 import { mix } from 'polished';
@@ -24,7 +22,7 @@ import { CartItem } from './CartItem';
 import { LoadingInstance } from '../LoadingSVG';
 
 const ARROW_SIDE = 32;
-const ARROW_DIAG = ARROW_SIDE / Math.SQRT2;
+// const ARROW_DIAG = ARROW_SIDE / Math.SQRT2;
 
 const theme = createMuiTheme({
     palette: {
@@ -174,12 +172,12 @@ interface CartListProps {
     setArrowElement: (el: HTMLDivElement) => void;
 }
 
-export const CartList = ({
+export const CartList: React.FC<CartListProps> = ({
     styles,
     attributes,
     setPopperElement,
     setArrowElement,
-}: CartListProps) => {
+}) => {
     const [email, setEmail] = React.useState('');
     const [error, setError] = React.useState(false);
     const shopItems = useSelector(({ shop }: GlobalStateShape) => shop.items);
@@ -230,7 +228,6 @@ export const CartList = ({
                                     <path d="M40 40L80 80M40 80L80 40" strokeLinecap="square" strokeWidth="6" />
                                 </CloseSVG>
                             </Heading>
-                            {/* <Divider /> */}
                             <StyledItemList>
                                 {checkoutError.message !== '' &&
                                     (
@@ -249,12 +246,10 @@ export const CartList = ({
                                     );
                                 })}
                             </StyledItemList>
-                            {/* <Divider /> */}
                             <Subtotal>
                                 <div>Subtotal:</div>
                                 <div>{formatPrice(subtotal)}</div>
                             </Subtotal>
-                            {/* <Divider /> */}
                             <ThemeProvider theme={theme}>
 
                                 <StyledForm
@@ -300,4 +295,4 @@ export const CartList = ({
 };
 
 export type CartListType = typeof CartList;
-// export interface RequiredProps {}
+export type RequiredProps = CartListProps;

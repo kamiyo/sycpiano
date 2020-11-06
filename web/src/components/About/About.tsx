@@ -6,8 +6,6 @@ import { Transition, TransitionGroup } from 'react-transition-group';
 
 import styled from '@emotion/styled';
 
-import { TweenLite } from 'gsap';
-
 import AsyncComponent from 'src/components/AsyncComponent';
 import module from 'src/module';
 import store from 'src/store';
@@ -23,19 +21,7 @@ const Press = () => register('press', import(/* webpackChunkName: 'press' */ 'sr
 const Discs = () => register('discs', import(/* webpackChunkName: 'discs' */ 'src/components/About/Discs'));
 
 import { container } from 'src/styles/mixins';
-import { metaDescriptions, titleStringBase } from 'src/utils';
-
-const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
-    if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 0 }, { autoAlpha: 1, delay });
-    }
-};
-
-const fadeOnExit = (element: HTMLElement) => {
-    if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 1 }, { autoAlpha: 0 });
-    }
-};
+import { metaDescriptions, titleStringBase, fadeOnEnter, fadeOnExit } from 'src/utils';
 
 const AboutContainer = styled.div`
     height: 100%;
@@ -69,7 +55,7 @@ const About = ({ isMobile, match, location }: AboutProps) => (
                 <Transition
                     key={match.params.about}
                     onEntering={fadeOnEnter(0.25)}
-                    onExiting={fadeOnExit}
+                    onExiting={fadeOnExit()}
                     timeout={750}
                     appear={true}
                 >

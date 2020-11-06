@@ -3,21 +3,12 @@ import * as React from 'react';
 import { css } from '@emotion/core';
 import { Transition } from 'react-transition-group';
 
-import { TweenLite } from 'gsap';
-
 import { LazyImage } from 'src/components/LazyImage';
 import { PhotoItem } from 'src/components/Media/Photos/types';
 import { idFromItem, resizedPathFromItem, staticPathFromItem } from 'src/components/Media/Photos/utils';
 import { generateSrcsetWidths } from 'src/styles/imageUrls';
 import { screenWidths } from 'src/styles/screens';
-
-const fadeOnEnter = (element: HTMLElement) => {
-    TweenLite.to(element, 0.25, { autoAlpha: 1 });
-};
-
-const fadeOnExit = (element: HTMLElement) => {
-    TweenLite.to(element, 0.25, { autoAlpha: 0 });
-};
+import { fadeOnEnter, fadeOnExit } from 'src/utils';
 
 interface PhotoFaderProps {
     readonly item: PhotoItem;
@@ -32,8 +23,8 @@ const PhotoFader: React.FC<PhotoFaderProps> = ({ item, isCurrent }) => {
             mountOnEnter={true}
             unmountOnExit={true}
             in={isCurrent}
-            onEntering={fadeOnEnter}
-            onExiting={fadeOnExit}
+            onEntering={fadeOnEnter()}
+            onExiting={fadeOnExit()}
             appear={true}
             timeout={250}
         >

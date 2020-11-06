@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+import { TweenLite } from 'gsap';
 
 export interface FormattedLocationShape {
     venue: string;
@@ -60,4 +61,28 @@ export const formatPrice = (price: number) => (
 
 export const validateEmail = (email: string) => {
     return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/.test(email);
+};
+
+export const fadeOnEnter = (delay = 0) => (element: HTMLElement) => {
+    if (element) {
+        TweenLite.fromTo(element, 0.25, { autoAlpha: 0 }, { autoAlpha: 1, delay });
+    }
+};
+
+export const fadeOnExit = (delay = 0) => (element: HTMLElement) => {
+    if (element) {
+        TweenLite.fromTo(element, 0.25, { autoAlpha: 1 }, { autoAlpha: 0, delay });
+    }
+};
+
+export const slideOnEnter = (delay: number) => (element: HTMLElement) => {
+    if (element) {
+        TweenLite.fromTo(element, 0.25, { autoAlpha: 1}, { y: '0%', delay, clearProps: 'transform', force3D: true });
+    }
+};
+
+export const slideOnExit = (delay: number) => (element: HTMLElement) => {
+    if (element) {
+        TweenLite.to(element, 0.25, { y: '-100%', delay, force3D: true });
+    }
 };

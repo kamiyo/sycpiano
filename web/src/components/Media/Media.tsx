@@ -6,8 +6,6 @@ import { Transition, TransitionGroup } from 'react-transition-group';
 
 import styled from '@emotion/styled';
 
-import { TweenLite } from 'gsap';
-
 import AsyncComponent from 'src/components/AsyncComponent';
 import module from 'src/module';
 import store from 'src/store';
@@ -23,19 +21,7 @@ const Photos = () => register('photos', import(/* webpackChunkName: 'photos' */ 
 const Videos = () => register('videos', import(/* webpackChunkName: 'videos' */ 'src/components/Media/Videos'));
 
 import { container } from 'src/styles/mixins';
-import { metaDescriptions, titleStringBase } from 'src/utils';
-
-const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
-    if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 0 }, { autoAlpha: 1, delay });
-    }
-};
-
-const fadeOnExit = (element: HTMLElement) => {
-    if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 1 }, { autoAlpha: 0 });
-    }
-};
+import { metaDescriptions, titleStringBase, fadeOnEnter, fadeOnExit } from 'src/utils';
 
 const MediaContainer = styled.div`
     height: 100%;
@@ -69,7 +55,7 @@ const Media = ({ isMobile, match, location }: MediaProps) => (
                 <Transition
                     key={match.params.media}
                     onEntering={fadeOnEnter(0.25)}
-                    onExiting={fadeOnExit}
+                    onExiting={fadeOnExit()}
                     timeout={750}
                     appear={true}
                 >

@@ -1,7 +1,8 @@
 import { DataTypes, QueryInterface } from 'sequelize';
+import { acclaim } from 'models/acclaim';
 
 export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
-    await queryInterface.createTable('acclaim', {
+    await queryInterface.createTable<acclaim>('acclaim', {
         id: {
             allowNull: false,
             autoIncrement: true,
