@@ -31,14 +31,14 @@ const transportOptions = (process.env.NODE_ENV === 'production') ? {
     };
 
 // To email a manual request, omit clientRef (or pass falsey value)
-export const emailPDFs = async (skus: string[], email: string, clientRef?: string) => {
+export const emailPDFs = async (productIDs: string[], email: string, clientRef?: string) => {
     const transport = nodemailer.createTransport(transportOptions);
 
     const products = await models.product.findAll({
-        attributes: ['sku', 'file', 'title'],
+        attributes: ['id', 'file', 'title'],
         where: {
-            sku: {
-                [Op.in]: skus,
+            id: {
+                [Op.in]: productIDs,
             },
         },
     });

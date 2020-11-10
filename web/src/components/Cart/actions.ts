@@ -99,7 +99,7 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
                 });
                 const response = await axios.post<{ sessionId: string }>('/api/shop/checkout', {
                     email,
-                    skus: getState().cart.items,
+                    productIDs: getState().cart.items,
                 });
                 const { error } = await stripe.redirectToCheckout({
                     sessionId: response.data.sessionId

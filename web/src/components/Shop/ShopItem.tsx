@@ -11,6 +11,7 @@ import { mix } from 'polished';
 import { useDispatch, useSelector } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
 import toUpper from 'lodash-es/toUpper';
+import { staticImage } from 'src/styles/imageUrls';
 
 interface ShopItemProps {
     item: Product;
@@ -150,9 +151,10 @@ const ShopItem: React.FC<ShopItemProps> = ({ item, className }) => {
     const isItemInCart = useSelector(({ cart }: GlobalStateShape) => cart.items.includes(item.id));
 
     const dispatch = useDispatch();
+
     return (
         <ShopItemContainer className={className}>
-            <Thumbnail imageUrl={item.images[0]} />
+            <Thumbnail imageUrl={staticImage('/products/thumbnails/' + item.images[0]) || ''} />
             <div css={contentContainerStyle}>
                 <div css={{ marginBottom: '24px' }}>
                     <ItemName>{item.name}</ItemName>

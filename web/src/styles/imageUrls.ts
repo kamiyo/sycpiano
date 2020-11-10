@@ -12,6 +12,7 @@ export const bg1 = `/bg_1.jpg`;
 export const homeBackground = (format: imageFormat = 'jpg') => `/syc_chair_bg_clean.${format}`;
 export const sycChairVertical = (format: imageFormat = 'jpg') => `/syc_chair_vertical.${format}`;
 
+// url should contain leading slash
 export const staticImage = (url: string) => (
     `${IMAGES_PATH}${url}`
 );

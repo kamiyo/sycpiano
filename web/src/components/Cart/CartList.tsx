@@ -159,6 +159,12 @@ const CartFilterGroup = styled.div<{ isCheckingOut: boolean }>({
     })
 );
 
+const EmptyMessage = styled.div({
+    margin: '1rem auto',
+    width: 'max-content',
+    fontSize: '1.2rem',
+});
+
 interface CartListProps {
     styles: {
         [key: string]: React.CSSProperties;
@@ -213,21 +219,22 @@ export const CartList: React.FC<CartListProps> = ({
                     style={arrowStyles}
                     transform={arrowTransform}
                 />
-                {cart.length !== 0 && shopItems.length !== 0 ?
-                    (
-                        <div css={cartListStyle}>
-                            <Heading>
-                                <div style={{ width: '100%', fontSize: '2rem', padding: '1rem 0 0.5rem 0' }}>Cart</div>
-                                <CloseSVG
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 120 120"
-                                    height="42"
-                                    width="42"
-                                    onClick={() => dispatch(toggleCartListAction(false))}
-                                >
-                                    <path d="M40 40L80 80M40 80L80 40" strokeLinecap="square" strokeWidth="6" />
-                                </CloseSVG>
-                            </Heading>
+
+                <div css={cartListStyle}>
+                    <Heading>
+                        <div style={{ width: '100%', fontSize: '2rem', padding: '1rem 0 0.5rem 0' }}>Cart</div>
+                        <CloseSVG
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 120 120"
+                            height="42"
+                            width="42"
+                            onClick={() => dispatch(toggleCartListAction(false))}
+                        >
+                            <path d="M40 40L80 80M40 80L80 40" strokeLinecap="square" strokeWidth="6" />
+                        </CloseSVG>
+                    </Heading>
+                    {cart.length !== 0 && shopItems.length !== 0 ?
+                        (
                             <StyledItemList>
                                 {checkoutError.message !== '' &&
                                     (
@@ -246,48 +253,53 @@ export const CartList: React.FC<CartListProps> = ({
                                     );
                                 })}
                             </StyledItemList>
-                            <Subtotal>
-                                <div>Subtotal:</div>
-                                <div>{formatPrice(subtotal)}</div>
-                            </Subtotal>
-                            <ThemeProvider theme={theme}>
 
-                                <StyledForm
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        if (error) {
-                                            return;
-                                        }
-                                        else if (email === '') {
-                                            setError(true);
-                                            return;
-                                        }
-                                        console.log('submitting');
-                                        dispatch(checkoutAction(email));
-                                    }}
-                                >
+                        ) : (
+                            <EmptyMessage>Cart is Empty!</EmptyMessage>
+                        )
+                    }
+                    <Subtotal>
+                        <div>Subtotal:</div>
+                        <div>{formatPrice(subtotal)}</div>
+                    </Subtotal>
+                    <ThemeProvider theme={theme}>
 
-                                    <StyledTextField
-                                        label={error ? 'Invalid Email' : 'Email Address'}
-                                        error={error}
-                                        id="email-text"
-                                        value={email}
-                                        onChange={(event) => {
-                                            setEmail(event.target.value);
-                                            setError(event.target.value !== '' && !validateEmail(event.target.value));
-                                        }}
-                                        variant="outlined"
-                                        margin="dense"
-                                        type="email"
-                                    />
-                                    <StyledCheckoutButton type="submit" value="Checkout with Stripe"></StyledCheckoutButton>
-                                </StyledForm>
-                            </ThemeProvider>
-                        </div>
-                    ) : (
-                        <div>Cart is Empty!</div>
-                    )
-                }
+                        <StyledForm
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                if (error) {
+                                    return;
+                                }
+                                else if (email === '') {
+                                    setError(true);
+                                    return;
+                                }
+                                console.log('submitting');
+                                dispatch(checkoutAction(email));
+                            }}
+                        >
+
+                            <StyledTextField
+                                label={error ? 'Invalid Email' : 'Email Address'}
+                                error={error}
+                                id="email-text"
+                                value={email}
+                                onChange={(event) => {
+                                    setEmail(event.target.value);
+                                    setError(event.target.value !== '' && !validateEmail(event.target.value));
+                                }}
+                                variant="outlined"
+                                margin="dense"
+                                type="email"
+                            />
+                            <StyledCheckoutButton
+                                type="submit"
+                                value="Checkout with Stripe"
+                                disabled={cart.length === 0}
+                            />
+                        </StyledForm>
+                    </ThemeProvider>
+                </div>
             </CartFilterGroup>
         </div>
     );

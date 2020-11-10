@@ -1,10 +1,7 @@
-'use strict';
-
 import { calendar } from 'models/calendar';
 import * as moment from 'moment';
 
-/* eslint-disable-next-line @typescript-eslint/no-var-requires */
-const forest = require('forest-express-sequelize');
+import * as forest from 'forest-express-sequelize';
 
 forest.collection('calendar', {
     actions: [

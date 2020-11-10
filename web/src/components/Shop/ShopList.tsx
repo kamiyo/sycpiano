@@ -7,23 +7,27 @@ import { ShopItem } from 'src/components/Shop/ShopItem';
 import { Product } from 'src/components/Shop/types';
 import { useSelector } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
+import { pushed } from 'src/styles/mixins';
 
 interface ShopListProps {
     isMobile: boolean;
 }
 
-const listStyle = css({
-    [screenXSorPortrait]: {
-        paddingTop: navBarHeight.mobile,
-    },
-    overflowY: 'scroll',
-    flex: '1 0 auto',
-    margin: '0 auto',
-    zIndex: 10,
-});
+const listStyle = css(
+    pushed,
+    {
+        [screenXSorPortrait]: {
+            paddingTop: navBarHeight.mobile,
+        },
+        overflowY: 'scroll',
+        flex: '1 0 auto',
+        zIndex: 10,
+    }
+);
 
 const ShopList: React.FC<ShopListProps> = () => {
     const items = useSelector(({ shop }: GlobalStateShape) => shop.items);
+    console.log(items);
 
     return (
         <div css={listStyle}>

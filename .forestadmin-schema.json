@@ -856,6 +856,106 @@
       "inverseOf": null,
       "validations": []
     }, {
+      "field": "products",
+      "type": ["String"],
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": "product.customerId",
+      "inverseOf": null,
+      "relationship": "BelongsToMany",
+      "validations": []
+    }, {
+      "field": "updatedAt",
+      "type": "Date",
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": null,
+      "inverseOf": null,
+      "validations": []
+    }],
+    "segments": [],
+    "actions": []
+  }, {
+    "name": "customerProduct",
+    "nameOld": "customerProduct",
+    "icon": null,
+    "integration": null,
+    "isReadOnly": false,
+    "isSearchable": true,
+    "isVirtual": false,
+    "onlyForRelationships": false,
+    "paginationType": "page",
+    "fields": [{
+      "field": "createdAt",
+      "type": "Date",
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": null,
+      "inverseOf": null,
+      "validations": []
+    }, {
+      "field": "customer",
+      "type": "String",
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": "customer.customerId",
+      "inverseOf": null,
+      "relationship": "BelongsTo",
+      "validations": []
+    }, {
+      "field": "id",
+      "type": "String",
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": null,
+      "inverseOf": null,
+      "validations": []
+    }, {
+      "field": "product",
+      "type": "String",
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": "product.productId",
+      "inverseOf": null,
+      "relationship": "BelongsTo",
+      "validations": []
+    }, {
       "field": "updatedAt",
       "type": "Date",
       "defaultValue": null,
@@ -1667,6 +1767,21 @@
       "inverseOf": null,
       "validations": []
     }, {
+      "field": "customers",
+      "type": ["String"],
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": "customer.productId",
+      "inverseOf": null,
+      "relationship": "BelongsToMany",
+      "validations": []
+    }, {
       "field": "description",
       "type": "String",
       "defaultValue": null,
@@ -1765,7 +1880,35 @@
       "inverseOf": null,
       "validations": []
     }, {
+      "field": "priceID",
+      "type": "String",
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": null,
+      "inverseOf": null,
+      "validations": []
+    }, {
       "field": "sample",
+      "type": "String",
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": null,
+      "inverseOf": null,
+      "validations": []
+    }, {
+      "field": "type",
       "type": "String",
       "defaultValue": null,
       "enums": null,
@@ -1794,7 +1937,16 @@
       "validations": []
     }],
     "segments": [],
-    "actions": []
+    "actions": [{
+      "name": "Populate Test Data",
+      "type": "global",
+      "baseUrl": null,
+      "endpoint": "/forest/actions/populate-test-data",
+      "httpMethod": "POST",
+      "redirect": null,
+      "download": false,
+      "fields": []
+    }]
   }, {
     "name": "token",
     "nameOld": "token",

@@ -35,5 +35,9 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
         }
     );
 
-    return product;
+    customer.associate = (models) => {
+        customer.belongsToMany(models.product, { through: models.customerProduct });
+    };
+
+    return customer;
 };

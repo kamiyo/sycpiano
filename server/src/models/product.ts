@@ -2,6 +2,8 @@ import { DataTypes, Sequelize, CreateOptions, UpdateOptions } from 'sequelize';
 import { createProduct, updateProduct } from '../stripe';
 import { Model } from '../types';
 
+const ProductTypes = ['arrangement', 'cadenza', 'original'] as const;
+
 export interface ProductAttributes {
     id: string;
     file: string;
@@ -12,6 +14,7 @@ export interface ProductAttributes {
     pages: number;
     price: number; // in cents
     priceID: string;
+    type: typeof ProductTypes[number];
 }
 
 export class product extends Model implements ProductAttributes {
@@ -24,6 +27,7 @@ export class product extends Model implements ProductAttributes {
     pages: number;
     price: number; // in cents
     priceID: string;
+    type: typeof ProductTypes[number];
     createdAt?: Date | string;
     updatedAt?: Date | string;
 }
@@ -61,7 +65,17 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
             description: dataTypes.TEXT,
             sample: dataTypes.STRING,
             pages: dataTypes.INTEGER,
-            price: dataTypes.INTEGER
+            price: dataTypes.INTEGER,
+            priceID: {
+                type: dataTypes.STRING,
+                field: 'price_id',
+            },
+            type: {
+                type: dataTypes.STRING,
+                validate: {
+                    isIn: [[...ProductTypes]]
+                }
+            }
         }, {
             sequelize,
             tableName: 'product',
@@ -71,6 +85,10 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
             },
         }
     );
+
+    product.associate = (models) => {
+        product.belongsToMany(models.customer, { through: models.customerProduct });
+    };
 
     return product;
 };

@@ -5,6 +5,7 @@ import * as express from 'express';
 import * as forest from 'forest-express-sequelize';
 import * as path from 'path';
 import * as Sequelize from 'sequelize';
+import * as stripeClient from './stripe';
 
 dotenv.config();
 
@@ -37,7 +38,7 @@ const respondWithError = (error: any, res: express.Response) => {
         });
     } else {
         res.status(400).json({
-            error: error.response.data.error.errors[0].message,
+            error,
         });
     }
 };
@@ -302,6 +303,46 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOpti
         });
     } catch (error) {
         respondWithError(error, res);
+    }
+});
+
+adminRest.post('/forest/actions/populate-test-data', forest.ensureAuthenticated, cors(corsOptions), async (_: express.Request, res: express.Response) => {
+    const pricesAndProducts = await stripeClient.getPricesAndProducts();
+    try {
+        await db.sequelize.getQueryInterface().bulkInsert('product', pricesAndProducts.map((pp) => {
+            try {
+                const product = pp.product
+                if (!stripeClient.productIsObject(product)) {
+                    throw Error('Product expansion failed, or no product tied to Price.');
+                }
+                const {
+                    id,
+                    name,
+                    description,
+                    metadata,
+                    images,
+                } = product;
+                return {
+                    id,
+                    name,
+                    description,
+                    price: pp.unit_amount,
+                    pages: parseInt(metadata.pages),
+                    file: metadata.file,
+                    images,
+                    type: metadata.type,
+                    sample: metadata.sample,
+                    price_id: pp.id, /* eslint-disable-line @typescript-eslint/camelcase */
+                };
+            } catch (e) {
+                console.log(e);
+            }
+        }), {
+
+        });
+        res.sendStatus(200);
+    } catch (e) {
+        respondWithError(e, res);
     }
 });
 

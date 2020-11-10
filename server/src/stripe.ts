@@ -6,6 +6,7 @@ import { ProductAttributes } from 'models/product';
 dotenv.config();
 
 type CustomerReturn = Stripe.Customer | Stripe.DeletedCustomer;
+type ProductReturn = string | Stripe.Product | Stripe.DeletedProduct;
 
 const CURRENCY = 'USD';
 
@@ -13,6 +14,19 @@ const stripe: Stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '
 
 const stripeCustomerActive = (cr: CustomerReturn): cr is Stripe.Customer => {
     return cr.deleted !== true;
+};
+
+export const productIsObject = (pr: ProductReturn): pr is Stripe.Product => {
+    return (typeof pr !== 'string') && pr.deleted !== true;
+};
+
+export const getPricesAndProducts = async () => {
+    try {
+        const result = await stripe.prices.list({ expand: ['data.product'] });
+        return result.data;
+    } catch (e) {
+        console.error(e);
+    }
 };
 
 export const getCustomer = async (email: string) => {
@@ -46,10 +60,16 @@ export const createCheckoutSession = async (productIDs: string[], priceIDs: stri
         const session = await stripe.checkout.sessions.create(
             {
                 /* eslint-disable @typescript-eslint/camelcase */
+                mode: 'payment',
                 success_url: 'https://www.seanchenpiano.com/shop/checkout/success?session_id={CHECKOUT_SESSION_ID}',
                 cancel_url: 'https://www.seanchenpiano.com/shop',
                 payment_method_types: ['card'],
-                line_items: priceIDs.map((id) => ({ price: id, quantity: 1 })),
+                line_items: priceIDs.map((id) =>
+                    ({
+                        price: id,
+                        quantity: 1
+                    })
+                ),
                 customer: customerId,
                 payment_intent_data: {
                     metadata: productIDs.reduce((acc, pID, idx) => ({
@@ -103,7 +123,7 @@ export const createProduct = async (attributes: Omit<ProductAttributes, 'created
                 pages: attributes.pages,
                 sample: attributes.sample,
             },
-            images: attributes.images,
+            images: attributes.images.map((img) => 'https://www.seanchenpiano.com/static/images/products/thumbnails/' + img),
         });
         const price = await stripe.prices.create({
             currency: CURRENCY,
@@ -118,6 +138,7 @@ export const createProduct = async (attributes: Omit<ProductAttributes, 'created
 
 export const updateProduct = async (attributes: Omit<ProductAttributes, 'createdAt' | 'updatedAt'>) => {
     try {
+        console.log(attributes.id);
         const product = await stripe.products.update(
             attributes.id,
             {
@@ -127,9 +148,10 @@ export const updateProduct = async (attributes: Omit<ProductAttributes, 'created
                     format: 'pdf',
                     pages: attributes.pages,
                     sample: attributes.sample,
+                    type: attributes.type,
                 },
-                images: attributes.images,
-            }
+                images: attributes.images.map((img) => 'https://www.seanchenpiano.com/static/images/products/thumbnails/' + img),
+            },
         );
         const oldPrice = await stripe.prices.retrieve(attributes.priceID);
         if (attributes.price !== oldPrice.unit_amount) {

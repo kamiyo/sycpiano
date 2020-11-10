@@ -74,12 +74,10 @@ const NavBar = ({
                     {mobile ?
                         (
                             <>
-                                {cartItems.length !== 0 &&
-                                    <CartButton
-                                        isHome={isHome}
-                                        setReferenceElement={setReferenceElement}
-                                    />
-                                }
+                                <CartButton
+                                    isHome={isHome}
+                                    setReferenceElement={setReferenceElement}
+                                />
                                 <HamburgerNav
                                     currentBasePath={currentBasePath}
                                     isMobile={true}
@@ -92,12 +90,11 @@ const NavBar = ({
                                     currentBasePath={currentBasePath}
                                     isMobile={false}
                                 />
-                                {cartItems.length !== 0 &&
-                                    <CartButton
-                                        isHome={isHome}
-                                        setReferenceElement={setReferenceElement}
-                                    />
-                                }
+
+                                <CartButton
+                                    isHome={isHome}
+                                    setReferenceElement={setReferenceElement}
+                                />
                             </StyledNavAndCart>
                         )
                     }

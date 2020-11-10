@@ -4,6 +4,7 @@ import styled from '@emotion/styled'
 import { formatPrice } from 'src/utils';
 import { useDispatch } from 'react-redux';
 import { removeFromCartAction } from 'src/components/Cart/actions';
+import { staticImage } from 'src/styles/imageUrls';
 
 const ItemContainer = styled.div({
     display: 'flex',
@@ -12,9 +13,13 @@ const ItemContainer = styled.div({
 
 const ItemThumbnail = styled.div({
     flex: '0 0 20%',
+    display: 'flex',
     ['img']: {
-        height: '100%',
-        maxWidth: '100%',
+        width: '100%',
+        objectFit: 'cover',
+        flex: '1',
+        overflow: 'hidden',
+        objectPosition: 'center',
     },
 });
 
@@ -23,10 +28,11 @@ const ItemDescription = styled.div({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    flex: '1 0 auto',
+    flex: '0 0 80%',
 });
 
 const ItemName = styled.div<{ error: boolean }>({
+    flex: '0 1 auto',
     fontSize: '1rem',
     fontWeight: 'bold',
     ['&:hover']: {
@@ -56,14 +62,14 @@ export const CartItem: React.FC<CartProps> = ({ item, error }) => {
     return (
         <ItemContainer>
                 <ItemThumbnail>
-                    <img src={item.images[0]} />
+                    <img src={staticImage('/products/thumbnails/' + item.images[0])} />
                 </ItemThumbnail>
                 <ItemDescription>
                     <div style={{ display: 'flex', justifyContent: 'space-between', }}>
                         <ItemName error={error}>{item.name}</ItemName>
-                        <a role="button" tabIndex={0} onClick={() => dispatch(removeFromCartAction(item.id))}>Remove</a>
+                        <a style={{ flex: '0 0 auto' }} role="button" tabIndex={0} onClick={() => dispatch(removeFromCartAction(item.id))}>Remove</a>
                     </div>
-                    <div>
+                    <div style={{ marginTop: '0.5rem' }}>
                         <ItemPrice>{formatPrice(item.price)}</ItemPrice>
                         {/* <Divider>|</Divider> */}
                     </div>

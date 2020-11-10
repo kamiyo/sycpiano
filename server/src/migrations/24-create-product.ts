@@ -15,6 +15,11 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
         images: dataTypes.ARRAY(dataTypes.STRING),
         pages: dataTypes.INTEGER,
         price: dataTypes.INTEGER,
+        type: dataTypes.STRING,
+        priceID: {
+            type: dataTypes.STRING,
+            field: 'price_id',
+        },
         createdAt: {
             type: dataTypes.DATE,
             field: 'created_at',

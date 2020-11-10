@@ -71,7 +71,7 @@ const getOrCreateLocalCustomer = async (email: string) => {
             return localCustomer[0];
         }
     } catch (e) {
-
+        console.log(e);
     }
 };
 
