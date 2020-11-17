@@ -61,7 +61,6 @@ const Page404 = () => register('page404', import(/* webpackChunkName: 'page404' 
 const RootContainer = styled.div<{ isHome: boolean }>`
     height: 100%;
     width: 100%;
-    // background-color: ${props => props.isHome ? 'black' : 'white'};
     background-color: white;
 `;
 
@@ -70,10 +69,6 @@ const FadingContainer = styled('div')`
     width: 100%;
     visibility: hidden;
 `;
-
-// const isSubPath = (testPath: string) => {
-//     return testPath === '/photos' || testPath === '/videos' || testPath === '/music';
-// }
 
 const getRouteBase = (pathname: string) => {
     const matches: string[] = pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
@@ -109,6 +104,7 @@ const App: React.FC<AppProps> = ({ location, history }) => {
         ],
     });
 
+    // Remove fbclid tracker
     React.useEffect(() => {
         const currentQuery = parse(location.search, { ignoreQueryPrefix: true });
         if (currentQuery.fbclid) {

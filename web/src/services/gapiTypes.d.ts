@@ -221,6 +221,10 @@ namespace Youtube {
         videoPublishedAt?: string;
     }
 
+    export interface TokenPagination {
+        etag?: string;
+    }
+
     export interface PlaylistItemListResponse {
         /* Etag of this resource. */
         etag?: string;
@@ -235,7 +239,7 @@ namespace Youtube {
         pageInfo?: PageInfo;
         /* The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
         prevPageToken?: string;
-        tokenPagination?: any;
+        tokenPagination?: TokenPagination;
         /* The visitorId identifies the visitor. */
         visitorId?: string;
     }
@@ -303,7 +307,7 @@ namespace Youtube {
         pageInfo?: PageInfo;
         /* The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
         prevPageToken?: string;
-        tokenPagination?: any;
+        tokenPagination?: TokenPagination;
         /* The visitorId identifies the visitor. */
         visitorId?: string;
     }
@@ -740,14 +744,14 @@ namespace GoogleCalendar {
         start: {
             date: date;
             dateTime: datetime;
-            timeZone?: string
+            timeZone?: string;
         };
         end: {
             date: date;
             dateTime: datetime;
-            timeZone?: string
+            timeZone?: string;
         };
-        [key: string]: any;
+        [key: string]: any; /* eslint-disable-line @typescript-eslint/no-explicit-any */
     }
 
     export interface EventsList {
