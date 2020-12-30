@@ -55,6 +55,11 @@ const config = (shouldCheck, reporter) => {
             filename: '[name].bundle.js',
             chunkFilename: '[name].chunk.js',
         },
+        optimization: {
+            removeAvailableModules: false,
+            removeEmptyChunks: false,
+            splitChunks: false,
+        },
         module: {
             rules: [{
                 test: /\.(t|j)sx?$/,

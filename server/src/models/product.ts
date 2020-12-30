@@ -8,6 +8,7 @@ export interface ProductAttributes {
     id: string;
     file: string;
     name: string;
+    permalink: string;
     description: string;
     sample: string;
     images: string[];
@@ -21,6 +22,7 @@ export class product extends Model implements ProductAttributes {
     id: string;
     file: string;
     name: string;
+    permalink: string;
     description: string;
     sample: string;
     images: string[];
@@ -60,6 +62,7 @@ export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
                 unique: true,
             },
             name: dataTypes.STRING,
+            permalink: dataTypes.STRING,
             file: dataTypes.STRING,
             images: dataTypes.ARRAY(dataTypes.STRING),
             description: dataTypes.TEXT,

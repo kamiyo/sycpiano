@@ -54,7 +54,7 @@ const Shop: React.FC<ShopProps & RouteComponentProps<{}>> = ({ isMobile, locatio
                                 )}
                             />
                             <Route
-                                path="/shop"
+                                path="/shop/:product?"
                                 render={(childProps) => (
                                     <ShopList {...childProps} isMobile={isMobile} />
                                 )}

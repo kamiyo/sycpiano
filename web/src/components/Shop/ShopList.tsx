@@ -8,10 +8,11 @@ import { Product } from 'src/components/Shop/types';
 import { useSelector } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
 import { pushed } from 'src/styles/mixins';
+import { RouteComponentProps } from 'react-router-dom';
 
-interface ShopListProps {
+type ShopListProps = {
     isMobile: boolean;
-}
+} & RouteComponentProps<{ product?: string }>
 
 const listStyle = css(
     pushed,
@@ -25,9 +26,14 @@ const listStyle = css(
     }
 );
 
-const ShopList: React.FC<ShopListProps> = () => {
+const ShopList: React.FC<ShopListProps> = ({ match: { params: { product }} }) => {
     const items = useSelector(({ shop }: GlobalStateShape) => shop.items);
-    console.log(items);
+    // console.log(items);
+    React.useLayoutEffect(() => {
+        if (items.length && product) {
+            document.getElementById(product)?.scrollIntoView();
+        }
+    }, [items, product])
 
     return (
         <div css={listStyle}>

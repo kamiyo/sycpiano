@@ -71,4 +71,5 @@ export interface ShopItem {
     readonly format?: string;
     readonly pages?: number;
     readonly sample?: string;
+    readonly permalink?: string;
 }

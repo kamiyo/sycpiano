@@ -3,6 +3,7 @@ import css from '@emotion/css';
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useSelector, useDispatch } from 'react-redux';
+import { Transition } from 'react-transition-group';
 import { GlobalStateShape } from 'src/types';
 import {
     checkoutAction,
@@ -12,6 +13,9 @@ import {
 
 import TextField from '@material-ui/core/TextField';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+
+import { gsap } from 'gsap';
+
 
 import { cartWidth } from 'src/styles/variables';
 import { lato2 } from 'src/styles/fonts';
@@ -37,7 +41,9 @@ const theme = createMuiTheme({
 
 const cartContainerStyle = css({
     zIndex: 5001,
-    filter: `drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.5))`,
+    filter: `drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.5))`,
+    overflow: 'hidden',
+    height: 0,
 });
 
 const cartListStyle = css({
@@ -184,12 +190,15 @@ export const CartList: React.FC<CartListProps> = ({
     setPopperElement,
     setArrowElement,
 }) => {
+    const visible = useSelector(({ cart }: GlobalStateShape) => cart.visible);
     const [email, setEmail] = React.useState('');
     const [error, setError] = React.useState(false);
     const shopItems = useSelector(({ shop }: GlobalStateShape) => shop.items);
     const cart = useSelector(({ cart }: GlobalStateShape) => cart.items);
     const isCheckingOut = useSelector(({ cart }: GlobalStateShape) => cart.isCheckingOut);
     const checkoutError = useSelector(({ cart }: GlobalStateShape) => cart.checkoutError);
+    const tl = React.useRef<gsap.core.Timeline>(null);
+
     const dispatch = useDispatch();
 
     let subtotal = 0;
@@ -202,106 +211,122 @@ export const CartList: React.FC<CartListProps> = ({
         }));
     }
     return (
-        <div
-            style={styles.popper}
-            ref={setPopperElement}
-            {...attributes.popper}
-            css={cartContainerStyle}
+        <Transition
+
+            in={visible}
+            timeout={250}
+            onEnter={(el) => {
+                if (!tl.current) {
+                    tl.current = gsap.timeline({ reversed: true, paused: true })
+                             .to(el, { height: 'auto', duration: 0.25, ease: 'expo.inOut' });
+                }
+                tl.current.play();
+            }}
+            onExit={() => {
+                tl.current.reverse();
+            }}
         >
-            {isCheckingOut &&
-                <LoadingDiv>
-                    <LoadingInstance width={60} height={60} />
-                </LoadingDiv>
-            }
-            <CartFilterGroup isCheckingOut={isCheckingOut}>
-                <Arrow
-                    ref={setArrowElement}
-                    style={arrowStyles}
-                    transform={arrowTransform}
-                />
+            <div
+                style={styles.popper}
+                ref={setPopperElement}
+                {...attributes.popper}
+                css={cartContainerStyle}
+            >
+                {isCheckingOut &&
+                    <LoadingDiv>
+                        <LoadingInstance width={60} height={60} />
+                    </LoadingDiv>
+                }
+                <CartFilterGroup isCheckingOut={isCheckingOut}>
+                    <Arrow
+                        ref={(el) => setArrowElement(el)}
+                        style={arrowStyles}
+                        transform={arrowTransform}
+                    />
 
-                <div css={cartListStyle}>
-                    <Heading>
-                        <div style={{ width: '100%', fontSize: '2rem', padding: '1rem 0 0.5rem 0' }}>Cart</div>
-                        <CloseSVG
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 120 120"
-                            height="42"
-                            width="42"
-                            onClick={() => dispatch(toggleCartListAction(false))}
-                        >
-                            <path d="M40 40L80 80M40 80L80 40" strokeLinecap="square" strokeWidth="6" />
-                        </CloseSVG>
-                    </Heading>
-                    {cart.length !== 0 && shopItems.length !== 0 ?
-                        (
-                            <StyledItemList>
-                                {checkoutError.message !== '' &&
-                                    (
-                                        <ErrorMessage>
-                                            <ReactMarkdown
-                                                source={checkoutError.message} />
-                                        </ErrorMessage>
-                                    )
-                                }
-                                {cart.map((item: string) => {
-                                    const currentItem = shopItems.find(el => el.id === item);
-                                    subtotal += currentItem.price;
-                                    const error = checkoutError.message !== '' && checkoutError.data.includes(item);
-                                    return (
-                                        <CartItem key={item} item={currentItem} error={error} />
-                                    );
-                                })}
-                            </StyledItemList>
+                    <div css={cartListStyle}>
+                        <Heading>
+                            <div style={{ width: '100%', fontSize: '2rem', padding: '1rem 0 0.5rem 0' }}>Cart</div>
+                            <CloseSVG
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 120 120"
+                                height="42"
+                                width="42"
+                                onClick={() => dispatch(toggleCartListAction(false))}
+                            >
+                                <path d="M40 40L80 80M40 80L80 40" strokeLinecap="square" strokeWidth="6" />
+                            </CloseSVG>
+                        </Heading>
+                        {cart.length !== 0 && shopItems.length !== 0 ?
+                            (
+                                <StyledItemList>
+                                    {checkoutError.message !== '' &&
+                                        (
+                                            <ErrorMessage>
+                                                <ReactMarkdown
+                                                    source={checkoutError.message} />
+                                            </ErrorMessage>
+                                        )
+                                    }
+                                    {cart.map((item: string) => {
+                                        const currentItem = shopItems.find(el => el.id === item);
+                                        subtotal += currentItem ? currentItem.price : 0;
+                                        const error = checkoutError.message !== '' && checkoutError.data.includes(item);
+                                        return (
+                                            <CartItem key={item} item={currentItem} error={error} />
+                                        );
+                                    })}
+                                </StyledItemList>
 
-                        ) : (
-                            <EmptyMessage>Cart is Empty!</EmptyMessage>
-                        )
-                    }
-                    <Subtotal>
-                        <div>Subtotal:</div>
-                        <div>{formatPrice(subtotal)}</div>
-                    </Subtotal>
-                    <ThemeProvider theme={theme}>
+                            ) : (
+                                <EmptyMessage>Cart is Empty!</EmptyMessage>
+                            )
+                        }
+                        <Subtotal>
+                            <div>Subtotal:</div>
+                            <div>{formatPrice(subtotal)}</div>
+                        </Subtotal>
+                        <ThemeProvider theme={theme}>
 
-                        <StyledForm
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                if (error) {
-                                    return;
-                                }
-                                else if (email === '') {
-                                    setError(true);
-                                    return;
-                                }
-                                console.log('submitting');
-                                dispatch(checkoutAction(email));
-                            }}
-                        >
-
-                            <StyledTextField
-                                label={error ? 'Invalid Email' : 'Email Address'}
-                                error={error}
-                                id="email-text"
-                                value={email}
-                                onChange={(event) => {
-                                    setEmail(event.target.value);
-                                    setError(event.target.value !== '' && !validateEmail(event.target.value));
+                            <StyledForm
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    if (error) {
+                                        return;
+                                    }
+                                    else if (email === '') {
+                                        setError(true);
+                                        return;
+                                    }
+                                    console.log('submitting');
+                                    dispatch(checkoutAction(email));
                                 }}
-                                variant="outlined"
-                                margin="dense"
-                                type="email"
-                            />
-                            <StyledCheckoutButton
-                                type="submit"
-                                value="Checkout with Stripe"
-                                disabled={cart.length === 0}
-                            />
-                        </StyledForm>
-                    </ThemeProvider>
-                </div>
-            </CartFilterGroup>
-        </div>
+                            >
+
+                                <StyledTextField
+                                    label={error ? 'Invalid Email' : 'Email Address'}
+                                    error={error}
+                                    id="email-text"
+                                    value={email}
+                                    onChange={(event) => {
+                                        setEmail(event.target.value);
+                                        setError(event.target.value !== '' && !validateEmail(event.target.value));
+                                    }}
+                                    variant="outlined"
+                                    margin="dense"
+                                    type="email"
+                                />
+                                <StyledCheckoutButton
+                                    type="submit"
+                                    value="Checkout with Stripe"
+                                    disabled={cart.length === 0}
+                                />
+                            </StyledForm>
+                        </ThemeProvider>
+                    </div>
+                </CartFilterGroup>
+            </div>
+        </Transition>
     );
 
 };

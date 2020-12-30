@@ -122,6 +122,7 @@ export const createProduct = async (attributes: Omit<ProductAttributes, 'created
                 format: 'pdf',
                 pages: attributes.pages,
                 sample: attributes.sample,
+                permalink: attributes.permalink,
             },
             images: attributes.images.map((img) => 'https://www.seanchenpiano.com/static/images/products/thumbnails/' + img),
         });
@@ -149,6 +150,7 @@ export const updateProduct = async (attributes: Omit<ProductAttributes, 'created
                     pages: attributes.pages,
                     sample: attributes.sample,
                     type: attributes.type,
+                    permalink: attributes.permalink,
                 },
                 images: attributes.images.map((img) => 'https://www.seanchenpiano.com/static/images/products/thumbnails/' + img),
             },

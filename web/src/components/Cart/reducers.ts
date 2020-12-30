@@ -10,9 +10,6 @@ export const cartReducer = (state: CartStateShape = {
     checkoutError: {
         message: '',
     },
-    referenceElement: null,
-    popperElement: null,
-    arrowElement: null,
 }, action: ActionTypes.Types): CartStateShape => {
     switch (action.type) {
         case CART_ACTIONS.INIT_SUCCESS:
@@ -64,24 +61,6 @@ export const cartReducer = (state: CartStateShape = {
             return {
                 ...state,
                 visible: (action.visible === undefined) ? !state.visible : action.visible,
-            };
-        }
-        case CART_ACTIONS.POPPER_SETREF: {
-            return {
-                ...state,
-                referenceElement: action.el
-            };
-        }
-        case CART_ACTIONS.POPPER_SETPOP: {
-            return {
-                ...state,
-                popperElement: action.el
-            };
-        }
-        case CART_ACTIONS.POPPER_SETARROW: {
-            return {
-                ...state,
-                arrowElement: action.el
             };
         }
         default:

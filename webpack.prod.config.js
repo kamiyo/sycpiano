@@ -23,6 +23,9 @@ const config = merge(common.config, {
         ],
     },
     optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
         minimizer: [
             new Minimizer({
                 cache: true,

@@ -4,6 +4,7 @@ import { initCartAction, syncLocalStorage } from './actions';
 import { GlobalStateShape } from 'src/types';
 import { CartList } from 'src/components/Cart/CartList';
 
+
 interface CartProps {
     styles: {
         [key: string]: React.CSSProperties;
@@ -20,7 +21,6 @@ interface CartProps {
 export const Cart: React.FC<CartProps> = (props) => {
     const dispatch = useDispatch();
     const cart = useSelector(({ cart }: GlobalStateShape) => cart.items);
-    const visible = useSelector(({ cart }: GlobalStateShape) => cart.visible);
     const firstRun = React.useRef(true);
 
     React.useEffect(() => {
@@ -34,8 +34,21 @@ export const Cart: React.FC<CartProps> = (props) => {
         }
     }, [cart.length]);
 
+    // React.useEffect(() => {
+    //     if (!visible) {
+    //         TweenLite.to(elRef, 250, { height: 0 });
+    //     }
+    // }, [visible])
+
+    // React.useLayoutEffect(() => {
+    //     if (visible) {
+    //         const height = elRef.clientHeight;
+    //         TweenLite.to(elRef, 250, { height });
+    //     }
+    // }, [visible])
+
     return (
-        visible && <CartList {...props}/>
+        <CartList {...props} />
     );
 };
 

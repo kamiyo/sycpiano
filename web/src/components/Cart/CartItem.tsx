@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { Product } from 'src/components/Shop/types';
 import styled from '@emotion/styled'
 import { formatPrice } from 'src/utils';
@@ -31,14 +32,18 @@ const ItemDescription = styled.div({
     flex: '0 0 80%',
 });
 
-const ItemName = styled.div<{ error: boolean }>({
+const ItemName = styled(Link)<{ error: boolean }>({
     flex: '0 1 auto',
     fontSize: '1rem',
     fontWeight: 'bold',
+    color: 'black',
     ['&:hover']: {
         cursor: 'pointer',
         textDecoration: 'underline',
     },
+    ['&:visited']: {
+        color: 'black',
+    }
 }, ({ error }) => error && ({
     color: 'red',
 }));
@@ -66,7 +71,7 @@ export const CartItem: React.FC<CartProps> = ({ item, error }) => {
                 </ItemThumbnail>
                 <ItemDescription>
                     <div style={{ display: 'flex', justifyContent: 'space-between', }}>
-                        <ItemName error={error}>{item.name}</ItemName>
+                        <ItemName to={`/shop/${item.permalink}`} error={error}>{item.name}</ItemName>
                         <a style={{ flex: '0 0 auto' }} role="button" tabIndex={0} onClick={() => dispatch(removeFromCartAction(item.id))}>Remove</a>
                     </div>
                     <div style={{ marginTop: '0.5rem' }}>

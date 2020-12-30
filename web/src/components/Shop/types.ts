@@ -7,6 +7,7 @@ export interface Product {
     readonly sample: string;
     readonly format: string;
     readonly pages: number;
+    readonly permalink: string;
 }
 
 export interface ShopStateShape {

@@ -48,8 +48,8 @@ shopRouter.use(bodyParser.json());
 
 shopRouter.get('/items', async (_, res) => {
     const products = await db.models.product.findAll();
-    const storeItems: ShopItem[] = products.map(({ id, name, description, price, images, pages, sample }) => ({
-        id, name, description, price, images, pages, sample
+    const storeItems: ShopItem[] = products.map(({ id, name, description, price, images, pages, sample, permalink }) => ({
+        id, name, description, price, images, pages, sample, permalink
     }))
     res.json(storeItems);
 });

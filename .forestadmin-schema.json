@@ -1866,6 +1866,20 @@
       "inverseOf": null,
       "validations": []
     }, {
+      "field": "permalink",
+      "type": "String",
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": null,
+      "inverseOf": null,
+      "validations": []
+    }, {
       "field": "price",
       "type": "Number",
       "defaultValue": null,

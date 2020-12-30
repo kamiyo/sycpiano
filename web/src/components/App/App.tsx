@@ -185,7 +185,7 @@ const App: React.FC<AppProps> = ({ location, history }) => {
                                                 render={(childProps) => <AsyncComponent<ScheduleProps> moduleProvider={Schedule} {...childProps} isMobile={matches} />}
                                             />
                                             <Route
-                                                path="/shop"
+                                                path="/shop*"
                                                 exact={true}
                                                 render={(childProps) => <AsyncComponent<ShopProps> moduleProvider={Shop} {...childProps} isMobile={matches} />}
                                             />

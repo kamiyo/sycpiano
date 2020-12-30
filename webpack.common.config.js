@@ -85,9 +85,6 @@ const config = () => {
         },
         optimization: {
             runtimeChunk: 'single',
-            splitChunks: {
-                chunks: 'all',
-            },
         },
         plugins: [
             new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /^en$/),
