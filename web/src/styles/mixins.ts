@@ -38,6 +38,7 @@ export const container = css`
     left: 0;
 `;
 
-export const noHighlight = css`
-    user-select: none;
-`;
+export const noHighlight = css({
+    userSelect: 'none',
+    WebkitTapHighlightColor: 'transparent',
+})

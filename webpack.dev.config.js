@@ -7,7 +7,6 @@ const common = require('./webpack.common.config.js');
 const webpack = require('webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const WebpackBar = require('webpackbar');
 
 const config = (shouldCheck, reporter) => {
     const tsxUse = common.tsxUse;
@@ -22,11 +21,11 @@ const config = (shouldCheck, reporter) => {
             // Prod key is hardcoded since it is restricted. See webpack.prod.config.js
             GAPI_KEY: JSON.stringify(process.env.GAPI_KEY_APP),
         }),
-        new BundleAnalyzerPlugin({
-            analyzerMode: 'static',
-            openAnalyzer: false,
-            logLevel: 'silent',
-        }),
+        // new BundleAnalyzerPlugin({
+        //     analyzerMode: 'static',
+        //     openAnalyzer: false,
+        //     logLevel: 'silent',
+        // }),
         new webpack.ProgressPlugin({
             handler: (percentage, message, ...args) => {
                 const msg = message
@@ -50,15 +49,10 @@ const config = (shouldCheck, reporter) => {
 
     return merge(common.config, {
         mode: 'development',
-        devtool: 'inline-cheap-source-map',
+        devtool: 'eval-cheap-source-map',
         output: {
             filename: '[name].bundle.js',
             chunkFilename: '[name].chunk.js',
-        },
-        optimization: {
-            removeAvailableModules: false,
-            removeEmptyChunks: false,
-            splitChunks: false,
         },
         module: {
             rules: [{

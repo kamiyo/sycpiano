@@ -159,21 +159,29 @@ const checkAndMakeBuildDir = (done) => {
 }
 
 const webpackWatch = (done) => {
-    webpack(devWebpackConfig(true, webpackBar)).watch({
-        ignored: /node_modules/,
-    }, (err, stats) => {
+    reporter.addTask('Webpack', { type: 'percentage', barColorFn: chalk.green, index: 2 });
+    const compiler = webpack(devWebpackConfig(false, reporter));
+    compiler.hooks.beforeRun.tapAsync('Reset Progress', (p) => {
+        reporter.addTask('Webpack', { type: 'percentage', barColorFn: chalk.green, index: 2 });
+        appPromise = new Promise((res, _) => appPromiseResolve = res);
+    });
+
+    webpackWatcher = compiler.watch({ ignored: /node_modules/ }, (err, stats) => {
         if (err)
             throw new PluginError('webpack', err);
 
-        fancyLog('[webpack]', stats.toString({
-            assets: true,
-            entrypoints: true,
-            modules: false,
-            colors: true
-        }));
+        reporter.done('Webpack');
+
+        // deferredReporter('[webpack]\n'.blue + stats.toString('minimal'));
+        reporter.promise.then(() => {
+            console.log(chalk.blue('[webpack]\n') + stats.toString('minimal'));
+        });
     });
+
     done();
 };
+
+let webpackWatcher = null;
 
 const webpackCompileNoCheck = (done) => {
     reporter.addTask('Webpack', { type: 'percentage', barColorFn: chalk.green, index: 2 });
@@ -249,6 +257,7 @@ const resolveAppPromise = (cb) => {
 
 process.on('SIGINT', () => {
     child && child.kill();
+    webpackWatcher && webpackWatcher.close();
     watchers.forEach((watcher) => {
         watcher.close();
     });
@@ -281,20 +290,39 @@ let watchers = []
 
 let mainDone;
 
-const watchDev = (done) => {
-    reporter = new MultiProgressBars({ initMessage: 'Watch Dev' });
+// const watchDev = (done) => {
+//     reporter = new MultiProgressBars({ initMessage: 'Watch Dev' });
+//     watchers.push(
+//         gulp.watch(
+//             ['server/src/**/*'],
+//             { ignoreInitial: false },
+//             gulp.series(resetServerPromise, cleanServer, compileServerNoCheck, resolveServerPromise),
+//         )
+//     );
+//     watchers.push(
+//         gulp.watch(
+//             ['web/src/**/*', 'web/partials/*'],
+//             { ignoreInitial: false },
+//             gulp.series(resetAppPromise, checkAndMakeBuildDir, webpackCompileNoCheck, resolveAppPromise),
+//         )
+//     );
+//     watchers.push(
+//         gulp.watch(
+//             ['server/src/**/*', 'web/src/**/*', 'web/partials/*'],
+//             { ignoreInitial: false },
+//             restartApp,
+//         )
+//     );
+//     mainDone = done;
+// };
+
+const watchDev = gulp.series((done) => {
+    reporter = new MultiProgressBars({ initMessage: 'Watch Dev', border: true, anchor: 'bottom', persist: true });
     watchers.push(
         gulp.watch(
             ['server/src/**/*'],
             { ignoreInitial: false },
             gulp.series(resetServerPromise, cleanServer, compileServerNoCheck, resolveServerPromise),
-        )
-    );
-    watchers.push(
-        gulp.watch(
-            ['web/src/**/*', 'web/partials/*'],
-            { ignoreInitial: false },
-            gulp.series(resetAppPromise, checkAndMakeBuildDir, webpackCompileNoCheck, resolveAppPromise),
         )
     );
     watchers.push(
@@ -305,7 +333,7 @@ const watchDev = (done) => {
         )
     );
     mainDone = done;
-};
+}, webpackWatch);
 
 exports.watchDev = watchDev;
 

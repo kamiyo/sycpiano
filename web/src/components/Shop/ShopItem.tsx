@@ -1,4 +1,3 @@
-import css from '@emotion/css';
 import styled from '@emotion/styled';
 import * as React from 'react';
 
@@ -12,19 +11,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GlobalStateShape } from 'src/types';
 import toUpper from 'lodash-es/toUpper';
 import { staticImage } from 'src/styles/imageUrls';
+import { noHighlight } from 'src/styles/mixins';
+import { Dispatch } from 'redux';
 
 interface ShopItemProps {
     item: Product;
     key: string | number;
     className?: string;
+    isMobile?: boolean;
 }
 
-const ThumbnailContainer = styled('div')(
-    {
-        flex: '0 0 200px',
+const ThumbnailContainer = styled('div')<{ isMobile: boolean }>(
+    ({ isMobile }) => ({
+        flex: '0 0 ' + (isMobile ? '95vw' : '200px'),
         position: 'relative',
-        boxShadow: '0 2px 7px -4px rgba(0,0,0,0.8)',
+        boxShadow: '0 2px 7px -4px rgba(0,0,0,0.8)'
+            + (isMobile ? ', 0 -2px 7px -4px rgba(0, 0, 0, 0.8)' : ''),
         zIndex: 0,
+        width: isMobile ? '95vw' : '',
+        height: isMobile ? '95vw' : '',
         '&:before, &:after': {
             zIndex: -1,
             position: 'absolute',
@@ -43,7 +48,7 @@ const ThumbnailContainer = styled('div')(
             right: '0.35rem',
             left: 'unset',
         },
-    },
+    })
 );
 
 const Thumbnail = styled('div')<{ imageUrl: string }>(
@@ -58,17 +63,22 @@ const Thumbnail = styled('div')<{ imageUrl: string }>(
     })
 );
 
-const contentContainerStyle = css({
-    flex: '1 1 auto',
-    height: 'auto',
-    padding: '1rem 1rem 1rem 4rem',
-    backgroundColor: 'transparent',
-    letterSpacing: '0.01rem',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-});
+const ContentContainer = styled.div<{ isMobile: boolean }>(
+    {
+        flex: '1 1 auto',
+        height: 'auto',
+        padding: '1rem 1rem 1rem 4rem',
+        backgroundColor: 'transparent',
+        letterSpacing: '0.01rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+    },
+    ({ isMobile }) => isMobile && ({
+        padding: '1rem',
+    }),
+);
 
 // const boxShadow = `
 //     0px 1px 3px 0px rgba(0, 0, 0, 0.2),
@@ -85,7 +95,7 @@ const getHoverStyle = (isMouseDown: boolean) => ({
     boxShadow: isMouseDown ? '0 1px 2px rgba(0, 0, 0, 0.8)' : '0 4px 6px rgba(0, 0, 0, 0.4)',
 });
 
-const CartButton = styled.button<{ isItemInCart: boolean; isMouseDown: boolean }>(
+const CartButton = styled.button<{ isItemInCart: boolean; isMouseDown: boolean; isMobile: boolean }>(
     {
         fontSize: '0.8em',
         width: '230px',
@@ -94,9 +104,10 @@ const CartButton = styled.button<{ isItemInCart: boolean; isMouseDown: boolean }
         fontFamily: lato3,
         borderRadius: '20px',
         transition: 'all 0.25s',
-        // boxShadow: buttonBoxShadow,
         letterSpacing: '0.1rem',
+        userSelect: 'none',
     },
+    noHighlight,
     props => {
         let base;
         if (props.isItemInCart) {
@@ -112,22 +123,33 @@ const CartButton = styled.button<{ isItemInCart: boolean; isMouseDown: boolean }
                 border: `1px solid ${logoBlue}`,
             };
         }
-        return {
-            ...base,
-            '&:hover': getHoverStyle(props.isMouseDown),
-        };
+        if (props.isMobile) {
+            return {
+                ...base,
+                ...getHoverStyle(props.isMouseDown),
+            };
+        } else {
+            return {
+                ...base,
+                '&:hover': getHoverStyle(props.isMouseDown),
+            };
+        }
     },
 );
 
-const ShopItemContainer = styled.div`
-    font-family: ${lato2};
-    height: auto;
-    display: flex;
-    border-radius: 4px;
-    margin: 5rem auto;
-    flex: 0 1 600px;
-    max-width: 600px;
-`;
+const ShopItemContainer = styled.div<{ isMobile: boolean }>({
+    fontFamily: lato2,
+    height: 'auto',
+    display: 'flex',
+    borderRadius: 4,
+    margin: '5rem auto',
+    flex: '0 1 600px',
+    maxWidth: 600,
+}, ({ isMobile }) => isMobile && ({
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: '1rem auto',
+}));
 
 const ItemName = styled.div({
     margin: '0 0 0.8rem 0',
@@ -149,12 +171,14 @@ const ItemPrice = styled.span({
     fontWeight: 'bold',
 });
 
-const DetailContainer = styled.div({
+const DetailContainer = styled.div<{ isMobile: boolean }>({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     maxWidth: 500,
-});
+}, ({ isMobile }) => isMobile && ({
+    justifyContent: 'space-evenly',
+}));
 
 const Separator = styled.span({
     margin: '0.2rem 1rem',
@@ -163,22 +187,33 @@ const Separator = styled.span({
 
 const formatCentsToDollars = (price: number) => `$${(price / 100).toFixed(2)}`;
 
-const ShopItem: React.FC<ShopItemProps> = ({ item, className }) => {
+interface ItemProps {
+    className: string;
+    item: Product;
+    isMouseDown: boolean;
+    setIsMouseDown: (s: boolean) => void;
+    isItemInCart: boolean;
+    dispatch: Dispatch<any>;
+    isMobile: boolean;
+}
+
+const ShopItem: React.FC<ShopItemProps> = ({ item, className, isMobile }) => {
     const isItemInCart = useSelector(({ cart }: GlobalStateShape) => cart.items.includes(item.id));
     const [isMouseDown, setIsMouseDown] = React.useState(false);
 
     const dispatch = useDispatch();
+    console.log(isMouseDown);
 
     return (
-        <ShopItemContainer className={className}>
-            <ThumbnailContainer>
-                <Thumbnail imageUrl={staticImage('/products/thumbnails/' + item.images[0]) || ''}/>
+        <ShopItemContainer isMobile={isMobile} className={className}>
+            <ThumbnailContainer isMobile={isMobile}>
+                <Thumbnail imageUrl={staticImage('/products/thumbnails/' + item.images[0]) || ''} />
             </ThumbnailContainer>
-            <div id={item.permalink} css={contentContainerStyle}>
+            <ContentContainer id={item.permalink} isMobile={isMobile}>
                 <div css={{ marginBottom: '24px' }}>
                     <ItemName>{item.name}</ItemName>
                     <ItemDescription>{item.description}</ItemDescription>
-                    <DetailContainer>
+                    <DetailContainer isMobile={isMobile}>
                         <ItemDetails>{toUpper(item.format)} format</ItemDetails>
                         <Separator>|</Separator>
                         <ItemDetails>{item.pages} pages</ItemDetails>
@@ -187,10 +222,21 @@ const ShopItem: React.FC<ShopItemProps> = ({ item, className }) => {
                     </DetailContainer>
                 </div>
                 <CartButton
+                    isMobile={isMobile}
                     isMouseDown={isMouseDown}
                     isItemInCart={isItemInCart}
+                    onTouchStart={(ev) => {
+                        console.log('touch-down');
+                        setIsMouseDown(true);
+                        console.log(isMouseDown);
+                    }}
                     onMouseDown={() => {
                         setIsMouseDown(true);
+                        console.log(isMouseDown);
+                    }}
+                    onTouchEnd={() => {
+                        console.log('touch-up');
+                        setIsMouseDown(false);
                     }}
                     onMouseUp={() => {
                         setIsMouseDown(false);
@@ -201,9 +247,9 @@ const ShopItem: React.FC<ShopItemProps> = ({ item, className }) => {
                 >
                     {isItemInCart ? 'Remove from Cart' : 'Add to Cart'}
                 </CartButton>
-            </div>
+            </ContentContainer>
         </ShopItemContainer>
-    )
+    );
 };
 
 export { ShopItem };

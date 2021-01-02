@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from 'src/components/Shop/types';
 import styled from '@emotion/styled'
+import isPropValid from '@emotion/is-prop-valid';
 import { formatPrice } from 'src/utils';
 import { useDispatch } from 'react-redux';
 import { removeFromCartAction } from 'src/components/Cart/actions';
@@ -32,7 +33,10 @@ const ItemDescription = styled.div({
     flex: '0 0 80%',
 });
 
-const ItemName = styled(Link)<{ error: boolean }>({
+const ItemName = styled(Link, {
+    shouldForwardProp: prop =>
+        isPropValid(prop) && prop !== 'error'
+})<{ error: boolean }>({
     flex: '0 1 auto',
     fontSize: '1rem',
     fontWeight: 'bold',
@@ -71,7 +75,12 @@ export const CartItem: React.FC<CartProps> = ({ item, error }) => {
                 </ItemThumbnail>
                 <ItemDescription>
                     <div style={{ display: 'flex', justifyContent: 'space-between', }}>
-                        <ItemName to={`/shop/${item.permalink}`} error={error}>{item.name}</ItemName>
+                        <ItemName
+                            to={`/shop/${item.permalink}`}
+                            error={error}
+                        >
+                            {item.name}
+                        </ItemName>
                         <a style={{ flex: '0 0 auto' }} role="button" tabIndex={0} onClick={() => dispatch(removeFromCartAction(item.id))}>Remove</a>
                     </div>
                     <div style={{ marginTop: '0.5rem' }}>

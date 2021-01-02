@@ -272,8 +272,9 @@ export const CartList: React.FC<CartListProps> = ({
                                         const currentItem = shopItems.find(el => el.id === item);
                                         subtotal += currentItem ? currentItem.price : 0;
                                         const error = checkoutError.message !== '' && checkoutError.data.includes(item);
+                                        console.log(error);
                                         return (
-                                            <CartItem key={item} item={currentItem} error={error} />
+                                            <CartItem key={item} item={currentItem} error={!!error} />
                                         );
                                     })}
                                 </StyledItemList>

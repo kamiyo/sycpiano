@@ -24,7 +24,6 @@ const workerPool = {
 };
 
 const tsxUse = [
-    { loader: 'cache-loader' },
     {
         loader: 'babel-loader',
         options: {
@@ -45,6 +44,7 @@ const tsxUse = [
                 '@babel/syntax-dynamic-import',
                 '@babel/proposal-class-properties',
                 '@babel/proposal-object-rest-spread',
+                ['@babel/transform-runtime', { 'corejs': 3 }]
             ],
         },
     },
@@ -66,25 +66,11 @@ const config = () => {
                     test: /\.(t|j)sx?$/,
                     include: sourcePaths,
                     use: tsxUse,
-                }, {
-                    test: /\.(ttf|eot|woff|woff2|svg|png|jpg)$/,
-                    include: [
-                        path.resolve(__dirname, 'web/assets/images'),
-                        path.resolve(__dirname, 'web/assets/fonts')
-                    ],
-                    use: [
-                        {
-                            loader: 'url-loader',
-                            options: {
-                                limit: 2e16,
-                                name: '[name]-[hash].[ext]',
-                            },
-                        },
-                    ],
-                }]
+                }
+            ]
         },
         optimization: {
-            runtimeChunk: 'single',
+            runtimeChunk: true,
         },
         plugins: [
             new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /^en$/),
@@ -107,6 +93,7 @@ const config = () => {
             extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
             alias: {
                 'src': path.resolve(__dirname, 'web/src'),
+                path: require.resolve('path-browserify'),
             },
             symlinks: false,
         }

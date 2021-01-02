@@ -26,7 +26,7 @@ const listStyle = css(
     }
 );
 
-const ShopList: React.FC<ShopListProps> = ({ match: { params: { product }} }) => {
+const ShopList: React.FC<ShopListProps> = ({ match: { params: { product }}, isMobile }) => {
     const items = useSelector(({ shop }: GlobalStateShape) => shop.items);
     // console.log(items);
     React.useLayoutEffect(() => {
@@ -42,6 +42,7 @@ const ShopList: React.FC<ShopListProps> = ({ match: { params: { product }} }) =>
                     <ShopItem
                         item={item}
                         key={idx}
+                        isMobile={isMobile}
                     />
                 ))
             }

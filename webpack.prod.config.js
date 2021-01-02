@@ -4,7 +4,6 @@
 const path = require('path');
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common.config.js');
-const Minimizer = require('terser-webpack-plugin');
 const webpack = require('webpack');
 
 const config = merge(common.config, {
@@ -20,17 +19,6 @@ const config = merge(common.config, {
                 include: common.sourcePaths,
                 use: common.tsxUse,
             },
-        ],
-    },
-    optimization: {
-        splitChunks: {
-            chunks: 'all',
-        },
-        minimizer: [
-            new Minimizer({
-                cache: true,
-                parallel: true,
-            }),
         ],
     },
     plugins: [
