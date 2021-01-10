@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import css from '@emotion/css';
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,16 +16,16 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { gsap } from 'gsap';
 
 
-import { cartWidth } from 'src/styles/variables';
+import { cartWidth, navBarHeight } from 'src/styles/variables';
 import { lato2 } from 'src/styles/fonts';
 import { magenta, lightBlue } from 'src/styles/colors';
 import { mix } from 'polished';
 import { formatPrice, validateEmail } from 'src/utils';
-import { CartItem } from './CartItem';
-import { LoadingInstance } from '../LoadingSVG';
+import { CartItem } from 'src/components/Cart/CartItem';
+import { LoadingInstance } from 'src/components/LoadingSVG';
+import { Product } from 'src/components/Shop/types';
 
 const ARROW_SIDE = 32;
-// const ARROW_DIAG = ARROW_SIDE / Math.SQRT2;
 
 const theme = createMuiTheme({
     palette: {
@@ -39,21 +38,26 @@ const theme = createMuiTheme({
     },
 });
 
-const cartContainerStyle = css({
+const CartContainer = styled.div<{ isMobile: boolean }>({
     zIndex: 5001,
     filter: `drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.5))`,
     overflow: 'hidden',
     height: 0,
-});
+}, ({ isMobile }) => isMobile && ({
+    position: 'absolute',
+    top: navBarHeight.mobile,
+    zIndex: 4999,
+    maxHeight: `calc(100% - ${navBarHeight.mobile}px)`,
+}));
 
-const cartListStyle = css({
+const CartListDiv = styled.div<{ isMobile: boolean }>(({ isMobile }) => ({
     backgroundColor: 'white',
     position: 'relative',
-    width: cartWidth,
-    margin: `${ARROW_SIDE / 2}px 1.5rem`,
+    width: isMobile ? '100vw' : cartWidth,
+    margin: isMobile ? 'unset' : `${ARROW_SIDE / 2}px 1.5rem`,
     fontFamily: lato2,
     fontSize: '0.8rem',
-});
+}));
 
 const StyledItemList = styled.div({
     overflowY: 'auto',
@@ -182,6 +186,7 @@ interface CartListProps {
     };
     setPopperElement: (el: HTMLDivElement) => void;
     setArrowElement: (el: HTMLDivElement) => void;
+    isMobile: boolean;
 }
 
 export const CartList: React.FC<CartListProps> = ({
@@ -189,6 +194,7 @@ export const CartList: React.FC<CartListProps> = ({
     attributes,
     setPopperElement,
     setArrowElement,
+    isMobile,
 }) => {
     const visible = useSelector(({ cart }: GlobalStateShape) => cart.visible);
     const [email, setEmail] = React.useState('');
@@ -210,27 +216,28 @@ export const CartList: React.FC<CartListProps> = ({
             data: [],
         }));
     }
+    const popperStyles = isMobile ? {} : {style: styles.popper};
+    const popperAttributes = isMobile ? {} : attributes.popper;
     return (
-        <Transition
-
+        <Transition<undefined>
             in={visible}
             timeout={250}
-            onEnter={(el) => {
+            onEnter={(el: HTMLDivElement) => {
                 if (!tl.current) {
                     tl.current = gsap.timeline({ reversed: true, paused: true })
-                             .to(el, { height: 'auto', duration: 0.25, ease: 'expo.inOut' });
+                        .to(el, { height: 'auto', duration: 0.25, ease: 'expo.inOut' });
                 }
-                tl.current.play();
+                tl.current.pause().play();
             }}
             onExit={() => {
-                tl.current.reverse();
+                tl.current.pause().reverse();
             }}
         >
-            <div
-                style={styles.popper}
-                ref={setPopperElement}
-                {...attributes.popper}
-                css={cartContainerStyle}
+            <CartContainer
+                {...popperStyles}
+                isMobile={isMobile}
+                ref={isMobile ? () => { } : setPopperElement}    /* eslint-disable-line @typescript-eslint/no-empty-function */
+                {...popperAttributes}
             >
                 {isCheckingOut &&
                     <LoadingDiv>
@@ -238,13 +245,14 @@ export const CartList: React.FC<CartListProps> = ({
                     </LoadingDiv>
                 }
                 <CartFilterGroup isCheckingOut={isCheckingOut}>
-                    <Arrow
-                        ref={(el) => setArrowElement(el)}
-                        style={arrowStyles}
-                        transform={arrowTransform}
-                    />
-
-                    <div css={cartListStyle}>
+                    {!isMobile && (
+                        < Arrow
+                            ref={isMobile ? () => { } : setArrowElement}     /* eslint-disable-line @typescript-eslint/no-empty-function */
+                            style={arrowStyles}
+                            transform={arrowTransform}
+                        />
+                    )}
+                    <CartListDiv isMobile={isMobile}>
                         <Heading>
                             <div style={{ width: '100%', fontSize: '2rem', padding: '1rem 0 0.5rem 0' }}>Cart</div>
                             <CloseSVG
@@ -257,7 +265,7 @@ export const CartList: React.FC<CartListProps> = ({
                                 <path d="M40 40L80 80M40 80L80 40" strokeLinecap="square" strokeWidth="6" />
                             </CloseSVG>
                         </Heading>
-                        {cart.length !== 0 && shopItems.length !== 0 ?
+                        {cart.length !== 0 && Object.keys(shopItems).length !== 0 ?
                             (
                                 <StyledItemList>
                                     {checkoutError.message !== '' &&
@@ -269,10 +277,10 @@ export const CartList: React.FC<CartListProps> = ({
                                         )
                                     }
                                     {cart.map((item: string) => {
-                                        const currentItem = shopItems.find(el => el.id === item);
+                                        const currentItem = Object.values(shopItems)
+                                            .reduce((acc, prods) => acc || prods.find(el => el.id === item), undefined as Product);
                                         subtotal += currentItem ? currentItem.price : 0;
                                         const error = checkoutError.message !== '' && checkoutError.data.includes(item);
-                                        console.log(error);
                                         return (
                                             <CartItem key={item} item={currentItem} error={!!error} />
                                         );
@@ -324,9 +332,9 @@ export const CartList: React.FC<CartListProps> = ({
                                 />
                             </StyledForm>
                         </ThemeProvider>
-                    </div>
+                    </CartListDiv>
                 </CartFilterGroup>
-            </div>
+            </CartContainer>
         </Transition>
     );
 

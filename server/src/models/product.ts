@@ -2,7 +2,7 @@ import { DataTypes, Sequelize, CreateOptions, UpdateOptions } from 'sequelize';
 import { createProduct, updateProduct } from '../stripe';
 import { Model } from '../types';
 
-const ProductTypes = ['arrangement', 'cadenza', 'original'] as const;
+export const ProductTypes = ['arrangement', 'cadenza', 'original'] as const;
 
 export interface ProductAttributes {
     id: string;

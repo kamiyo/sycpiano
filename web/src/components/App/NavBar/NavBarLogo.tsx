@@ -45,7 +45,7 @@ const StyledLink = styled(Link, {
     letter-spacing: 0.05em;
     height: 100%;
     color: ${logoBlue};
-    fill: ${props => (props.isHome && !props.isExpanded) ? 'white' : logoBlue};
+    fill: ${props => (props.isHome) ? 'white' : logoBlue};
     transition: all 0.3s;
     overflow: hidden;
     cursor: pointer;

@@ -68,7 +68,6 @@ export const initCartAction = (): ThunkAction<Promise<void>, GlobalStateShape, v
                 dispatch(initCartSuccess(cart));
                 return Promise.resolve();
             } else {
-                dispatch(initCartSuccess([]));
                 return Promise.resolve();
             }
         };

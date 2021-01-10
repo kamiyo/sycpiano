@@ -106,7 +106,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
         const Loading = (loadingComponent as typeof React.Component);
         return (
             <React.Fragment>
-                <Transition
+                <Transition<undefined>
                     in={loadingComponent && !this.state.isLoaded}
                     mountOnEnter={true}
                     unmountOnExit={true}

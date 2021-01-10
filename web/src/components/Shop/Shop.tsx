@@ -38,7 +38,7 @@ const Shop: React.FC<ShopProps & RouteComponentProps<{}>> = ({ isMobile, locatio
     return (
         <ShopContainer>
             <TransitionGroup component={null}>
-                <Transition
+                <Transition<undefined>
                     key={location.pathname.includes('checkout/success') ? 'checkoutSuccess' : 'shop'}
                     onEntering={fadeOnEnter(0.25)}
                     onExiting={fadeOnExit()}

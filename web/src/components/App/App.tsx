@@ -35,6 +35,9 @@ const activated = [
 import moment from 'moment-timezone';
 
 import { Cart } from 'src/components/Cart/Cart';
+import { ToggleCartList } from 'src/components/Cart/actionTypes';
+import { toggleCartListAction } from 'src/components/Cart/actions';
+import { ClickListenerOverlay } from 'src/components/ClickListenerOverlay';
 import { toggleNavBar } from 'src/components/App/NavBar/actions';
 import { ToggleNav } from 'src/components/App/NavBar/actionTypes';
 import NavBar from 'src/components/App/NavBar/NavBar';
@@ -64,11 +67,14 @@ const RootContainer = styled.div<{ isHome: boolean }>`
     background-color: white;
 `;
 
-const FadingContainer = styled('div')`
-    height: 100%;
-    width: 100%;
-    visibility: hidden;
-`;
+const FadingContainer = styled.div<{ shouldBlur: boolean }>({
+    height: '100%',
+    width: '100%',
+    visibility: 'hidden',
+    transition: 'filter 0.25s',
+}, ({ shouldBlur }) => shouldBlur && ({
+    filter: 'blur(8px)',
+}));
 
 const getRouteBase = (pathname: string) => {
     const matches: string[] = pathname.match(/^(\/[^/]+)?(\/[^/]+)?/);
@@ -84,8 +90,10 @@ const getMostSpecificRouteName = (pathname: string) => {
 type AppProps = RouteComponentProps<{}>;
 
 const App: React.FC<AppProps> = ({ location, history }) => {
-    const dispatch = useDispatch<ThunkDispatch<GlobalStateShape, void, ToggleNav>>();
+    const dispatch = useDispatch<ThunkDispatch<GlobalStateShape, void, ToggleNav | ToggleCartList>>();
     const navbarVisible = useSelector(({ navbar }: GlobalStateShape) => navbar.isVisible);
+    const menuOpen = useSelector(({ navbar }: GlobalStateShape) => navbar.isExpanded);
+    const cartOpen = useSelector(({ cart }: GlobalStateShape) => cart.visible);
     const [referenceElement, setReferenceElement] = React.useState<ReferenceObject>(null);
     const [popperElement, setPopperElement] = React.useState<HTMLDivElement>(null);
     const [arrowElement, setArrowElement] = React.useState<HTMLDivElement>(null);
@@ -142,7 +150,7 @@ const App: React.FC<AppProps> = ({ location, history }) => {
                     return (
                         <RootContainer isHome={getRouteBase(location.pathname) === '/'}>
                             <LogoSVG />
-                            <Transition
+                            <Transition<undefined>
                                 in={navbarVisible || !matches}
                                 onEntering={getRouteBase(location.pathname) === '/' ? fadeOnEnter(0) : slideOnEnter(0)}
                                 onExiting={slideOnExit(0)}
@@ -156,14 +164,14 @@ const App: React.FC<AppProps> = ({ location, history }) => {
                                 />
                             </Transition>
                             <TransitionGroup component={null}>
-                                <Transition
+                                <Transition<undefined>
                                     key={getRouteBase(location.pathname)}
                                     onEntering={fadeOnEnter(0.25)}
                                     onExiting={fadeOnExit(0)}
                                     timeout={750}
                                     appear={true}
                                 >
-                                    <FadingContainer>
+                                    <FadingContainer shouldBlur={matches && (cartOpen || menuOpen) && getRouteBase(location.pathname) !== '/'}>
                                         <Switch location={location}>
                                             <Route
                                                 path="/about/:about"
@@ -204,7 +212,13 @@ const App: React.FC<AppProps> = ({ location, history }) => {
                                 setArrowElement={setArrowElement}
                                 styles={styles}
                                 attributes={attributes}
+                                isMobile={matches}
                             />
+                            {(matches && cartOpen) &&
+                                <ClickListenerOverlay onClick={() => dispatch(toggleCartListAction(false))} />}
+                            {(matches && menuOpen) &&
+                                <ClickListenerOverlay onClick={() => {}} /> /* eslint-disable-line @typescript-eslint/no-empty-function */
+                            }
                         </RootContainer>
                     );
                 }}

@@ -154,7 +154,7 @@ class Social extends React.PureComponent<{}, SocialState> {
                 <SocialIconsContainer>
                     {
                         Object.keys(socials).map((key, idx) => (
-                            <Transition
+                            <Transition<undefined>
                                 key={key}
                                 in={this.state.show}
                                 onEnter={this.onSocialEnter(idx)}

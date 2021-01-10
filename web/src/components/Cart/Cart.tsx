@@ -16,36 +16,26 @@ interface CartProps {
     };
     setPopperElement: (el: HTMLDivElement) => void;
     setArrowElement: (el: HTMLDivElement) => void;
+    isMobile: boolean;
 }
 
 export const Cart: React.FC<CartProps> = (props) => {
     const dispatch = useDispatch();
-    const cart = useSelector(({ cart }: GlobalStateShape) => cart.items);
+    const cartLength = useSelector(({ cart }: GlobalStateShape) => cart.items.length);
     const firstRun = React.useRef(true);
 
     React.useEffect(() => {
+        console.log('initCartAction');
         dispatch(initCartAction());
         firstRun.current = false;
     }, []);
 
     React.useEffect(() => {
         if (!firstRun.current) {
+            console.log('syncLocalStorage');
             dispatch(syncLocalStorage());
         }
-    }, [cart.length]);
-
-    // React.useEffect(() => {
-    //     if (!visible) {
-    //         TweenLite.to(elRef, 250, { height: 0 });
-    //     }
-    // }, [visible])
-
-    // React.useLayoutEffect(() => {
-    //     if (visible) {
-    //         const height = elRef.clientHeight;
-    //         TweenLite.to(elRef, 250, { height });
-    //     }
-    // }, [visible])
+    }, [cartLength]);
 
     return (
         <CartList {...props} />

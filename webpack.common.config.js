@@ -66,8 +66,18 @@ const config = () => {
                     test: /\.(t|j)sx?$/,
                     include: sourcePaths,
                     use: tsxUse,
-                }
-            ]
+                },
+                {
+                    test: /node_modules\/vfile\/core\.js/,
+                    use: [{
+                        loader: 'imports-loader',
+                        options: {
+                            type: 'commonjs',
+                            imports: ['single process/browser process'],
+                        },
+                    }],
+                },
+            ],
         },
         optimization: {
             runtimeChunk: true,

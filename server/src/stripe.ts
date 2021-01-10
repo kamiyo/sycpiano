@@ -10,6 +10,8 @@ type ProductReturn = string | Stripe.Product | Stripe.DeletedProduct;
 
 const CURRENCY = 'USD';
 
+const isDev = process.env.NODE_ENV === 'development';
+const host = isDev ? 'http://localhost:8000' : 'https://seanchenpiano.com'
 const stripe: Stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2020-08-27' });
 
 const stripeCustomerActive = (cr: CustomerReturn): cr is Stripe.Customer => {
@@ -61,8 +63,8 @@ export const createCheckoutSession = async (productIDs: string[], priceIDs: stri
             {
                 /* eslint-disable @typescript-eslint/camelcase */
                 mode: 'payment',
-                success_url: 'https://www.seanchenpiano.com/shop/checkout/success?session_id={CHECKOUT_SESSION_ID}',
-                cancel_url: 'https://www.seanchenpiano.com/shop',
+                success_url: `${host}/shop/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: `${host}/shop`,
                 payment_method_types: ['card'],
                 line_items: priceIDs.map((id) =>
                     ({
@@ -124,7 +126,9 @@ export const createProduct = async (attributes: Omit<ProductAttributes, 'created
                 sample: attributes.sample,
                 permalink: attributes.permalink,
             },
-            images: attributes.images.map((img) => 'https://www.seanchenpiano.com/static/images/products/thumbnails/' + img),
+            images: attributes.images.map((img) =>
+                `https://seanchenpiano.com/static/images/products/thumbnails/${img}`
+            ),
         });
         const price = await stripe.prices.create({
             currency: CURRENCY,
@@ -152,7 +156,9 @@ export const updateProduct = async (attributes: Omit<ProductAttributes, 'created
                     type: attributes.type,
                     permalink: attributes.permalink,
                 },
-                images: attributes.images.map((img) => 'https://www.seanchenpiano.com/static/images/products/thumbnails/' + img),
+                images: attributes.images.map((img) =>
+                    `https://seanchenpiano.com/static/images/products/thumbnails/${img}`
+                ),
             },
         );
         const oldPrice = await stripe.prices.retrieve(attributes.priceID);

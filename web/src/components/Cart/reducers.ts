@@ -30,8 +30,7 @@ export const cartReducer = (state: CartStateShape = {
             };
         }
         case CART_ACTIONS.REMOVE_FROM_CART: {
-            const retArray = state.items.splice(0);
-            retArray.splice(retArray.findIndex((v: string) => v === action.skuId), 1);
+            const retArray = state.items.filter((v: string) => v !== action.skuId);
             return {
                 ...state,
                 items: retArray,

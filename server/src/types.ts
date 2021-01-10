@@ -35,6 +35,7 @@ export type ModelCtor<M extends Model> = typeof Sequelize.Model & (new () => M);
 
 export class Model<T extends {} = any, T2 extends {} = any> extends Sequelize.Model<T, T2> {
     static associate?(db: {[key: string]: ModelCtor<any>}): void;
+    readonly dataValues: T;
 }
 
 export interface ModelMap {

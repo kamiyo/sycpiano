@@ -12,24 +12,22 @@ import { GlobalStateShape } from 'src/types';
 import toUpper from 'lodash-es/toUpper';
 import { staticImage } from 'src/styles/imageUrls';
 import { noHighlight } from 'src/styles/mixins';
-import { Dispatch } from 'redux';
 
 interface ShopItemProps {
     item: Product;
-    key: string | number;
     className?: string;
-    isMobile?: boolean;
+    isMobile: boolean;
 }
 
 const ThumbnailContainer = styled('div')<{ isMobile: boolean }>(
     ({ isMobile }) => ({
-        flex: '0 0 ' + (isMobile ? '95vw' : '200px'),
+        flex: '0 0 ' + (isMobile ? '80vw' : '200px'),
         position: 'relative',
         boxShadow: '0 2px 7px -4px rgba(0,0,0,0.8)'
             + (isMobile ? ', 0 -2px 7px -4px rgba(0, 0, 0, 0.8)' : ''),
         zIndex: 0,
-        width: isMobile ? '95vw' : '',
-        height: isMobile ? '95vw' : '',
+        width: isMobile ? '60vw' : '',
+        height: isMobile ? '80vw' : '',
         '&:before, &:after': {
             zIndex: -1,
             position: 'absolute',
@@ -51,16 +49,20 @@ const ThumbnailContainer = styled('div')<{ isMobile: boolean }>(
     })
 );
 
-const Thumbnail = styled('div')<{ imageUrl: string }>(
+const Thumbnail = styled('div')<{ imageUrl: string; isMobile: boolean }>(
     {
         backgroundColor: '#fff',
         backgroundPosition: 'center',
         backgroundSize: 'cover',
         height: '100%',
     },
-    props => ({
-        backgroundImage: `url(${props.imageUrl})`
-    })
+    props => {
+        const spread = props.isMobile ? '1rem' : '0.5rem';
+        return {
+            backgroundImage: `url(${props.imageUrl})`,
+            boxShadow: `0 0 2px ${spread} rgba(255, 255, 255, 1) inset`,
+        };
+    }
 );
 
 const ContentContainer = styled.div<{ isMobile: boolean }>(
@@ -79,12 +81,6 @@ const ContentContainer = styled.div<{ isMobile: boolean }>(
         padding: '1rem',
     }),
 );
-
-// const boxShadow = `
-//     0px 1px 3px 0px rgba(0, 0, 0, 0.2),
-//     0px 1px 1px 0px rgba(0, 0, 0, 0.14),
-//     0px 2px 1px -1px rgba(0, 0, 0, 0.12)
-// `;
 
 const getHoverStyle = (isMouseDown: boolean) => ({
     backgroundColor: mix(0.75, logoBlue, '#FFF'),
@@ -142,25 +138,27 @@ const ShopItemContainer = styled.div<{ isMobile: boolean }>({
     height: 'auto',
     display: 'flex',
     borderRadius: 4,
-    margin: '5rem auto',
-    flex: '0 1 600px',
+    margin: '2.5rem auto',
+    flex: '0 1 auto',
     maxWidth: 600,
+    scrollMarginTop: '5rem',
 }, ({ isMobile }) => isMobile && ({
     flexDirection: 'column',
     alignItems: 'center',
-    margin: '1rem auto',
+    // margin: '1rem auto 2rem auto',
 }));
 
-const ItemName = styled.div({
-    margin: '0 0 0.8rem 0',
+const ItemName = styled.div<{ isMobile: boolean }>(({ isMobile }) => ({
+    margin: isMobile ? '0.8rem 0' : '0 0 0.8rem 0',
     fontSize: '1.2rem',
-    fontWeight: 'bold'
-});
+    fontWeight: 'bold',
+    textAlign: isMobile ? 'center' : 'unset',
+}));
 
-const ItemDescription = styled.div({
-    margin: '2rem 0',
-    paddingLeft: '1rem',
-});
+const ItemDescription = styled.div<{ isMobile: boolean }>(({ isMobile }) => ({
+    margin: isMobile ? '1rem 2rem' : '2rem 0',
+    paddingLeft: isMobile ? 'unset' : '1rem',
+}));
 
 const ItemDetails = styled.span({
     margin: '0.2rem 0',
@@ -187,17 +185,7 @@ const Separator = styled.span({
 
 const formatCentsToDollars = (price: number) => `$${(price / 100).toFixed(2)}`;
 
-interface ItemProps {
-    className: string;
-    item: Product;
-    isMouseDown: boolean;
-    setIsMouseDown: (s: boolean) => void;
-    isItemInCart: boolean;
-    dispatch: Dispatch<any>;
-    isMobile: boolean;
-}
-
-const ShopItem: React.FC<ShopItemProps> = ({ item, className, isMobile }) => {
+const ShopItem: React.FC<ShopItemProps> = ({ item, className, children, ...isMobile }) => {
     const isItemInCart = useSelector(({ cart }: GlobalStateShape) => cart.items.includes(item.id));
     const [isMouseDown, setIsMouseDown] = React.useState(false);
 
@@ -205,15 +193,15 @@ const ShopItem: React.FC<ShopItemProps> = ({ item, className, isMobile }) => {
     console.log(isMouseDown);
 
     return (
-        <ShopItemContainer isMobile={isMobile} className={className}>
-            <ThumbnailContainer isMobile={isMobile}>
-                <Thumbnail imageUrl={staticImage('/products/thumbnails/' + item.images[0]) || ''} />
+        <ShopItemContainer id={item.permalink} {...isMobile} className={className}>
+            <ThumbnailContainer {...isMobile}>
+                <Thumbnail {...isMobile} imageUrl={staticImage('/products/thumbnails/' + item.images[0]) || ''} />
             </ThumbnailContainer>
-            <ContentContainer id={item.permalink} isMobile={isMobile}>
+            <ContentContainer {...isMobile}>
                 <div css={{ marginBottom: '24px' }}>
-                    <ItemName>{item.name}</ItemName>
-                    <ItemDescription>{item.description}</ItemDescription>
-                    <DetailContainer isMobile={isMobile}>
+                    <ItemName {...isMobile}>{item.name}</ItemName>
+                    <ItemDescription {...isMobile}>{item.description}</ItemDescription>
+                    <DetailContainer {...isMobile}>
                         <ItemDetails>{toUpper(item.format)} format</ItemDetails>
                         <Separator>|</Separator>
                         <ItemDetails>{item.pages} pages</ItemDetails>
@@ -222,20 +210,16 @@ const ShopItem: React.FC<ShopItemProps> = ({ item, className, isMobile }) => {
                     </DetailContainer>
                 </div>
                 <CartButton
-                    isMobile={isMobile}
+                    {...isMobile}
                     isMouseDown={isMouseDown}
                     isItemInCart={isItemInCart}
-                    onTouchStart={(ev) => {
-                        console.log('touch-down');
+                    onTouchStart={() => {
                         setIsMouseDown(true);
-                        console.log(isMouseDown);
                     }}
                     onMouseDown={() => {
                         setIsMouseDown(true);
-                        console.log(isMouseDown);
                     }}
                     onTouchEnd={() => {
-                        console.log('touch-up');
                         setIsMouseDown(false);
                     }}
                     onMouseUp={() => {

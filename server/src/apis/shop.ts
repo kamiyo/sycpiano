@@ -8,6 +8,7 @@ import * as stripeClient from '../stripe';
 import { emailPDFs } from '../mailer';
 import db from '../models';
 import { Op } from 'sequelize';
+import { ProductTypes } from '../models/product';
 
 const shopRouter = express.Router();
 
@@ -48,9 +49,20 @@ shopRouter.use(bodyParser.json());
 
 shopRouter.get('/items', async (_, res) => {
     const products = await db.models.product.findAll();
-    const storeItems: ShopItem[] = products.map(({ id, name, description, price, images, pages, sample, permalink }) => ({
-        id, name, description, price, images, pages, sample, permalink
-    }))
+    const storeItems: Partial<Record<typeof ProductTypes[number], ShopItem[]>> =
+        ProductTypes.reduce((acc, type) => {
+            const prods =
+                products
+                    .filter(({ type: t }) => t === type)
+                    .map(({ dataValues: { createdAt, updatedAt, ...prod } }) => ({
+                        ...prod,
+                        format: 'pdf',
+                    }));
+            return {
+                ...acc,
+                [type]: prods,
+            };
+        }, {});
     res.json(storeItems);
 });
 
@@ -138,7 +150,7 @@ shopRouter.post('/getPurchased', async (req, res) => {
 
     try {
         const stripeCustomer = await stripeClient.getCustomer(email);
-        const localCustomer = await db.models.customer.findAll({ where: { id: stripeCustomer.id }});
+        const localCustomer = await db.models.customer.findAll({ where: { id: stripeCustomer.id } });
         const purchased = await localCustomer[0].getProducts();
         const purchasedIDs = purchased.map((prod) => prod.id);
         res.json({
@@ -158,7 +170,7 @@ shopRouter.post('/resendPurchased', async (req, res) => {
 
     try {
         const stripeCustomer = await stripeClient.getCustomer(email);
-        const localCustomer = await db.models.customer.findAll({ where: { id: stripeCustomer.id }});
+        const localCustomer = await db.models.customer.findAll({ where: { id: stripeCustomer.id } });
         const purchased = await localCustomer[0].getProducts();
         const purchasedIDs = purchased.map((prod) => prod.id);
         await emailPDFs(purchasedIDs, email);

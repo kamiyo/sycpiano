@@ -39,16 +39,19 @@ const StyledNavBar = styled.div<{ isHome: boolean; isExpanded: boolean }>`
     left: 0;
     right: 0;
     z-index: 5000;
-    background-color: ${props => (props.isExpanded || !props.isHome) ? 'white' : 'transparent'};
+    background-color: ${props => (!props.isHome) ? 'white' : 'transparent'};
     transition: background-color 0.25s;
     box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.3);
 `;
 
-const StyledNavAndCart = styled.div<{}>({
+const StyledNavAndCart = styled.div<{ isMobile: boolean }>({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-end',
-});
+}, ({ isMobile }) => isMobile && ({
+    height: '100%',
+    justifyContent: 'center',
+}));
 
 const NavBar = ({
         currentBasePath,
@@ -56,7 +59,6 @@ const NavBar = ({
         setReferenceElement,
 }: NavBarProps) => {
     const isExpanded = useSelector(({ navbar }: GlobalStateShape) => navbar.isExpanded);
-    const cartItems = useSelector(({ cart }: GlobalStateShape) => cart.items);
 
     const isHome = currentBasePath === '/';
     return (
@@ -73,27 +75,28 @@ const NavBar = ({
                     />
                     {mobile ?
                         (
-                            <>
+                            <StyledNavAndCart isMobile={mobile}>
                                 <CartButton
+                                    isMobile={mobile}
                                     isHome={isHome}
-                                    setReferenceElement={setReferenceElement}
+                                    setReferenceElement={mobile ? () => {} : setReferenceElement}   /* eslint-disable-line @typescript-eslint/no-empty-function */
                                 />
                                 <HamburgerNav
                                     currentBasePath={currentBasePath}
                                     isMobile={true}
                                     key="hamburger-nav"
                                 />
-                            </>
+                            </StyledNavAndCart>
                         ) : (
-                            <StyledNavAndCart>
+                            <StyledNavAndCart isMobile={mobile}>
                                 <NavBarLinks
                                     currentBasePath={currentBasePath}
                                     isMobile={false}
                                 />
-
                                 <CartButton
+                                    isMobile={mobile}
                                     isHome={isHome}
-                                    setReferenceElement={setReferenceElement}
+                                    setReferenceElement={mobile ? () => {} : setReferenceElement}   /* eslint-disable-line @typescript-eslint/no-empty-function */
                                 />
                             </StyledNavAndCart>
                         )

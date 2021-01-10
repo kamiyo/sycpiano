@@ -19,17 +19,19 @@ const StyledUL = styled.ul`
         width: 100%;
         padding-top: 1.8rem;
         overflow-y: auto;
+        overflow-x: hidden;
+        align-items: flex-end;
     }
 `;
 
-const LinksDiv = styled.div`
+const LinksDiv = styled.div<{ isHome: boolean }>`
     ${noHighlight}
     text-transform: uppercase;
 
     ${screenMorPortrait} {
         ${pushedDesktop}
         position: fixed;
-        background-color: white;
+        background: ${props => props.isHome ? 'transparent' : 'linear-gradient(90deg, transparent 0% 25%, white 55%)'};
         left: 0;
         top: 0;
         width: 100%;
@@ -37,7 +39,6 @@ const LinksDiv = styled.div`
         display: flex;
         justify-content: center;
         box-shadow: inset 0 7px 6px -5px rgba(0, 0, 0, 0.25);
-        visibility: hidden;
 
         ${screenXSorPortrait} {
             ${pushedMobile}
@@ -46,7 +47,7 @@ const LinksDiv = styled.div`
 `;
 
 const NavBarLinks: React.FC<NavBarLinksProps> = (props) => (
-    <LinksDiv>
+    <LinksDiv isHome={props.currentBasePath === '/'}>
         <StyledUL>
             {links.map((link: LinkShape, i: number): JSX.Element => {
                 return (

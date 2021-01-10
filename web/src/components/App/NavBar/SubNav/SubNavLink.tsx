@@ -5,14 +5,14 @@ import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
 import { darken } from 'polished';
-import { lightBlue } from 'src/styles/colors';
+import { lightBlue, logoBlue, navFontColor } from 'src/styles/colors';
 import { noHighlight } from 'src/styles/mixins';
 
 import { LinkShape } from 'src/components/App/NavBar/types';
 
 interface SubNavLinkProps {
     readonly isHome: boolean;
-    readonly basePath: string;
+    readonly basePath: LinkShape;
     readonly link: LinkShape;
     readonly onClick: () => void;
     readonly isMobile: boolean;
@@ -21,7 +21,7 @@ interface SubNavLinkProps {
 const StyledSubNavLink = styled(NavLink, {
     shouldForwardProp: (prop) => (prop !== 'isMobile' && prop !== 'isHome'),
 })<{ isMobile: boolean; isHome: boolean }>`
-    color: rgba(0, 0, 0, 0.7);
+    color: ${navFontColor};
     position: relative;
     width: 100%;
     display: block;
@@ -32,26 +32,22 @@ const StyledSubNavLink = styled(NavLink, {
     transition: all 0.25s;
     line-height: 2rem;
 
-    :hover {
-        background-color: ${lightBlue};
-        color: white;
-    }
+    // :hover {
+    //     background-color: ${lightBlue};
+    //     color: white;
+    // }
 
     &.active {
-        background-color: ${lightBlue};
-        color: white;
+        color: ${lightBlue};
     }
 `;
 
 const mobileStyle = css`
-    color: white;
-    padding: 20px;
+    color: ${navFontColor};
+    padding: 0.5rem 1rem 0.5rem;
     background-color: transparent;
     box-shadow: none;
-
-    &.active {
-        background-color: ${darken(0.05, lightBlue)};
-    }
+    text-align: right;
 `;
 
 const homeStyle = css`
@@ -69,10 +65,10 @@ const homeStyle = css`
 const StyledLi = styled.li(noHighlight);
 
 const SubNavLink: React.FC<SubNavLinkProps> = ({ basePath, link, onClick, isHome, isMobile }) => (
-    <StyledLi>
+    <StyledLi className={basePath.name}>
         <StyledSubNavLink
-            css={[isHome && homeStyle, isMobile && mobileStyle]}
-            to={`${basePath}${link.path}`}
+            css={[isMobile && mobileStyle, isHome && homeStyle]}
+            to={`${basePath.path}${link.path}`}
             isMobile={isMobile}
             isHome={isHome}
             activeClassName={'active'}
@@ -83,4 +79,4 @@ const SubNavLink: React.FC<SubNavLinkProps> = ({ basePath, link, onClick, isHome
     </StyledLi>
 );
 
-export default React.memo(SubNavLink);
+export default SubNavLink;
