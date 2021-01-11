@@ -1,4 +1,4 @@
-export const loadShader = (gl: WebGLRenderingContext, type: number, source: string) => {
+export const loadShader = (gl: WebGLRenderingContext, type: number, source: string): WebGLShader => {
     const shader = gl.createShader(type);
 
     // Send the source to the shader object
@@ -16,7 +16,7 @@ export const loadShader = (gl: WebGLRenderingContext, type: number, source: stri
     return shader;
 };
 
-export const initShader = (gl: WebGLRenderingContext, vSource: string, fSource: string) => {
+export const initShader = (gl: WebGLRenderingContext, vSource: string, fSource: string): WebGLProgram => {
 
     const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vSource);
     const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fSource);

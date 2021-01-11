@@ -145,7 +145,6 @@ const ShopItemContainer = styled.div<{ isMobile: boolean }>({
 }, ({ isMobile }) => isMobile && ({
     flexDirection: 'column',
     alignItems: 'center',
-    // margin: '1rem auto 2rem auto',
 }));
 
 const ItemName = styled.div<{ isMobile: boolean }>(({ isMobile }) => ({
@@ -190,7 +189,6 @@ const ShopItem: React.FC<ShopItemProps> = ({ item, className, children, ...isMob
     const [isMouseDown, setIsMouseDown] = React.useState(false);
 
     const dispatch = useDispatch();
-    console.log(isMouseDown);
 
     return (
         <ShopItemContainer id={item.permalink} {...isMobile} className={className}>

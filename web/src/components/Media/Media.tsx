@@ -39,7 +39,7 @@ const FadingContainer = styled.div`
 
 type MediaProps = { isMobile: boolean } & RouteComponentProps<{ media: string }>;
 
-const Media = ({ isMobile, match, location }: MediaProps) => (
+const Media: React.FC<MediaProps> = ({ isMobile, match, location }) => (
     <>
         <Helmet
             title={`${titleStringBase} | ${startCase(match.params.media)}`}
@@ -52,7 +52,7 @@ const Media = ({ isMobile, match, location }: MediaProps) => (
         />
         <MediaContainer>
             <TransitionGroup component={null}>
-                <Transition
+                <Transition<undefined>
                     key={match.params.media}
                     onEntering={fadeOnEnter(0.25)}
                     onExiting={fadeOnExit()}

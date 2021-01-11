@@ -70,12 +70,12 @@ export const initCartAction = (): ThunkAction<Promise<void>, GlobalStateShape, v
             } else {
                 return Promise.resolve();
             }
-        };
+        }
     }
 
 export const syncLocalStorage = (): ThunkAction<void, GlobalStateShape, void, null> =>
     (_, getState) => {
-        console.log('syncing');
+        // console.log('syncing');
         if (storageAvailable()) {
             window.localStorage.setItem(
                 LOCAL_STORAGE_KEY,

@@ -37,7 +37,7 @@ export default (() => {
     return store;
 })();
 
-export const registerReducer = (store: AsyncStore, reducers: Reducers) => {
+export const registerReducer = (store: AsyncStore, reducers: Reducers): void => {
     store.async = { ...store.async, ...reducers };
     store.replaceReducer(createReducer(store.async));
 };

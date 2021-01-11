@@ -16,7 +16,7 @@ export const formatLocation = (location: string): FormattedLocationShape => {
     return { venue, street, stateZipCountry };
 };
 
-export const getViewportSize = () => (
+export const getViewportSize = (): { width: number; height: number } => (
     {
         width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
         height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0),
@@ -38,6 +38,7 @@ export const metaDescriptions: {
     photos: string;
     press: string;
     getMusic: (piece: string, contributors?: string) => string;
+    shop: string;
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     [index: string]: any;
 } = {
@@ -53,35 +54,36 @@ export const metaDescriptions: {
             `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
         photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
         press: `Press of Sean Chen's performances.`,
+        shop: `Online shop of Sean Chen's arrangements, cadenzas, and original compositions.`,
     };
 
-export const formatPrice = (price: number) => (
+export const formatPrice = (price: number): string => (
     '$' + (price / 100).toFixed(2)
 );
 
-export const validateEmail = (email: string) => {
+export const validateEmail = (email: string): boolean => {
     return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/.test(email);
 };
 
-export const fadeOnEnter = (delay = 0) => (element: HTMLElement) => {
+export const fadeOnEnter = (delay = 0) => (element: HTMLElement): void => {
     if (element) {
         TweenLite.fromTo(element, 0.25, { autoAlpha: 0 }, { autoAlpha: 1, delay });
     }
 };
 
-export const fadeOnExit = (delay = 0) => (element: HTMLElement) => {
+export const fadeOnExit = (delay = 0) => (element: HTMLElement): void => {
     if (element) {
         TweenLite.fromTo(element, 0.25, { autoAlpha: 1 }, { autoAlpha: 0, delay });
     }
 };
 
-export const slideOnEnter = (delay: number) => (element: HTMLElement) => {
+export const slideOnEnter = (delay: number) => (element: HTMLElement): void => {
     if (element) {
         TweenLite.fromTo(element, 0.25, { autoAlpha: 1}, { y: '0%', delay, clearProps: 'transform', force3D: true });
     }
 };
 
-export const slideOnExit = (delay: number) => (element: HTMLElement) => {
+export const slideOnExit = (delay: number) => (element: HTMLElement): void => {
     if (element) {
         TweenLite.to(element, 0.25, { y: '-100%', delay, force3D: true });
     }

@@ -1,12 +1,13 @@
+import { Reducer } from 'redux';
 import PRESS_ACTIONS from 'src/components/About/Press/actionTypeKeys';
 
 import { ActionTypes } from 'src/components/About/Press/actionTypes';
 import { AcclaimsListStateShape } from 'src/components/About/Press/types';
 
-export const acclaimsListReducer = (state: AcclaimsListStateShape = {
+export const acclaimsListReducer: Reducer<AcclaimsListStateShape, ActionTypes> = (state = {
     isFetching: false,
     items: [],
-}, action: ActionTypes) => {
+}, action) => {
     switch (action.type) {
         case PRESS_ACTIONS.FETCH_ACCLAIMS_SUCCESS:
             return {

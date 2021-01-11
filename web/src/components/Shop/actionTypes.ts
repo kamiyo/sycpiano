@@ -1,5 +1,5 @@
 import STORE_ACTIONS from 'src/components/Shop/actionTypeKeys';
-import { Product } from './types';
+import { ProductMap } from './types';
 
 export interface FetchItemsRequest {
     readonly type: typeof STORE_ACTIONS.FETCH_ITEMS_REQUEST;
@@ -7,7 +7,7 @@ export interface FetchItemsRequest {
 
 export interface FetchItemsSuccess {
     readonly type: typeof STORE_ACTIONS.FETCH_ITEMS_SUCCESS;
-    readonly items: Product[];
+    readonly items: ProductMap;
 }
 
 export interface FetchItemsError {

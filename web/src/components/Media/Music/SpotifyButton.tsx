@@ -35,7 +35,7 @@ const StyledImg = styled.img` display: block; `;
 
 const StyledLink = styled.a` display: block; `;
 
-const SpotifyButton: React.FC<{}> = () => (
+const SpotifyButton: React.FC<Record<string, unknown>> = () => (
     <StyledDiv>
         <StyledLink href={'https://open.spotify.com/artist/6kMZjx0C2LY2v2fUsaN27y?si=8Uxb9kFTQPisQCvAyOybMQ'} target="_blank" rel="noopener">
             <StyledImg width={50} height={50} src={staticImage(`/logos/spotify-color.svg`)} />

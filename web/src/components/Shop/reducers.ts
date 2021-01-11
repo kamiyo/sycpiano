@@ -1,11 +1,12 @@
+import { Reducer } from 'redux';
 import STORE_ACTIONS from 'src/components/Shop/actionTypeKeys';
 import * as ActionTypes from 'src/components/Shop/actionTypes';
 import { ShopStateShape } from 'src/components/Shop/types';
 
-export const shopReducer = (state: ShopStateShape = {
+export const shopReducer: Reducer<ShopStateShape, ActionTypes.Types> = (state: ShopStateShape = {
     isFetching: false,
     fetchSuccess: false,
-    items: [],
+    items: {},
 }, action: ActionTypes.Types) => {
     switch (action.type) {
         case STORE_ACTIONS.FETCH_ITEMS_REQUEST:

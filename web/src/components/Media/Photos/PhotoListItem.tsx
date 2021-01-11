@@ -67,12 +67,12 @@ const loadingStyle = css`
 class PhotoListItem extends React.Component<ChildRendererProps<PhotoItem>, { isLoaded: boolean }> {
     state = { isLoaded: false };
 
-    successCb = (el: HTMLImageElement) => {
+    successCb = (el: HTMLImageElement): void => {
         this.setState({isLoaded: true});
         TweenLite.to(el, 0.2, { autoAlpha: 1 });
     };
 
-    render() {
+    render(): JSX.Element {
         const { item, currentItemId, isMobile, onClick } = this.props;
         const isActive = currentItemId === idFromItem(item);
         const mobileUrl = resizedPathFromItem(item, { gallery: true });

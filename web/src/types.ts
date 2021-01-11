@@ -56,7 +56,7 @@ export interface Reducers {
 
 export type AnyComponent<P> = React.ComponentClass<P> | React.FunctionComponent<P>;
 
-export type AsyncStore = Store<GlobalStateShape | {}> & { async?: Reducers };
+export type AsyncStore = Store<GlobalStateShape | Record<string, unknown>> & { async?: Reducers };
 
 export interface AsyncModule<P> {
     Component: AnyComponent<P>;

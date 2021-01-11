@@ -86,7 +86,7 @@ const eventNameStyle = css`
     }
 `;
 
-class EventName extends React.Component<EventNameProps & RouteComponentProps<{}>> {
+class EventName extends React.Component<EventNameProps & RouteComponentProps<unknown>> {
     copiedSpan: React.RefObject<HTMLSpanElement> = React.createRef();
     onCopy = () => {
         TweenLite.fromTo(this.copiedSpan.current, 0.2, { autoAlpha: 1 }, { autoAlpha: 0, delay: 0.5 });

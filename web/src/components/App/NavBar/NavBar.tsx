@@ -53,11 +53,11 @@ const StyledNavAndCart = styled.div<{ isMobile: boolean }>({
     justifyContent: 'center',
 }));
 
-const NavBar = ({
+const NavBar: React.FC<NavBarProps> = ({
         currentBasePath,
         specificRouteName,
         setReferenceElement,
-}: NavBarProps) => {
+}) => {
     const isExpanded = useSelector(({ navbar }: GlobalStateShape) => navbar.isExpanded);
 
     const isHome = currentBasePath === '/';

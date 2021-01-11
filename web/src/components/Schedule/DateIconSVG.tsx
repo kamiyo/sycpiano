@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { default as moment, Moment } from 'moment-timezone';
 
-export const DateIconSVG: React.FC<{}> = () => {
+export const DateIconSVG: React.FC<Record<string, unknown>> = () => {
     return (
         <svg style={{ display: 'none' }}>
             <symbol id="date_icon_template">
@@ -12,7 +12,7 @@ export const DateIconSVG: React.FC<{}> = () => {
     );
 };
 
-interface DateIconProps extends React.SVGAttributes<{}> {
+interface DateIconProps extends React.SVGAttributes<unknown> {
     readonly date: Moment;
 }
 

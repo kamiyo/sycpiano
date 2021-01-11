@@ -8,6 +8,7 @@ import {
 
 import { SortedArraySet } from 'collections/sorted-array-set';
 import { default as moment, Moment } from 'moment';
+import { Reducer } from 'redux';
 
 const dateTimeFormat = 'YYYY-MM-DDTHH:mm';
 const dateFormat = 'YYYY-MM-DD';
@@ -52,7 +53,7 @@ const initialState: EventItemsStateShape = {
     hasMore: true,
 };
 
-const eventItemsReducer = (
+const eventItemsReducer: Reducer<EventItemsStateShape, ActionTypes> = (
     state: EventItemsStateShape = initialState,
     action: ActionTypes,
 ) => {
@@ -118,7 +119,7 @@ const eventItemsReducer = (
     }
 };
 
-export const scheduleReducer = (state: ScheduleStateShape = {
+export const scheduleReducer: Reducer<ScheduleStateShape, ActionTypes> = (state: ScheduleStateShape = {
     upcoming: {
         ...initialState,
         items: new SortedArraySet<EventItemType>([], equals, ascendCompare),

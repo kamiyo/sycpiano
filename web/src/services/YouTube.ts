@@ -21,8 +21,8 @@ declare global {
 
 class YouTube {
     private player: YT.Player = undefined;
-    private playerReady: Promise<{}> = undefined;
-    private apiReady: Promise<{}> = undefined;
+    private playerReady: Promise<unknown> = undefined;
+    private apiReady: Promise<unknown> = undefined;
 
     constructor() {
         this.apiReady = new Promise((resolve) => {

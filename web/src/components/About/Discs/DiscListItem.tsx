@@ -107,8 +107,8 @@ const LinksContainer = styled.div`
     align-items: flex-end;
 `;
 
-class DiscListItem extends React.PureComponent<ChildRendererProps<Disc>, {}> {
-    render() {
+class DiscListItem extends React.PureComponent<ChildRendererProps<Disc>, Record<string, never>> {
+    render(): JSX.Element {
         return (
             <li>
                 <DiscItem isMobile={this.props.isMobile}>

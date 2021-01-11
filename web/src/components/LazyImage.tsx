@@ -61,7 +61,7 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
         isLoaded: false,
     };
 
-    activateBlazy = () => {
+    activateBlazy = (): void => {
         this.blazy = new Blazy({
             selector: `#${this.props.id}`,
             offset: this.props.offset || Infinity,
@@ -75,25 +75,25 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
         });
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         this.mounted = true;
         this.activateBlazy();
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.mounted = false;
         clearTimeout(this.timeout);
         this.blazy.destroy();
     }
 
-    componentDidUpdate(prevProps: LazyImageProps) {
+    componentDidUpdate(prevProps: LazyImageProps): void {
         if (prevProps.isMobile !== this.props.isMobile) {
             this.setState({ isLoaded: false });
             this.blazy.revalidate();
         }
     }
 
-    render() {
+    render(): JSX.Element {
         const {
             mobileAttributes,
             desktopAttributes,

@@ -2,10 +2,10 @@ import * as path from 'path';
 
 import { PhotoItem } from 'src/components/Media/Photos/types';
 
-export const idFromItem = (item: PhotoItem) =>
+export const idFromItem = (item: PhotoItem): string =>
         item && path.basename(item.file, '.jpg');
 
-export const staticPathFromItem = (item: PhotoItem, options?: { gallery?: boolean; thumbnail?: boolean }) =>
+export const staticPathFromItem = (item: PhotoItem, options?: { gallery?: boolean; thumbnail?: boolean }): string =>
         item && path.normalize(path.join(
                 '/static/images',
                 (options && options.gallery) ? 'gallery' : '',
@@ -13,7 +13,7 @@ export const staticPathFromItem = (item: PhotoItem, options?: { gallery?: boolea
                 item.file,
         ));
 
-export const resizedPathFromItem = (item: PhotoItem, options?: { gallery?: boolean; thumbnail?: boolean; webp?: boolean }) =>
+export const resizedPathFromItem = (item: PhotoItem, options?: { gallery?: boolean; thumbnail?: boolean; webp?: boolean }): string =>
         item && path.normalize(path.join(
                 '/',
                 (options && options.gallery) ? 'gallery' : '',

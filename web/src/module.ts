@@ -10,7 +10,7 @@ const modules: {
 // This function checks if module is cached, if is, returns the cached module;
 // otherwise, registers the reducer of the (new) module, and caches it.
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-const extractModule = (store: AsyncStore) => async (name: string, moduleProvider: Promise<AsyncModule<any>>) => {
+const extractModule = (store: AsyncStore) => async (name: string, moduleProvider: Promise<AsyncModule<any>>): Promise<AsyncModule<any>> => {
     if (Object.prototype.hasOwnProperty.call(modules, name)) {
         return Promise.resolve(modules[name]);
     } else {

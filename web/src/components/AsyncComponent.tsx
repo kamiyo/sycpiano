@@ -26,7 +26,7 @@ export default class AsyncComponent<P> extends React.PureComponent<AsyncComponen
             this.setState({ Component });
         });
     }
-    render() {
+    render(): JSX.Element {
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const { Component } = this.state as any;
         const { moduleProvider, ...props } = this.props;

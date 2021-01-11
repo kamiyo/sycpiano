@@ -112,7 +112,7 @@ class Videos extends React.Component<VideosProps> {
                     ref={this.domElement}
                 >
                     <PreviewOverlay isMobile={this.props.isMobile} />
-                    <Transition
+                    <Transition<undefined>
                         in={!this.props.isPlayerReady}
                         onExit={(el) => TweenLite.to(el, 0.3, { autoAlpha: 0 })}
                         timeout={300}

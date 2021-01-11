@@ -68,12 +68,12 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     requestId = 0;
     lastCallback: number;
 
-    adjustHeight = () => {
+    adjustHeight = (): void => {
         this.HEIGHT_ADJUST = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
         this.SCALE = this.props.isMobile ? SCALE_MOBILE : SCALE_DESKTOP;
     }
 
-    initializeVisualizer = async () => {
+    initializeVisualizer = async (): Promise<void> => {
         this.visualizationCtx = this.visualization.current.getContext('2d');
         this.visualizationCtx.save();
         this.onResize();
@@ -112,7 +112,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
     }
 
-    onAnalyze = () => {
+    onAnalyze = (): void => {
         // this.requestId = requestAnimationFrame(this.onAnalyze);
         // don't render anything if analyzers are null, i.e. audio not set up yet
         // also limit 30fps on mobile =).
@@ -200,7 +200,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
     }
 
-    drawConstantQBins = (context: CanvasRenderingContext2D, values: Float32Array, radius: number, color: string) => {
+    drawConstantQBins = (context: CanvasRenderingContext2D, values: Float32Array, radius: number, color: string): void => {
         context.beginPath();
         let currentInput = 0;
         let currentSample = 0;
@@ -247,7 +247,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         context.fill();
     }
 
-    drawWaveForm = (context: CanvasRenderingContext2D, centerAxis: number, color: string) => {
+    drawWaveForm = (context: CanvasRenderingContext2D, centerAxis: number, color: string): void => {
         const waveform = waveformLoader.waveform;
         const angles = waveformLoader.angles;
         if (!waveform || waveform.length === 0) {
@@ -284,7 +284,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         context.fill();
     }
 
-    drawPlaybackHead = (context: CanvasRenderingContext2D, angle: number, minRad: number, maxRad: number, color: string) => {
+    drawPlaybackHead = (context: CanvasRenderingContext2D, angle: number, minRad: number, maxRad: number, color: string): void => {
         const [xStart, yStart] = polarToCartesian(minRad, angle);
         const [xEnd, yEnd] = polarToCartesian(maxRad, angle);
         context.beginPath();
@@ -294,7 +294,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         context.stroke();
     }
 
-    drawSeekArea = (context: CanvasRenderingContext2D, radius: number, color: string, timestamp: number) => {
+    drawSeekArea = (context: CanvasRenderingContext2D, radius: number, color: string, timestamp: number): void => {
         const WAVEFORM_CENTER_AXIS = radius - this.WAVEFORM_HALF_HEIGHT;
         this.drawWaveForm(context, WAVEFORM_CENTER_AXIS, color);
 
@@ -328,7 +328,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
     }
 
-    drawVisualization = (context: CanvasRenderingContext2D, lowFreq: number, values: Float32Array, lightness: number, timestamp: number) => {
+    drawVisualization = (context: CanvasRenderingContext2D, lowFreq: number, values: Float32Array, lightness: number, timestamp: number): void => {
         // beware! we are rotating the whole thing by -half_pi so, we need to swap width and height values
         context.clearRect(-this.height / 2 + this.HEIGHT_ADJUST, -this.width / 2, this.height, this.width);
         // hsl derived from @light-blue: #4E86A4;
@@ -342,7 +342,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.drawSeekArea(context, radius, color, timestamp);
     }
 
-    onResize = () => {
+    onResize = (): void => {
         this.idleStart = performance.now();
         this.adjustHeight();
 
@@ -390,7 +390,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.WAVEFORM_HALF_HEIGHT = Math.min(50, this.RADIUS_BASE / 4);
     }
 
-    onVisibilityChange = () => {
+    onVisibilityChange = (): void => {
         gsap.ticker.remove(this.onAnalyze);
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         if (!(document as any)[visibilityChangeApi.hidden]) {
@@ -398,20 +398,20 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         window.addEventListener('resize', this.onResize);
         document.addEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange, false);
         this.initializeVisualizer();
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         window.removeEventListener('resize', this.onResize);
         document.removeEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange);
         gsap.ticker.remove(this.onAnalyze);
     }
 
     // dunno why it doens't work without this. onResize should be called anyways
-    componentDidUpdate(prevProps: AudioVisualizerProps) {
+    componentDidUpdate(prevProps: AudioVisualizerProps): void {
         this.idleStart = performance.now();
         gsap.ticker.remove(this.onAnalyze);
         gsap.ticker.add(this.onAnalyze);
@@ -420,7 +420,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
     }
 
-    shouldComponentUpdate(nextProps: AudioVisualizerProps) {
+    shouldComponentUpdate(nextProps: AudioVisualizerProps): boolean {
         if (nextProps.isMobile !== this.props.isMobile ||
             nextProps.currentPosition !== this.props.currentPosition ||
             nextProps.isPlaying && !this.props.isPlaying ||
@@ -432,7 +432,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         return false;
     }
 
-    render() {
+    render(): JSX.Element {
         return (
             <VisualizerContainer ref={this.container}>
                 <VisualizerCanvas ref={this.visualization} />

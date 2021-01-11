@@ -76,13 +76,13 @@ export class WaveformLoader {
     angles: Array<{ x: number; y: number }>;
     loaded: Promise<void>;
 
-    reset = () => {
+    reset = (): void => {
         this.header = undefined;
         this.waveform = undefined;
         this.angles = undefined;
     }
 
-    loadWaveformFile = (filename: string) => {
+    loadWaveformFile = (filename: string): void => {
         this.header = undefined;
         this.waveform = undefined;
         this.loaded = new Promise((resolve) => {

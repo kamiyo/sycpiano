@@ -91,9 +91,7 @@ interface CartButtonProps {
     setReferenceElement: React.Dispatch<React.SetStateAction<ReferenceObject>>;
 }
 
-const CartButton = (
-    { isHome, setReferenceElement, isMobile }: CartButtonProps,
-) => {
+const CartButton: React.FC<CartButtonProps> = ({ isHome, setReferenceElement, isMobile }) => {
     const cartCount = useSelector(({ cart }: GlobalStateShape) => cart.items.length);
     const cartIsInit = useSelector(({ cart }: GlobalStateShape) => cart.isInit);
     const cartRef = React.useRef<HTMLDivElement>(null);

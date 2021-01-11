@@ -105,7 +105,7 @@ const mapStateToProps = ({ audioPlaylist }: GlobalStateShape) => ({
     items: audioPlaylist.items,
 });
 
-export default connect<MusicPlaylistStateToProps, {}, MusicPlaylistOwnProps>(
+export default connect<MusicPlaylistStateToProps, unknown, MusicPlaylistOwnProps>(
     mapStateToProps,
     null,
 )(MusicPlaylist);

@@ -47,7 +47,7 @@ const Contact: React.FC<ContactProps> = ({ isMobile, onScroll: onScrollAction })
     </ContactContainer>
 );
 
-const ConnectedContact = connect<{}, ContactDispatchToProps>(
+const ConnectedContact = connect<Record<string, never>, ContactDispatchToProps>(
     null,
     { onScroll },
 )(Contact);

@@ -25,12 +25,11 @@ import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 
 import { CSSPlugin } from 'gsap';
 
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-ignore */
-// @ts-ignore
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const activated = [
     CSSPlugin,
 ];
-/* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-ignore */
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 import moment from 'moment-timezone';
 
@@ -87,7 +86,7 @@ const getMostSpecificRouteName = (pathname: string) => {
     return (match ? match.slice(1) : '') || null;
 }
 
-type AppProps = RouteComponentProps<{}>;
+type AppProps = RouteComponentProps<Record<string, string>>;
 
 const App: React.FC<AppProps> = ({ location, history }) => {
     const dispatch = useDispatch<ThunkDispatch<GlobalStateShape, void, ToggleNav | ToggleCartList>>();
@@ -202,7 +201,7 @@ const App: React.FC<AppProps> = ({ location, history }) => {
                                                 exact={true}
                                                 render={(childProps) => <AsyncComponent<HomeProps> moduleProvider={Home} {...childProps} /*bgLoaded={() => setHomeBgLoaded(true)}*/ isMobile={matches} />}
                                             />
-                                            <Route render={() => <AsyncComponent<{}> moduleProvider={Page404} />} />
+                                            <Route render={() => <AsyncComponent<unknown> moduleProvider={Page404} />} />
                                         </Switch>
                                     </FadingContainer>
                                 </Transition>

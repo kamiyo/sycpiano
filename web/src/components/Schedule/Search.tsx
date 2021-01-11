@@ -21,7 +21,7 @@ type SearchProps = {
     isMobile?: boolean;
     search: string;
     setSearch: (search: string) => void;
-} & RouteComponentProps<{}>;
+} & RouteComponentProps<unknown>;
 
 const Container = styled.div<{ focused: boolean }>`
     width: 90%;

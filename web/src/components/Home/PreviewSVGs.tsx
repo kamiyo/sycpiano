@@ -97,10 +97,10 @@ const mobileSVGString = ReactDOMServer.renderToStaticMarkup(
     ),
 );
 
-export const DesktopBackgroundPreview: React.FC<{}> = () => (
+export const DesktopBackgroundPreview: React.FC<Record<string, unknown>> = () => (
     <DesktopImg src={svgToMiniDataURI(desktopSVGString)} />
 );
 
-export const MobileBackgroundPreview: React.FC<{}> = () => (
+export const MobileBackgroundPreview: React.FC<Record<string, unknown>> = () => (
     <MobileImg src={svgToMiniDataURI(mobileSVGString)} />
 );

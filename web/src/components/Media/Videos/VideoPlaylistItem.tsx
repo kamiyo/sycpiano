@@ -30,7 +30,7 @@ function publishedDateToDisplay(publishedAt: string) {
     return moment(publishedAt).format('MMM D, YYYY');
 }
 
-type VideoPlaylistItemProps = RouteComponentProps<{}> & {
+type VideoPlaylistItemProps = RouteComponentProps<unknown> & {
     readonly item: VideoItemShape;
     readonly currentItemId: number | string;
     readonly onClick: (isMobile: boolean, id?: string) => void;

@@ -96,7 +96,7 @@ interface SocialState {
     canHover: { [key: string]: boolean };
 }
 
-class Social extends React.PureComponent<{}, SocialState> {
+class Social extends React.PureComponent<Record<string, unknown>, SocialState> {
     defaultCanHover = Object.keys(socials).reduce((prev, curr) => {
         return {
             ...prev,
@@ -109,11 +109,11 @@ class Social extends React.PureComponent<{}, SocialState> {
         canHover: this.defaultCanHover,
     };
 
-    onHandleClick = () => {
+    onHandleClick = (): void => {
         this.setState({ show: !this.state.show });
     }
 
-    onSocialEnter = (id: number) => (el: HTMLLinkElement) => {
+    onSocialEnter = (id: number) => (el: HTMLLinkElement): void => {
         const relative = id - (Object.keys(socials).length / 2 - 0.5);
         TweenLite.fromTo(el, 0.25,
             {
@@ -130,7 +130,7 @@ class Social extends React.PureComponent<{}, SocialState> {
             });
     }
 
-    onSocialExit = (id: number) => (el: HTMLLinkElement) => {
+    onSocialExit = (id: number) => (el: HTMLLinkElement): void => {
         const relative = id - Math.floor(Object.keys(socials).length / 2);
         TweenLite.fromTo(el, 0.25,
             {
@@ -147,7 +147,7 @@ class Social extends React.PureComponent<{}, SocialState> {
             });
         this.setState({ canHover: this.defaultCanHover });
     }
-    render() {
+    render(): JSX.Element {
         return (
             <SocialContainer>
                 <Handle onClick={this.onHandleClick}>@seanchenpiano</Handle>

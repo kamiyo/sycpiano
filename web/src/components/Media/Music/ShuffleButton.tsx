@@ -59,7 +59,7 @@ class ShuffleButton extends React.Component<ShuffleButtonProps, ShuffleButtonSta
         extraClass: null,
     };
 
-    render() {
+    render(): JSX.Element {
         const { on, onClick } = this.props;
         return (
             <div

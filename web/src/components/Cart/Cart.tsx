@@ -25,14 +25,12 @@ export const Cart: React.FC<CartProps> = (props) => {
     const firstRun = React.useRef(true);
 
     React.useEffect(() => {
-        console.log('initCartAction');
         dispatch(initCartAction());
         firstRun.current = false;
     }, []);
 
     React.useEffect(() => {
         if (!firstRun.current) {
-            console.log('syncLocalStorage');
             dispatch(syncLocalStorage());
         }
     }, [cartLength]);

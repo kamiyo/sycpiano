@@ -28,7 +28,7 @@ const FadingContainer = styled.div({
 
 interface ShopProps { isMobile: boolean }
 
-const Shop: React.FC<ShopProps & RouteComponentProps<{}>> = ({ isMobile, location }) => {
+const Shop: React.FC<ShopProps & RouteComponentProps<unknown>> = ({ isMobile, location }) => {
     const dispatch = useDispatch();
 
     React.useEffect(() => {

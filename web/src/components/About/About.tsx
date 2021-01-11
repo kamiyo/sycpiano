@@ -39,7 +39,7 @@ const FadingContainer = styled.div`
 
 type AboutProps = { isMobile: boolean } & RouteComponentProps<{ about: string }>;
 
-const About = ({ isMobile, match, location }: AboutProps) => (
+const About: React.FC<AboutProps> = ({ isMobile, match, location }) => (
     <>
         <Helmet
             title={`${titleStringBase} | ${startCase(match.params.about)}`}
@@ -52,7 +52,7 @@ const About = ({ isMobile, match, location }: AboutProps) => (
         />
         <AboutContainer>
             <TransitionGroup component={null}>
-                <Transition
+                <Transition<undefined>
                     key={match.params.about}
                     onEntering={fadeOnEnter(0.25)}
                     onExiting={fadeOnExit()}

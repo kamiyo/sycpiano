@@ -25,7 +25,7 @@ export const cartesianToPolar: CartesianToPolarShape = (x, y) => (
     }
 );
 
-export const formatTime = (current: number) => {
+export const formatTime = (current: number): string => {
     if (current === -1) {
         return '--:--';
     }
@@ -83,18 +83,18 @@ export const visibilityChangeApi = (typeof document.hidden !== 'undefined') ?
             }
             : {};
 
-export const getLastName = (name: string) => {
+export const getLastName = (name: string): string => {
     return /([^\s]+)\s?(?:\(.*\))?$/.exec(name)[1];
 };
 
-export const normalizeString = (str: string) => {
+export const normalizeString = (str: string): string => {
     return str.normalize('NFD').replace(/[\u0300-\u036f":()',.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
 };
 
-export const getPermaLink = (base: string, composer: string, piece: string, movement?: string) => {
+export const getPermaLink = (base: string, composer: string, piece: string, movement?: string): string => {
     return path.normalize(`${base}/${getLastName(composer)}/${normalizeString(piece)}${movement ? '/' + normalizeString(movement) : ''}`);
 };
 
-export const modulo = (n: number, m: number) => {
+export const modulo = (n: number, m: number): number => {
     return ((n % m) + m) % m;
 };

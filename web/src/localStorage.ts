@@ -1,4 +1,4 @@
-export const storageAvailable = () => {
+export const storageAvailable = (): boolean => {
     let storage: Storage;
     try {
         storage = window.localStorage;

@@ -105,7 +105,7 @@ class PhotoList extends React.PureComponent<PhotoListProps> {
     }
 }
 
-export default connect<{}, PhotoListDispatchToProps, PhotoListOwnProps>(
+export default connect<unknown, PhotoListDispatchToProps, PhotoListOwnProps>(
     null,
     { onScroll },
 )(PhotoList);

@@ -68,6 +68,6 @@ export const transformCachedEventsToListItems = (
     };
 };
 
-export const getGoogleMapsSearchUrl = (query: string) => `
+export const getGoogleMapsSearchUrl = (query: string): string => `
     ${GOOGLE_MAPS_SEARCH_URL}&query=${encodeURIComponent(query)}
 `;

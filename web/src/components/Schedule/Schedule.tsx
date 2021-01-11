@@ -41,13 +41,13 @@ class Schedule extends React.Component<ScheduleProps, { search: string }> {
         };
     }
 
-    setSearch = (search: string) => {
+    setSearch = (search: string): void => {
         this.setState({
             search,
         });
     }
 
-    render() {
+    render(): JSX.Element {
         const { isMobile } = this.props;
         return (
             <div css={scheduleStyles}>
@@ -81,7 +81,7 @@ class Schedule extends React.Component<ScheduleProps, { search: string }> {
                         <Route
                             path="/schedule/search"
                             exact={true}
-                            render={(routeProps: RouteComponentProps<{}>) => (
+                            render={(routeProps: RouteComponentProps<unknown>) => (
                                 <EventList
                                     {...routeProps}
                                     type={'search'}

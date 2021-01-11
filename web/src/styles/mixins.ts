@@ -1,6 +1,6 @@
 // Various CSS emotion mixins
 
-import { css } from '@emotion/core';
+import { css, SerializedStyles } from '@emotion/core';
 import darken from 'polished/lib/color/darken';
 
 import { screenXSorPortrait } from 'src/styles/screens';
@@ -21,7 +21,7 @@ export const pushed = css({
     },
 });
 
-export const link = (colorString: string, hoverDelta = 0.2) => css`
+export const link = (colorString: string, hoverDelta = 0.2): SerializedStyles => css`
     color: ${colorString};
     text-decoration: none;
     cursor: pointer;

@@ -18,7 +18,7 @@ import { gsap } from 'gsap';
 
 import { cartWidth, navBarHeight } from 'src/styles/variables';
 import { lato2 } from 'src/styles/fonts';
-import { magenta, lightBlue } from 'src/styles/colors';
+import { magenta, lightBlue, logoBlue } from 'src/styles/colors';
 import { mix } from 'polished';
 import { formatPrice, validateEmail } from 'src/utils';
 import { CartItem } from 'src/components/Cart/CartItem';
@@ -82,7 +82,7 @@ const CloseSVG = styled.svg({
     },
 });
 
-const StyledCheckoutButton = styled.input({
+const StyledCheckoutButton = styled.input<{ disabled: boolean }>({
     position: 'relative',
     fontSize: '1rem',
     left: '50%',
@@ -98,11 +98,17 @@ const StyledCheckoutButton = styled.input({
     transition: 'all 0.25s',
     border: 'none',
     display: 'block',
-    ['&:hover']: {
-        backgroundColor: mix(0.75, lightBlue, '#fff'),
-        cursor: 'pointer',
-    },
-});
+}, ({ disabled }) => disabled
+    ? {
+        backgroundColor: mix(0.50, logoBlue, '#FFF'),
+        border: `1px solid ${mix(0.52, logoBlue, '#FFF')}`
+    }
+    : {
+        ['&:hover']: {
+            backgroundColor: mix(0.75, lightBlue, '#fff'),
+            cursor: 'pointer',
+        }
+    });
 
 const ErrorMessage = styled.div({
     color: 'red',
@@ -116,7 +122,7 @@ const StyledForm = styled.form({
     alignItmes: 'center',
 });
 
-const StyledTextField = styled(TextField)<{}>({
+const StyledTextField = styled(TextField)({
     ['&&']: {
         margin: '2rem',
     },
@@ -328,7 +334,7 @@ export const CartList: React.FC<CartListProps> = ({
                                 <StyledCheckoutButton
                                     type="submit"
                                     value="Checkout with Stripe"
-                                    disabled={cart.length === 0}
+                                    disabled={cart.length === 0 || email === ''}
                                 />
                             </StyledForm>
                         </ThemeProvider>
