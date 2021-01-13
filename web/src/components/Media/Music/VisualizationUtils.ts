@@ -4,14 +4,12 @@ import {
     DenseMatrixDependencies,
     multiplyDependencies,
     SparseMatrixDependencies,
-    transposeDependencies,
     Matrix,
 } from 'mathjs';
-const { multiply, DenseMatrix, SparseMatrix, matrix, transpose } = create({
+const { multiply, SparseMatrix, matrix } = create({
     multiplyDependencies,
     DenseMatrixDependencies,
     SparseMatrixDependencies,
-    transposeDependencies,
 }, {});
 
 import jBinary from 'jbinary';

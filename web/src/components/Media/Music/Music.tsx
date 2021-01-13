@@ -250,6 +250,17 @@ class Music extends React.Component<MusicProps, MusicState> {
         });
     }
 
+    loadTrackNoFade = async (track: MusicFileItem) => {
+        this.setState({
+            currentTrack: track,
+            duration: -1,
+            isLoading: true,
+        });
+        waveformLoader.loadWaveformFile(`${MUSIC_PATH}/waveforms/${track.waveformFile}`);
+        this.audio.current.src = `${MUSIC_PATH}/${track.audioFile}`;
+        await waveformLoader.loaded;
+    }
+
     onTimeUpdate = () => {
         this.setState({
             playbackPosition: this.audio.current.currentTime,
@@ -281,13 +292,23 @@ class Music extends React.Component<MusicProps, MusicState> {
         }
     }
 
+    playNextNoFade = async () => {
+        const next = this.getNextTrack('next', true);
+        if (next) {
+            this.props.history.push(getPermaLink(this.props.baseRoute, next.musicItem.composer, next.musicItem.piece, next.name));
+            await this.loadTrackNoFade(next);
+            this.play();
+        }
+    }
+
     onEnded = () => {
+        console.log('ended');
         this.setState({
             isPlaying: false,
             playbackPosition: 0,
             lastUpdateTimestamp: performance.now(),
         });
-        this.playNext();
+        this.playNextNoFade();
     }
 
     onDrag = (percent: number) => {
