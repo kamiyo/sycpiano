@@ -3,7 +3,7 @@ import { stringify } from 'qs';
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { SearchIconInstance, SearchIconSVG } from 'src/components/Schedule/SearchIconSVG';

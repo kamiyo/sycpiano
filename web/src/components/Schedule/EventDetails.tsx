@@ -5,7 +5,7 @@ import * as React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { RouteComponentProps, withRouter } from 'react-router';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { LinkIconInstance } from 'src/components/Schedule/LinkIconSVG';

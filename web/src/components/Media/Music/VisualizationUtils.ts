@@ -3,12 +3,15 @@ import {
     create,
     DenseMatrixDependencies,
     multiplyDependencies,
-    SparseMatrixDependencies
+    SparseMatrixDependencies,
+    transposeDependencies,
+    Matrix,
 } from 'mathjs';
-const { multiply, DenseMatrix,  SparseMatrix } = create({
+const { multiply, DenseMatrix, SparseMatrix, matrix, transpose } = create({
     multiplyDependencies,
     DenseMatrixDependencies,
     SparseMatrixDependencies,
+    transposeDependencies,
 }, {});
 
 import jBinary from 'jbinary';
@@ -172,7 +175,8 @@ class ConstantQ {
         outerPtrSize: 'uint32',
     };
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    matrix: any;
+    matrix: Matrix;
+    input = matrix([], 'dense', 'number');
     loaded: Promise<void>;
     minF = 0;
     maxF = 0;
@@ -211,6 +215,7 @@ class ConstantQ {
                 this.minF = header.minFreq;
                 this.maxF = header.maxFreq;
                 this.matrix = SparseMatrix.fromJSON(o);
+                this.input.resize([1, this.numRows]);
 
                 const cqBins = 2 * this.numCols;
                 const invCqBins = 1 / cqBins;
@@ -222,13 +227,8 @@ class ConstantQ {
 
     apply(input: Float32Array): Float32Array {
         if (this.matrix) {
-            const inputMatrix = DenseMatrix.fromJSON({
-                mathjs: 'DenseMatrix',
-                data: [input],
-                size: [1, input.length],
-                datatype: 'number',
-            });
-            return Float32Array.from(multiply(inputMatrix, this.matrix).toArray()[0]);
+            this.input._data = [Array.from(input)];
+            return Float32Array.from(multiply(this.input, this.matrix).toArray()[0]);
         }
         return input;
     }

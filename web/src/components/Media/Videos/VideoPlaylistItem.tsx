@@ -4,7 +4,7 @@ import * as React from 'react';
 import ClampLines, { ClampLinesProps } from 'react-clamp-lines';
 import { RouteComponentProps, withRouter } from 'react-router';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { VideoItemShape } from 'src/components/Media/Videos/types';

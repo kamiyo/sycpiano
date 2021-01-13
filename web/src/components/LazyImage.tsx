@@ -2,7 +2,7 @@ import Blazy from 'blazy';
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
 
-import { SerializedStyles } from '@emotion/core';
+import { SerializedStyles } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { LoadingInstance } from 'src/components/LoadingSVG';

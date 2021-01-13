@@ -28,8 +28,10 @@ const tsxUse = [
         loader: 'babel-loader',
         options: {
             presets: [
-                '@babel/preset-react',
-                '@emotion/babel-preset-css-prop',
+                [
+                    '@babel/preset-react',
+                    { runtime: 'automatic', importSource: '@emotion/react' }
+                ],
                 [
                     '@babel/preset-env',
                     {
@@ -41,6 +43,7 @@ const tsxUse = [
                 '@babel/preset-typescript',
             ],
             plugins: [
+                '@emotion/babel-plugin',
                 '@babel/syntax-dynamic-import',
                 '@babel/proposal-class-properties',
                 '@babel/proposal-object-rest-spread',

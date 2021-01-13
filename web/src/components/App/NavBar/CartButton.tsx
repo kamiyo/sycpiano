@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ReferenceObject } from 'popper.js'
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { logoBlue } from 'src/styles/colors';

@@ -36,6 +36,7 @@ interface ShaderProgram {
 }
 
 class AudioVisualizer extends React.Component<AudioVisualizerProps> {
+    isRendering: boolean;
     lastPlayheadPosition = 0;
     height: number;
     width: number;
@@ -179,6 +180,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.idleStart = performance.now();
 
             gsap.ticker.add(this.onAnalyze);
+            this.isRendering = true;
         } catch (err) {
             console.error('visualizer init failed.', err);
         }
@@ -218,6 +220,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
                 // if has been idle for over 3.5 seconds, cancel animation
                 if (this.idleStart !== 0 && (timestamp - this.idleStart > 3500)) {
                     gsap.ticker.remove(this.onAnalyze);
+                    this.isRendering = false;
                     return;
                 }
             }
@@ -503,10 +506,18 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     }
 
     onVisibilityChange = (): void => {
-        gsap.ticker.remove(this.onAnalyze);
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         if (!(document as any)[visibilityChangeApi.hidden]) {
-            gsap.ticker.add(this.onAnalyze);
+            if (!this.isRendering) {
+                this.idleStart = performance.now();
+                gsap.ticker.add(this.onAnalyze);
+                this.isRendering = true;
+            }
+        } else {
+            if (this.isRendering) {
+                gsap.ticker.remove(this.onAnalyze);
+                this.isRendering = false;
+            }
         }
     }
 
@@ -520,17 +531,18 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         window.removeEventListener('resize', this.onResize);
         document.removeEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange);
         gsap.ticker.remove(this.onAnalyze);
+        this.isRendering = false;
     }
 
     // dunno why it doens't work without this. onResize should be called anyways
-    componentDidUpdate(prevProps: AudioVisualizerProps): void {
-        this.idleStart = performance.now();
-        gsap.ticker.remove(this.onAnalyze);
-        gsap.ticker.add(this.onAnalyze);
-        if (prevProps.isMobile !== this.props.isMobile) {
-            this.onResize();
-        }
-    }
+    // componentDidUpdate(prevProps: AudioVisualizerProps): void {
+    //     this.idleStart = performance.now();
+    //     gsap.ticker.remove(this.onAnalyze);
+    //     gsap.ticker.add(this.onAnalyze);
+    //     if (prevProps.isMobile !== this.props.isMobile) {
+    //         this.onResize();
+    //     }
+    // }
 
     shouldComponentUpdate(nextProps: AudioVisualizerProps): boolean {
         if (nextProps.isMobile !== this.props.isMobile ||
@@ -539,7 +551,11 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             nextProps.isHoverSeekring !== this.props.isHoverSeekring ||
             nextProps.hoverAngle !== this.props.hoverAngle
         ) {
-            return true;
+            this.idleStart = performance.now();
+            if (!this.isRendering) {
+                gsap.ticker.add(this.onAnalyze);
+                this.isRendering = true;
+            }
         }
         return false;
     }

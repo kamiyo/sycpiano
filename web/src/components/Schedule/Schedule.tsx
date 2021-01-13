@@ -2,7 +2,7 @@ import moment from 'moment-timezone';
 import { parse } from 'qs';
 import * as React from 'react';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
 import EventList from 'src/components/Schedule/EventList';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { css, SerializedStyles } from '@emotion/core';
+import { css, SerializedStyles } from '@emotion/react';
 
 import { lightBlue } from 'src/styles/colors';
 import { screenM, screenXSorPortrait } from 'src/styles/screens';

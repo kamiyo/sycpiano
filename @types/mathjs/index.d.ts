@@ -1,14 +1,22 @@
 declare module 'mathjs' {
-    export class SparseMatrix {
-        fromJSON: (object: Object) => SparseMatrix;
-    }
-
-    export class DenseMatrix {
-        fromJSON: (object: Object) => DenseMatrix;
+    class MatrixBase {
         toArray: () => ArrayLike<ArrayLike<number>>;
+        valueOf: () => ArrayLike<number>;
+        resize: (size: Array<number>, _default?: number, copy?: boolean) => Matrix;
+        _data: ArrayLike<ArrayLike<number>>;
     }
 
-    export function multiply(d: DenseMatrix, a: any): DenseMatrix;
+    export class SparseMatrix extends MatrixBase {
+        fromJSON: (object: Record<string, unknown>) => SparseMatrix;
+    }
+
+    export class DenseMatrix extends MatrixBase {
+        fromJSON: (object: Record<string, unknown>) => DenseMatrix;
+    }
+
+    export type Matrix = SparseMatrix | DenseMatrix;
+
+    export function multiply(d: DenseMatrix, a: Matrix): DenseMatrix;
 
     interface configOptions {
         epsilon?: number;
@@ -23,11 +31,18 @@ declare module 'mathjs' {
         SparseMatrix: SparseMatrix;
         DenseMatrix: DenseMatrix;
         multiply: typeof multiply;
+        matrix: <T extends 'dense' | 'sparse'>(data: number[] | number[][], type: T, dataType?: string) => {
+            dense: DenseMatrix,
+            sparse: SparseMatrix,
+        }[T];
+        transpose: (m: Matrix) => Matrix;
     }
 
-    export function factory (name: string, dependencies: string[], create: Function): Function;
-    export function create (factories: {[key: string]: typeof factory}, config: configOptions): dependencies;
-    export function SparseMatrixDependencies (name: string, dependencies: string[], create: Function): Function;
-    export function multiplyDependencies (name: string, dependencies: string[], create: Function): Function;
-    export function DenseMatrixDependencies (name: string, dependencies: string[], create: Function): Function;
+
+
+    export function create (factories: Record<string, unknown>, config: configOptions): dependencies;
+    export function SparseMatrixDependencies(): Record<string, unknown>;
+    export function multiplyDependencies (): Record<string, unknown>;
+    export function DenseMatrixDependencies (): Record<string, unknown>;
+    export function transposeDependencies (): Record<string, unknown>;
 }

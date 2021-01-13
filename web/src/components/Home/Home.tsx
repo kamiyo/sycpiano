@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import * as React from 'react';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { lato1, lato2 } from 'src/styles/fonts';

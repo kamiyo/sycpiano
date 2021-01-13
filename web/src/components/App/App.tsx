@@ -16,7 +16,7 @@ import { RequiredProps as MediaProps } from 'src/components/Media/Media';
 import { RequiredProps as ScheduleProps } from 'src/components/Schedule/Schedule';
 import { RequiredProps as ShopProps } from 'src/components/Shop/Shop';
 
-import { Global } from '@emotion/core';
+import { Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { globalCss } from 'src/styles/global';
 

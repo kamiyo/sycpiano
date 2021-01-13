@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 
 import { TweenLite } from 'gsap';
 

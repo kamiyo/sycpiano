@@ -2,7 +2,7 @@ import svgToMiniDataURI from 'mini-svg-data-uri';
 import * as React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 const previewStyle = css`

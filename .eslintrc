@@ -16,7 +16,7 @@
     },
     "plugins": [
         "react",
-        "emotion"
+        "@emotion"
     ],
     "extends": [
         "eslint:recommended",

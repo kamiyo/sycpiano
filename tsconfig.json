@@ -19,6 +19,7 @@
         "module": "esnext",
         "target": "esnext",
         "jsx": "preserve",
+        "jsxImportSource": "@emotion/react",
         "allowJs": true,
         "noEmit": true,
         "moduleResolution": "node",

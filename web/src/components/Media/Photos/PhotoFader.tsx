@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import { Transition } from 'react-transition-group';
 
 import { LazyImage } from 'src/components/LazyImage';
