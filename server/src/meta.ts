@@ -37,26 +37,34 @@ const descriptions: {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     [key: string]: any;
 } = {
-        home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
-        biography: `Hailed as a charismatic rising star with “an exceptional ability to connect with an audience combined with an easy virtuosity” (Huffington Post), ${age.toString()}-year-old American pianist Sean Chen, third prize winner at the 2013 Van Cliburn International Piano Competition and recipient of the DeHaan Classical Fellowship as the winner of the 2013 American Pianists Awards, has continued to earn accolades for “alluring, colorfully shaded renditions” (New York Times) and “genuinely sensitive” (LA Times) playing.`,
-        discography: 'Complete discography of Sean Chen',
-        contact: `Contact information for Sean Chen and for booking performances.`,
-        upcoming: 'Upcoming recitals, concerti, and masterclasses.',
-        archive: 'Past recitals, concerti, and masterclasses.',
-        search: 'Search recitals, concerti, and masterclasses,',
-        videos: `A playlist of Sean Chen's YouTube clips.`,
-        music: `A playlist of Sean Chen's live concert recordings, and a link to his Spotify musician page.`,
-        getMusic: (piece: string, contributors?: string) =>
-            `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
-        photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
-        press: `Reviews of Sean Chen's performances.`,
-        shop: `Buy Sean Chen's sheet music.`,
-    };
+    home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
+    biography: `Hailed as a charismatic rising star with “an exceptional ability to connect with an audience combined with an easy virtuosity” (Huffington Post), ${age.toString()}-year-old American pianist Sean Chen, third prize winner at the 2013 Van Cliburn International Piano Competition and recipient of the DeHaan Classical Fellowship as the winner of the 2013 American Pianists Awards, has continued to earn accolades for “alluring, colorfully shaded renditions” (New York Times) and “genuinely sensitive” (LA Times) playing.`,
+    discography: 'Complete discography of Sean Chen',
+    contact: `Contact information for Sean Chen and for booking performances.`,
+    upcoming: 'Upcoming recitals, concerti, and masterclasses.',
+    archive: 'Past recitals, concerti, and masterclasses.',
+    search: 'Search recitals, concerti, and masterclasses,',
+    videos: `A playlist of Sean Chen's YouTube clips.`,
+    music: `A playlist of Sean Chen's live concert recordings, and a link to his Spotify musician page.`,
+    getMusic: (piece: string, contributors?: string) =>
+        `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
+    photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
+    press: `Reviews of Sean Chen's performances.`,
+    shop: `eShop of Sean Chen's digital sheet music.`,
+};
 
-const validFirst = [ '', 'about', 'contact', 'schedule', 'media', 'press', 'store', 'shop' ];
-const validSecond = [ '', 'biography', 'discography', 'press', 'music', 'videos', 'photos', 'upcoming', 'archive' ];
+const validFirst = ['', 'about', 'contact', 'schedule', 'media', 'press', 'store', 'shop'];
+const validSecond = ['', 'biography', 'discography', 'press', 'music', 'videos', 'photos', 'upcoming', 'archive', 'checkout'];
 
-export const getMetaFromPathAndSanitize = async (url: string) => {
+interface Meta {
+    title: string;
+    description: string;
+    notFound?: boolean
+    image?: string;
+    sanitize?: string;
+}
+
+export const getMetaFromPathAndSanitize = async (url: string): Promise<Meta> => {
     const parsed = regex.exec(url);
     if (parsed === null) {
         return {
@@ -170,6 +178,19 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
                 title: baseString + startCase(parsed[1]),
                 description: descriptions[parsed[1]],
                 sanitize: e === 'invalid date' ? parsed[3] : undefined,
+            };
+        }
+    }
+    if (parsed[1] === 'shop') {
+        if (parsed[2] === 'checkout') {
+            return {
+                title: baseString + 'Checkout Success',
+                description: descriptions[parsed[1]],
+            }
+        } else {
+            return {
+                title: baseString + startCase(parsed[1]),
+                description: descriptions[parsed[1]],
             };
         }
     }

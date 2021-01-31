@@ -10,6 +10,7 @@ export const cartReducer = (state: CartStateShape = {
     checkoutError: {
         message: '',
     },
+    email: ''
 }, action: ActionTypes.Types): CartStateShape => {
     switch (action.type) {
         case CART_ACTIONS.INIT_SUCCESS:
@@ -17,6 +18,7 @@ export const cartReducer = (state: CartStateShape = {
                 ...state,
                 isInit: true,
                 items: action.items,
+                email: action.email,
             };
         case CART_ACTIONS.INIT_ERROR:
             return {

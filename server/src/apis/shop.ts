@@ -2,6 +2,7 @@
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { Stripe } from 'stripe';
+import { ParamsDictionary } from 'express-serve-static-core';
 
 import { ShopItem } from 'types';
 import * as stripeClient from '../stripe';
@@ -9,6 +10,7 @@ import { emailPDFs } from '../mailer';
 import db from '../models';
 import { Op } from 'sequelize';
 import { ProductTypes } from '../models/product';
+import { pick } from 'lodash';
 
 const shopRouter = express.Router();
 
@@ -86,6 +88,19 @@ const getOrCreateLocalCustomer = async (email: string) => {
         console.log(e);
     }
 };
+
+shopRouter.get<ParamsDictionary, any, any, { session_id: string }>('/checkoutSuccess', async (req, res) => {
+    const {
+        session_id: sessionId
+    } = req.query;
+
+    const { session, lineItems } = await stripeClient.getCheckoutSession(sessionId);
+
+    res.json({
+        session: pick(session, ['customer_details', 'client_reference_id']),
+        lineItems: lineItems.map((item) => item.description),
+    });
+})
 
 // new stripe API: old skus = new prices
 // However, we are using the Product IDs in the front end, so have to fetch

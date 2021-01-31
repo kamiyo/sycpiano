@@ -10,6 +10,7 @@ export interface InitCartError {
 export interface InitCartSuccess {
     readonly type: typeof CART_ACTIONS.INIT_SUCCESS;
     readonly items: string[];
+    readonly email: string;
 }
 
 export interface AddToCart {
@@ -20,6 +21,10 @@ export interface AddToCart {
 export interface RemoveFromCart {
     readonly type: typeof CART_ACTIONS.REMOVE_FROM_CART;
     readonly skuId: string;
+}
+
+export interface ClearCart {
+    readonly type: typeof CART_ACTIONS.CLEAR_CART;
 }
 
 export interface CheckoutRequest {
@@ -55,7 +60,7 @@ export interface PopperSetArrow {
     readonly el: HTMLDivElement;
 }
 
-export type UpdateCartActions = AddToCart | RemoveFromCart;
+export type UpdateCartActions = AddToCart | RemoveFromCart | ClearCart;
 export type InitCartActions = InitCartError | InitCartSuccess;
 export type CheckCustomerActions = CheckoutRequest | CheckoutSuccess | CheckoutError;
 export type PopperActions = PopperSetRef | PopperSetPop | PopperSetArrow;

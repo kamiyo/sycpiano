@@ -48,9 +48,13 @@ export const removeFromCartAction = (skuId: string): ThunkAction<void, GlobalSta
     }
 );
 
-const initCartSuccess = (items: string[]): ActionTypes.InitCartSuccess => ({
+export const clearCartAction = (): ThunkAction<void, GlobalStateShape, void, ActionTypes.ClearCart> =>
+    (dispatch) => dispatch({ type: CART_ACTIONS.CLEAR_CART });
+
+const initCartSuccess = (items: string[], email: string): ActionTypes.InitCartSuccess => ({
     type: CART_ACTIONS.INIT_SUCCESS,
     items,
+    email,
 });
 
 const shouldInitCart = (state: GlobalStateShape) => {
@@ -62,10 +66,11 @@ export const initCartAction = (): ThunkAction<Promise<void>, GlobalStateShape, v
         if (shouldInitCart(getState())) {
             if (storageAvailable()) {
                 const cart: string[] = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) ?? '[]');
+                const email: string = JSON.parse(window.localStorage.getItem('customer_email') ?? '[]')
                 if (cart.length !== 0) {
                     await dispatch(fetchItemsAction())
                 }
-                dispatch(initCartSuccess(cart));
+                dispatch(initCartSuccess(cart, email));
                 return Promise.resolve();
             } else {
                 return Promise.resolve();
@@ -96,6 +101,12 @@ export const checkoutAction = (email: string): ThunkAction<void, GlobalStateShap
                 dispatch({
                     type: CART_ACTIONS.CHECKOUT_REQUEST,
                 });
+                if (storageAvailable()) {
+                    window.localStorage.setItem(
+                        'customer_email',
+                        JSON.stringify(email),
+                    );
+                }
                 const response = await axios.post<{ sessionId: string }>('/api/shop/checkout', {
                     email,
                     productIDs: getState().cart.items,

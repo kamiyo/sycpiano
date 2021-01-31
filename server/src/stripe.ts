@@ -22,7 +22,7 @@ export const productIsObject = (pr: ProductReturn): pr is Stripe.Product => {
     return (typeof pr !== 'string') && pr.deleted !== true;
 };
 
-export const getPricesAndProducts = async () => {
+export const getPricesAndProducts = async (): Promise<Stripe.Price[]> => {
     try {
         const result = await stripe.prices.list({ expand: ['data.product'] });
         return result.data;
@@ -31,7 +31,7 @@ export const getPricesAndProducts = async () => {
     }
 };
 
-export const getCustomer = async (email: string) => {
+export const getCustomer = async (email: string): Promise<Stripe.Customer> => {
     try {
         return (await stripe.customers.list({ email })).data[0];
     } catch (e) {
@@ -39,7 +39,7 @@ export const getCustomer = async (email: string) => {
     }
 };
 
-export const getOrCreateCustomer = async (email: string) => {
+export const getOrCreateCustomer = async (email: string): Promise<Stripe.Customer> => {
     try {
         const customers = await stripe.customers.list(
             { email }
@@ -57,11 +57,10 @@ export const getOrCreateCustomer = async (email: string) => {
     }
 };
 
-export const createCheckoutSession = async (productIDs: string[], priceIDs: string[], customerId: string) => {
+export const createCheckoutSession = async (productIDs: string[], priceIDs: string[], customerId: string): Promise<string> => {
     try {
         const session = await stripe.checkout.sessions.create(
             {
-                /* eslint-disable @typescript-eslint/camelcase */
                 mode: 'payment',
                 success_url: `${host}/shop/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
                 cancel_url: `${host}/shop`,
@@ -80,7 +79,6 @@ export const createCheckoutSession = async (productIDs: string[], priceIDs: stri
                     }), {}),
                 },
                 client_reference_id: uniqid.time(),
-                /* eslint-enable @typescript-eslint/camelcase */
             }
         );
         return session.id;
@@ -89,7 +87,7 @@ export const createCheckoutSession = async (productIDs: string[], priceIDs: stri
     }
 }
 
-export const getProductIDsFromPaymentIntent = async (paymentIntent: string) => {
+export const getProductIDsFromPaymentIntent = async (paymentIntent: string): Promise<string[]> => {
     try {
         const intent = await stripe.paymentIntents.retrieve(paymentIntent);
         const metadata = Object.values(intent.metadata);
@@ -99,7 +97,7 @@ export const getProductIDsFromPaymentIntent = async (paymentIntent: string) => {
     }
 };
 
-export const getEmailFromCustomer = async (cid: string) => {
+export const getEmailFromCustomer = async (cid: string): Promise<string> => {
     try {
         const customer = await stripe.customers.retrieve(cid);
         if (stripeCustomerActive(customer)) {
@@ -110,12 +108,12 @@ export const getEmailFromCustomer = async (cid: string) => {
     }
 };
 
-export const constructEvent = (body: any, sig: string | string[]) => {
+export const constructEvent = (body: string | Buffer, sig: string | string[]): Stripe.Event => {
     const event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_KEY);
     return event;
 };
 
-export const createProduct = async (attributes: Omit<ProductAttributes, 'createdAt' | 'updatedAt' | 'id'>) => {
+export const createProduct = async (attributes: Omit<ProductAttributes, 'createdAt' | 'updatedAt' | 'id'>): Promise<string[]> => {
     try {
         const product = await stripe.products.create({
             name: attributes.name,
@@ -132,7 +130,7 @@ export const createProduct = async (attributes: Omit<ProductAttributes, 'created
         });
         const price = await stripe.prices.create({
             currency: CURRENCY,
-            unit_amount: attributes.price, /* eslint-disable-line @typescript-eslint/camelcase */
+            unit_amount: attributes.price,
             product: product.id,
         });
         return [product.id, price.id];
@@ -141,7 +139,7 @@ export const createProduct = async (attributes: Omit<ProductAttributes, 'created
     }
 };
 
-export const updateProduct = async (attributes: Omit<ProductAttributes, 'createdAt' | 'updatedAt'>) => {
+export const updateProduct = async (attributes: Omit<ProductAttributes, 'createdAt' | 'updatedAt'>): Promise<string[]> => {
     try {
         console.log(attributes.id);
         const product = await stripe.products.update(
@@ -166,7 +164,7 @@ export const updateProduct = async (attributes: Omit<ProductAttributes, 'created
             await stripe.prices.update(attributes.priceID, { active: false });
             const newPrice = await stripe.prices.create({
                 currency: CURRENCY,
-                unit_amount: attributes.price, /* eslint-disable-line @typescript-eslint/camelcase */
+                unit_amount: attributes.price,
                 product: product.id,
             });
             return [product.id, newPrice.id];
@@ -176,3 +174,18 @@ export const updateProduct = async (attributes: Omit<ProductAttributes, 'created
         console.error(`Couldn't update product.`, e);
     }
 };
+
+export const getCheckoutSession = async (sessionId: string): Promise<{ session: Stripe.Checkout.Session; lineItems: Stripe.LineItem[] } > => {
+    try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        const lineItems = await stripe.checkout.sessions.listLineItems(sessionId);
+        // console.log(session);
+        // console.log(lineItems);
+        return {
+            session,
+            lineItems: lineItems.data
+        };
+    } catch (e) {
+        console.error(`Could not retrieve session with id ${sessionId}`);
+    }
+}

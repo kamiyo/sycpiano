@@ -77,6 +77,9 @@ Object.keys(oldRoutesToRedirectsMap).forEach(key => (
 
 // We catch any route first, and then let our front-end routing do the work.
 app.get(/\//, async (req, res) => {
+    if (isProduction && req.get('host').match(/^www\..*/i) === null) {
+        res.redirect(301, `https://www.${req.get('host')}${req.originalUrl}`);
+    }
     delete req.query.fbclid;
     const { sanitize = '', notFound = false, ...meta } = await getMetaFromPathAndSanitize(req.path);
     if (notFound) {

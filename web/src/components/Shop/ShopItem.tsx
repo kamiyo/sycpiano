@@ -94,11 +94,11 @@ const getHoverStyle = (isMouseDown: boolean) => ({
 const CartButton = styled.button<{ isItemInCart: boolean; isMouseDown: boolean; isMobile: boolean }>(
     {
         fontSize: '0.8em',
-        width: '230px',
-        padding: '10px',
+        width: 230,
+        padding: 10,
         textAlign: 'center',
         fontFamily: lato3,
-        borderRadius: '20px',
+        borderRadius: 20,
         transition: 'all 0.25s',
         letterSpacing: '0.1rem',
         userSelect: 'none',

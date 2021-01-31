@@ -29,8 +29,12 @@ const StyledSubNavLink = styled(NavLink, {
     boxShadow: '0 6px 11px -5px rgba(0, 0, 0, 0.3)',
     transition: 'all 0.25s',
     lineHeight: '2rem',
-    ['&.active']: {
+    '&.active': {
         color: lightBlue,
+    },
+    '&:hover': {
+        color: 'white',
+        backgroundColor: lightBlue,
     },
 }, (props) => props.isMobile && {
     color: navFontColor,
@@ -42,7 +46,7 @@ const StyledSubNavLink = styled(NavLink, {
     color: 'white',
     backgroundColor: 'transparent',
     boxShadow: 'none',
-    ['&:hover']: {
+    '&:hover': {
         textShadow: '0 0 1px rgba(255, 255, 255, 1)',
         backgroundColor: 'rgba(53, 53, 53, 0.27)',
         boxShadow: '0 6px 11px -5px rgba(0, 0, 0, 0.5)',

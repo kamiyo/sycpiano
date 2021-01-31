@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ThunkAction } from 'redux-thunk';
 import { GlobalStateShape } from 'src/types';
-import { Product } from './types';
+import { ProductMap } from './types';
 
 import STORE_ACTIONS from 'src/components/Shop/actionTypeKeys';
 import * as ActionTypes from 'src/components/Shop/actionTypes';
@@ -14,7 +14,7 @@ type ShopThunkAction = ThunkAction<Promise<void>, GlobalStateShape, void, Action
 const fetchItemsAsync: ShopThunkAction = async (dispatch) => {
     try {
         dispatch({ type: STORE_ACTIONS.FETCH_ITEMS_REQUEST });
-        const { data: items }: { data: Product[] } = await axios.get('/api/shop/items');
+        const { data: items }: { data: ProductMap } = await axios.get('/api/shop/items');
         dispatch({
             type: STORE_ACTIONS.FETCH_ITEMS_SUCCESS,
             items,

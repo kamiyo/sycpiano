@@ -3,12 +3,14 @@ import db from './models';
 import { Op } from 'sequelize';
 import * as path from 'path';
 import * as mustache from 'mustache';
-import { promises as fsAsync, default as fs } from 'fs';
+import { promises as fsAsync, readFileSync } from 'fs';
 import * as moment from 'moment';
 
 const models = db.models;
 
-const transportOptions = (process.env.NODE_ENV === 'production') ? {
+const transportOptions =
+// (process.env.NODE_ENV === 'production') ?
+{
     host: 'smtpout.secureserver.net',
     secure: true,
     port: 465,
@@ -19,23 +21,24 @@ const transportOptions = (process.env.NODE_ENV === 'production') ? {
     dkim: {
         domainName: 'seanchenpiano.com',
         keySelector: 'email',
-        privateKey: fs.readFileSync(path.resolve(__dirname, process.env.EMAIL_PRIVATE_KEY_FILE), 'utf8'),
+        privateKey: readFileSync(path.resolve(__dirname, process.env.DKIM_PRIVATE_KEY_FILE), 'utf8'),
     },
-} : {
-        host: 'smtp.ethereal.email',
-        port: 587,
-        auth: {
-            user: 'dave14@ethereal.email',
-            pass: 'ZbHs2rcZubP4EV9tWB'
-        },
-    };
+};
+// : {
+//         host: 'smtp.ethereal.email',
+//         port: 587,
+//         auth: {
+//             user: 'dave14@ethereal.email',
+//             pass: 'ZbHs2rcZubP4EV9tWB'
+//         },
+//     };
 
 // To email a manual request, omit clientRef (or pass falsey value)
-export const emailPDFs = async (productIDs: string[], email: string, clientRef?: string) => {
+export const emailPDFs = async (productIDs: string[], email: string, clientRef?: string): Promise<void> => {
     const transport = nodemailer.createTransport(transportOptions);
 
     const products = await models.product.findAll({
-        attributes: ['id', 'file', 'title'],
+        attributes: ['id', 'file', 'name'],
         where: {
             id: {
                 [Op.in]: productIDs,
@@ -68,19 +71,22 @@ export const emailPDFs = async (productIDs: string[], email: string, clientRef?:
         clientRef,
         year: moment().year(),
     });
-    console.log(attachments);
+
 
     const message: nodemailer.SendMailOptions = {
         from: 'Sean Chen Piano Shop <shop@seanchenpiano.com>',
         replyTo: 'seanchen@seanchenpiano.com',
         to: email,
-        subject: '[Sean Chen Piano] Your recent purchased PDFs from seanchenpiano.com.',
+        subject: `[Sean Chen Piano] ${clientRef ? 'Your recent' : 'Your request for previously'} purchased PDFs from seanchenpiano.com.`,
         html,
         attachments,
     };
 
     const result = await transport.sendMail(message);
     if (process.env.NODE_ENV === 'development') {
-        console.log(nodemailer.getTestMessageUrl(result));
+        console.log(email);
+        console.log(attachments);
+        console.log(result);
     }
 };
+    //     console.log(nodemailer.getTestMessageUrl(result));

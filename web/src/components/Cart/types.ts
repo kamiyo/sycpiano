@@ -9,4 +9,5 @@ export interface CartStateShape {
     visible: boolean;
     checkoutError: CheckoutErrorObject;
     isCheckingOut: boolean;
+    email: string;
 }

@@ -41,12 +41,13 @@ const ItemName = styled(Link, {
     fontSize: '1rem',
     fontWeight: 'bold',
     color: 'black',
+    paddingRight: '1rem',
     ['&:hover']: {
         cursor: 'pointer',
         textDecoration: 'underline',
     },
     ['&:visited']: {
-        color: 'black',
+        color: 'unset',
     }
 }, ({ error }) => error && ({
     color: 'red',
@@ -74,16 +75,16 @@ export const CartItem: React.FC<CartProps> = ({ item, error }) => {
                     <img src={staticImage('/products/thumbnails/' + item.images[0])} />
                 </ItemThumbnail>
                 <ItemDescription>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', }}>
+                    <div css={{ display: 'flex', justifyContent: 'space-between', }}>
                         <ItemName
                             to={`/shop/${item.permalink}`}
                             error={error}
                         >
                             {item.name}
                         </ItemName>
-                        <a style={{ flex: '0 0 auto' }} role="button" tabIndex={0} onClick={() => dispatch(removeFromCartAction(item.id))}>Remove</a>
+                        <a css={{ flex: '0 0 auto' }} role="button" tabIndex={0} onClick={() => dispatch(removeFromCartAction(item.id))}>Remove</a>
                     </div>
-                    <div style={{ marginTop: '0.5rem' }}>
+                    <div css={{ marginTop: '0.5rem' }}>
                         <ItemPrice>{formatPrice(item.price)}</ItemPrice>
                         {/* <Divider>|</Divider> */}
                     </div>
