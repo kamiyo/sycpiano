@@ -120,49 +120,51 @@ class BioText extends React.Component<BioTextProps> {
 
 interface ImageContainerProps { currScrollTop: number; bgImage?: string }
 
-const ImageContainer = styled.div<ImageContainerProps>`
-    flex: 1;
-    backgroundImage: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
-    backgroundSize: cover;
-    backgroundPosition: center 100px;
-    backgroundAttachment: initial;
-    backgroundRepeat: noRepeat;
-    backgroundColor: black;
-    visibility: hidden;
+const ImageContainer = styled.div<ImageContainerProps>({
+    flex: 1,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center 100px',
+    backgroundAttachment: 'initial',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor: 'black',
+    visibility: 'hidden',
 
-    ${screenM} {
-        backgroundSize: cover;
-        backgroundPosition: center 0;
+    [screenM]: {
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 0',
+    },
+
+    [screenXSorPortrait]: {
+        position: 'fixed',
+        zIndex: 0,
+        top: navBarHeight.mobile,
+        height: pictureHeight,
+        width: '100%',
+        backgroundSize: '106%',
+        backgroundPosition: 'center 15%',
     }
+}, ({ currScrollTop, bgImage }) => ({
+    backgroundImage: bgImage ? `url(${bgImage})` : 'unset',
+    opacity: easeQuadOut(Math.max(1 - currScrollTop / pictureHeight, 0)),
+}));
 
-    ${screenXSorPortrait} {
-        position: fixed;
-        zIndex: 0;
-        top: ${navBarHeight.mobile}px;
-        height: ${pictureHeight}px;
-        width: 100%;
-        backgroundSize: 106%;
-        backgroundPosition: center 15%;
-        opacity: ${props => easeQuadOut(Math.max(1 - props.currScrollTop / pictureHeight, 0))};
-    }
-`;
+const BioContainer = styled.div(
+    pushed,
+    {
 
-const BioContainer = styled.div`
-    ${pushed}
-    width: 100%;
-    backgroundColor: black;
-    position: absolute;
-    display: flex;
-
-    ${screenXSorPortrait} {
-        marginTop: 0;
-        paddingTop: ${navBarHeight.mobile}px;
-        display: block;
-        height: 100%;
-        overflowY: scroll;
-        WebkitOverflowScrolling: touch;
-    }
-`;
+        width: '100%',
+        backgroundColor: 'black',
+        position: 'absolute',
+        display: 'flex',
+        [screenXSorPortrait]: {
+            marginTop: 0,
+            paddingTop: navBarHeight.mobile,
+            display: 'block',
+            height: '100%',
+            overflowY: 'scroll',
+            WebkitOverflowScrolling: 'touch',
+        },
+    });
 
 const srcWidths = screenLengths.map((value) => (
     Math.round(value * 1736 / 2560)
@@ -186,10 +188,10 @@ interface BioDispatchToProps {
     readonly fetchBioAction: () => Promise<void>;
 }
 
-const imageLoaderStyle = css`
-    visibility: hidden;
-    position: absolute;
-`;
+const imageLoaderStyle = css({
+    visibility: 'hidden',
+    position: 'absolute',
+});
 
 type BioProps = BioOwnProps & BioStateToProps & BioDispatchToProps;
 
