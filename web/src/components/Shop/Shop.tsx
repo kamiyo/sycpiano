@@ -9,6 +9,8 @@ import { TransitionGroup, Transition } from 'react-transition-group';
 import { RouteComponentProps, Route, Switch } from 'react-router-dom';
 import { fadeOnEnter, fadeOnExit } from 'src/utils';
 import { CheckoutSuccess } from 'src/components/Shop/CheckoutSuccess';
+import { FAQs } from 'src/components/Shop/FAQs';
+import { RetrievalForm } from './RetrievePurchased';
 
 const ShopContainer = styled.div(
     container,
@@ -54,9 +56,21 @@ const Shop: React.FC<ShopProps & RouteComponentProps<unknown>> = ({ isMobile, lo
                                 )}
                             />
                             <Route
-                                path="/shop/:product?"
+                                path="/shop/scores/:product?"
                                 render={(childProps) => (
                                     <ShopList {...childProps} isMobile={isMobile} />
+                                )}
+                            />
+                            <Route
+                                path="/shop/retrieve-purchased"
+                                render={(childProps) => (
+                                    <RetrievalForm {...childProps} isMobile={isMobile} />
+                                )}
+                            />
+                            <Route
+                                path="/shop/faqs"
+                                render={(childProps) => (
+                                    <FAQs {...childProps} isMobile={isMobile} />
                                 )}
                             />
                         </Switch>

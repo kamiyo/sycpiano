@@ -77,7 +77,7 @@ export const CartItem: React.FC<CartProps> = ({ item, error }) => {
                 <ItemDescription>
                     <div css={{ display: 'flex', justifyContent: 'space-between', }}>
                         <ItemName
-                            to={`/shop/${item.permalink}`}
+                            to={`/shop/scores/${item.permalink}`}
                             error={error}
                         >
                             {item.name}

@@ -10,11 +10,11 @@ import {
 } from 'src/components/Cart/actions';
 
 import TextField from '@material-ui/core/TextField';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
 
 import { cartWidth } from 'src/styles/variables';
 import { lato2, lato3 } from 'src/styles/fonts';
-import { magenta, lightBlue, logoBlue } from 'src/styles/colors';
+import { theme, lightBlue, logoBlue } from 'src/styles/colors';
 import { mix } from 'polished';
 import { formatPrice, validateEmail } from 'src/utils';
 import { CartItem } from 'src/components/Cart/CartItem';
@@ -22,17 +22,6 @@ import { Product } from 'src/components/Shop/types';
 import { noHighlight } from 'src/styles/mixins';
 
 const ARROW_SIDE = 32;
-
-const theme = createMuiTheme({
-    palette: {
-        primary: {
-            main: lightBlue,
-        },
-        secondary: {
-            main: magenta,
-        }
-    },
-});
 
 const CartListDiv = styled.div<{ isMobile: boolean }>(({ isMobile }) => ({
     backgroundColor: 'white',

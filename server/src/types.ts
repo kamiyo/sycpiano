@@ -15,6 +15,7 @@ import { piece } from './models/piece';
 import { token } from './models/token';
 import { product } from './models/product';
 import { customer } from 'models/customer';
+import { faq } from 'models/faq';
 
 type Moment = moment.Moment;
 
@@ -33,7 +34,7 @@ export interface GCalEvent {
 
 export type ModelCtor<M extends Model> = typeof Sequelize.Model & (new () => M);
 
-export class Model<T extends {} = any, T2 extends {} = any> extends Sequelize.Model<T, T2> {
+export class Model<T extends unknown = any, T2 extends unknown = any> extends Sequelize.Model<T, T2> {
     static associate?(db: {[key: string]: ModelCtor<any>}): void;
     readonly dataValues: T;
 }
@@ -54,6 +55,7 @@ export interface ModelMap {
     token: typeof token;
     product: typeof product;
     customer: typeof customer;
+    faq: typeof faq;
     [key: string]: typeof Model;
 }
 

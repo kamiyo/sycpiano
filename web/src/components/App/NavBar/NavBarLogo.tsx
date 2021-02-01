@@ -78,7 +78,7 @@ const NavBarLogo: React.FC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProp
     isExpanded,
     specificRouteName,
 }) => {
-    const displayName = specificRouteName && specificRouteName.replace('discography', 'discog').replace('biography', 'bio');
+    const displayName = specificRouteName && specificRouteName.replace('discography', 'discog').replace('biography', 'bio').replace('retrieve-purchased', 'shop').replace('checkout', 'shop');
     return (
         <StyledLink to="/" isHome={isHome} isExpanded={isExpanded}>
             <ReactMedia query={reactMediaMobileQuery}>

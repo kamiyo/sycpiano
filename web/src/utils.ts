@@ -55,6 +55,7 @@ export const metaDescriptions: {
         photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
         press: `Press of Sean Chen's performances.`,
         shop: `Online shop of Sean Chen's arrangements, cadenzas, and original compositions.`,
+        faqs: `Information about Sean Chen Piano online shop.`,
     };
 
 export const formatPrice = (price: number): string => (

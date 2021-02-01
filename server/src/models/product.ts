@@ -54,7 +54,7 @@ const beforeUpdateHook = async (p: product, _: UpdateOptions) => {
     }
 };
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof product => {
     product.init({
             id: {
                 type: dataTypes.STRING,

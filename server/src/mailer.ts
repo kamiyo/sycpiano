@@ -74,7 +74,7 @@ export const emailPDFs = async (productIDs: string[], email: string, clientRef?:
 
 
     const message: nodemailer.SendMailOptions = {
-        from: 'Sean Chen Piano Shop <shop@seanchenpiano.com>',
+        from: 'Sean Chen Piano <seanchen@seanchenpiano.com>',
         replyTo: 'seanchen@seanchenpiano.com',
         to: email,
         subject: `[Sean Chen Piano] ${clientRef ? 'Your recent' : 'Your request for previously'} purchased PDFs from seanchenpiano.com.`,

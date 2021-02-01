@@ -182,6 +182,11 @@ const Separator = styled.span({
     fontSize: '1.5rem',
 });
 
+const SampleLink = styled.div<{ isMobile: boolean }>(({ isMobile }) => ({
+    margin: isMobile ? '1rem 2rem' : '2rem 0',
+    paddingLeft: isMobile ? 'unset' : '1rem',
+}));
+
 const formatCentsToDollars = (price: number) => `$${(price / 100).toFixed(2)}`;
 
 const ShopItem: React.FC<ShopItemProps> = ({ item, className, children, ...isMobile }) => {
@@ -199,6 +204,9 @@ const ShopItem: React.FC<ShopItemProps> = ({ item, className, children, ...isMob
                 <div css={{ marginBottom: '24px' }}>
                     <ItemName {...isMobile}>{item.name}</ItemName>
                     <ItemDescription {...isMobile}>{item.description}</ItemDescription>
+                    {item.sample && (
+                        <SampleLink {...isMobile}><a href={item.sample} target="seanchenpiano_sample">Listen to the work here.</a></SampleLink>
+                    )}
                     <DetailContainer {...isMobile}>
                         <ItemDetails>{toUpper(item.format)} format</ItemDetails>
                         <Separator>|</Separator>

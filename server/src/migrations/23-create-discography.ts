@@ -2,7 +2,7 @@ import { DataTypes, QueryInterface } from 'sequelize';
 import { disc } from 'models/disc';
 import { discLink } from 'models/discLink';
 
-export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
+export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes): Promise<void> => {
     try {
         await queryInterface.createTable<disc>('disc', {
             id: {
@@ -71,7 +71,7 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
     }
 };
 
-export const down = async (queryInterface: QueryInterface) => {
+export const down = async (queryInterface: QueryInterface): Promise<void> => {
     await queryInterface.dropTable('disc_link');
     await queryInterface.dropTable('disc');
 };

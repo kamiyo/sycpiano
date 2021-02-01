@@ -27,57 +27,57 @@ import { GlobalStateShape } from 'src/types';
 
 const pictureHeight = 250;
 
-const Paragraph = styled.p`
-    font-family: ${lato2};
-    font-size: 1.2em;
-    line-height: 2em;
-    margin: 1.6em 0;
+const Paragraph = styled.p({
+    fontFamily: lato2,
+    fontSize: '1.2em',
+    lineHeight: '2em',
+    margin: '1.6em 0',
 
-    ${screenXSorPortrait} {
-        font-size: 1em;
-        line-height: 1.6em;
-        margin: 1.3em 0;
+    [screenXSorPortrait]: {
+        fontSize: '1em',
+        lineHeight: '1.6em',
+        margin: '1.3em 0',
     }
-`;
+});
 
-const SpaceFiller = styled.div`
-    display: none;
+const SpaceFiller = styled.div({
+    display: 'none',
 
-    ${screenXSorPortrait} {
-        display: block;
-        height: ${pictureHeight}px;
-        width: 100%;
-        background-color: transparent;
+    [screenXSorPortrait]: {
+        display: 'block',
+        height: pictureHeight,
+        width: '100%',
+        backgroundColor: 'transparent',
     }
-`;
+});
 
-const TextGroup = styled.div`
-    ${screenXSorPortrait} {
-        background-color: white;
-        padding: 20px 20px;
+const TextGroup = styled.div({
+    [screenXSorPortrait]: {
+        backgroundColor: 'white',
+        padding: '20px 20px',
     }
-`;
+});
 
-const TextContainer = styled.div`
-    box-sizing: border-box;
-    flex: 0 0 45%;
-    height: auto;
-    padding: 20px 40px 80px 60px;
-    background-color: ${offWhite};
-    color: black;
-    overflow-y: scroll;
+const TextContainer = styled.div({
+    boxSizing: 'border-box',
+    flex: '0 0 45%',
+    height: 'auto',
+    padding: '20px 40px 80px 60px',
+    backgroundColor: offWhite,
+    color: 'black',
+    overflowY: 'scroll',
 
-    ${screenXSorPortrait} {
-        position: relative;
-        z-index: 1;
-        margin-top: 0;
-        height: 100%;
-        left: 0;
-        background-color: transparent;
-        padding: 0;
-        overflow-y: visible;
-    }
-`;
+    [screenXSorPortrait]: {
+        position: 'relative',
+        zIndex: 1,
+        marginTop: 0,
+        height: '100%',
+        left: 0,
+        backgroundColor: 'transparent',
+        padding: 0,
+        overflowY: 'visible',
+    },
+});
 
 const NameSpan = styled.span({
     fontFamily: lato3,
@@ -122,27 +122,27 @@ interface ImageContainerProps { currScrollTop: number; bgImage?: string }
 
 const ImageContainer = styled.div<ImageContainerProps>`
     flex: 1;
-    background-image: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
-    background-size: cover;
-    background-position: center -100px;
-    background-attachment: initial;
-    background-repeat: no-repeat;
-    background-color: black;
+    backgroundImage: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
+    backgroundSize: cover;
+    backgroundPosition: center 100px;
+    backgroundAttachment: initial;
+    backgroundRepeat: noRepeat;
+    backgroundColor: black;
     visibility: hidden;
 
     ${screenM} {
-        background-size: cover;
-        background-position: center 0;
+        backgroundSize: cover;
+        backgroundPosition: center 0;
     }
 
     ${screenXSorPortrait} {
         position: fixed;
-        z-index: 0;
+        zIndex: 0;
         top: ${navBarHeight.mobile}px;
         height: ${pictureHeight}px;
         width: 100%;
-        background-size: 106%;
-        background-position: center 15%;
+        backgroundSize: 106%;
+        backgroundPosition: center 15%;
         opacity: ${props => easeQuadOut(Math.max(1 - props.currScrollTop / pictureHeight, 0))};
     }
 `;
@@ -150,17 +150,17 @@ const ImageContainer = styled.div<ImageContainerProps>`
 const BioContainer = styled.div`
     ${pushed}
     width: 100%;
-    background-color: black;
+    backgroundColor: black;
     position: absolute;
     display: flex;
 
     ${screenXSorPortrait} {
-        margin-top: 0;
-        padding-top: ${navBarHeight.mobile}px;
+        marginTop: 0;
+        paddingTop: ${navBarHeight.mobile}px;
         display: block;
         height: 100%;
-        overflow-y: scroll;
-        -webkit-overflow-scrolling: touch;
+        overflowY: scroll;
+        WebkitOverflowScrolling: touch;
     }
 `;
 

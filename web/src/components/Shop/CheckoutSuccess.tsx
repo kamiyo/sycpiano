@@ -7,6 +7,7 @@ import { clearCartAction } from 'src/components/Cart/actions';
 import styled from '@emotion/styled';
 import { pushed } from 'src/styles/mixins';
 import { lato2, } from 'src/styles/fonts';
+import { screenXSorPortrait } from 'src/styles/screens';
 
 const Container = styled.div(
     pushed,
@@ -17,7 +18,11 @@ const Container = styled.div(
         marginLeft: 'auto',
         marginRight: 'auto',
         alignItems: 'center',
-    }
+        [screenXSorPortrait]: {
+            padding: '1rem',
+            alignItems: 'flex-start',
+        }
+    },
 );
 
 const LineItem = styled.li({
@@ -28,6 +33,9 @@ const LineItem = styled.li({
 const Thanks = styled.div({
     fontSize: '2rem',
     padding: '3rem 0 2rem 0',
+    [screenXSorPortrait]: {
+        padding: '2rem 0',
+    }
 });
 
 const EmailedTo = styled.div({
@@ -38,6 +46,9 @@ const EmailedTo = styled.div({
 const Questions = styled.div({
     fontSize: '1rem',
     padding: '2rem',
+    [screenXSorPortrait]: {
+        padding: '1rem 0',
+    }
 });
 
 type CheckoutSuccessProps = { isMobile?: boolean } & RouteComponentProps<unknown>
@@ -54,7 +65,6 @@ interface CheckoutSuccessResponse {
 
 const CheckoutSuccess: React.FC<CheckoutSuccessProps> = ({ location }) => {
     const query = parse(location.search, { ignoreQueryPrefix: true });
-    console.log(query);
     const dispatch = useDispatch();
     const [email, setEmail] = React.useState('');
     const [clientRef, setClientRef] = React.useState('');

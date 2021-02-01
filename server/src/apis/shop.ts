@@ -68,6 +68,11 @@ shopRouter.get('/items', async (_, res) => {
     res.json(storeItems);
 });
 
+shopRouter.get('/faqs', async (_, res) => {
+    const faqs = await db.models.faq.findAll();
+    res.json(faqs);
+});
+
 const getOrCreateLocalCustomer = async (email: string) => {
     try {
         const stripeCustomer = await stripeClient.getOrCreateCustomer(email);
@@ -158,7 +163,7 @@ shopRouter.post('/checkout', async (req, res) => {
     }
 });
 
-shopRouter.post('/getPurchased', async (req, res) => {
+shopRouter.post('/get-purchased', async (req, res) => {
     const {
         email
     } = req.body;
@@ -178,7 +183,7 @@ shopRouter.post('/getPurchased', async (req, res) => {
 
 });
 
-shopRouter.post('/resendPurchased', async (req, res) => {
+shopRouter.post('/resend-purchased', async (req, res) => {
     const {
         email
     } = req.body;
@@ -192,7 +197,7 @@ shopRouter.post('/resendPurchased', async (req, res) => {
         res.sendStatus(200);
     } catch (e) {
         console.error(`Failed to resend purchased pdfs of email: ${email}`, e);
-        res.sendStatus(400);
+        res.sendStatus(200);    // We don't want to give away whether email exists or not.
     }
 });
 

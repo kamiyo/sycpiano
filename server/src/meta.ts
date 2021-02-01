@@ -32,7 +32,8 @@ const descriptions: {
     music: string;
     photos: string;
     press: string;
-    shop: string;
+    scores: string;
+    faqs: string;
     getMusic: (piece: string, contributors?: string) => string;
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     [key: string]: any;
@@ -50,11 +51,12 @@ const descriptions: {
         `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
     photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
     press: `Reviews of Sean Chen's performances.`,
-    shop: `eShop of Sean Chen's digital sheet music.`,
+    scores: `Online shop of Sean Chen's arrangements, cadenzas, and original compositions.`,
+    faqs: `Information about Sean Chen Piano online shop.`,
 };
 
 const validFirst = ['', 'about', 'contact', 'schedule', 'media', 'press', 'store', 'shop'];
-const validSecond = ['', 'biography', 'discography', 'press', 'music', 'videos', 'photos', 'upcoming', 'archive', 'checkout'];
+const validSecond = ['', 'biography', 'discography', 'press', 'music', 'videos', 'photos', 'upcoming', 'archive', 'scores', 'FAQs', 'checkout'];
 
 interface Meta {
     title: string;
@@ -184,13 +186,13 @@ export const getMetaFromPathAndSanitize = async (url: string): Promise<Meta> => 
     if (parsed[1] === 'shop') {
         if (parsed[2] === 'checkout') {
             return {
-                title: baseString + 'Checkout Success',
-                description: descriptions[parsed[1]],
+                title: baseString + startCase(parsed[1]) + ' | Checkout Success',
+                description: descriptions[parsed[2]],
             }
         } else {
             return {
                 title: baseString + startCase(parsed[1]),
-                description: descriptions[parsed[1]],
+                description: descriptions[parsed[2]],
             };
         }
     }
