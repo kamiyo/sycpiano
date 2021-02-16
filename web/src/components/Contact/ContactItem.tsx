@@ -31,22 +31,21 @@ interface PhotoAttributes {
     imgCss?: SerializedStyles;
 }
 
-const photosAttributesMap = new Map<string, PhotoAttributes>([
-    ['Sean Chen', {
+const photosAttributesMap: Record<string, PhotoAttributes> = {
+    'Sean Chen': {
         jpg: seanChenContactPhotoUrl(),
         webp: seanChenContactPhotoUrl('webp'),
         css: css({
             backgroundSize: 'cover',
             backgroundPosition: '0 28%',
         }),
-    }],
-    ['Martha Woods', {
+    },
+    'Martha Woods': {
         svg: marthaWoodsContactPhotoUrl(),
         css: css({
             backgroundSize: 'unset',
             backgroundPosition: '0 0',
             backgroundColor: 'white',
-            visibility: 'visible',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -54,25 +53,34 @@ const photosAttributesMap = new Map<string, PhotoAttributes>([
         imgCss: css({
             width: '90%',
         }),
-    }],
-]);
+    },
+};
 
 interface ImageContainerProps { bgImage?: string; contact: string }
 
-const ImageContainer = styled.div<ImageContainerProps>`
-    background-image: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
-    background-attachment: initial;
-    background-repeat: no-repeat;
-    background-color: black;
-    visibility: hidden;
-    flex: 0 0 55%;
-    box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
-    ${props => photosAttributesMap.get(props.contact).css}
+const ImageContainer = styled.div<ImageContainerProps>(
+    {
+        backgroundAttachment: 'initial',
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: 'black',
+        visibility: 'hidden',
+        flex: '0 0 55%',
+        boxShadow:
+            `inset 0 -15px 15px -15px ${imageInsetShadowColor}`,
 
-    ${screenXSorPortrait} {
-        height: 75vw;
-    }
-`;
+        [screenXSorPortrait]: {
+            height: '75vw',
+            flex: 'unset',
+            boxShadow:
+                `inset 0 -15px 15px -15px ${imageInsetShadowColor},
+                inset 0 15px 15px -15px ${imageInsetShadowColor}`,
+        }
+    },
+    ({ contact }) => photosAttributesMap[contact].css,
+    ({ bgImage }) => ({
+        backgroundImage: bgImage ? `url(${bgImage})` : 'unset',
+    }),
+);
 
 const StyledContactInfo = styled(ContactInfo)` flex: 1 0 31%; `;
 
@@ -83,41 +91,41 @@ const imageLoaderStyle = css`
     position: absolute;
 `;
 
-const StyledContactItem = styled.div`
-    ${pushed}
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    flex: 0 1 600px;
-    width: 100%;
+const StyledContactItem = styled.div(
+    pushed,
+    {
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'white',
+        flex: '0 1 600px',
+        width: '100%',
 
-    &:nth-of-type(2n) {
-        background-color: ${alternateBackgroundColor};
-    }
+        '&:nth-of-type(2n)': {
+            backgroundColor: alternateBackgroundColor,
+        },
 
-    ${screenXSorPortrait} {
-        height: fit-content;
-        padding-bottom: 3em;
+        [screenXSorPortrait]: {
+            height: 'fit-content',
+            paddingBottom: '3em',
 
-        &:not(:first-of-type) {
-            margin-top: 0;
-        }
-    }
-`;
+            '&:not(:first-of-type)': {
+                marginTop: 0,
+            },
+        },
+    });
 
 const ContactItem: React.FC<ContactItemShape> = (props) => {
     const [bgImage, setBgImage] = React.useState('');
     const bgRef = React.useRef<HTMLDivElement>();
 
-    const onImageLoad = (el: HTMLImageElement) => setBgImage(el.currentSrc);
-
-    React.useEffect(() => {
+    const onImageLoad = React.useCallback((el?: HTMLImageElement) => {
         TweenLite.to(
             bgRef.current,
             0.3,
             { autoAlpha: 1, delay: 0.2, clearProps: 'opacity' },
         );
-    }, [bgImage]);
+        setBgImage(el?.currentSrc)
+    }, [bgRef]);
 
     const onImageDestroy = () => {
         TweenLite.to(
@@ -137,11 +145,7 @@ const ContactItem: React.FC<ContactItemShape> = (props) => {
         website,
     }: Partial<ContactItemShape> = props;
 
-    const attributes = photosAttributesMap.get(name);
-    const {
-        webp,
-        jpg,
-    } = attributes;
+    const { webp, jpg, svg, imgCss } = photosAttributesMap[name];
     const webpSrcSet = generateSrcsetWidths(webp, screenWidths);
     const jpgSrcSet = generateSrcsetWidths(jpg, screenWidths);
 
@@ -152,44 +156,46 @@ const ContactItem: React.FC<ContactItemShape> = (props) => {
                 ref={bgRef}
                 contact={name}
             >
-                {(!attributes.svg) ? (
-                    <LazyImage
-                        isMobile={isMobile}
-                        id={`contact_lazy_image_${name.replace(/ /g, '_')}`}
-                        csss={{
-                            mobile: imageLoaderStyle,
-                            desktop: imageLoaderStyle,
-                        }}
-                        mobileAttributes={{
-                            webp: {
-                                srcset: webpSrcSet,
-                                sizes: '100vw',
-                            },
-                            jpg: {
-                                srcset: jpgSrcSet,
-                                sizes: '100vw',
-                            },
-                            src: resizedImage(jpg, { width: 640 }),
-                        }}
-                        desktopAttributes={{
-                            webp: {
-                                srcset: webpSrcSet,
-                                sizes: '100vh',
-                            },
-                            jpg: {
-                                srcset: jpgSrcSet,
-                                sizes: '100vh',
-                            },
-                            src: resizedImage(jpg, { height: 1080 }),
-                        }}
-                        alt={`${name}`}
-                        successCb={onImageLoad}
-                        destroyCb={onImageDestroy}
-                    />
-                ) : (
+                {(!svg) ?
+                    (
+                        <LazyImage
+                            isMobile={isMobile}
+                            id={`contact_lazy_image_${name.replace(/ /g, '_')}`}
+                            csss={{
+                                mobile: imageLoaderStyle,
+                                desktop: imageLoaderStyle,
+                            }}
+                            mobileAttributes={{
+                                webp: {
+                                    srcset: webpSrcSet,
+                                    sizes: '100vw',
+                                },
+                                jpg: {
+                                    srcset: jpgSrcSet,
+                                    sizes: '100vw',
+                                },
+                                src: resizedImage(jpg, { width: 640 }),
+                            }}
+                            desktopAttributes={{
+                                webp: {
+                                    srcset: webpSrcSet,
+                                    sizes: '100vh',
+                                },
+                                jpg: {
+                                    srcset: jpgSrcSet,
+                                    sizes: '100vh',
+                                },
+                                src: resizedImage(jpg, { height: 1080 }),
+                            }}
+                            alt={`${name}`}
+                            successCb={onImageLoad}
+                            destroyCb={onImageDestroy}
+                        />
+                    ) : (
                         <img
-                            src={staticImage(`${attributes.svg}`)}
-                            css={attributes.imgCss}
+                            src={staticImage(`${svg}`)}
+                            css={imgCss}
+                            onLoad={() => onImageLoad()}
                         />
                     )}
             </ImageContainer>

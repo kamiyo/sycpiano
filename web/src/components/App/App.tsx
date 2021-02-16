@@ -23,14 +23,6 @@ import { globalCss } from 'src/styles/global';
 import 'picturefill';
 import 'picturefill/dist/plugins/mutation/pf.mutation.min';
 
-import { CSSPlugin } from 'gsap';
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-const activated = [
-    CSSPlugin,
-];
-/* eslint-enable @typescript-eslint/no-unused-vars */
-
 import moment from 'moment-timezone';
 
 import { Cart } from 'src/components/Cart/Cart';
@@ -70,7 +62,9 @@ const FadingContainer = styled.div<{ shouldBlur: boolean }>({
     height: '100%',
     width: '100%',
     visibility: 'hidden',
-    transition: 'filter 0.25s',
+    transition: 'all 0.25s',
+    overflow: 'hidden',
+    position: 'absolute',
 }, ({ shouldBlur }) => shouldBlur && ({
     filter: 'blur(8px)',
 }));
@@ -93,9 +87,12 @@ const App: React.FC<AppProps> = ({ location, history }) => {
     const navbarVisible = useSelector(({ navbar }: GlobalStateShape) => navbar.isVisible);
     const menuOpen = useSelector(({ navbar }: GlobalStateShape) => navbar.isExpanded);
     const cartOpen = useSelector(({ cart }: GlobalStateShape) => cart.visible);
+    const [delayedRouteBase, setDelayedRouteBase] = React.useState(getRouteBase(location.pathname));
     const [referenceElement, setReferenceElement] = React.useState<ReferenceObject>(null);
     const [popperElement, setPopperElement] = React.useState<HTMLDivElement>(null);
     const [arrowElement, setArrowElement] = React.useState<HTMLDivElement>(null);
+    const timerRef = React.useRef<NodeJS.Timeout>();
+
     const { styles, attributes } = usePopper(referenceElement, popperElement, {
         modifiers: [
             {
@@ -117,6 +114,13 @@ const App: React.FC<AppProps> = ({ location, history }) => {
         if (currentQuery.fbclid) {
             history.push(location.pathname + stringify(omit(currentQuery, 'fbclid')));
         }
+    }, [location]);
+
+    React.useEffect(() => {
+        timerRef.current = setTimeout(() => { setDelayedRouteBase(getRouteBase(location.pathname)); }, 250);
+        return () => {
+            clearTimeout(timerRef.current);
+        };
     }, [location]);
 
     let currentPage = getMostSpecificRouteName(location.pathname);
@@ -157,7 +161,7 @@ const App: React.FC<AppProps> = ({ location, history }) => {
                                 appear={true}
                             >
                                 <NavBar
-                                    currentBasePath={getRouteBase(location.pathname)}
+                                    currentBasePath={delayedRouteBase}
                                     specificRouteName={getMostSpecificRouteName(location.pathname)}
                                     setReferenceElement={setReferenceElement}
                                 />
@@ -170,7 +174,7 @@ const App: React.FC<AppProps> = ({ location, history }) => {
                                     timeout={750}
                                     appear={true}
                                 >
-                                    <FadingContainer shouldBlur={matches && (cartOpen || menuOpen) && getRouteBase(location.pathname) !== '/'}>
+                                    <FadingContainer shouldBlur={matches && (cartOpen || menuOpen) && delayedRouteBase !== '/'}>
                                         <Switch location={location}>
                                             <Route
                                                 path="/about/:about"

@@ -10,6 +10,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { lato2 } from 'src/styles/fonts';
 import { logoBlue } from 'src/styles/colors';
+import { useMedia } from 'react-media';
+import { screenBreakPoints } from 'src/styles/screens';
 
 type ShopListProps = {
     isMobile: boolean;
@@ -56,8 +58,10 @@ const CategoryToLabel: Record<typeof ProductTypes[number], string> = {
     original: 'Original Compositions',
 };
 
-const ShopList: React.FC<ShopListProps> = ({ match: { params: { product } }, isMobile }) => {
+const ShopList: React.FC<ShopListProps> = ({ match: { params: { product } }}) => {
     const categorizedItems = useSelector(({ shop }: GlobalStateShape) => shop.items);
+    const { xs } = useMedia({ queries: screenBreakPoints });
+
     React.useEffect(() => {
         if (Object.keys(categorizedItems).length && product) {
             const el = document.getElementById(product);
@@ -71,16 +75,16 @@ const ShopList: React.FC<ShopListProps> = ({ match: { params: { product } }, isM
         <div css={listStyle}>
             {
                 Object.entries(categorizedItems).map(([key, items]) => (
-                    <Category isMobile={isMobile} key={key}>
-                        <CategoryTitle isMobile={isMobile}>
-                            <CategoryTitleText isMobile={isMobile}>{CategoryToLabel[key as typeof ProductTypes[number]]}</CategoryTitleText>
+                    <Category isMobile={xs} key={key}>
+                        <CategoryTitle isMobile={xs}>
+                            <CategoryTitleText isMobile={xs}>{CategoryToLabel[key as typeof ProductTypes[number]]}</CategoryTitleText>
                         </CategoryTitle>
                         {
                             items.map((item: Product, idx: number) => (
                                 <ShopItem
                                     item={item}
                                     key={idx}
-                                    isMobile={isMobile}
+                                    isMobile={xs}
                                 />
                             ))
                         }

@@ -3,10 +3,10 @@
 import { css, SerializedStyles } from '@emotion/react';
 import darken from 'polished/lib/color/darken';
 
-import { screenXSorPortrait } from 'src/styles/screens';
+import { screenMorPortrait } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
-const pushedHelper = (marginTop: number) => ({
+export const pushedHelper = (marginTop: number): { height: string; marginTop: string } => ({
     height: `calc(100% - ${marginTop}px)`,
     marginTop: `${marginTop}px`,
 });
@@ -16,7 +16,7 @@ export const pushedMobile = css(pushedHelper(navBarHeight.mobile));
 
 export const pushed = css({
     ...pushedHelper(navBarHeight.desktop),
-    [screenXSorPortrait]: {
+    [screenMorPortrait]: {
         ...pushedHelper(navBarHeight.mobile),
     },
 });

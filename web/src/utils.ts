@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import { TweenLite } from 'gsap';
+import { gsap } from 'gsap';
 
 export interface FormattedLocationShape {
     venue: string;
@@ -66,26 +66,26 @@ export const validateEmail = (email: string): boolean => {
     return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/.test(email);
 };
 
-export const fadeOnEnter = (delay = 0) => (element: HTMLElement): void => {
+export const fadeOnEnter = (delay = 0, duration = 0.25) => (element: HTMLElement): void => {
     if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 0 }, { autoAlpha: 1, delay });
+        gsap.fromTo(element, { autoAlpha: 0 }, { autoAlpha: 1, delay, duration });
     }
 };
 
-export const fadeOnExit = (delay = 0) => (element: HTMLElement): void => {
+export const fadeOnExit = (delay = 0, duration = 0.25) => (element: HTMLElement): void => {
     if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 1 }, { autoAlpha: 0, delay });
+        gsap.fromTo(element, { autoAlpha: 1 }, { autoAlpha: 0, delay, duration });
     }
 };
 
-export const slideOnEnter = (delay: number) => (element: HTMLElement): void => {
+export const slideOnEnter = (delay = 0, duration = 0.25) => (element: HTMLElement): void => {
     if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 1}, { y: '0%', delay, clearProps: 'transform', force3D: true });
+        gsap.fromTo(element, { autoAlpha: 1}, { y: '0%', delay, duration, clearProps: 'transform', force3D: true, });
     }
 };
 
-export const slideOnExit = (delay: number) => (element: HTMLElement): void => {
+export const slideOnExit = (delay = 0, duration = 0.25) => (element: HTMLElement): void => {
     if (element) {
-        TweenLite.to(element, 0.25, { y: '-100%', delay, force3D: true });
+        gsap.to(element, { y: '-100%', delay, duration, force3D: true });
     }
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ReactMedia from 'react-media';
+import { useMedia } from 'react-media';
 import { Link } from 'react-router-dom';
 
 import styled from '@emotion/styled';
@@ -9,10 +9,12 @@ import { SycLogo } from 'src/components/App/NavBar/SycLogo';
 import { lightBlue, logoBlue } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 import { noHighlight } from 'src/styles/mixins';
-import { reactMediaMediumQuery, reactMediaMobileQuery, screenXSorPortrait } from 'src/styles/screens';
+import { screenBreakPoints } from 'src/styles/screens';
 import { navBarHeight } from 'src/styles/variables';
 
 const navBarFontSizeREM = 2.5;
+const letterSpacing = 0.05;
+const capitalRatio = 0.7;
 
 interface NavBarLogoProps {
     isHome: boolean;
@@ -20,82 +22,97 @@ interface NavBarLogoProps {
     specificRouteName: string;
 }
 
-const LogoText = styled.div`
-    ${noHighlight}
-    display: inline-block;
-    margin-left: 20px;
-    vertical-align: middle;
-    line-height: ${navBarHeight.desktop}px;
-    height: ${navBarHeight.desktop}px;
-    text-transform: uppercase;
+const LogoText = styled.div<{ isMobile: boolean }>(
+    noHighlight,
+    {
+        display: 'inline-block',
+        verticalAlign: 'middle',
+        lineHeight: `${navBarHeight.desktop}px`,
+        height: navBarHeight.desktop,
+        textTransform: 'uppercase',
+        flex: '1 1 auto',
 
-    ${screenXSorPortrait} {
-        margin-left: 0;
-        line-height: ${navBarHeight.mobile}px;
-        height: ${navBarHeight.mobile}px;
-    }
-`;
+        screenXSorPortrait: {
+            marginLeft: 0,
+            lineHeight: navBarHeight.mobile,
+            height: navBarHeight.mobile,
+        },
+    },
+    ({ isMobile }) => !isMobile && {
+        marginLeft: 20,
+    },
+);
 
 const StyledLink = styled(Link, {
     shouldForwardProp: prop => prop !== 'isHome' && prop !== 'isExpanded',
-}) <{ isHome: boolean; isExpanded: boolean }>`
-    display: inline-flex;
-    font-family: ${lato2};
-    font-size: ${navBarFontSizeREM}rem;
-    letter-spacing: 0.05em;
-    height: 100%;
-    color: ${logoBlue};
-    fill: ${props => (props.isHome) ? 'white' : logoBlue};
-    transition: all 0.3s;
-    overflow: hidden;
-    cursor: pointer;
-    align-items: center;
-    -webkit-tap-highlight-color: transparent;
+})<{ isHome: boolean; isExpanded: boolean }>(
+    {
+        display: 'inline-flex',
+        fontFamily: lato2,
+        fontSize: `${navBarFontSizeREM}rem`,
+        letterSpacing: `${letterSpacing}rem`,
+        height: '100%',
+        color: logoBlue,
+        transition: 'all 0.3s',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        alignItems: 'center',
+        WebkitTapHighlightColor: 'transparent',
 
-    &:hover {
-        /* stylelint-disable-next-line declaration-colon-newline-after */
-        ${props => !props.isHome ?
-        `fill: ${lightBlue}` :
-        'filter: drop-shadow(0px 0px 4px white)'};
-        color: ${lightBlue};
-    }
+        '&:hover': {
+            color: lightBlue,
+        },
 
-    ${screenXSorPortrait} {
-        font-size: ${navBarFontSizeREM * 0.75}rem;
-    }
-`;
+    },
+    ({ isHome }) => isHome ?
+        {
+            fill: 'white',
+            '&:hover': {
+                filter: 'drop-shadow(0px 0px 4px white)',
+            }
+        } : {
+            fill: logoBlue,
+            '&:hover': {
+                fill: lightBlue
+            }
+        },
+);
 
 const SeanChenText = styled.span` vertical-align: middle; `;
 
-const RouteText = styled.span`
-    font-size: ${navBarFontSizeREM * 0.8}rem;
-    vertical-align: middle;
-    margin-left: 10px;
-`;
+const RouteText = styled.div({
+    fontSize: `${navBarFontSizeREM * 0.8}rem`,
+    letterSpacing: 0,
+    display: 'inline-block',
+    verticalAlign: 'middle',
+    marginLeft: 10,
+});
+
+const routeNameMapping: Record<string, string> = {
+    biography: 'bio',
+    discography: 'discog',
+    'retrieve-purchased': 'shop',
+    scores: 'shop',
+    checkout: 'shop',
+};
 
 const NavBarLogo: React.FC<React.HTMLAttributes<HTMLDivElement> & NavBarLogoProps> = ({
     isHome,
     isExpanded,
     specificRouteName,
 }) => {
-    const displayName = specificRouteName && specificRouteName.replace('discography', 'discog').replace('biography', 'bio').replace('retrieve-purchased', 'shop').replace('checkout', 'shop');
+    const { xs, medium } = useMedia({ queries: screenBreakPoints })
+    const displayName = specificRouteName && ((xs && routeNameMapping[specificRouteName]) || specificRouteName);
+    const letterCount = displayName?.length;
+    const estimatedTextWidth = displayName && letterCount * capitalRatio * navBarFontSizeREM * 0.8 + letterSpacing * (letterCount - 1);
+    const otherObjectSizes = (xs || medium) && ((xs ? 120 : 150) + (xs ? 0 : 20) + 111);   // other stuff 56 + 35 + 15 + 5 buffer
     return (
         <StyledLink to="/" isHome={isHome} isExpanded={isExpanded}>
-            <ReactMedia query={reactMediaMobileQuery}>
-                {(xs: boolean) => (
-                    <ReactMedia query={reactMediaMediumQuery}>
-                        {(medium: boolean) => (
-                            <React.Fragment>
-                                <SycLogo />
-                                <LogoText>
-                                    {!isHome && !xs && <SeanChenText>{'SEAN CHEN' + (medium ? ' |' : '')}</SeanChenText>}
-                                    {!isHome && (xs || medium) && <RouteText>{displayName}</RouteText>}
-                                </LogoText>
-                            </React.Fragment>
-                        )}
-                    </ReactMedia>
-                )}
-            </ReactMedia>
+            <SycLogo />
+            <LogoText isMobile={xs}>
+                {!isHome && !xs && <SeanChenText>{'SEAN CHEN' + (medium ? ' |' : '')}</SeanChenText>}
+                {displayName && !isHome && (xs || medium) && <RouteText css={{ fontSize: `min(${navBarFontSizeREM * 0.8}rem, calc(${navBarFontSizeREM * 0.8} * (100vw - ${otherObjectSizes}px) / ${estimatedTextWidth}))` }}>{displayName}</RouteText>}
+            </LogoText>
         </StyledLink>
     );
 };

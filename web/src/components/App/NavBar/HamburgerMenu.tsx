@@ -84,4 +84,4 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = (props) => (
     </StyledHamburger>
 );
 
-export default React.memo(HamburgerMenu);
+export default HamburgerMenu;

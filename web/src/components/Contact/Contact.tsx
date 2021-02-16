@@ -23,6 +23,7 @@ type ContactProps = ContactOwnProps & ContactDispatchToProps;
 
 const ContactContainer = styled.div({
     display: 'flex',
+    visibilieyt: 'hidden',
     flexFlow: 'row wrap',
     justifyContent: 'center',
     height: '100%',

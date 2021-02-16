@@ -3,6 +3,8 @@ import * as React from 'react';
 import { css } from '@emotion/react';
 import { Transition } from 'react-transition-group';
 
+import { gsap } from 'gsap';
+
 import { LazyImage } from 'src/components/LazyImage';
 import { PhotoItem } from 'src/components/Media/Photos/types';
 import { idFromItem, resizedPathFromItem, staticPathFromItem } from 'src/components/Media/Photos/utils';
@@ -19,7 +21,7 @@ const PhotoFader: React.FC<PhotoFaderProps> = ({ item, isCurrent }) => {
     const urlWebP = resizedPathFromItem(item, { gallery: true, webp: true });
     const urlJpg = resizedPathFromItem(item, { gallery: true });
     return (
-        <Transition
+        <Transition<undefined>
             mountOnEnter={true}
             unmountOnExit={true}
             in={isCurrent}
@@ -47,7 +49,7 @@ const PhotoFader: React.FC<PhotoFaderProps> = ({ item, isCurrent }) => {
                 }}
                 loadingComponent="default"
                 successCb={(el: HTMLImageElement) => {
-                    TweenLite.to(el, 0.2, { autoAlpha: 1 });
+                    gsap.to(el, { autoAlpha: 1, duration: 0.2 });
                 }}
             />
         </Transition>

@@ -33,6 +33,10 @@ const Paragraph = styled.p({
     lineHeight: '2em',
     margin: '1.6em 0',
 
+    [screenM]: {
+        fontSize: '1em',
+    },
+
     [screenXSorPortrait]: {
         fontSize: '1em',
         lineHeight: '1.6em',
@@ -118,7 +122,7 @@ class BioText extends React.Component<BioTextProps> {
     }
 }
 
-interface ImageContainerProps { currScrollTop: number; bgImage?: string }
+interface ImageContainerProps { bgImage?: string }
 
 const ImageContainer = styled.div<ImageContainerProps>({
     flex: 1,
@@ -143,9 +147,9 @@ const ImageContainer = styled.div<ImageContainerProps>({
         backgroundSize: '106%',
         backgroundPosition: 'center 15%',
     }
-}, ({ currScrollTop, bgImage }) => ({
+}, ({ bgImage }) => ({
     backgroundImage: bgImage ? `url(${bgImage})` : 'unset',
-    opacity: easeQuadOut(Math.max(1 - currScrollTop / pictureHeight, 0)),
+    // opacity: easeQuadOut(Math.max(1 - currScrollTop / pictureHeight, 0)),
 }));
 
 const BioContainer = styled.div(
@@ -175,7 +179,7 @@ interface BioOwnProps {
 }
 
 interface BioState {
-    readonly bgImage?: string;
+    readonly bgImage: string;
 }
 
 interface BioStateToProps {
@@ -220,11 +224,14 @@ class About extends React.PureComponent<BioProps, BioState> {
         );
     }
 
+    componentDidUpdate() {
+        this.bgRef.current.style.opacity = easeQuadOut(Math.max(1 - this.props.scrollTop / pictureHeight, 0)).toString();
+    }
+
     render() {
         return (
             <BioContainer onScroll={this.props.isMobile ? scrollFn(pictureHeight + navBarHeight.mobile, this.props.onScroll) : null}>
                 <ImageContainer
-                    currScrollTop={this.props.scrollTop}
                     bgImage={this.state.bgImage}
                     ref={this.bgRef}
                 >

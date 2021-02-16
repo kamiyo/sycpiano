@@ -159,21 +159,21 @@ const enterAnimation = (el: HTMLElement, isAppearing: boolean, isMobile: boolean
             el.style.height = 'auto';
         } else {
             gsap.set(el, { height: 'auto' });
-            gsap.from(el, 0.25, { height: 0 });
+            gsap.from(el, { height: 0, duration: 0.25 });
             gsap.fromTo(`.${path}`, { autoAlpha: 0, x: 80 }, { autoAlpha: 1, x: 0, stagger: 0.08, duration: 0.3 });
 
         }
     } else {
-        gsap.to(el, 0.25, { autoAlpha: 1 });
+        gsap.to(el, { autoAlpha: 1, duration: 0.25 });
     }
 };
 
 const exitAnimation = (el: HTMLElement, isMobile: boolean, path: string) => {
     if (isMobile) {
-        gsap.to(el, 0.25, { height: 0 })
-        gsap.to(`.${path}`, { autoAlpha: 0, x: 80, stagger: 0.05, duration: 0.25, });
+        gsap.to(el, { height: 0, duration: 0.25 })
+        gsap.to(`.${path}`, { autoAlpha: 0, x: 80, stagger: 0.05, duration: 0.25 });
     } else {
-        gsap.to(el, 0.25, { autoAlpha: 0 });
+        gsap.to(el, { autoAlpha: 0, duration: 0.25 });
     }
 };
 
@@ -199,25 +199,9 @@ const StyledLi = styled.li<{ isHome: boolean }>`
     }
 `;
 
-const subsAreEqual = (prev: NavBarLinkProps, next: NavBarLinkProps) => {
-    const { showSubs: prevShowSubs, ...prevWithoutShowSubs } = prev;
-    const { showSubs: nextShowSubs, ...nextWithoutShowSubs } = next;
-    // Object.keys(prevWithoutShowSubs).forEach((key: keyof typeof prevWithoutShowSubs) => {
-    //     if (prevWithoutShowSubs[key] !== nextWithoutShowSubs[key]) {
-    //         return false;
-    //     }
-    // });
-    const subDiffPrev = prevShowSubs.filter(x => !nextShowSubs.includes(x));
-    const subDiffNext = nextShowSubs.filter(x => !prevShowSubs.includes(x));
-    if (subDiffPrev.length || subDiffNext.length) {
-        return false;
-    }
-    return true;
-};
-
 interface AorLink {
     href?: string;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
     to?: string;
 }
 
@@ -225,7 +209,6 @@ const NavBarLink = ({
     active,
     isHome,
     isMobile,
-    isExpanded,
     link,
     subNavLinks,
     showSubs,
@@ -251,7 +234,7 @@ const NavBarLink = ({
     } else {
         attr.to = link.path;
         attr.onClick = () => {
-            toggleSubNav('');
+            toggle('');
             isMobile && expand(false);
         };
     }

@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import { lighten } from 'polished';
 import * as React from 'react';
-import ClampLines, { ClampLinesProps } from 'react-clamp-lines';
+import ClampLines from 'react-clamp-lines';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 import { css } from '@emotion/react';
@@ -114,7 +114,7 @@ const h4style = css`
     color: black;
 `;
 
-const TextTop = styled<typeof ClampLines, ClampLinesProps>(ClampLines)`
+const TextTop = styled(ClampLines)`
     ${h4style}
     padding-top: 5;
     font-size: 1rem;
