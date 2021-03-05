@@ -4,7 +4,6 @@ const gulp = require('gulp');
 const fancyLog = require('fancy-log');
 const PluginError = require('plugin-error');
 const ts = require('gulp-typescript');
-const { ESLint } = require('eslint');
 const geslint = require('gulp-eslint');
 const webpack = require('webpack');
 const path = require('path');
@@ -24,6 +23,8 @@ const { MultiProgressBars } = require('multi-progress-bars');
 let reporter;
 
 const isProduction = process.env.NODE_ENV === 'production';
+
+const { ESLint } = isProduction ? { ESLint: undefined } : require('eslint');
 
 const devWebpackConfig = require('./webpack.dev.config.js');
 
