@@ -5,11 +5,10 @@ const getLastName = (name: string) => {
 };
 
 const normalizeString = (str: string) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f":()',\.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
+    return str.normalize('NFD').replace(/[\u0300-\u036f":()',.-]/g, '').replace(/\s+/g, '-').replace(/_$/, '');
 };
 
-export const getHash = (composer: string, piece: string, name?: string) => {
+export const getHash = (composer: string, piece: string, name?: string): string => {
     const str = `/${getLastName(composer)}/${normalizeString(piece)}${name ? '/' + normalizeString(name) : ''}`;
-    const hash = createHash('sha1').update(str).digest('base64');
-    return hash;
+    return createHash('sha1').update(str).digest('base64');
 };

@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import * as React from 'react';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { lato1, lato2 } from 'src/styles/fonts';
@@ -16,9 +16,12 @@ import { navBarHeight } from 'src/styles/variables';
 
 import { DesktopBackgroundPreview, MobileBackgroundPreview } from 'src/components/Home/PreviewSVGs';
 import Social from 'src/components/Home/Social';
-import socials from 'src/components/Home/socials';
 import { LazyImage } from 'src/components/LazyImage';
-import { screenLengths, screenXSandPortrait, screenXSorPortrait } from 'src/styles/screens';
+import { screenLengths, screenXSandPortrait, screenXSorPortrait, screenMandPortrait } from 'src/styles/screens';
+import { useSelector } from 'react-redux';
+import { GlobalStateShape } from 'src/types';
+import { Transition } from 'react-transition-group';
+import { fadeOnEnter, fadeOnExit } from 'src/utils';
 
 const textShadowColor = 'rgba(0, 0, 0, 0.75)';
 
@@ -28,7 +31,7 @@ const HomeContainer = styled('div')`
     width: 100%;
 `;
 
-const Content = styled('div')`
+const Content = styled.div<{ menuExpanded: boolean }>`
     ${noHighlight}
     position: absolute;
     width: 100%;
@@ -39,6 +42,11 @@ const Content = styled('div')`
     text-shadow: 0 0 8px ${textShadowColor};
     z-index: 100;
     overflow: hidden;
+    transition: filter 0.25s;
+
+    ${screenMandPortrait} {
+        filter: ${props => props.menuExpanded ? 'blur(8px)' : 'unset'};
+    }
 
     ${screenXSorPortrait} {
         height: calc(100% - ${navBarHeight.mobile}px);
@@ -186,73 +194,69 @@ const srcWidths = screenLengths.map((value) => (
 ));
 
 interface HomeProps {
-    bgLoaded: () => void;
+    // bgLoaded: () => void;
     isMobile: boolean;
 }
 
-class Home extends React.Component<HomeProps, {}> {
+const Home: React.FC<HomeProps> = ({ isMobile }) => {
+    const menuExpanded = useSelector(({ navbar }: GlobalStateShape) => navbar.isExpanded);
 
-    defaultCanHover = Object.keys(socials).reduce((prev, curr) => {
-        return {
-            ...prev,
-            [curr]: false,
-        };
-    }, {});
-
-    onImageLoaded = () => {
-        this.props.bgLoaded();
-    }
-
-    render() {
-        return (
-            <HomeContainer>
-                <BackgroundContainer>
-                    <LazyImage
-                        isMobile={this.props.isMobile}
-                        id="home_bg"
-                        csss={{
-                            mobile: mobileBackgroundStyle,
-                            desktop: desktopBackgroundStyle,
-                            loading: loadingStyle,
-                        }}
-                        mobileAttributes={{
-                            webp: {
-                                srcset: generateSrcsetWidths(sycChairVertical('webp'), srcWidths),
-                                sizes: '100vh',
-                            },
-                            jpg: {
-                                srcset: generateSrcsetWidths(sycChairVertical(), srcWidths),
-                                sizes: '100vh',
-                            },
-                            src: resizedImage(sycChairVertical(), { height: 1920 }),
-                        }}
-                        desktopAttributes={{
-                            webp: {
-                                srcset: generateSrcsetWidths(homeBackground('webp'), screenLengths),
-                            },
-                            jpg: {
-                                srcset: generateSrcsetWidths(homeBackground(), screenLengths),
-                            },
-                            src: resizedImage(homeBackground(), { width: 1920 }),
-                        }}
-                        loadingComponent={this.props.isMobile ? MobileBackgroundPreview : DesktopBackgroundPreview}
-                        alt="home background"
-                        successCb={this.onImageLoaded}
-                    />
-                    <BackgroundCover />
-                    <NavBarGradient />
-                </BackgroundContainer>
-                <Content>
-                    <Name>Sean Chen</Name>
-                    <Skills>pianist / composer / arranger</Skills>
-                    <Social />
-                    <StyledCopyright>Copyright © {moment().format('YYYY')} Sean Chen</StyledCopyright>
-                </Content>
-            </HomeContainer>
-        );
-    }
+    return (
+        <HomeContainer>
+            <BackgroundContainer>
+                <Transition<undefined>
+                    in={isMobile && menuExpanded}
+                    onEnter={fadeOnEnter()}
+                    onExit={fadeOnExit(0.15)}
+                    timeout={400}
+                >
+                    <div css={{ visibility: 'hidden', position: 'absolute', top: 0, zIndex: 1, height: '100%' }}><MobileBackgroundPreview /></div>
+                </Transition>
+                <LazyImage
+                    isMobile={isMobile}
+                    id="home_bg"
+                    csss={{
+                        mobile: mobileBackgroundStyle,
+                        desktop: desktopBackgroundStyle,
+                        loading: loadingStyle,
+                    }}
+                    mobileAttributes={{
+                        webp: {
+                            srcset: generateSrcsetWidths(sycChairVertical('webp'), srcWidths),
+                            sizes: '100vh',
+                        },
+                        jpg: {
+                            srcset: generateSrcsetWidths(sycChairVertical(), srcWidths),
+                            sizes: '100vh',
+                        },
+                        src: resizedImage(sycChairVertical(), { height: 1920 }),
+                    }}
+                    desktopAttributes={{
+                        webp: {
+                            srcset: generateSrcsetWidths(homeBackground('webp'), screenLengths),
+                        },
+                        jpg: {
+                            srcset: generateSrcsetWidths(homeBackground(), screenLengths),
+                        },
+                        src: resizedImage(homeBackground(), { width: 1920 }),
+                    }}
+                    loadingComponent={isMobile ? MobileBackgroundPreview : DesktopBackgroundPreview}
+                    alt="home background"
+                    successCb={() => { }} /* eslint-disable-line @typescript-eslint/no-empty-function */
+                />
+                <BackgroundCover />
+                <NavBarGradient />
+            </BackgroundContainer>
+            <Content menuExpanded={menuExpanded}>
+                <Name>Sean Chen</Name>
+                <Skills>pianist / composer / arranger</Skills>
+                <Social />
+                <StyledCopyright>Copyright © {moment().format('YYYY')} Sean Chen</StyledCopyright>
+            </Content>
+        </HomeContainer>
+    );
 }
 
-export type HomeType = React.Component<HomeProps>;
+export type HomeType = typeof Home;
 export type RequiredProps = HomeProps;
 export default Home;

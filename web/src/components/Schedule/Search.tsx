@@ -3,7 +3,7 @@ import { stringify } from 'qs';
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { SearchIconInstance, SearchIconSVG } from 'src/components/Schedule/SearchIconSVG';
@@ -21,7 +21,7 @@ type SearchProps = {
     isMobile?: boolean;
     search: string;
     setSearch: (search: string) => void;
-} & RouteComponentProps<{}>;
+} & RouteComponentProps<unknown>;
 
 const Container = styled.div<{ focused: boolean }>`
     width: 90%;
@@ -83,7 +83,7 @@ const ResetButton = styled.div<{ focused: boolean }>`
     }
 `;
 
-class Search extends React.Component<SearchProps, { focused: boolean; }> {
+class Search extends React.Component<SearchProps, { focused: boolean }> {
     constructor(props: SearchProps) {
         super(props);
         this.state = {

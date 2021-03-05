@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { css, SerializedStyles } from '@emotion/core';
+import { css, SerializedStyles } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import { ContactInfo } from 'src/components/Contact/ContactInfo';
 import { ContactSocialMedia } from 'src/components/Contact/ContactSocialMedia';
@@ -23,38 +23,29 @@ import { screenWidths, screenXSorPortrait } from 'src/styles/screens';
 const imageInsetShadowColor = '#222';
 const alternateBackgroundColor = '#eee';
 
-const photosAttributesMap = new Map<string, { jpg?: string; webp?: string; svg?: string; css: SerializedStyles; imgCss?: SerializedStyles}>([
-    ['Sean Chen', {
+interface PhotoAttributes {
+    jpg?: string;
+    webp?: string;
+    svg?: string;
+    css: SerializedStyles;
+    imgCss?: SerializedStyles;
+}
+
+const photosAttributesMap: Record<string, PhotoAttributes> = {
+    'Sean Chen': {
         jpg: seanChenContactPhotoUrl(),
         webp: seanChenContactPhotoUrl('webp'),
         css: css({
             backgroundSize: 'cover',
             backgroundPosition: '0 28%',
         }),
-    }],
-    // ['Joel Harrison', {
-    //     jpg: joelHarrisonContactPhotoUrl(),
-    //     webp: joelHarrisonContactPhotoUrl('webp'),
-    //     css: css({
-    //         backgroundSize: '125%',
-    //         backgroundPosition: 'center 40%',
-    //     }),
-    // }],
-    // ['Martha Woods', {
-    //     jpg: marthaWoodsContactPhotoUrl(),
-    //     webp: marthaWoodsContactPhotoUrl('webp'),
-    //     css: css({
-    //         backgroundSize: 'unset',
-    //         backgroundPosition: '0 0',
-    //     }),
-    // }],
-    ['Martha Woods', {
+    },
+    'Martha Woods': {
         svg: marthaWoodsContactPhotoUrl(),
         css: css({
             backgroundSize: 'unset',
             backgroundPosition: '0 0',
             backgroundColor: 'white',
-            visibility: 'visible',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -62,25 +53,34 @@ const photosAttributesMap = new Map<string, { jpg?: string; webp?: string; svg?:
         imgCss: css({
             width: '90%',
         }),
-    }],
-]);
+    },
+};
 
-interface ImageContainerProps { bgImage?: string; contact: string; }
+interface ImageContainerProps { bgImage?: string; contact: string }
 
-const ImageContainer = styled.div<ImageContainerProps>`
-    background-image: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
-    background-attachment: initial;
-    background-repeat: no-repeat;
-    background-color: black;
-    visibility: hidden;
-    flex: 0 0 55%;
-    box-shadow: inset 0 -15px 15px -15px ${imageInsetShadowColor};
-    ${props => photosAttributesMap.get(props.contact).css}
+const ImageContainer = styled.div<ImageContainerProps>(
+    {
+        backgroundAttachment: 'initial',
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: 'black',
+        visibility: 'hidden',
+        flex: '0 0 55%',
+        boxShadow:
+            `inset 0 -15px 15px -15px ${imageInsetShadowColor}`,
 
-    ${screenXSorPortrait} {
-        height: 75vw;
-    }
-`;
+        [screenXSorPortrait]: {
+            height: '75vw',
+            flex: 'unset',
+            boxShadow:
+                `inset 0 -15px 15px -15px ${imageInsetShadowColor},
+                inset 0 15px 15px -15px ${imageInsetShadowColor}`,
+        }
+    },
+    ({ contact }) => photosAttributesMap[contact].css,
+    ({ bgImage }) => ({
+        backgroundImage: bgImage ? `url(${bgImage})` : 'unset',
+    }),
+);
 
 const StyledContactInfo = styled(ContactInfo)` flex: 1 0 31%; `;
 
@@ -91,81 +91,73 @@ const imageLoaderStyle = css`
     position: absolute;
 `;
 
-const StyledContactItem = styled.div`
-    ${pushed}
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    flex: 0 1 600px;
-    width: 100%;
+const StyledContactItem = styled.div(
+    pushed,
+    {
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'white',
+        flex: '0 1 600px',
+        width: '100%',
 
-    &:nth-of-type(2n) {
-        background-color: ${alternateBackgroundColor};
-    }
+        '&:nth-of-type(2n)': {
+            backgroundColor: alternateBackgroundColor,
+        },
 
-    ${screenXSorPortrait} {
-        height: fit-content;
-        padding-bottom: 3em;
+        [screenXSorPortrait]: {
+            height: 'fit-content',
+            paddingBottom: '3em',
 
-        &:not(:first-of-type) {
-            margin-top: 0;
-        }
-    }
-`;
+            '&:not(:first-of-type)': {
+                marginTop: 0,
+            },
+        },
+    });
 
-interface ContactItemState {
-    bgImage: string;
-}
+const ContactItem: React.FC<ContactItemShape> = (props) => {
+    const [bgImage, setBgImage] = React.useState('');
+    const bgRef = React.useRef<HTMLDivElement>();
 
-class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
-    state: ContactItemState = { bgImage: '' };
-    private bgRef: React.RefObject<HTMLDivElement> = React.createRef();
-
-    onImageLoad = (el: HTMLImageElement) => {
-        this.setState({ bgImage: el.currentSrc }, () => {
-            TweenLite.to(
-                this.bgRef.current,
-                0.3,
-                { autoAlpha: 1, delay: 0.2, clearProps: 'opacity' });
-        });
-    }
-
-    onImageDestroy = () => {
+    const onImageLoad = React.useCallback((el?: HTMLImageElement) => {
         TweenLite.to(
-            this.bgRef.current,
+            bgRef.current,
+            0.3,
+            { autoAlpha: 1, delay: 0.2, clearProps: 'opacity' },
+        );
+        setBgImage(el?.currentSrc)
+    }, [bgRef]);
+
+    const onImageDestroy = () => {
+        TweenLite.to(
+            bgRef.current,
             0.1,
             { autoAlpha: 0 },
         );
-    }
+    };
 
-    render() {
-        const {
-            name,
-            position,
-            phone,
-            email,
-            social,
-            isMobile,
-            website,
-        }: Partial<ContactItemShape> = this.props;
+    const {
+        name,
+        position,
+        phone,
+        email,
+        social,
+        isMobile,
+        website,
+    }: Partial<ContactItemShape> = props;
 
-        const attributes = photosAttributesMap.get(name);
-        const {
-            webp,
-            jpg,
-        } = attributes;
-        const webpSrcSet = generateSrcsetWidths(webp, screenWidths);
-        const jpgSrcSet = generateSrcsetWidths(jpg, screenWidths);
+    const { webp, jpg, svg, imgCss } = photosAttributesMap[name];
+    const webpSrcSet = generateSrcsetWidths(webp, screenWidths);
+    const jpgSrcSet = generateSrcsetWidths(jpg, screenWidths);
 
-        return (
-            <StyledContactItem>
-
-                <ImageContainer
-                    bgImage={this.state.bgImage}
-                    ref={this.bgRef}
-                    contact={name}
-                >
-                    {(!attributes.svg) ? (
+    return (
+        <StyledContactItem>
+            <ImageContainer
+                bgImage={bgImage}
+                ref={bgRef}
+                contact={name}
+            >
+                {(!svg) ?
+                    (
                         <LazyImage
                             isMobile={isMobile}
                             id={`contact_lazy_image_${name.replace(/ /g, '_')}`}
@@ -196,29 +188,29 @@ class ContactItem extends React.Component<ContactItemShape, ContactItemState> {
                                 src: resizedImage(jpg, { height: 1080 }),
                             }}
                             alt={`${name}`}
-                            successCb={this.onImageLoad}
-                            destroyCb={this.onImageDestroy}
+                            successCb={onImageLoad}
+                            destroyCb={onImageDestroy}
                         />
                     ) : (
-                            <img
-                                src={staticImage(`/logos${attributes.svg}`)}
-                                css={attributes.imgCss}
-                            />
-                        )}
-                </ImageContainer>
+                        <img
+                            src={staticImage(`${svg}`)}
+                            css={imgCss}
+                            onLoad={() => onImageLoad()}
+                        />
+                    )}
+            </ImageContainer>
 
-                <StyledContactInfo
-                    name={name}
-                    position={position}
-                    phone={phone}
-                    email={email}
-                    website={website}
-                />
+            <StyledContactInfo
+                name={name}
+                position={position}
+                phone={phone}
+                email={email}
+                website={website}
+            />
 
-                <StyledContactSocialMedia social={social} />
-            </StyledContactItem>
-        );
-    }
-}
+            <StyledContactSocialMedia social={social} />
+        </StyledContactItem>
+    );
+};
 
 export default ContactItem;

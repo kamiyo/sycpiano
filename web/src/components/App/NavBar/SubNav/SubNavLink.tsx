@@ -1,18 +1,16 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 
-import { darken } from 'polished';
-import { lightBlue } from 'src/styles/colors';
+import { lightBlue, navFontColor } from 'src/styles/colors';
 import { noHighlight } from 'src/styles/mixins';
 
 import { LinkShape } from 'src/components/App/NavBar/types';
 
 interface SubNavLinkProps {
     readonly isHome: boolean;
-    readonly basePath: string;
+    readonly basePath: LinkShape;
     readonly link: LinkShape;
     readonly onClick: () => void;
     readonly isMobile: boolean;
@@ -20,59 +18,48 @@ interface SubNavLinkProps {
 
 const StyledSubNavLink = styled(NavLink, {
     shouldForwardProp: (prop) => (prop !== 'isMobile' && prop !== 'isHome'),
-})<{ isMobile: boolean; isHome: boolean }>`
-    color: rgba(0, 0, 0, 0.7);
-    position: relative;
-    width: 100%;
-    display: block;
-    padding: 10px;
-    background-color: white;
-    text-align: center;
-    box-shadow: 0 6px 11px -5px rgba(0, 0, 0, 0.3);
-    transition: all 0.25s;
-    line-height: 2rem;
-
-    :hover {
-        background-color: ${lightBlue};
-        color: white;
+})<{ isMobile: boolean; isHome: boolean }>({
+    color: navFontColor,
+    position: 'relative',
+    width: '100%',
+    display: 'block',
+    padding: '10px',
+    backgroundColor: 'white',
+    textAlign: 'center',
+    boxShadow: '0 6px 11px -5px rgba(0, 0, 0, 0.3)',
+    transition: 'all 0.25s',
+    lineHeight: '2rem',
+    '&.active': {
+        color: lightBlue,
+    },
+    '&:hover': {
+        color: 'white',
+        backgroundColor: lightBlue,
+    },
+}, (props) => props.isMobile && {
+    color: navFontColor,
+    padding: '0.5rem 1rem 0.5rem',
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
+    textAlign: 'right',
+}, (props) => props.isHome && {
+    color: 'white',
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
+    '&:hover': {
+        textShadow: '0 0 1px rgba(255, 255, 255, 1)',
+        backgroundColor: 'rgba(53, 53, 53, 0.27)',
+        boxShadow: '0 6px 11px -5px rgba(0, 0, 0, 0.5)',
+        color: 'white',
     }
-
-    &.active {
-        background-color: ${lightBlue};
-        color: white;
-    }
-`;
-
-const mobileStyle = css`
-    color: white;
-    padding: 20px;
-    background-color: transparent;
-    box-shadow: none;
-
-    &.active {
-        background-color: ${darken(0.05, lightBlue)};
-    }
-`;
-
-const homeStyle = css`
-    color: white;
-    background-color: transparent;
-    box-shadow: none;
-
-    :hover {
-        text-shadow: 0 0 1px rgba(255, 255, 255, 1);
-        background-color: rgba(53, 53, 53, 0.27);
-        box-shadow: 0 6px 11px -5px rgba(0, 0, 0, 0.5);
-    }
-`;
+});
 
 const StyledLi = styled.li(noHighlight);
 
 const SubNavLink: React.FC<SubNavLinkProps> = ({ basePath, link, onClick, isHome, isMobile }) => (
-    <StyledLi>
+    <StyledLi className={basePath.name}>
         <StyledSubNavLink
-            css={[isHome && homeStyle, isMobile && mobileStyle]}
-            to={`${basePath}${link.path}`}
+            to={`${basePath.path}${link.path}`}
             isMobile={isMobile}
             isHome={isHome}
             activeClassName={'active'}
@@ -83,4 +70,4 @@ const SubNavLink: React.FC<SubNavLinkProps> = ({ basePath, link, onClick, isHome
     </StyledLi>
 );
 
-export default React.memo(SubNavLink);
+export default SubNavLink;

@@ -37,7 +37,5 @@ export interface OtherActions {
     readonly type: typeof VIDEO_ACTIONS.OTHER_ACTIONS;
 }
 
-type ActionTypes = FetchPlaylistError | FetchPlaylistRequest | FetchPlaylistSuccess |
+export type ActionTypes = FetchPlaylistError | FetchPlaylistRequest | FetchPlaylistSuccess |
                   PlayItem | TogglePlaylist | PlayerIsReady | ResetPlayer | OtherActions;
-
-export default ActionTypes;

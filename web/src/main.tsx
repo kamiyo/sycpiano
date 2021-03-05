@@ -1,8 +1,7 @@
 import bluebird from 'bluebird';
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-global.Promise = bluebird;
+global.Promise = bluebird as any; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -10,8 +9,6 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import store from 'src/store';
 
 import App from 'src/components/App/App';
-
-main();
 
 function main() {
     ReactDOM.render((
@@ -22,3 +19,5 @@ function main() {
         </Provider>
     ), document.getElementById('hero-container') as HTMLElement);
 }
+
+main();

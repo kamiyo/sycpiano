@@ -1,9 +1,12 @@
+/* global BINARY_PATH */
 import {
     create,
     DenseMatrixDependencies,
     multiplyDependencies,
-    SparseMatrixDependencies } from 'mathjs';
-const { multiply, DenseMatrix,  SparseMatrix } = create({
+    SparseMatrixDependencies,
+    Matrix,
+} from 'mathjs';
+const { multiply, SparseMatrix, matrix } = create({
     multiplyDependencies,
     DenseMatrixDependencies,
     SparseMatrixDependencies,
@@ -33,11 +36,11 @@ export const drawCircleMask: DrawCircleMaskShape = (context, radius, dimensions,
     context.restore();
 };
 
-const getCirclePoints = (points: number, offset: number = 0) => {
+const getCirclePoints = (points: number, offset = 0) => {
     const pointArray: Array<{
         x: number;
         y: number;
-    }> = new Array();
+    }> = [];
 
     const twoPiPerPoints = 2 * Math.PI / points;
     for (let i = 0; i < points; i++) {
@@ -51,6 +54,7 @@ const getCirclePoints = (points: number, offset: number = 0) => {
 };
 
 interface Binary extends jBinary {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     read(type: any, offset?: number): any;
 }
 
@@ -70,20 +74,20 @@ export class WaveformLoader {
         length: number;
     } = undefined;
     waveform: Float32Array = undefined;
-    angles: Array<{ x: number; y: number; }>;
+    angles: Array<{ x: number; y: number }>;
+    loaded: Promise<void>;
 
-    loaded: Promise<any>;
-
-    reset = () => {
+    reset = (): void => {
         this.header = undefined;
         this.waveform = undefined;
         this.angles = undefined;
     }
 
-    loadWaveformFile = (filename: string) => {
+    loadWaveformFile = (filename: string): void => {
         this.header = undefined;
         this.waveform = undefined;
         this.loaded = new Promise((resolve) => {
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
             jBinary.loadData(filename).then((data: any) => {
                 const j: Binary = new jBinary(new jDataView(data, 0, data.byteLength, true), {});
                 const header = j.read(this.headerStructure);
@@ -120,7 +124,7 @@ class FIRLoader {
     samplesPerCrossing: number;
     filterSize: number;
     halfCrossings: number;
-    loaded: Promise<any>;
+    loaded: Promise<void>;
     coeffs: Float32Array;
     deltas: Float32Array;
 
@@ -134,8 +138,9 @@ class FIRLoader {
         this.loaded = this.loadFIRFile();
     }
 
-    loadFIRFile = () => (
-        new Promise((resolve) => {
+    loadFIRFile = () =>
+        new Promise<void>((resolve) => {
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
             jBinary.loadData(`${BINARY_PATH}/fir.dat`).then((data: any) => {
                 const j: Binary = new jBinary(new jDataView(data, 0, data.byteLength, true), {});
                 const header = j.read(this.headerStructure);
@@ -152,7 +157,6 @@ class FIRLoader {
                 resolve();
             });
         })
-    )
 }
 
 export const firLoader = new FIRLoader();
@@ -168,14 +172,16 @@ class ConstantQ {
         innerPtrSize: 'uint32',
         outerPtrSize: 'uint32',
     };
-    matrix: any;
-    loaded: Promise<any>;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    matrix: Matrix;
+    input = matrix([], 'dense', 'number');
+    loaded: Promise<void>;
     minF = 0;
     maxF = 0;
     numRows = 0;
     numCols = 0;
     sampleRate: number;
-    angles: Array<{ x: number; y: number; }>;
+    angles: Array<{ x: number; y: number }>;
 
     constructor(sampleRate: number) {
         this.matrix = undefined;
@@ -184,7 +190,8 @@ class ConstantQ {
     }
 
     loadMatrix = (filename: string) => (
-        new Promise((resolve) => {
+        new Promise<void>((resolve) => {
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
             jBinary.loadData(filename).then((data: any) => {
                 const j: Binary = new jBinary(new jDataView(data, 0, data.byteLength, true), {});
                 const header = j.read(this.headerStructure);
@@ -206,6 +213,7 @@ class ConstantQ {
                 this.minF = header.minFreq;
                 this.maxF = header.maxFreq;
                 this.matrix = SparseMatrix.fromJSON(o);
+                this.input.resize([1, this.numRows]);
 
                 const cqBins = 2 * this.numCols;
                 const invCqBins = 1 / cqBins;
@@ -217,13 +225,8 @@ class ConstantQ {
 
     apply(input: Float32Array): Float32Array {
         if (this.matrix) {
-            const inputMatrix = DenseMatrix.fromJSON({
-                mathjs: 'DenseMatrix',
-                data: [input],
-                size: [1, input.length],
-                datatype: 'number',
-            });
-            return Float32Array.from(multiply(inputMatrix, this.matrix).toArray()[0]);
+            this.input._data = [Array.from(input)];
+            return Float32Array.from(multiply(this.input, this.matrix).toArray()[0]);
         }
         return input;
     }

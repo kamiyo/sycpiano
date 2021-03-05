@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const path = require('path');
 const mustacheExpress = require('mustache-express');
@@ -28,28 +29,33 @@ const logger = () => {
     }
 };
 
+app.use(logger());
+
 // helmet will add HSTS to force HTTPS connections, remove x-powered-by non-standard header,
 // sets x-frame-options header to disallow our content to be rendered in iframes.
 app.use(helmet());
+
+// Non-admin routes.
+// Don't inject bodyParser unless needed
+app.use(/\/api/, ApiRouter);
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json())
 
 // only for dev
 // prod uses nginx to serve static files
 app.use('/static', express.static(path.join(__dirname, '/web/assets')));
 app.use('/static', express.static(path.join(__dirname, '/web/build')));
 
-app.use(logger());
 app.engine('html', mustacheExpress());
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '/web/build'));
 
 // Matches the /admin route.
-app.get(/\/admin/, (req, res) => res.redirect('https://app.forestadmin.com'));
+app.get(/\/admin/, (_, res) => res.redirect('https://app.forestadmin.com'));
 
 // Extends Forest api
 app.use(/\/rest/, AdminRest);
-
-// Non-admin routes.
-app.use(/\/api/, ApiRouter);
 
 // Resize images.
 app.use(/\/resized/, Resized);
@@ -71,6 +77,9 @@ Object.keys(oldRoutesToRedirectsMap).forEach(key => (
 
 // We catch any route first, and then let our front-end routing do the work.
 app.get(/\//, async (req, res) => {
+    if (isProduction && req.get('host').match(/^www\..*/i) === null) {
+        res.redirect(301, `https://www.${req.get('host')}${req.originalUrl}`);
+    }
     delete req.query.fbclid;
     const { sanitize = '', notFound = false, ...meta } = await getMetaFromPathAndSanitize(req.path);
     if (notFound) {

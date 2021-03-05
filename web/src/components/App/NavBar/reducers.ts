@@ -1,13 +1,14 @@
+import { Reducer } from 'redux';
 import NAV_ACTIONS from 'src/components/App/NavBar/actionTypeKeys';
-import ActionTypes from 'src/components/App/NavBar/actionTypes';
+import { ActionTypes } from 'src/components/App/NavBar/actionTypes';
 import { NavBarStateShape } from 'src/components/App/NavBar/types';
 
-export const NavBarReducer = (state: NavBarStateShape = {
+export const navBarReducer: Reducer<NavBarStateShape, ActionTypes> = (state = {
     isVisible: true,
     isExpanded: false,
     showSubs: [],
     lastScrollTop: 0,
-}, action: ActionTypes) => {
+}, action) => {
     switch (action.type) {
         case NAV_ACTIONS.NAV_TOGGLE_NAV:
             return {

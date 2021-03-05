@@ -1,7 +1,7 @@
 import { parseToRgb } from 'polished';
 import * as React from 'react';
 
-import TweenLite from 'gsap/TweenLite';
+import { gsap } from 'gsap';
 
 import {
     AudioVisualizerProps,
@@ -36,6 +36,7 @@ interface ShaderProgram {
 }
 
 class AudioVisualizer extends React.Component<AudioVisualizerProps> {
+    isRendering: boolean;
     lastPlayheadPosition = 0;
     height: number;
     width: number;
@@ -73,22 +74,22 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     FILTER_SIZE: number;
 
     STEP_SIZE: number;
-    lastIsHover: boolean = false;
-    lastHover: number = 0;
-    lastCurrentPosition: number = 0;
-    idleStart: number = 0;
-    requestId: number = 0;
+    lastIsHover = false;
+    lastHover = 0;
+    lastCurrentPosition = 0;
+    idleStart = 0;
+    requestId = 0;
     lastCallback: number;
 
     internalOffset: number;
     deviceRatio: number;
 
-    adjustHeight = () => {
+    adjustHeight = (): void => {
         this.HEIGHT_ADJUST = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
         this.SCALE = this.props.isMobile ? SCALE_MOBILE : SCALE_DESKTOP;
     }
 
-    initializeVisualizer = async () => {
+    initializeVisualizer = async (): Promise<void> => {
         const gl = this.visualization.current.getContext('webgl');
         gl.getExtension('GL_OES_standard_derivatives');
         gl.getExtension('OES_standard_derivatives');
@@ -178,13 +179,14 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.normalizedR = new Float32Array(this.FFT_HALF_SIZE);
             this.idleStart = performance.now();
 
-            TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
+            gsap.ticker.add(this.onAnalyze);
+            this.isRendering = true;
         } catch (err) {
             console.error('visualizer init failed.', err);
         }
     }
 
-    onAnalyze = () => {
+    onAnalyze = (): void => {
         // this.requestId = requestAnimationFrame(this.onAnalyze);
         // don't render anything if analyzers are null, i.e. audio not set up yet
         // also limit 30fps on mobile =).
@@ -217,7 +219,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
                 this.lastCurrentPosition = this.props.currentPosition;
                 // if has been idle for over 3.5 seconds, cancel animation
                 if (this.idleStart !== 0 && (timestamp - this.idleStart > 3500)) {
-                    TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+                    gsap.ticker.remove(this.onAnalyze);
+                    this.isRendering = false;
                     return;
                 }
             }
@@ -272,7 +275,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
     }
 
-    drawConstantQBins = (gl: WebGLRenderingContext, values: Float32Array, radius: number, color: Float32Array) => {
+    drawConstantQBins = (gl: WebGLRenderingContext, values: Float32Array, radius: number, color: Float32Array): void => {
         let currentInput = 0;
         let currentSample = 0;
         let currentFraction = 0;
@@ -336,7 +339,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, vertices.length / 2);
     }
 
-    drawWaveForm = (gl: WebGLRenderingContext, centerAxis: number, color: Float32Array) => {
+    drawWaveForm = (gl: WebGLRenderingContext, centerAxis: number, color: Float32Array): void => {
         const waveform = waveformLoader.waveform;
         const angles = waveformLoader.angles;
         if (!waveform || waveform.length === 0) {
@@ -373,7 +376,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, waveformLength * 2);
     }
 
-    drawPlaybackHead = (gl: WebGLRenderingContext, angle: number, minRad: number, maxRad: number, color: Float32Array) => {
+    drawPlaybackHead = (gl: WebGLRenderingContext, angle: number, minRad: number, maxRad: number, color: Float32Array): void => {
         const [xStart, yStart] = polarToCartesian(minRad, angle);
         const [xEnd, yEnd] = polarToCartesian(maxRad, angle);
 
@@ -405,7 +408,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
-    drawSeekArea = (gl: WebGLRenderingContext, radius: number, color: Float32Array, timestamp: number) => {
+    drawSeekArea = (gl: WebGLRenderingContext, radius: number, color: Float32Array, timestamp: number): void => {
         const WAVEFORM_CENTER_AXIS = radius - this.WAVEFORM_HALF_HEIGHT;
         this.drawWaveForm(gl, WAVEFORM_CENTER_AXIS, color);
 
@@ -439,7 +442,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
     }
 
-    drawVisualization = (gl: WebGLRenderingContext, lowFreq: number, values: Float32Array, lightness: number, timestamp: number) => {
+    drawVisualization = (gl: WebGLRenderingContext, lowFreq: number, values: Float32Array, lightness: number, timestamp: number): void => {
         // beware! we are rotating the whole thing by -half_pi so, we need to swap width and height values
         // context.clearRect(-this.height / 2 + this.HEIGHT_ADJUST, -this.width / 2, this.height, this.width);
         // hsl derived from @light-blue: #4E86A4;
@@ -459,7 +462,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.drawSeekArea(gl, radius, colorArray, timestamp);
     }
 
-    onResize = () => {
+    onResize = (): void => {
         this.idleStart = performance.now();
         this.adjustHeight();
 
@@ -502,48 +505,62 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.WAVEFORM_HALF_HEIGHT = Math.min(50, this.RADIUS_BASE / 4);
     }
 
-    onVisibilityChange = () => {
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+    onVisibilityChange = (): void => {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         if (!(document as any)[visibilityChangeApi.hidden]) {
-            TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
+            if (!this.isRendering) {
+                this.idleStart = performance.now();
+                gsap.ticker.add(this.onAnalyze);
+                this.isRendering = true;
+            }
+        } else {
+            if (this.isRendering) {
+                gsap.ticker.remove(this.onAnalyze);
+                this.isRendering = false;
+            }
         }
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         window.addEventListener('resize', this.onResize);
         document.addEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange, false);
         this.initializeVisualizer();
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         window.removeEventListener('resize', this.onResize);
         document.removeEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange);
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+        gsap.ticker.remove(this.onAnalyze);
+        this.isRendering = false;
     }
 
     // dunno why it doens't work without this. onResize should be called anyways
-    componentDidUpdate(prevProps: AudioVisualizerProps) {
-        this.idleStart = performance.now();
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
-        TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
-        if (prevProps.isMobile !== this.props.isMobile) {
-            this.onResize();
-        }
-    }
+    // componentDidUpdate(prevProps: AudioVisualizerProps): void {
+    //     this.idleStart = performance.now();
+    //     gsap.ticker.remove(this.onAnalyze);
+    //     gsap.ticker.add(this.onAnalyze);
+    //     if (prevProps.isMobile !== this.props.isMobile) {
+    //         this.onResize();
+    //     }
+    // }
 
-    shouldComponentUpdate(nextProps: AudioVisualizerProps) {
+    shouldComponentUpdate(nextProps: AudioVisualizerProps): boolean {
         if (nextProps.isMobile !== this.props.isMobile ||
             nextProps.currentPosition !== this.props.currentPosition ||
             nextProps.isPlaying && !this.props.isPlaying ||
             nextProps.isHoverSeekring !== this.props.isHoverSeekring ||
             nextProps.hoverAngle !== this.props.hoverAngle
         ) {
-            return true;
+            this.idleStart = performance.now();
+            if (!this.isRendering) {
+                gsap.ticker.add(this.onAnalyze);
+                this.isRendering = true;
+            }
         }
         return false;
     }
 
-    render() {
+    render(): JSX.Element {
         return (
             <VisualizerContainer ref={this.container}>
                 <VisualizerCanvas ref={this.visualization} />

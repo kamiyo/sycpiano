@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import { connect } from 'react-redux';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
@@ -93,7 +93,7 @@ class AcclaimsList extends React.Component<AcclaimsListProps> {
 }
 
 const mapStateToProps = (state: GlobalStateShape): AcclaimsListStateToProps => ({
-    acclaims: state.press_acclaimsList.items,
+    acclaims: state.pressAcclaimsList.items,
 });
 
 const mapDispatchToProps: AcclaimsListDispatchToProps = {

@@ -8,7 +8,7 @@ import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/dist/es/CellMeasurer';
 import { List, ListRowRenderer } from 'react-virtualized/dist/es/List';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import debounce from 'lodash-es/debounce';
@@ -141,7 +141,7 @@ class EventList extends React.Component<EventListProps> {
 
     onMountOrUpdate() {
         const date = moment(this.props.match.params.date, 'YYYY-MM-DD');
-        this.currentQuery = parse(this.props.location.search, { ignoreQueryPrefix: true });
+        this.currentQuery.q = parse(this.props.location.search, { ignoreQueryPrefix: true }).q as string;
         if (this.currentQuery.q) {
             this.props.createSearchEventsAction('search', { q: this.currentQuery.q });
         } else {
@@ -379,7 +379,7 @@ class EventList extends React.Component<EventListProps> {
 }
 
 const mapStateToProps = (state: GlobalStateShape, ownProps: EventListOwnProps): EventListStateToProps => {
-    const reducer = state.schedule_eventItems[ownProps.type];
+    const reducer = state.scheduleEventItems[ownProps.type];
     return {
         eventItems: reducer.itemArray,
         hasEventBeenSelected: reducer.hasEventBeenSelected,

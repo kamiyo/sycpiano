@@ -30,7 +30,7 @@ const hookFn = async (m: music, _: any) => {
     console.log(`[End Hook]\n`);
 };
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof music => {
     music.init({
         id: {
             allowNull: false,

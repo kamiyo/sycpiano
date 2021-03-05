@@ -1,5 +1,6 @@
-declare var BINARY_PATH: string;
-declare var IMAGES_PATH: string;
-declare var MUSIC_PATH: string;
-declare var VIDEOS_PATH: string;
-declare var GAPI_KEY: string; // see webpack conf
+declare let BINARY_PATH: string;
+declare let IMAGES_PATH: string;
+declare let MUSIC_PATH: string;
+declare let VIDEOS_PATH: string;
+declare let GAPI_KEY: string; // see webpack conf
+declare let STRIPE_PUBLIC: string;

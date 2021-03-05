@@ -11,13 +11,17 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import thunk from 'redux-thunk';
 
-import { NavBarReducer } from 'src/components/App/NavBar/reducers';
+import { navBarReducer } from 'src/components/App/NavBar/reducers';
+import { cartReducer } from 'src/components/Cart/reducers';
+import { shopReducer } from 'src/components/Shop/reducers';
 
 import { AsyncStore, GlobalStateShape, Reducers } from 'src/types';
 
 const createReducer = (reducers?: Reducers) => {
     return combineReducers<GlobalStateShape>({
-        navbar: NavBarReducer,
+        navbar: navBarReducer,
+        cart: cartReducer,
+        shop: shopReducer,
         ...reducers,
     });
 };
@@ -33,7 +37,7 @@ export default (() => {
     return store;
 })();
 
-export const registerReducer = (store: AsyncStore, reducers: Reducers) => {
+export const registerReducer = (store: AsyncStore, reducers: Reducers): void => {
     store.async = { ...store.async, ...reducers };
     store.replaceReducer(createReducer(store.async));
 };

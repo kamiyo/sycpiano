@@ -15,7 +15,7 @@ export class disc extends Model {
     readonly getDiscLinks: HasManyGetAssociationsMixin<discLink>;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof disc => {
     disc.init({
         id: {
             type: dataTypes.UUID,

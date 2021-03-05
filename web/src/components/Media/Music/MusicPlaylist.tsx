@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import MusicPlaylistItem from 'src/components/Media/Music/MusicPlaylistItem';
@@ -101,11 +101,11 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
         </PlaylistContainer>
     );
 
-const mapStateToProps = ({ audio_playlist }: GlobalStateShape) => ({
-    items: audio_playlist.items,
+const mapStateToProps = ({ audioPlaylist }: GlobalStateShape) => ({
+    items: audioPlaylist.items,
 });
 
-export default connect<MusicPlaylistStateToProps, {}, MusicPlaylistOwnProps>(
+export default connect<MusicPlaylistStateToProps, unknown, MusicPlaylistOwnProps>(
     mapStateToProps,
     null,
 )(MusicPlaylist);

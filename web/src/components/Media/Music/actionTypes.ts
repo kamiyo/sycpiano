@@ -39,8 +39,6 @@ export interface OtherActions {
     readonly type: typeof AUDIO_ACTIONS.OTHER_ACTIONS;
 }
 
-type ActionTypes = SetHoverSeekring | SetMouseMove | StoreRadii |
+export type ActionTypes = SetHoverSeekring | SetMouseMove | StoreRadii |
     FetchPlaylistError | FetchPlaylistRequest | FetchPlaylistSuccess |
     OtherActions;
-
-export default ActionTypes;

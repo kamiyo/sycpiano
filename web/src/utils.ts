@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+import { gsap } from 'gsap';
 
 export interface FormattedLocationShape {
     venue: string;
@@ -15,7 +16,7 @@ export const formatLocation = (location: string): FormattedLocationShape => {
     return { venue, street, stateZipCountry };
 };
 
-export const getViewportSize = () => (
+export const getViewportSize = (): { width: number; height: number } => (
     {
         width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
         height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0),
@@ -37,6 +38,8 @@ export const metaDescriptions: {
     photos: string;
     press: string;
     getMusic: (piece: string, contributors?: string) => string;
+    shop: string;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     [index: string]: any;
 } = {
         home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
@@ -51,4 +54,38 @@ export const metaDescriptions: {
             `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
         photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
         press: `Press of Sean Chen's performances.`,
+        shop: `Online shop of Sean Chen's arrangements, cadenzas, and original compositions.`,
+        faqs: `Information about Sean Chen Piano online shop.`,
     };
+
+export const formatPrice = (price: number): string => (
+    '$' + (price / 100).toFixed(2)
+);
+
+export const validateEmail = (email: string): boolean => {
+    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/.test(email);
+};
+
+export const fadeOnEnter = (delay = 0, duration = 0.25) => (element: HTMLElement): void => {
+    if (element) {
+        gsap.fromTo(element, { autoAlpha: 0 }, { autoAlpha: 1, delay, duration });
+    }
+};
+
+export const fadeOnExit = (delay = 0, duration = 0.25) => (element: HTMLElement): void => {
+    if (element) {
+        gsap.fromTo(element, { autoAlpha: 1 }, { autoAlpha: 0, delay, duration });
+    }
+};
+
+export const slideOnEnter = (delay = 0, duration = 0.25) => (element: HTMLElement): void => {
+    if (element) {
+        gsap.fromTo(element, { autoAlpha: 1}, { y: '0%', delay, duration, clearProps: 'transform', force3D: true, });
+    }
+};
+
+export const slideOnExit = (delay = 0, duration = 0.25) => (element: HTMLElement): void => {
+    if (element) {
+        gsap.to(element, { y: '-100%', delay, duration, force3D: true });
+    }
+};

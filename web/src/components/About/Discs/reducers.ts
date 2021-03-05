@@ -1,11 +1,12 @@
+import { Reducer } from 'redux';
 import DISCS_ACTIONS from 'src/components/About/Discs/actionTypeKeys';
-import ActionTypes from 'src/components/About/Discs/actionTypes';
+import { ActionTypes } from 'src/components/About/Discs/actionTypes';
 import { DiscsStateShape } from 'src/components/About/Discs/types';
 
-export const discsReducer = (state: DiscsStateShape = {
+export const discsReducer: Reducer<DiscsStateShape, ActionTypes> = (state = {
     isFetching: false,
     discs: [],
-}, action: ActionTypes) => {
+}, action) => {
     switch (action.type) {
         case DISCS_ACTIONS.FETCH_DISCS_REQUEST:
             return {

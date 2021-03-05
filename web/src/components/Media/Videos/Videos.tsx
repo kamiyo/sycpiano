@@ -6,7 +6,7 @@ import { Transition } from 'react-transition-group';
 
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import { LoadingInstance } from 'src/components/LoadingSVG';
 import PreviewOverlay from 'src/components/Media/Videos/PreviewOverlay';
@@ -38,7 +38,7 @@ interface VideosOwnProps {
     readonly isMobile: boolean;
 }
 
-type VideosProps = VideosStateToProps & VideosDispatchToProps & VideosOwnProps & RouteComponentProps<{ videoId?: string; }>;
+type VideosProps = VideosStateToProps & VideosDispatchToProps & VideosOwnProps & RouteComponentProps<{ videoId?: string }>;
 
 const StyledVideos = styled.div`
     ${pushed}
@@ -112,7 +112,7 @@ class Videos extends React.Component<VideosProps> {
                     ref={this.domElement}
                 >
                     <PreviewOverlay isMobile={this.props.isMobile} />
-                    <Transition
+                    <Transition<undefined>
                         in={!this.props.isPlayerReady}
                         onExit={(el) => TweenLite.to(el, 0.3, { autoAlpha: 0 })}
                         timeout={300}
@@ -130,10 +130,10 @@ class Videos extends React.Component<VideosProps> {
     }
 }
 
-const mapStateToProps = ({ video_player, video_playlist }: GlobalStateShape): VideosStateToProps => ({
-    videos: video_playlist.items,
-    videoId: video_player.videoId,
-    isPlayerReady: video_player.isPlayerReady,
+const mapStateToProps = ({ videoPlayer, videoPlaylist }: GlobalStateShape): VideosStateToProps => ({
+    videos: videoPlaylist.items,
+    videoId: videoPlayer.videoId,
+    isPlayerReady: videoPlayer.isPlayerReady,
 });
 
 const mapDispatchToProps: VideosDispatchToProps = {

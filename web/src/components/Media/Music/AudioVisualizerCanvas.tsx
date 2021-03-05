@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import TweenLite from 'gsap/TweenLite';
+import { gsap } from 'gsap';
 
 import {
     AudioVisualizerProps,
@@ -19,7 +19,18 @@ import {
 import { polarToCartesian, visibilityChangeApi } from 'src/components/Media/Music/utils';
 import { CIRCLE_SAMPLES, constantQ, drawCircleMask, firLoader, waveformLoader } from 'src/components/Media/Music/VisualizationUtils';
 
+declare global {
+    interface CanvasRenderingContext2D {
+        webkitBackingStorePixelRatio?: number;
+        mozBackingStorePixelRatio?: number;
+        msBackingStorePixelRatio?: number;
+        oBackingStorePixelRatio?: number;
+        backingStorePixelRatio?: number;
+    }
+}
+
 class AudioVisualizer extends React.Component<AudioVisualizerProps> {
+    isRendering: boolean;
     lastPlayheadPosition = 0;
     height: number;
     width: number;
@@ -51,19 +62,19 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
     FILTER_SIZE: number;
 
     STEP_SIZE: number;
-    lastIsHover: boolean = false;
-    lastHover: number = 0;
-    lastCurrentPosition: number = 0;
-    idleStart: number = 0;
-    requestId: number = 0;
+    lastIsHover = false;
+    lastHover = 0;
+    lastCurrentPosition = 0;
+    idleStart = 0;
+    requestId = 0;
     lastCallback: number;
 
-    adjustHeight = () => {
+    adjustHeight = (): void => {
         this.HEIGHT_ADJUST = this.props.isMobile ? HEIGHT_ADJUST_MOBILE : HEIGHT_ADJUST_DESKTOP;
         this.SCALE = this.props.isMobile ? SCALE_MOBILE : SCALE_DESKTOP;
     }
 
-    initializeVisualizer = async () => {
+    initializeVisualizer = async (): Promise<void> => {
         this.visualizationCtx = this.visualization.current.getContext('2d');
         this.visualizationCtx.save();
         this.onResize();
@@ -96,13 +107,14 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
             this.normalizedR = new Float32Array(this.FFT_HALF_SIZE);
             this.idleStart = performance.now();
 
-            TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
+            gsap.ticker.add(this.onAnalyze);
+            this.isRendering = true;
         } catch (err) {
             console.error('visualizer init failed.', err);
         }
     }
 
-    onAnalyze = () => {
+    onAnalyze = (): void => {
         // this.requestId = requestAnimationFrame(this.onAnalyze);
         // don't render anything if analyzers are null, i.e. audio not set up yet
         // also limit 30fps on mobile =).
@@ -135,7 +147,8 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
                 this.lastCurrentPosition = this.props.currentPosition;
                 // if has been idle for over 3.5 seconds, cancel animation
                 if (this.idleStart !== 0 && (timestamp - this.idleStart > 3500)) {
-                    TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+                    gsap.ticker.remove(this.onAnalyze);
+                    this.isRendering = false;
                     return;
                 }
             }
@@ -190,7 +203,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
     }
 
-    drawConstantQBins = (context: CanvasRenderingContext2D, values: Float32Array, radius: number, color: string) => {
+    drawConstantQBins = (context: CanvasRenderingContext2D, values: Float32Array, radius: number, color: string): void => {
         context.beginPath();
         let currentInput = 0;
         let currentSample = 0;
@@ -237,7 +250,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         context.fill();
     }
 
-    drawWaveForm = (context: CanvasRenderingContext2D, centerAxis: number, color: string) => {
+    drawWaveForm = (context: CanvasRenderingContext2D, centerAxis: number, color: string): void => {
         const waveform = waveformLoader.waveform;
         const angles = waveformLoader.angles;
         if (!waveform || waveform.length === 0) {
@@ -274,7 +287,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         context.fill();
     }
 
-    drawPlaybackHead = (context: CanvasRenderingContext2D, angle: number, minRad: number, maxRad: number, color: string) => {
+    drawPlaybackHead = (context: CanvasRenderingContext2D, angle: number, minRad: number, maxRad: number, color: string): void => {
         const [xStart, yStart] = polarToCartesian(minRad, angle);
         const [xEnd, yEnd] = polarToCartesian(maxRad, angle);
         context.beginPath();
@@ -284,7 +297,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         context.stroke();
     }
 
-    drawSeekArea = (context: CanvasRenderingContext2D, radius: number, color: string, timestamp: number) => {
+    drawSeekArea = (context: CanvasRenderingContext2D, radius: number, color: string, timestamp: number): void => {
         const WAVEFORM_CENTER_AXIS = radius - this.WAVEFORM_HALF_HEIGHT;
         this.drawWaveForm(context, WAVEFORM_CENTER_AXIS, color);
 
@@ -318,7 +331,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         }
     }
 
-    drawVisualization = (context: CanvasRenderingContext2D, lowFreq: number, values: Float32Array, lightness: number, timestamp: number) => {
+    drawVisualization = (context: CanvasRenderingContext2D, lowFreq: number, values: Float32Array, lightness: number, timestamp: number): void => {
         // beware! we are rotating the whole thing by -half_pi so, we need to swap width and height values
         context.clearRect(-this.height / 2 + this.HEIGHT_ADJUST, -this.width / 2, this.height, this.width);
         // hsl derived from @light-blue: #4E86A4;
@@ -332,7 +345,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.drawSeekArea(context, radius, color, timestamp);
     }
 
-    onResize = () => {
+    onResize = (): void => {
         this.idleStart = performance.now();
         this.adjustHeight();
 
@@ -342,7 +355,7 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         // scale canvas for high-resolution screens
         // code from https://gist.github.com/callumlocke/cc258a193839691f60dd
         const devicePixelRatio = window.devicePixelRatio || 1;
-        const anyCtx: any = this.visualizationCtx;
+        const anyCtx: CanvasRenderingContext2D = this.visualizationCtx;
         const backingStoreRatio = anyCtx.webkitBackingStorePixelRatio ||
             anyCtx.mozBackingStorePixelRatio ||
             anyCtx.msBackingStorePixelRatio ||
@@ -380,48 +393,62 @@ class AudioVisualizer extends React.Component<AudioVisualizerProps> {
         this.WAVEFORM_HALF_HEIGHT = Math.min(50, this.RADIUS_BASE / 4);
     }
 
-    onVisibilityChange = () => {
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+    onVisibilityChange = (): void => {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         if (!(document as any)[visibilityChangeApi.hidden]) {
-            TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
+            if (!this.isRendering) {
+                this.idleStart = performance.now();
+                gsap.ticker.add(this.onAnalyze);
+                this.isRendering = true;
+            }
+        } else {
+            if (this.isRendering) {
+                gsap.ticker.remove(this.onAnalyze);
+                this.isRendering = false;
+            }
         }
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         window.addEventListener('resize', this.onResize);
         document.addEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange, false);
         this.initializeVisualizer();
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         window.removeEventListener('resize', this.onResize);
         document.removeEventListener(visibilityChangeApi.visibilityChange, this.onVisibilityChange);
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
+        gsap.ticker.remove(this.onAnalyze);
+        this.isRendering = false;
     }
 
     // dunno why it doens't work without this. onResize should be called anyways
-    componentDidUpdate(prevProps: AudioVisualizerProps) {
-        this.idleStart = performance.now();
-        TweenLite.ticker.removeEventListener('tick', this.onAnalyze);
-        TweenLite.ticker.addEventListener('tick', this.onAnalyze, this);
-        if (prevProps.isMobile !== this.props.isMobile) {
-            this.onResize();
-        }
-    }
+    // componentDidUpdate(prevProps: AudioVisualizerProps): void {
+    //     this.idleStart = performance.now();
+    //     gsap.ticker.remove(this.onAnalyze);
+    //     gsap.ticker.add(this.onAnalyze);
+    //     if (prevProps.isMobile !== this.props.isMobile) {
+    //         this.onResize();
+    //     }
+    // }
 
-    shouldComponentUpdate(nextProps: AudioVisualizerProps) {
+    shouldComponentUpdate(nextProps: AudioVisualizerProps): boolean {
         if (nextProps.isMobile !== this.props.isMobile ||
             nextProps.currentPosition !== this.props.currentPosition ||
             nextProps.isPlaying && !this.props.isPlaying ||
             nextProps.isHoverSeekring !== this.props.isHoverSeekring ||
             nextProps.hoverAngle !== this.props.hoverAngle
         ) {
-            return true;
+            this.idleStart = performance.now();
+            if (!this.isRendering) {
+                gsap.ticker.add(this.onAnalyze);
+                this.isRendering = true;
+            }
         }
         return false;
     }
 
-    render() {
+    render(): JSX.Element {
         return (
             <VisualizerContainer ref={this.container}>
                 <VisualizerCanvas ref={this.visualization} />

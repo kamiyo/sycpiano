@@ -19,7 +19,7 @@ const GOOGLE_MAPS_SEARCH_URL = 'https://www.google.com/maps/search/?api=1';
 export const transformCachedEventsToListItems = (
     events: CachedEvent[],
     monthsSeen: Set<string>,
-): { events: EventItemType[], monthsSeen: Set<string> } => {
+): { events: EventItemType[]; monthsSeen: Set<string> } => {
     const monthsSet = new Set<string>(monthsSeen);
     const eventsList = events.reduce((runningEventsArr: EventItemType[], event) => {
         let eventDateTime = moment(event.dateTime);
@@ -68,6 +68,6 @@ export const transformCachedEventsToListItems = (
     };
 };
 
-export const getGoogleMapsSearchUrl = (query: string) => `
+export const getGoogleMapsSearchUrl = (query: string): string => `
     ${GOOGLE_MAPS_SEARCH_URL}&query=${encodeURIComponent(query)}
 `;

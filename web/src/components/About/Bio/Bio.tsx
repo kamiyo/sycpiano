@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { fetchBioAction } from 'src/components/About/Bio/actions';
@@ -12,7 +12,7 @@ import { Blurb } from 'src/components/About/Bio/types';
 import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 
 import { easeQuadOut } from 'd3-ease';
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import PortfolioButton from 'src/components/About/Bio/PortfolioButton';
 import { LazyImage } from 'src/components/LazyImage';
@@ -27,57 +27,61 @@ import { GlobalStateShape } from 'src/types';
 
 const pictureHeight = 250;
 
-const Paragraph = styled.p`
-    font-family: ${lato2};
-    font-size: 1.2em;
-    line-height: 2em;
-    margin: 1.6em 0;
+const Paragraph = styled.p({
+    fontFamily: lato2,
+    fontSize: '1.2em',
+    lineHeight: '2em',
+    margin: '1.6em 0',
 
-    ${screenXSorPortrait} {
-        font-size: 1em;
-        line-height: 1.6em;
-        margin: 1.3em 0;
+    [screenM]: {
+        fontSize: '1em',
+    },
+
+    [screenXSorPortrait]: {
+        fontSize: '1em',
+        lineHeight: '1.6em',
+        margin: '1.3em 0',
     }
-`;
+});
 
-const SpaceFiller = styled.div`
-    display: none;
+const SpaceFiller = styled.div({
+    display: 'none',
 
-    ${screenXSorPortrait} {
-        display: block;
-        height: ${pictureHeight}px;
-        width: 100%;
-        background-color: transparent;
+    [screenXSorPortrait]: {
+        display: 'block',
+        height: pictureHeight,
+        width: '100%',
+        backgroundColor: 'transparent',
     }
-`;
+});
 
-const TextGroup = styled.div`
-    ${screenXSorPortrait} {
-        background-color: white;
-        padding: 20px 20px;
+const TextGroup = styled.div({
+    [screenXSorPortrait]: {
+        backgroundColor: 'white',
+        padding: '20px 20px',
     }
-`;
+});
 
-const TextContainer = styled.div`
-    box-sizing: border-box;
-    flex: 0 0 45%;
-    height: auto;
-    padding: 20px 40px 80px 60px;
-    background-color: ${offWhite};
-    color: black;
-    overflow-y: scroll;
+const TextContainer = styled.div({
+    boxSizing: 'border-box',
+    flex: '0 0 45%',
+    height: 'auto',
+    padding: '20px 40px 80px 60px',
+    backgroundColor: offWhite,
+    color: 'black',
+    overflowY: 'scroll',
 
-    ${screenXSorPortrait} {
-        position: relative;
-        z-index: 1;
-        margin-top: 0;
-        height: 100%;
-        left: 0;
-        background-color: transparent;
-        padding: 0;
-        overflow-y: visible;
-    }
-`;
+    [screenXSorPortrait]: {
+        position: 'relative',
+        zIndex: 1,
+        marginTop: 0,
+        height: '100%',
+        left: 0,
+        backgroundColor: 'transparent',
+        padding: 0,
+        overflowY: 'visible',
+    },
+});
 
 const NameSpan = styled.span({
     fontFamily: lato3,
@@ -118,51 +122,53 @@ class BioText extends React.Component<BioTextProps> {
     }
 }
 
-interface ImageContainerProps { currScrollTop: number; bgImage?: string; }
+interface ImageContainerProps { bgImage?: string }
 
-const ImageContainer = styled.div<ImageContainerProps>`
-    flex: 1;
-    background-image: ${props => props.bgImage ? `url(${props.bgImage})` : 'unset'};
-    background-size: cover;
-    background-position: center -100px;
-    background-attachment: initial;
-    background-repeat: no-repeat;
-    background-color: black;
-    visibility: hidden;
+const ImageContainer = styled.div<ImageContainerProps>({
+    flex: 1,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center 100px',
+    backgroundAttachment: 'initial',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor: 'black',
+    visibility: 'hidden',
 
-    ${screenM} {
-        background-size: cover;
-        background-position: center 0;
+    [screenM]: {
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 0',
+    },
+
+    [screenXSorPortrait]: {
+        position: 'fixed',
+        zIndex: 0,
+        top: navBarHeight.mobile,
+        height: pictureHeight,
+        width: '100%',
+        backgroundSize: '106%',
+        backgroundPosition: 'center 15%',
     }
+}, ({ bgImage }) => ({
+    backgroundImage: bgImage ? `url(${bgImage})` : 'unset',
+    // opacity: easeQuadOut(Math.max(1 - currScrollTop / pictureHeight, 0)),
+}));
 
-    ${screenXSorPortrait} {
-        position: fixed;
-        z-index: 0;
-        top: ${navBarHeight.mobile}px;
-        height: ${pictureHeight}px;
-        width: 100%;
-        background-size: 106%;
-        background-position: center 15%;
-        opacity: ${props => easeQuadOut(Math.max(1 - props.currScrollTop / pictureHeight, 0))};
-    }
-`;
+const BioContainer = styled.div(
+    pushed,
+    {
 
-const BioContainer = styled.div`
-    ${pushed}
-    width: 100%;
-    background-color: black;
-    position: absolute;
-    display: flex;
-
-    ${screenXSorPortrait} {
-        margin-top: 0;
-        padding-top: ${navBarHeight.mobile}px;
-        display: block;
-        height: 100%;
-        overflow-y: scroll;
-        -webkit-overflow-scrolling: touch;
-    }
-`;
+        width: '100%',
+        backgroundColor: 'black',
+        position: 'absolute',
+        display: 'flex',
+        [screenXSorPortrait]: {
+            marginTop: 0,
+            paddingTop: navBarHeight.mobile,
+            display: 'block',
+            height: '100%',
+            overflowY: 'scroll',
+            WebkitOverflowScrolling: 'touch',
+        },
+    });
 
 const srcWidths = screenLengths.map((value) => (
     Math.round(value * 1736 / 2560)
@@ -173,7 +179,7 @@ interface BioOwnProps {
 }
 
 interface BioState {
-    readonly bgImage?: string;
+    readonly bgImage: string;
 }
 
 interface BioStateToProps {
@@ -186,10 +192,10 @@ interface BioDispatchToProps {
     readonly fetchBioAction: () => Promise<void>;
 }
 
-const imageLoaderStyle = css`
-    visibility: hidden;
-    position: absolute;
-`;
+const imageLoaderStyle = css({
+    visibility: 'hidden',
+    position: 'absolute',
+});
 
 type BioProps = BioOwnProps & BioStateToProps & BioDispatchToProps;
 
@@ -218,11 +224,14 @@ class About extends React.PureComponent<BioProps, BioState> {
         );
     }
 
+    componentDidUpdate() {
+        this.bgRef.current.style.opacity = easeQuadOut(Math.max(1 - this.props.scrollTop / pictureHeight, 0)).toString();
+    }
+
     render() {
         return (
             <BioContainer onScroll={this.props.isMobile ? scrollFn(pictureHeight + navBarHeight.mobile, this.props.onScroll) : null}>
                 <ImageContainer
-                    currScrollTop={this.props.scrollTop}
                     bgImage={this.state.bgImage}
                     ref={this.bgRef}
                 >
@@ -282,6 +291,6 @@ const connectedAbout = connect<BioStateToProps, BioDispatchToProps, BioOwnProps>
     mapDispatchToProps,
 )(About);
 
-export type BioType = new (props: any) => React.Component<BioProps>;
+export type BioType = new (props: BioProps) => React.Component<BioProps>;
 export type RequiredProps = BioOwnProps;
 export default connectedAbout;

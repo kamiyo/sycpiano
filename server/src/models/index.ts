@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Sequelize } from 'sequelize';
+import { Sequelize, DataTypes } from 'sequelize';
 
 import sequelize from '../sequelize';
 import { Model, ModelMap } from '../types';
@@ -14,16 +14,15 @@ const importModels = (seq: Sequelize): ModelMap => {
     const modelMap = fs.readdirSync(__dirname).filter((file) => {
         return (file.indexOf('.') !== 0) && (file !== 'index.js') && (file.slice(-3) === '.js');
     }).reduce((out, file) => {
-        const model = seq.import(path.join(__dirname, file)) as typeof Model;
+        /* eslint-disable-next-line @typescript-eslint/no-var-requires */
+        const model = require(path.join(__dirname, file)).default(seq, DataTypes) as typeof Model;
         out[model.name] = model;
         return out;
     }, {} as ModelMap);
 
     // execute associations
-    Object.keys(modelMap).forEach((modelName) => {
-        if (modelMap[modelName].associate) {
-            modelMap[modelName].associate(modelMap);
-        }
+    Object.values(modelMap).forEach((model) => {
+        model.associate?.(modelMap);
     });
 
     return modelMap;

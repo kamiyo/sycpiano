@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
@@ -105,7 +105,7 @@ class PhotoList extends React.PureComponent<PhotoListProps> {
     }
 }
 
-export default connect<{}, PhotoListDispatchToProps, PhotoListOwnProps>(
+export default connect<unknown, PhotoListDispatchToProps, PhotoListOwnProps>(
     null,
     { onScroll },
 )(PhotoList);

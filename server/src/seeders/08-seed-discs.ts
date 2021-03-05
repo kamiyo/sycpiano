@@ -2,18 +2,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ModelMap } from 'types';
 
-export const up = async (models: ModelMap) => {
+export const up = async (models: ModelMap): Promise<void> => {
     const model = models.disc;
     const filePath = path.join(__dirname, `../../../web/assets/data/discs.json`);
-    return fs.readFile(filePath, (err: NodeJS.ErrnoException, content: any) => {
-        if (err) {
-            console.log(err);
-        }
+    try {
+        const content = await fs.promises.readFile(filePath, { encoding: 'utf8' });
         const json: Array<{
-            [key: string]: any,
+            [key: string]: any;
         }> = JSON.parse(content);
 
-        json.forEach(async (item) => {
+        await Promise.each(json, async (item) => {
             try {
                 await model.create(item, {
                     include: [models.discLink],
@@ -22,9 +20,11 @@ export const up = async (models: ModelMap) => {
                 console.log(e);
             }
         });
-    });
+    } catch (e) {
+        console.log(e);
+    }
 };
 
-export const down = async (models: ModelMap) => {
+export const down = async (models: ModelMap): Promise<number> => {
     return models.disc.destroy({ where: {}, cascade: true });
 };

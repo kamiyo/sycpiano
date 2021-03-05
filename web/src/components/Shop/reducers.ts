@@ -1,12 +1,13 @@
-import STORE_ACTIONS from 'src/components/SycStore/actionTypeKeys';
-import ActionTypes from 'src/components/SycStore/actionTypes';
-import { SycStoreStateShape } from 'src/components/SycStore/types';
+import { Reducer } from 'redux';
+import STORE_ACTIONS from 'src/components/Shop/actionTypeKeys';
+import * as ActionTypes from 'src/components/Shop/actionTypes';
+import { ShopStateShape } from 'src/components/Shop/types';
 
-export const sycStoreReducer = (state: SycStoreStateShape = {
+export const shopReducer: Reducer<ShopStateShape, ActionTypes.Types> = (state: ShopStateShape = {
     isFetching: false,
     fetchSuccess: false,
-    items: [],
-}, action: ActionTypes) => {
+    items: {},
+}, action: ActionTypes.Types) => {
     switch (action.type) {
         case STORE_ACTIONS.FETCH_ITEMS_REQUEST:
             return {

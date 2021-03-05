@@ -1,3 +1,4 @@
+/* global YT, GAPI_KEY */
 import axios from 'axios';
 
 // Restricted API key, okay to commit.
@@ -12,14 +13,20 @@ const MAX_PLAYLIST_ITEMS = 25;
 /* NOTE: We might want to consider moving all properties on the YouTube class
 ** that don't need to be exposed to other modules into variables local to module. */
 
+declare global {
+    interface Window {
+        onYouTubeIframeAPIReady: () => void;
+    }
+}
+
 class YouTube {
     private player: YT.Player = undefined;
-    private playerReady: Promise<{}> = undefined;
-    private apiReady: Promise<{}> = undefined;
+    private playerReady: Promise<unknown> = undefined;
+    private apiReady: Promise<unknown> = undefined;
 
     constructor() {
         this.apiReady = new Promise((resolve) => {
-            (window as any).onYouTubeIframeAPIReady = () => resolve();
+            window.onYouTubeIframeAPIReady = () => resolve();
 
             // load youtube api
             const body = document.body;
@@ -40,8 +47,7 @@ class YouTube {
 
     public initializePlayerOnElement(el: HTMLElement, id = 'player') {
         // reinitiaize playerReady deferred
-        this.playerReady = new Promise(async (resolve) => {
-            await this.apiReady;
+        this.playerReady = this.apiReady.then(() => new Promise((resolve) => {
 
             // For now, only allow one player at a time.
             this.destroyPlayer();
@@ -61,7 +67,7 @@ class YouTube {
                 },
                 videoId: undefined,
             });
-        });
+        }));
     }
 
     public async loadVideoById(videoId: string, autoplay?: boolean) {

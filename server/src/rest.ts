@@ -5,6 +5,7 @@ import * as express from 'express';
 import * as forest from 'forest-express-sequelize';
 import * as path from 'path';
 import * as Sequelize from 'sequelize';
+import * as stripeClient from './stripe';
 
 dotenv.config();
 
@@ -37,12 +38,22 @@ const respondWithError = (error: any, res: express.Response) => {
         });
     } else {
         res.status(400).json({
-            error: error.response.data.error.errors[0].message,
+            error,
         });
     }
 };
 
-adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors(corsOptions), async (req, res) => {
+interface RequestWithBody extends express.Request {
+    body: {
+        data: {
+            attributes: {
+                ids: string[];
+            };
+        };
+    };
+}
+
+adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors(corsOptions), async (req: RequestWithBody, res: express.Response) => {
     let updated = 0;
     let created = 0;
     let errored = 0;
@@ -166,7 +177,7 @@ adminRest.post('/forest/actions/sync-selected', forest.ensureAuthenticated, cors
     }
 });
 
-adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOptions), async (_, res) => {
+adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOptions), async (_: express.Request, res: express.Response) => {
     let events: calendar[];
     const limit = 10;
     let offset = 0;
@@ -295,12 +306,56 @@ adminRest.post('/forest/actions/sync', forest.ensureAuthenticated, cors(corsOpti
     }
 });
 
-adminRest.use(forest.init({
-    modelsDir: path.join(__dirname, './models'), // Your models directory.
-    configDir: path.join(__dirname, './forest'),
-    envSecret: process.env.FOREST_ENV_SECRET,
-    authSecret: process.env.FOREST_AUTH_SECRET,
-    sequelize: db.sequelize,
-}));
+adminRest.post('/forest/actions/populate-test-data', forest.ensureAuthenticated, cors(corsOptions), async (_: express.Request, res: express.Response) => {
+    const pricesAndProducts = await stripeClient.getPricesAndProducts();
+    try {
+        await db.sequelize.getQueryInterface().bulkInsert('product', pricesAndProducts.map((pp) => {
+            try {
+                const product = pp.product
+                if (!stripeClient.productIsObject(product)) {
+                    throw Error('Product expansion failed, or no product tied to Price.');
+                }
+                const {
+                    id,
+                    name,
+                    description,
+                    metadata,
+                    images,
+                } = product;
+                return {
+                    id,
+                    name,
+                    description,
+                    price: pp.unit_amount,
+                    pages: parseInt(metadata.pages),
+                    file: metadata.file,
+                    images,
+                    type: metadata.type,
+                    sample: metadata.sample,
+                    price_id: pp.id,
+                };
+            } catch (e) {
+                console.log(e);
+            }
+        }), {
+
+        });
+        res.sendStatus(200);
+    } catch (e) {
+        respondWithError(e, res);
+    }
+});
+
+const addForest = async () => {
+    adminRest.use(await forest.init({
+        modelsDir: path.join(__dirname, './models'), // Your models directory.
+        configDir: path.join(__dirname, './forest'),
+        envSecret: process.env.FOREST_ENV_SECRET,
+        authSecret: process.env.FOREST_AUTH_SECRET,
+        sequelize: db.sequelize,
+    }));
+};
+
+addForest();
 
 export const AdminRest = adminRest;

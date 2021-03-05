@@ -1,10 +1,10 @@
 // Screen widths for media queries
 const xs = '800px';
-const m = '1200px';
-const xl = '1600px';
+const m = '1024px';
+const xl = '1280px';
 
 export const reactMediaMobileQuery = `(orientation: portrait), (max-width: ${xs})`;
-export const reactMediaMediumQuery = `(orientation: portrait), (max-width: ${m})`;
+export const reactMediaMediumQuery = `(max-width: ${m})`;
 
 type DimensionName = keyof MediaQueryBounds;
 
@@ -47,6 +47,10 @@ export const screenXSandPortrait = mediaQuery({ orientation: 'portrait', maxWidt
 export const screenMandPortrait = mediaQuery({ orientation: 'portrait', maxWidth: m });
 export const screenXSorPortrait = `${screenPortrait}, ${screenXS}`;
 export const screenMorPortrait = `${screenM}, ${screenPortrait}`;
+export const screenBreakPoints = {
+    xs: { maxWidth: 640 },
+    medium: [{ maxWidth: 1280 }, { orientation: 'portrait' }],
+};
 
 // cutoffs for <picture> size queries
 export const screenWidths = [1600, 1440, 1080, 800, 768, 720, 640, 480, 320];

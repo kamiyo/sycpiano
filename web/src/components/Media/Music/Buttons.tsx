@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { css } from '@emotion/core';
-import styled from '@emotion/styled';
+import { css } from '@emotion/react';
+import styled, { Interpolation } from '@emotion/styled';
 
 import { PauseSVG, PlaySVG, SkipSVG } from 'src/components/Media/Music/IconSVGs';
 import { AnyComponent } from 'src/types';
@@ -11,19 +11,20 @@ interface IconProps {
     width: number;
     height: number;
     verticalOffset: number;
-    Component?: AnyComponent;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    Component?: AnyComponent<any>;
     className?: string;
 }
 
-const getSharedStyle = (verticalOffset: number) => css`
-    transform: translateY(${verticalOffset}px);
-    transform-origin: center center;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    -webkit-tap-highlight-color: transparent;
-`;
+const getSharedStyle = (verticalOffset: number) => css({
+    transform: `translateY(${verticalOffset}px)`,
+    transformOrigin: 'center center',
+    zIndex: 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    webkitTap: 'transparent',
+});
 
 const StyledIcon = styled.div<{ verticalOffset: number }>`
     ${(props) => getSharedStyle(props.verticalOffset)}
@@ -36,19 +37,25 @@ const StyledIcon = styled.div<{ verticalOffset: number }>`
     }
 `;
 
-const getInnerStyle = (type: 'blur' | 'solid') => css`
-    position: absolute;
-    fill: ${(type === 'blur') ? '#eee' : '#999'};
-    z-index: 1;
-`;
+const getInnerBlurStyle = css({
+    position: 'absolute',
+    fill: '#eee',
+    zIndex: 1,
+})
+
+const getInnerSolidStyle = css({
+    position: 'absolute',
+    fill: '#999',
+    zIndex: 1,
+})
 
 const Icon: React.FC<IconProps> = ({ setRef, verticalOffset, Component, ...props }) => (
     <StyledIcon
         ref={(div) => setRef(div)}
         verticalOffset={verticalOffset}
     >
-        <Component css={getInnerStyle('solid')} {...props} />
-        <Component css={getInnerStyle('blur')} {...props} />
+        <Component css={getInnerSolidStyle} {...props} />
+        <Component css={getInnerBlurStyle} {...props} />
     </StyledIcon>
 );
 
@@ -73,29 +80,30 @@ interface ButtonProps {
     readonly width: number;
     readonly height: number;
     readonly verticalOffset: number;
-    readonly Component?: AnyComponent;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    readonly Component?: AnyComponent<any>;
     readonly className?: string;
 }
 
-const StyledButton = styled.div<{ verticalOffset: number; height: number; width: number; }>(
-    (props) => getSharedStyle(props.verticalOffset),
-    ({ width, height }) => ({
+const StyledButton = styled.div<{ verticalOffset: number; height: number; width: number }>(
+    ({ verticalOffset, width, height }) => ({
+        ...getSharedStyle(verticalOffset),
         width,
         height,
     }),
-    css`
-        transition: opacity 0.25s;
-        opacity: 1;
-        flex: initial;
-    `,
+    {
+        transition: 'opacity 0.25s',
+        opacity: 1,
+        flex: 'initial',
+    },
 );
 
 const solidButtonStyle = css(
-    getInnerStyle('solid'),
-    css`
-        z-index: 2;
-        transition: fill 0.25s;
-    `,
+    getInnerSolidStyle,
+    {
+        zIndex: 2,
+        transition: 'fill 0.25s',
+    },
 );
 
 const solidButtonHover = css`
@@ -104,8 +112,10 @@ const solidButtonHover = css`
 `;
 
 const blurButtonStyle = css(
-    getInnerStyle('blur'),
-    css` transition: blur 0.25s; `,
+    getInnerBlurStyle,
+    {
+        transition: 'blur 0.25s',
+    },
 );
 
 const blurButtonHover = css` filter: blur(5px); `;

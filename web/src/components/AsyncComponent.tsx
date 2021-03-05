@@ -1,21 +1,21 @@
-import React, { PureComponent } from 'react';
+import * as React from 'react';
 import { AnyComponent, AsyncModule } from 'src/types';
 
-interface AsyncComponentBase {
-    moduleProvider?: () => Promise<AsyncModule>;
+interface AsyncComponentBase<P> {
+    moduleProvider?: () => Promise<AsyncModule<P>>;
 }
 
-type AsyncComponentProps<P> = AsyncComponentBase & P;
+type AsyncComponentProps<P> = AsyncComponentBase<P> & P;
 
-interface AsyncComponentState {
-    Component: AnyComponent;
+interface AsyncComponentState<P> {
+    Component: AnyComponent<P>;
 }
 
 // Waits for moduleProvider to return a promise that contains the AsyncModule.
 // Then sets the component of that module in the state to trigger mounting of
 // component in render(). Passes through props the props.
-export default class AsyncComponent<P> extends PureComponent<AsyncComponentProps<P>, AsyncComponentState> {
-    state: AsyncComponentState = {
+export default class AsyncComponent<P> extends React.PureComponent<AsyncComponentProps<P>, AsyncComponentState<P>> {
+    state: AsyncComponentState<P> = {
         Component: null,
     };
 
@@ -26,9 +26,9 @@ export default class AsyncComponent<P> extends PureComponent<AsyncComponentProps
             this.setState({ Component });
         });
     }
-
-    render() {
-        const { Component } = this.state;
+    render(): JSX.Element {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        const { Component } = this.state as any;
         const { moduleProvider, ...props } = this.props;
         return (
             Component && <Component {...props} />

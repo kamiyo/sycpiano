@@ -1,7 +1,8 @@
 import { DataTypes, QueryInterface } from 'sequelize';
+import { token } from 'models/token';
 
-export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
-    await queryInterface.createTable('token', {
+export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes): Promise<void> => {
+    await queryInterface.createTable<token>('token', {
         id: {
             type: dataTypes.STRING,
             allowNull: false,
@@ -23,6 +24,6 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
     });
 };
 
-export const down = async (queryInterface: QueryInterface) => {
+export const down = async (queryInterface: QueryInterface): Promise<void> => {
     await queryInterface.dropTable('token');
 };

@@ -6,8 +6,6 @@ import { Transition, TransitionGroup } from 'react-transition-group';
 
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
-
 import AsyncComponent from 'src/components/AsyncComponent';
 import module from 'src/module';
 import store from 'src/store';
@@ -23,19 +21,7 @@ const Photos = () => register('photos', import(/* webpackChunkName: 'photos' */ 
 const Videos = () => register('videos', import(/* webpackChunkName: 'videos' */ 'src/components/Media/Videos'));
 
 import { container } from 'src/styles/mixins';
-import { metaDescriptions, titleStringBase } from 'src/utils';
-
-const fadeOnEnter = (delay: number) => (element: HTMLElement) => {
-    if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 0 }, { autoAlpha: 1, delay });
-    }
-};
-
-const fadeOnExit = (element: HTMLElement) => {
-    if (element) {
-        TweenLite.fromTo(element, 0.25, { autoAlpha: 1 }, { autoAlpha: 0 });
-    }
-};
+import { metaDescriptions, titleStringBase, fadeOnEnter, fadeOnExit } from 'src/utils';
 
 const MediaContainer = styled.div`
     height: 100%;
@@ -51,9 +37,9 @@ const FadingContainer = styled.div`
     position: absolute;
 `;
 
-type MediaProps = { isMobile: boolean; } & RouteComponentProps<{ media: string; }>;
+type MediaProps = { isMobile: boolean } & RouteComponentProps<{ media: string }>;
 
-const Media = ({ isMobile, match, location }: MediaProps) => (
+const Media: React.FC<MediaProps> = ({ isMobile, match, location }) => (
     <>
         <Helmet
             title={`${titleStringBase} | ${startCase(match.params.media)}`}
@@ -66,10 +52,10 @@ const Media = ({ isMobile, match, location }: MediaProps) => (
         />
         <MediaContainer>
             <TransitionGroup component={null}>
-                <Transition
+                <Transition<undefined>
                     key={match.params.media}
                     onEntering={fadeOnEnter(0.25)}
-                    onExiting={fadeOnExit}
+                    onExiting={fadeOnExit()}
                     timeout={750}
                     appear={true}
                 >

@@ -1,3 +1,5 @@
+/* global MUSIC_PATH */
+
 import isEmpty from 'lodash-es/isEmpty';
 import shuffle from 'lodash-es/shuffle';
 import * as React from 'react';
@@ -8,7 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import { onScroll, scrollFn } from 'src/components/App/NavBar/actions';
 import { fetchPlaylistAction } from 'src/components/Media/Music/actions';
@@ -122,7 +124,7 @@ class Music extends React.Component<MusicProps, MusicState> {
     musicOrder: number[];
     musicFileOrder: number[];
 
-    getNextTrack = (which: 'next' | 'prev', force: boolean = false) => {
+    getNextTrack = (which: 'next' | 'prev', force = false) => {
         const trackNo = this.state.localFlat.findIndex((item) => item.id === this.state.currentTrack.id);
         const nextTrackNo = (which === 'next') ? trackNo + 1 : trackNo - 1;
         if (force) {
@@ -207,7 +209,7 @@ class Music extends React.Component<MusicProps, MusicState> {
             this.setState({
                 localFlat: this.props.flatItems,
             });
-            this.loadTrack(firstTrack as any);
+            this.loadTrack(firstTrack);
         } catch (err) {
             console.error('constantQ or playlist init failed.', err);
         }
@@ -248,6 +250,17 @@ class Music extends React.Component<MusicProps, MusicState> {
         });
     }
 
+    loadTrackNoFade = async (track: MusicFileItem) => {
+        this.setState({
+            currentTrack: track,
+            duration: -1,
+            isLoading: true,
+        });
+        waveformLoader.loadWaveformFile(`${MUSIC_PATH}/waveforms/${track.waveformFile}`);
+        this.audio.current.src = `${MUSIC_PATH}/${track.audioFile}`;
+        await waveformLoader.loaded;
+    }
+
     onTimeUpdate = () => {
         this.setState({
             playbackPosition: this.audio.current.currentTime,
@@ -279,13 +292,23 @@ class Music extends React.Component<MusicProps, MusicState> {
         }
     }
 
+    playNextNoFade = async () => {
+        const next = this.getNextTrack('next', true);
+        if (next) {
+            this.props.history.push(getPermaLink(this.props.baseRoute, next.musicItem.composer, next.musicItem.piece, next.name));
+            await this.loadTrackNoFade(next);
+            this.play();
+        }
+    }
+
     onEnded = () => {
+        console.log('ended');
         this.setState({
             isPlaying: false,
             playbackPosition: 0,
             lastUpdateTimestamp: performance.now(),
         });
-        this.playNext();
+        this.playNextNoFade();
     }
 
     onDrag = (percent: number) => {
@@ -459,9 +482,9 @@ class Music extends React.Component<MusicProps, MusicState> {
     }
 }
 
-const mapStateToProps = ({ audio_playlist }: GlobalStateShape): MusicStateToProps => ({
-    items: audio_playlist.items,
-    flatItems: audio_playlist.flatItems,
+const mapStateToProps = ({ audioPlaylist }: GlobalStateShape): MusicStateToProps => ({
+    items: audioPlaylist.items,
+    flatItems: audioPlaylist.flatItems,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<GlobalStateShape, undefined, Action>) => ({

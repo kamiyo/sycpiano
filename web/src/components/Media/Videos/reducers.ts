@@ -1,14 +1,15 @@
+import { Reducer } from 'redux';
 import VIDEO_ACTIONS from 'src/components/Media/Videos/actionTypeKeys';
-import ActionTypes from 'src/components/Media/Videos/actionTypes';
+import { ActionTypes } from 'src/components/Media/Videos/actionTypes';
 
 import { VideoPlayerStateShape, VideoPlaylistStateShape } from 'src/components/Media/Videos/types';
 
-export const videoPlayerReducer = (state: VideoPlayerStateShape = {
+export const videoPlayerReducer: Reducer<VideoPlayerStateShape, ActionTypes> = (state = {
     isPlayerReady: false,
     videoId: '',
     isPreviewOverlay: false,
     isPlaying: false,
-}, action: ActionTypes) => {
+}, action) => {
     switch (action.type) {
         case VIDEO_ACTIONS.PLAYER_IS_READY:
             return {
@@ -40,11 +41,11 @@ export const videoPlayerReducer = (state: VideoPlayerStateShape = {
     }
 };
 
-export const videoPlaylistReducer = (state: VideoPlaylistStateShape = {
+export const videoPlaylistReducer: Reducer<VideoPlaylistStateShape, ActionTypes> = (state = {
     items: [],
     isFetching: false,
     isShow: true,
-}, action: ActionTypes) => {
+}, action) => {
     switch (action.type) {
         case VIDEO_ACTIONS.FETCH_PLAYLIST_REQUEST:
             return {

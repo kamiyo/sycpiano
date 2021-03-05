@@ -23,7 +23,5 @@ export interface OtherAction {
     type: PHOTO_ACTIONS.OTHER_ACTION;
 }
 
-type PhotoActions = FetchPhotosRequest | FetchPhotosSuccess | FetchPhotosError |
+export type PhotoActions = FetchPhotosRequest | FetchPhotosSuccess | FetchPhotosError |
                     SelectPhoto | OtherAction;
-
-export default PhotoActions;

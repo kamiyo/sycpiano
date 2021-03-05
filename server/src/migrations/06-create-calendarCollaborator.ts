@@ -1,7 +1,8 @@
 import { DataTypes, QueryInterface } from 'sequelize';
+import { calendarCollaborator } from 'models/calendarCollaborator';
 
-export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
-    await queryInterface.createTable('calendar_collaborator', {
+export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes): Promise<void> => {
+    await queryInterface.createTable<calendarCollaborator>('calendar_collaborator', {
         id: {
             allowNull: false,
             defaultValue: dataTypes.UUIDV4,
@@ -40,6 +41,6 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
     });
 };
 
-export const down = async (queryInterface: QueryInterface) => {
+export const down = async (queryInterface: QueryInterface): Promise<void> => {
     await queryInterface.dropTable('calendar_collaborator');
 };

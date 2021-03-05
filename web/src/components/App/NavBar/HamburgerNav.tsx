@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import TweenLite from 'gsap/TweenLite';
+import { gsap } from 'gsap';
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from 'react-transition-group';
 
 import { toggleExpanded } from 'src/components/App/NavBar/actions';
@@ -10,34 +10,36 @@ import NavBarLinks from 'src/components/App/NavBar/NavBarLinks';
 import { NavBarLinksProps } from 'src/components/App/NavBar/types';
 
 import { GlobalStateShape } from 'src/types';
-
-interface HamburgerNavStateToProps {
-    isExpanded: boolean;
-}
-
-interface HamburgerNavDispatchToProps {
-    toggleExpanded: typeof toggleExpanded;
-}
+import { logoBlue } from 'src/styles/colors';
 
 const MenuContainer = styled.div` margin: auto 0; `;
 
-const HamburgerNav = React.memo(({
-    isExpanded,
-    toggleExpanded: toggleExpand,
-    currentBasePath,
-    isMobile,
-}: NavBarLinksProps & HamburgerNavDispatchToProps & HamburgerNavStateToProps) => (
+const onEnter = (el: HTMLDivElement) => {
+    gsap.to(el, { autoAlpha: 1, duration: 0.3 });
+    gsap.fromTo('.navlink-entry', { autoAlpha: 0, x: 80 }, { autoAlpha: 1, x: 0, stagger: 0.08, duration: 0.3 });
+};
+
+const onExit = (el: HTMLDivElement) => {
+    gsap.to('.navlink-entry', { autoAlpha: 0, x: 80, stagger: 0.05, duration: 0.25, });
+    gsap.to(el, { autoAlpha: 0, duration: 0.3, delay: 0.15 });
+}
+
+const HamburgerNav: React.FC<NavBarLinksProps> = ({ currentBasePath, isMobile }) => {
+    const isExpanded = useSelector(({ navbar }: GlobalStateShape) => navbar.isExpanded);
+    const dispatch = useDispatch();
+
+    return (
         <MenuContainer>
             <HamburgerMenu
                 isExpanded={isExpanded}
-                onClick={() => toggleExpand()}
-                layerColor={currentBasePath === '/' && !isExpanded ? 'white' : 'black'}
+                onClick={() => dispatch(toggleExpanded())}
+                layerColor={currentBasePath === '/' ? 'white' : logoBlue}
             />
-            <Transition
+            <Transition<undefined>
                 in={isExpanded}
-                onEnter={(el) => TweenLite.to(el, 0.25, { autoAlpha: 1 })}
-                onExit={(el) => TweenLite.to(el, 0.25, { autoAlpha: 0 })}
-                timeout={250}
+                onEnter={onEnter}
+                onExit={onExit}
+                timeout={1000}
                 unmountOnExit={true}
                 mountOnEnter={true}
             >
@@ -47,13 +49,7 @@ const HamburgerNav = React.memo(({
                 />
             </Transition>
         </MenuContainer>
-    ));
+    );
+};
 
-const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
-    isExpanded: navbar.isExpanded,
-});
-
-export default connect<HamburgerNavStateToProps, HamburgerNavDispatchToProps, NavBarLinksProps>(
-    mapStateToProps,
-    { toggleExpanded },
-)(HamburgerNav);
+export default HamburgerNav;

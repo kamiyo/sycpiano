@@ -5,7 +5,7 @@ import * as React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { RouteComponentProps, withRouter } from 'react-router';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { LinkIconInstance } from 'src/components/Schedule/LinkIconSVG';
@@ -16,7 +16,7 @@ import { getGoogleMapsSearchUrl } from 'src/components/Schedule/utils';
 import { lightBlue, logoBlue, magenta, textGrey } from 'src/styles/colors';
 import { lato2 } from 'src/styles/fonts';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 import { screenXSorPortrait } from 'src/styles/screens';
 
 const locationIconDimension = '30px';
@@ -59,7 +59,7 @@ EventDate = styled(EventDate)<EventDateTimeProps>`
     border-radius: ${props => radii[props.rounded]};
 `;
 
-interface EventNameProps { name: string; eventType: EventType; className?: string; isMobile?: boolean; permaLink: string; }
+interface EventNameProps { name: string; eventType: EventType; className?: string; isMobile?: boolean; permaLink: string }
 
 const linkIconStyle = css`
     margin: 0 0.5em;
@@ -86,7 +86,7 @@ const eventNameStyle = css`
     }
 `;
 
-class EventName extends React.Component<EventNameProps & RouteComponentProps<{}>> {
+class EventName extends React.Component<EventNameProps & RouteComponentProps<unknown>> {
     copiedSpan: React.RefObject<HTMLSpanElement> = React.createRef();
     onCopy = () => {
         TweenLite.fromTo(this.copiedSpan.current, 0.2, { autoAlpha: 1 }, { autoAlpha: 0, delay: 0.5 });
@@ -124,7 +124,7 @@ let EventTime: React.FC<EventDateTimeProps> = ({ className, dateTime }) => (
 
 EventTime = styled(EventTime)` font-size: 1.5em; `;
 
-interface EventLocationProps { location: string; className?: string; isMobile?: boolean; }
+interface EventLocationProps { location: string; className?: string; isMobile?: boolean }
 
 const getVenueName = (location: string): string => {
     if (!location) {
@@ -144,7 +144,7 @@ let EventLocation: React.FC<EventLocationProps> = ({ location, className, isMobi
     });
 
     return (
-        <a href={getGoogleMapsSearchUrl(location)} className={className} target="_blank" rel="noopener">
+        <a href={getGoogleMapsSearchUrl(location)} className={className} target="_blank" rel="noopener noreferrer">
             <LocationIconInstance css={locationIconStyle} />
 
             <strong
@@ -224,7 +224,7 @@ interface EventWebsiteButtonProps {
 }
 
 let EventWebsiteButton: React.FC<EventWebsiteButtonProps> = ({ website, className }) => (
-    <a href={website} target="_blank" rel="noopener" className={className}>
+    <a href={website} target="_blank" rel="noopener noreferrer" className={className}>
         {`Tickets & Info`}
     </a>
 );

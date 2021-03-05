@@ -25,6 +25,7 @@ const hookFn = async (mFile: musicFile, _: any) => {
         if (mFile.musicId) {
             const m: music = await mFile.getMusic();
             console.log(`Updating hash for ${mFile.id}.`);
+            /* eslint-disable-next-line require-atomic-updates */
             mFile.hash = getHash(m.composer, m.piece, mFile.name);
         }
     } catch (error) {
@@ -33,7 +34,7 @@ const hookFn = async (mFile: musicFile, _: any) => {
     console.log(`[End Hook]\n`);
 };
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof musicFile => {
     musicFile.init({
         id: {
             allowNull: false,

@@ -13,6 +13,9 @@ import { musicFile } from './models/musicFile';
 import { photo } from './models/photo';
 import { piece } from './models/piece';
 import { token } from './models/token';
+import { product } from './models/product';
+import { customer } from 'models/customer';
+import { faq } from 'models/faq';
 
 type Moment = moment.Moment;
 
@@ -29,10 +32,11 @@ export interface GCalEvent {
     readonly [key: string]: any; // other params
 }
 
-export type ModelCtor<M extends Model> = (new () => M) & typeof Model;
+export type ModelCtor<M extends Model> = typeof Sequelize.Model & (new () => M);
 
-export class Model<T = any, T2 = any> extends Sequelize.Model<T, T2> {
+export class Model<T extends unknown = any, T2 extends unknown = any> extends Sequelize.Model<T, T2> {
     static associate?(db: {[key: string]: ModelCtor<any>}): void;
+    readonly dataValues: T;
 }
 
 export interface ModelMap {
@@ -49,6 +53,9 @@ export interface ModelMap {
     photo: typeof photo;
     piece: typeof piece;
     token: typeof token;
+    product: typeof product;
+    customer: typeof customer;
+    faq: typeof faq;
     [key: string]: typeof Model;
 }
 
@@ -58,12 +65,14 @@ export interface DB {
     readonly models: ModelMap;
 }
 
-export interface StoreItem {
-    readonly caption: string;
-    readonly created: number;
+export interface ShopItem {
     readonly description: string;
     readonly id: string;
-    readonly images: string[];
     readonly name: string;
-    readonly updated: number;
+    readonly price: number;
+    readonly images: string[];
+    readonly format?: string;
+    readonly pages?: number;
+    readonly sample?: string;
+    readonly permalink?: string;
 }

@@ -10,7 +10,7 @@ export class discLink extends Model {
     readonly updatedAt?: Date | string;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof discLink => {
     discLink.init({
         id: {
             type: dataTypes.UUID,

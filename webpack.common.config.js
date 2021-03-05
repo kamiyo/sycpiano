@@ -4,7 +4,6 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const os = require('os');
 require('dotenv').config();
@@ -24,6 +23,36 @@ const workerPool = {
     poolTimeout: isProd ? 2000 : Infinity,
 };
 
+const tsxUse = [
+    {
+        loader: 'babel-loader',
+        options: {
+            presets: [
+                [
+                    '@babel/preset-react',
+                    { runtime: 'automatic', importSource: '@emotion/react' }
+                ],
+                [
+                    '@babel/preset-env',
+                    {
+                        targets: "> 0.25%, not dead",
+                        useBuiltIns: 'usage',
+                        corejs: '3',
+                    }
+                ],
+                '@babel/preset-typescript',
+            ],
+            plugins: [
+                '@emotion/babel-plugin',
+                '@babel/syntax-dynamic-import',
+                '@babel/proposal-class-properties',
+                '@babel/proposal-object-rest-spread',
+                ['@babel/transform-runtime', { 'corejs': 3 }]
+            ],
+        },
+    },
+];
+
 const config = () => {
     return {
         cache: true,
@@ -35,61 +64,26 @@ const config = () => {
             publicPath: '/static/',
         },
         module: {
-            rules: [{
-                test: /\.(t|j)sx?$/,
-                include: sourcePaths,
-                use: [
-                    { loader: 'cache-loader' },
-                    {
-                        loader: 'thread-loader',
-                        options: workerPool,
-                    },
-                    {
-                        loader: 'babel-loader',
+            rules: [
+                {
+                    test: /\.(t|j)sx?$/,
+                    include: sourcePaths,
+                    use: tsxUse,
+                },
+                {
+                    test: /node_modules\/vfile\/core\.js/,
+                    use: [{
+                        loader: 'imports-loader',
                         options: {
-                            presets: [
-                                '@babel/preset-react',
-                                '@emotion/babel-preset-css-prop',
-                                [
-                                    '@babel/preset-env',
-                                    {
-                                        targets: "> 0.25%, not dead",
-                                        useBuiltIns: 'usage',
-                                        corejs: '3',
-                                    }
-                                ],
-                                '@babel/preset-typescript',
-                            ],
-                            plugins: [
-                                'syntax-dynamic-import',
-                                '@babel/proposal-class-properties',
-                                '@babel/proposal-object-rest-spread',
-                            ],
+                            type: 'commonjs',
+                            imports: ['single process/browser process'],
                         },
-                    },
-                ]
-            }, {
-                test: /\.(ttf|eot|woff|woff2|svg|png|jpg)$/,
-                include: [
-                    path.resolve(__dirname, 'web/assets/images'),
-                    path.resolve(__dirname, 'web/assets/fonts')
-                ],
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 2e16,
-                            name: '[name]-[hash].[ext]',
-                        },
-                    },
-                ],
-            }]
+                    }],
+                },
+            ],
         },
         optimization: {
-            runtimeChunk: 'single',
-            splitChunks: {
-                chunks: 'all',
-            },
+            runtimeChunk: true,
         },
         plugins: [
             new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /^en$/),
@@ -99,21 +93,20 @@ const config = () => {
                 // MUSIC_PATH: JSON.stringify(staticPrefix + '/music'), => see dev and prod files
                 VIDEOS_PATH: JSON.stringify(staticPrefix + '/videos'),
                 // GAPI_KEY => see dev and prod files
+                STRIPE_PUBLIC: JSON.stringify(process.env.STRIPE_PUBLIC),
             }),
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, 'web/partials/index.html'),
-                inject: false,
-            }),
-            new ProgressBarPlugin({
-                format: '[:percent] webpack: :msg... :elapseds \n',
-                clear: false,
+                scriptLoading: 'defer',
+                hash: true,
             }),
         ],
         resolve: {
             extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
             alias: {
                 'src': path.resolve(__dirname, 'web/src'),
+                path: require.resolve('path-browserify'),
             },
             symlinks: false,
         }
@@ -123,4 +116,6 @@ const config = () => {
 module.exports = {
     config: config(),
     staticPrefix,
+    sourcePaths,
+    tsxUse,
 };

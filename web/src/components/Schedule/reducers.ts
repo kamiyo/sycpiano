@@ -1,5 +1,5 @@
 import SCHEDULE_ACTIONS from 'src/components/Schedule/actionTypeKeys';
-import ActionType from 'src/components/Schedule/actionTypes';
+import { ActionTypes } from 'src/components/Schedule/actionTypes';
 import {
     EventItemsStateShape,
     EventItemType,
@@ -8,6 +8,7 @@ import {
 
 import { SortedArraySet } from 'collections/sorted-array-set';
 import { default as moment, Moment } from 'moment';
+import { Reducer } from 'redux';
 
 const dateTimeFormat = 'YYYY-MM-DDTHH:mm';
 const dateFormat = 'YYYY-MM-DD';
@@ -52,45 +53,9 @@ const initialState: EventItemsStateShape = {
     hasMore: true,
 };
 
-export const scheduleReducer = (state: ScheduleStateShape = {
-    upcoming: {
-        ...initialState,
-        items: new SortedArraySet<EventItemType>([], equals, ascendCompare),
-    },
-    archive: {
-        ...initialState,
-        items: new SortedArraySet<EventItemType>([], equals, descendCompare),
-    },
-    search: {
-        ...initialState,
-        items: new SortedArraySet<EventItemType>([], equals, descendCompare),
-        lastQuery: '',
-    },
-}, action: ActionType) => {
-    switch (action.name) {
-        case 'upcoming':
-            return {
-                ...state,
-                upcoming: eventItemsReducer(state.upcoming, action),
-            };
-        case 'archive':
-            return {
-                ...state,
-                archive: eventItemsReducer(state.archive, action),
-            };
-        case 'search':
-            return {
-                ...state,
-                search: eventItemsReducer(state.search, action),
-            };
-        default:
-            return state;
-    }
-};
-
-const eventItemsReducer = (
+const eventItemsReducer: Reducer<EventItemsStateShape, ActionTypes> = (
     state: EventItemsStateShape = initialState,
-    action: ActionType,
+    action: ActionTypes,
 ) => {
     switch (action.type) {
         case SCHEDULE_ACTIONS.CLEAR_LIST:
@@ -148,6 +113,42 @@ const eventItemsReducer = (
                 ...state,
                 hasEventBeenSelected: true,
                 currentItem: action.eventItem,
+            };
+        default:
+            return state;
+    }
+};
+
+export const scheduleReducer: Reducer<ScheduleStateShape, ActionTypes> = (state: ScheduleStateShape = {
+    upcoming: {
+        ...initialState,
+        items: new SortedArraySet<EventItemType>([], equals, ascendCompare),
+    },
+    archive: {
+        ...initialState,
+        items: new SortedArraySet<EventItemType>([], equals, descendCompare),
+    },
+    search: {
+        ...initialState,
+        items: new SortedArraySet<EventItemType>([], equals, descendCompare),
+        lastQuery: '',
+    },
+}, action: ActionTypes) => {
+    switch (action.name) {
+        case 'upcoming':
+            return {
+                ...state,
+                upcoming: eventItemsReducer(state.upcoming, action),
+            };
+        case 'archive':
+            return {
+                ...state,
+                archive: eventItemsReducer(state.archive, action),
+            };
+        case 'search':
+            return {
+                ...state,
+                search: eventItemsReducer(state.search, action),
             };
         default:
             return state;

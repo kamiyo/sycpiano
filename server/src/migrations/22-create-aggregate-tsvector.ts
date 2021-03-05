@@ -1,6 +1,6 @@
 import { QueryInterface } from 'sequelize';
 
-export const up = async (queryInterface: QueryInterface) => (
+export const up = async (queryInterface: QueryInterface): Promise<[unknown[], unknown]> => (
     await queryInterface.sequelize.query(`
         CREATE AGGREGATE tsvector_agg (tsvector) (
             SFUNC = tsvector_concat,
@@ -9,7 +9,7 @@ export const up = async (queryInterface: QueryInterface) => (
     `)
 );
 
-export const down = async (queryInterface: QueryInterface) => (
+export const down = async (queryInterface: QueryInterface): Promise<[unknown[], unknown]> => (
     await queryInterface.sequelize.query(`
         DROP AGGREGATE IF EXISTS tsvector_agg(tsvector);
     `)

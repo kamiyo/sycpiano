@@ -2,10 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Transition } from 'react-transition-group';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import { playVideo } from 'src/components/Media/Videos/actions';
 import { cliburn1, generateSrcsetWidths, resizedImage} from 'src/styles/imageUrls';
@@ -25,7 +25,7 @@ interface PreviewOverlayDispatchToProps {
 
 type PreviewOverlayProps = { isMobile: boolean } & PreviewOverlayStateToProps & PreviewOverlayDispatchToProps;
 
-const StyledPreviewOverlay = styled.div<{ bgImage?: string; }>`
+const StyledPreviewOverlay = styled.div<{ bgImage?: string }>`
     width: 100%;
     height: 100%;
     z-index: 10;
@@ -70,7 +70,7 @@ const imageLoaderStyle = css`
     position: absolute;
 `;
 
-class PreviewOverlay extends React.Component<PreviewOverlayProps, { bgImage: string; }> {
+class PreviewOverlay extends React.Component<PreviewOverlayProps, { bgImage: string }> {
     state = { bgImage: '' };
     private bgRef: React.RefObject<HTMLDivElement> = React.createRef();
 
@@ -143,7 +143,7 @@ class PreviewOverlay extends React.Component<PreviewOverlayProps, { bgImage: str
 }
 
 const mapStateToProps = (state: GlobalStateShape): PreviewOverlayStateToProps => ({
-    isPreviewOverlay: state.video_player.isPreviewOverlay,
+    isPreviewOverlay: state.videoPlayer.isPreviewOverlay,
 });
 
 const mapDispatchToProps: PreviewOverlayDispatchToProps = {

@@ -1,11 +1,12 @@
+import { Reducer } from 'redux';
 import PHOTO_ACTIONS from 'src/components/Media/Photos/actionTypeKeys';
-import PhotoActions from 'src/components/Media/Photos/actionTypes';
+import { PhotoActions } from 'src/components/Media/Photos/actionTypes';
 import { PhotoListReducerShape, PhotoViewerReducerShape } from 'src/components/Media/Photos/types';
 
-export const photoListReducer = (state: PhotoListReducerShape = {
+export const photoListReducer: Reducer<PhotoListReducerShape, PhotoActions> = (state = {
     items: [],
     isFetching: false,
-}, action: PhotoActions) => {
+}, action) => {
     switch (action.type) {
         case PHOTO_ACTIONS.FETCH_PHOTOS_REQUEST:
             return {
@@ -27,9 +28,9 @@ export const photoListReducer = (state: PhotoListReducerShape = {
     }
 };
 
-export const photoViewerReducer = (state: PhotoViewerReducerShape = {
+export const photoViewerReducer: Reducer<PhotoViewerReducerShape, PhotoActions> = (state = {
     currentItem: null,
-}, action: PhotoActions) => {
+}, action) => {
     switch (action.type) {
         case PHOTO_ACTIONS.SELECT_PHOTO:
             return {

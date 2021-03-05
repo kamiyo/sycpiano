@@ -60,11 +60,11 @@ const transformModelToGoogle = async (c: calendar) => {
         allDay: c.allDay,
         timeZone: c.timezone,
         description: JSON.stringify({
-            collaborators: collaborators.map((collab) => ({
+            collaborators: collaborators.map((collab: { name: string; instrument: string }) => ({
                 name: collab.name,
                 instrument: collab.instrument,
             })),
-            pieces: pieces.map((pie) => ({
+            pieces: pieces.map((pie: { composer: string; piece: string }) => ({
                 composer: pie.composer,
                 piece: pie.piece,
             })),
@@ -110,6 +110,7 @@ const beforeCreateHook = async (c: calendar, _: any) => {
     if (allDay && c.endDate) {
         const endDateString = moment(c.endDate).format('YYYY-MM-DD');
         const endDateWithTz = moment.tz(endDateString, timezone).toDate();
+        /* eslint-disable-next-line require-atomic-updates */
         c.endDate = endDateWithTz;
     }
 
@@ -126,11 +127,12 @@ const beforeCreateHook = async (c: calendar, _: any) => {
 
     const id = createResponse.data.id;
     console.log(`Received response id: ${id}.`);
-
+    /* eslint-disable require-atomic-updates */
     c.id = id;
     c.location = location;
     c.timezone = timezone;
     c.dateTime = dateWithTz;
+    /* eslint-enable require-atomic-updates */
     console.log(`[End Hook]\n`);
 };
 
@@ -155,8 +157,10 @@ const beforeUpdateHook = async (c: calendar, _: any) => {
         console.log(c.dateTime);
         const dateString = moment.tz(c.dateTime, null).format('YYYY-MM-DD HH:mm');
         const dateWithTz = moment.tz(dateString, timezone).toDate();
+        /* eslint-disable require-atomic-updates */
         c.dateTime = dateWithTz;
         c.timezone = timezone;
+        /* eslint-enable require-atomic-updates */
     } else {
         // Here, since dateTime was unchanged, we're not being fed an input number, forced into UTC.
         // Instead, we have a time in a destination timezone. So, we extract the number we want, then
@@ -165,8 +169,10 @@ const beforeUpdateHook = async (c: calendar, _: any) => {
             console.log(`Updating dateTime with new tz.`);
             const dateString = moment(c.dateTime).tz(c.timezone).format('YYYY-MM-DD HH:mm');
             const dateWithTz = moment.tz(dateString, timezone).toDate();
+            /* eslint-disable require-atomic-updates */
             c.dateTime = dateWithTz;
             c.timezone = timezone;
+            /* eslint-enable require-atomic-updates */
         }
     }
 
@@ -178,7 +184,7 @@ const beforeUpdateHook = async (c: calendar, _: any) => {
     console.log(`[End Hook]\n`);
 };
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof calendar => {
     calendar.init({
         id: {
             autoIncrement: false,

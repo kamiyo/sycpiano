@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import * as dotenv from 'dotenv';
 import { startCase } from 'lodash';
 import * as moment from 'moment-timezone';
-import * as pathToRegexp from 'path-to-regexp';
+import * as regexp from 'path-to-regexp';
 
 import { Op } from 'sequelize';
 import db from './models';
@@ -17,7 +17,7 @@ const models = db.models;
 
 const { gte, lt } = Op;
 
-const regex = pathToRegexp('/:first/:second?/(.*)?');
+const regex = regexp.pathToRegexp('/:first/:second?/(.*)?');
 const baseString = 'Sean Chen: Pianist, Composer, Arranger | ';
 const age = moment().diff('1988-08-27', 'year');
 const descriptions: {
@@ -32,30 +32,41 @@ const descriptions: {
     music: string;
     photos: string;
     press: string;
-    store: string;
+    scores: string;
+    faqs: string;
     getMusic: (piece: string, contributors?: string) => string;
-    [index: string]: any;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    [key: string]: any;
 } = {
-        home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
-        biography: `Hailed as a charismatic rising star with “an exceptional ability to connect with an audience combined with an easy virtuosity” (Huffington Post), ${age.toString()}-year-old American pianist Sean Chen, third prize winner at the 2013 Van Cliburn International Piano Competition and recipient of the DeHaan Classical Fellowship as the winner of the 2013 American Pianists Awards, has continued to earn accolades for “alluring, colorfully shaded renditions” (New York Times) and “genuinely sensitive” (LA Times) playing.`,
-        discography: 'Complete discography of Sean Chen',
-        contact: `Contact information for Sean Chen and for booking performances.`,
-        upcoming: 'Upcoming recitals, concerti, and masterclasses.',
-        archive: 'Past recitals, concerti, and masterclasses.',
-        search: 'Search recitals, concerti, and masterclasses,',
-        videos: `A playlist of Sean Chen's YouTube clips.`,
-        music: `A playlist of Sean Chen's live concert recordings, and a link to his Spotify musician page.`,
-        getMusic: (piece: string, contributors?: string) =>
-            `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
-        photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
-        press: `Reviews of Sean Chen's performances.`,
-        store: `Buy Sean Chen's sheet music.`,
-    };
+    home: 'Welcome to the official website of pianist, composer, and arranger Sean Chen. Third Prize at the 2013 Van Cliburn, Christel DeHaan Classical Fellow of the 2013 American Pianists Awards, and Artist-in-Residence at University of Missouri, Kansas City.',
+    biography: `Hailed as a charismatic rising star with “an exceptional ability to connect with an audience combined with an easy virtuosity” (Huffington Post), ${age.toString()}-year-old American pianist Sean Chen, third prize winner at the 2013 Van Cliburn International Piano Competition and recipient of the DeHaan Classical Fellowship as the winner of the 2013 American Pianists Awards, has continued to earn accolades for “alluring, colorfully shaded renditions” (New York Times) and “genuinely sensitive” (LA Times) playing.`,
+    discography: 'Complete discography of Sean Chen',
+    contact: `Contact information for Sean Chen and for booking performances.`,
+    upcoming: 'Upcoming recitals, concerti, and masterclasses.',
+    archive: 'Past recitals, concerti, and masterclasses.',
+    search: 'Search recitals, concerti, and masterclasses,',
+    videos: `A playlist of Sean Chen's YouTube clips.`,
+    music: `A playlist of Sean Chen's live concert recordings, and a link to his Spotify musician page.`,
+    getMusic: (piece: string, contributors?: string) =>
+        `Listen to Sean Chen's live performance of ${piece}` + (contributors ? `, with ${contributors}` : '.'),
+    photos: 'Publicity photos for browsing, and a link to a Dropbox folder for high-resolution images.',
+    press: `Reviews of Sean Chen's performances.`,
+    scores: `Online shop of Sean Chen's arrangements, cadenzas, and original compositions.`,
+    faqs: `Information about Sean Chen Piano online shop.`,
+};
 
-const validFirst = [ '', 'about', 'contact', 'schedule', 'media', 'press', 'store' ];
-const validSecond = [ '', 'biography', 'discography', 'press', 'music', 'videos', 'photos', 'upcoming', 'archive' ];
+const validFirst = ['', 'about', 'contact', 'schedule', 'media', 'press', 'store', 'shop'];
+const validSecond = ['', 'biography', 'discography', 'press', 'music', 'videos', 'photos', 'upcoming', 'archive', 'scores', 'FAQs', 'checkout'];
 
-export const getMetaFromPathAndSanitize = async (url: string) => {
+interface Meta {
+    title: string;
+    description: string;
+    notFound?: boolean
+    image?: string;
+    sanitize?: string;
+}
+
+export const getMetaFromPathAndSanitize = async (url: string): Promise<Meta> => {
     const parsed = regex.exec(url);
     if (parsed === null) {
         return {
@@ -169,6 +180,19 @@ export const getMetaFromPathAndSanitize = async (url: string) => {
                 title: baseString + startCase(parsed[1]),
                 description: descriptions[parsed[1]],
                 sanitize: e === 'invalid date' ? parsed[3] : undefined,
+            };
+        }
+    }
+    if (parsed[1] === 'shop') {
+        if (parsed[2] === 'checkout') {
+            return {
+                title: baseString + startCase(parsed[1]) + ' | Checkout Success',
+                description: descriptions[parsed[2]],
+            }
+        } else {
+            return {
+                title: baseString + startCase(parsed[1]),
+                description: descriptions[parsed[2]],
             };
         }
     }

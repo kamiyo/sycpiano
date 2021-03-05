@@ -3,6 +3,6 @@ import Videos from 'src/components/Media/Videos/Videos';
 
 export const Component = Videos;
 export const reducers = {
-    video_player: videos.videoPlayerReducer,
-    video_playlist: videos.videoPlaylistReducer,
+    videoPlayer: videos.videoPlayerReducer,
+    videoPlaylist: videos.videoPlaylistReducer,
 };

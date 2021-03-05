@@ -99,7 +99,15 @@ const BEFORE = -2;
 
 const calendarRouter = express.Router({ mergeParams: true });
 
-calendarRouter.get('/search', async (req, res) => {
+interface CalendarQuery {
+    q?: string;
+    before?: string;
+    after?: string;
+    date?: string;
+    limit?: string;
+}
+
+calendarRouter.get('/search', async (req: express.Request<any, any, any, CalendarQuery>, res) => {
     const str: string = req.query.q;
     let idArray: string[];
     if (str) {
@@ -138,8 +146,8 @@ calendarRouter.get('/search', async (req, res) => {
     const date = req.query.date ? moment(req.query.date) : undefined;
 
     let where: {
-        id?: string[],
-        dateTime?: any,
+        id?: string[];
+        dateTime?: any;
     } = (str) ? {
         id: idArray,
     } : {};
@@ -197,10 +205,10 @@ calendarRouter.get('/search', async (req, res) => {
     res.json(calendarResults);
 });
 
-calendarRouter.get('/', async (req, res) => {
+calendarRouter.get('/', async (req: express.Request<any, any, any, CalendarQuery>, res) => {
     const model = models.calendar;
 
-    const limit = req.query.limit;
+    const limit = req.query.limit && parseInt(req.query.limit);
     const date = req.query.date;
     const before = req.query.before;
     const after = req.query.after;

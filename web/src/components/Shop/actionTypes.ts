@@ -1,5 +1,5 @@
-import STORE_ACTIONS from 'src/components/SycStore/actionTypeKeys';
-import { StoreItem } from './types';
+import STORE_ACTIONS from 'src/components/Shop/actionTypeKeys';
+import { ProductMap } from './types';
 
 export interface FetchItemsRequest {
     readonly type: typeof STORE_ACTIONS.FETCH_ITEMS_REQUEST;
@@ -7,13 +7,13 @@ export interface FetchItemsRequest {
 
 export interface FetchItemsSuccess {
     readonly type: typeof STORE_ACTIONS.FETCH_ITEMS_SUCCESS;
-    readonly items: StoreItem[];
+    readonly items: ProductMap;
 }
 
 export interface FetchItemsError {
     readonly type: typeof STORE_ACTIONS.FETCH_ITEMS_ERROR;
 }
 
-type ActionTypes = FetchItemsRequest | FetchItemsSuccess | FetchItemsError;
+export type FetchItemsActions = FetchItemsRequest | FetchItemsSuccess | FetchItemsError;
 
-export default ActionTypes;
+export type Types = FetchItemsActions

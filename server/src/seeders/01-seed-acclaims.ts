@@ -3,22 +3,23 @@ import { omit } from 'lodash';
 import * as path from 'path';
 import { ModelMap } from 'types';
 
-export const up = async (models: ModelMap) => {
+export const up = async (models: ModelMap): Promise<void> => {
     const model = models.acclaim;
     const filePath = path.join(__dirname, '../../../web/assets/data/acclaim.json');
-    fs.readFile(filePath, (err: NodeJS.ErrnoException, content: any) => {
-        if (err) {
-            console.log(err);
-        }
+    try {
+        const content = await fs.promises.readFile(filePath, { encoding: 'utf8' });
+
         const json: Array<{
-            [key: string]: any,
+            [key: string]: any;
         }> = JSON.parse(content);
 
         const items = json.map((obj) => omit(obj, ['ID']));
-        return model.bulkCreate(items);
-    });
+        await model.bulkCreate(items);
+    } catch (e) {
+        console.log(e);
+    }
 };
 
-export const down = async (models: ModelMap) => {
+export const down = async (models: ModelMap): Promise<number> => {
     return models.acclaim.destroy({ truncate: true });
 };

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import * as moment from 'moment';
 import { getToken } from './oauth';
 
@@ -14,7 +14,7 @@ const calendarId = (process.env.NODE_ENV === 'production' && process.env.SERVER_
     : 'c7dolt217rdb9atggl25h4fspg@group.calendar.google.com';
 const uriEncCalId = encodeURIComponent(calendarId);
 
-export const getCalendarSingleEvent = async (sequelize: Sequelize, id: string) => {
+export const getCalendarSingleEvent = async (sequelize: Sequelize, id: string): Promise<AxiosResponse<any>> => {
     const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${id}`;
     return axios.get(url, {
@@ -24,7 +24,7 @@ export const getCalendarSingleEvent = async (sequelize: Sequelize, id: string) =
     });
 };
 
-export const getCalendarEvents = async (sequelize: Sequelize, nextPageToken: string = null, syncToken: string = null) => {
+export const getCalendarEvents = async (sequelize: Sequelize, nextPageToken: string = null, syncToken: string = null): Promise<AxiosResponse<any>> => {
     const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
     return axios.get(url, {
@@ -39,7 +39,7 @@ export const getCalendarEvents = async (sequelize: Sequelize, nextPageToken: str
     });
 };
 
-export const deleteCalendarEvent = async (sequelize: Sequelize, id: string) => {
+export const deleteCalendarEvent = async (sequelize: Sequelize, id: string): Promise<AxiosResponse<any>> => {
     const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${id}`;
     return axios.delete(url, {
@@ -68,7 +68,7 @@ export const createCalendarEvent = async (sequelize: Sequelize, {
     timeZone,
     allDay,
     endDate,
-}: GoogleCalendarParams) => {
+}: GoogleCalendarParams): Promise<AxiosResponse<any>> => {
     const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events`;
     const startMoment = moment(startDatetime);
@@ -102,7 +102,7 @@ export const updateCalendar = async (sequelize: Sequelize, {
     timeZone,
     allDay,
     endDate,
-}: GoogleCalendarParams) => {
+}: GoogleCalendarParams): Promise<AxiosResponse<any>> => {
     const token = await getToken(sequelize);
     const url = `https://www.googleapis.com/calendar/v3/calendars/${uriEncCalId}/events/${id}`;
     const startMoment = moment(startDatetime);
@@ -127,7 +127,7 @@ export const updateCalendar = async (sequelize: Sequelize, {
     });
 };
 
-export const extractEventDescription = (event: GCalEvent) => {
+export const extractEventDescription = (event: GCalEvent): Record<string, unknown> => {
     try {
         return JSON.parse(event.description);
     } catch (e) {
@@ -138,7 +138,7 @@ export const extractEventDescription = (event: GCalEvent) => {
     }
 };
 
-export const getLatLng = async (address: string) => {
+export const getLatLng = async (address: string): Promise<{ latlng: { lat: number; lng: number }; formattedAddress: string }> => {
     const geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
     try {
         const response = await axios.get(geocodeUrl, {
@@ -156,7 +156,7 @@ export const getLatLng = async (address: string) => {
     }
 };
 
-export const getTimeZone = async (lat: number, lng: number, timestamp?: string | Date) => {
+export const getTimeZone = async (lat: number, lng: number, timestamp?: string | Date): Promise<string> => {
     const loc = `${lat.toString()},${lng.toString()}`;
     const url = `https://maps.googleapis.com/maps/api/timezone/json`;
     try {

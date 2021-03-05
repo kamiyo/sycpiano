@@ -10,7 +10,7 @@ export class calendarPiece extends Model {
     readonly updatedAt?: Date | string;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof calendarPiece => {
     calendarPiece.init({
         id: {
             allowNull: false,

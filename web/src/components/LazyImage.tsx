@@ -2,21 +2,12 @@ import Blazy from 'blazy';
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
 
-import { SerializedStyles } from '@emotion/core';
+import { SerializedStyles } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import TweenLite from 'gsap/TweenLite';
 
 import { LoadingInstance } from 'src/components/LoadingSVG';
 import { lightBlue } from 'src/styles/colors';
-
-const fadeOnEnter = (element: HTMLElement) => {
-    TweenLite.to(element.firstChild, 0.25, { autoAlpha: 1 });
-};
-
-const fadeOnExit = (element: HTMLElement) => {
-    TweenLite.to(element.firstChild, 0.25, { autoAlpha: 0 });
-};
+import { fadeOnEnter, fadeOnExit } from 'src/utils';
 
 const StyledLoadingInstance = styled(LoadingInstance) `
     position: absolute;
@@ -70,39 +61,40 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
         isLoaded: false,
     };
 
-    activateBlazy = () => {
+    activateBlazy = (): void => {
         this.blazy = new Blazy({
             selector: `#${this.props.id}`,
             offset: this.props.offset || Infinity,
             container: this.props.container ? `#${this.props.container}` : 'window',
+            loadInvisible: true,
             success: (el: HTMLImageElement) => {
                 if (this.mounted) {
-                    this.timeout = setTimeout(() => this.setState({ isLoaded: true }), 500);
-                    this.props.successCb && this.props.successCb(el);
+                    this.timeout = setTimeout(() => this.setState({ isLoaded: true }), 250);
+                    this.props.successCb?.(el);
                 }
             },
         });
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         this.mounted = true;
         this.activateBlazy();
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.mounted = false;
         clearTimeout(this.timeout);
         this.blazy.destroy();
     }
 
-    componentDidUpdate(prevProps: LazyImageProps) {
+    componentDidUpdate(prevProps: LazyImageProps): void {
         if (prevProps.isMobile !== this.props.isMobile) {
             this.setState({ isLoaded: false });
             this.blazy.revalidate();
         }
     }
 
-    render() {
+    render(): JSX.Element {
         const {
             mobileAttributes,
             desktopAttributes,
@@ -115,12 +107,12 @@ class LazyImageClass extends React.Component<LazyImageProps, LazyImageState> {
         const Loading = (loadingComponent as typeof React.Component);
         return (
             <React.Fragment>
-                <Transition
+                <Transition<undefined>
                     in={loadingComponent && !this.state.isLoaded}
                     mountOnEnter={true}
                     unmountOnExit={true}
-                    onEnter={fadeOnEnter}
-                    onExit={fadeOnExit}
+                    onEnter={fadeOnEnter()}
+                    onExit={fadeOnExit()}
                     timeout={250}
                 >
                     <div css={csss.loading}>

@@ -1,8 +1,8 @@
 import { DataTypes, QueryInterface } from 'sequelize';
 
-export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
+export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes): Promise<void> => {
     const table = await queryInterface.describeTable('photo');
-    if ((table as any).credit) {
+    if (table.credit) {
         return;
     }
     await queryInterface.addColumn('photo',
@@ -14,6 +14,6 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
     );
 };
 
-export const down = async (queryInterface: QueryInterface) => {
+export const down = async (queryInterface: QueryInterface): Promise<void> => {
     await queryInterface.removeColumn('photo', 'credit');
 };

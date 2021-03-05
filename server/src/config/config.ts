@@ -6,10 +6,10 @@ export const development = {
     host: '127.0.0.1',
     database: 'sycpiano',
     port: 5432,    // default
-    username: require('../secret').default.username,
-    password: require('../secret').default.password,
+    username: require('../secret').default.username, /* eslint-disable-line @typescript-eslint/no-var-requires */
+    password: require('../secret').default.password, /* eslint-disable-line @typescript-eslint/no-var-requires */
     dialect: 'postgres' as Dialect,
-    logging: (str: string) => {
+    logging: (str: string): void => {
         console.log(str);
     },
     define: { freezeTableName: true, underscored: true },

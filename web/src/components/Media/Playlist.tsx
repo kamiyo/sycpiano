@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 
-import TweenLite from 'gsap/TweenLite';
+import { TweenLite } from 'gsap';
 
 import PlaylistToggler from 'src/components/Media/PlaylistToggler';
 import { PlaylistProps } from 'src/components/Media/types';
@@ -57,7 +57,7 @@ const playlistStyle = css`
 class Playlist extends React.Component<PlaylistProps> {
     ulRef: React.RefObject<HTMLUListElement> = React.createRef();
 
-    onEnter = (el: HTMLElement, isAppearing: boolean) => {
+    onEnter = (el: HTMLElement, isAppearing: boolean): void => {
         const amount = this.ulRef.current.getBoundingClientRect().width;
         if ((!this.props.hasToggler || !this.props.shouldAppear) && isAppearing) {
             el.style.transform = 'translateX(0)';
@@ -66,15 +66,15 @@ class Playlist extends React.Component<PlaylistProps> {
         }
     }
 
-    onExit = (el: HTMLElement) => {
+    onExit = (el: HTMLElement): void => {
         const amount = this.ulRef.current.getBoundingClientRect().width;
         slideRight(el, amount);
     }
 
-    render() {
+    render(): JSX.Element {
         const props = this.props;
         return (
-            <Transition
+            <Transition<undefined>
                 in={props.isShow}
                 appear={true}
                 onEnter={this.onEnter}

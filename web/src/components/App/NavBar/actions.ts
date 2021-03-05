@@ -59,19 +59,21 @@ const lastScroll = (scrollTop: number): ThunkAction<void, GlobalStateShape, void
         });
     };
 
-export const scrollFn = (triggerHeight: number, action: (tHeight: number, top: number) => void) => (event: React.UIEvent<HTMLElement> | UIEvent) => {
-    const scrollTop = (event.target as HTMLElement).scrollTop;
-    action(triggerHeight, scrollTop);
-};
+export const scrollFn = (triggerHeight: number, action: (tHeight: number, top: number) => void) =>
+    (event: React.UIEvent<HTMLElement> | UIEvent): void => {
+        const scrollTop = (event.target as HTMLElement).scrollTop;
+        action(triggerHeight, scrollTop);
+    };
 
-export const onScroll = (triggerHeight: number, scrollTop: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.ToggleNav & ActionTypes.LastScroll> => (dispatch, getState) => {
-    const lastScrollTop = getState().navbar.lastScrollTop;
-    if (typeof triggerHeight === 'number') {
-        if (scrollTop > lastScrollTop && scrollTop > triggerHeight) {
-            dispatch(toggleNavBar(false));
-        } else {
-            dispatch(toggleNavBar(true));
+export const onScroll = (triggerHeight: number, scrollTop: number): ThunkAction<void, GlobalStateShape, void, ActionTypes.ToggleNav & ActionTypes.LastScroll> =>
+    (dispatch, getState) => {
+        const lastScrollTop = getState().navbar.lastScrollTop;
+        if (typeof triggerHeight === 'number') {
+            if (scrollTop > lastScrollTop && scrollTop > triggerHeight) {
+                dispatch(toggleNavBar(false));
+            } else {
+                dispatch(toggleNavBar(true));
+            }
+            dispatch(lastScroll(scrollTop));
         }
-        dispatch(lastScroll(scrollTop));
-    }
-};
+    };

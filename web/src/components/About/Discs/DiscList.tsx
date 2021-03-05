@@ -31,7 +31,7 @@ const DiscListUL = styled.ul`
 `;
 
 class DiscList extends React.PureComponent<DiscListProps> {
-    render() {
+    render(): JSX.Element {
         return (
             <div>
                 <DiscListUL>

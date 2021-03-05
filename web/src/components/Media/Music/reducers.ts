@@ -1,8 +1,9 @@
+import { Reducer } from 'redux';
 import AUDIO_ACTIONS from 'src/components/Media/Music/actionTypeKeys';
-import ActionTypes from 'src/components/Media/Music/actionTypes';
+import { ActionTypes } from 'src/components/Media/Music/actionTypes';
 import { AudioPlaylistStateShape } from 'src/components/Media/Music/types';
 
-export const audioPlaylistReducer = (state: AudioPlaylistStateShape = {
+export const audioPlaylistReducer: Reducer<AudioPlaylistStateShape, ActionTypes> = (state: AudioPlaylistStateShape = {
     isFetching: false,
     items: [],
     flatItems: [],

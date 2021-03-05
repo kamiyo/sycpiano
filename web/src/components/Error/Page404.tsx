@@ -17,7 +17,7 @@ const StyledDiv = styled.div`
     justify-content: center;
 `;
 
-const Page404: React.FunctionComponent<{}> = () => (
+const Page404: React.FunctionComponent<Record<string, unknown>> = () => (
     <>
         <Helmet
             title={`${titleStringBase} | 404: Page Not Found`}
@@ -28,5 +28,5 @@ const Page404: React.FunctionComponent<{}> = () => (
     </>
 );
 
-export type Page404Type = React.FunctionComponent<{}>;
+export type Page404Type = typeof Page404;
 export default Page404;

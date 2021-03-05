@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 const hamburgerLayerHeight = 3;
@@ -84,4 +84,4 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = (props) => (
     </StyledHamburger>
 );
 
-export default React.memo(HamburgerMenu);
+export default HamburgerMenu;

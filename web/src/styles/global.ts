@@ -1,4 +1,4 @@
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 
 import { logoBlue } from 'src/styles/colors';
 import { link } from 'src/styles/mixins';

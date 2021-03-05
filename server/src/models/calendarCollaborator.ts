@@ -10,7 +10,7 @@ export class calendarCollaborator extends Model {
     readonly updatedAt?: Date | string;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof calendarCollaborator => {
     calendarCollaborator.init({
         id: {
             allowNull: false,

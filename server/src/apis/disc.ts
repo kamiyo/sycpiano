@@ -1,9 +1,9 @@
-import { RequestHandler } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import db from '../models';
 const models = db.models;
 
-const discHandler: RequestHandler = async (_, res) => {
+const discHandler = async (_: Request, res: Response, __: NextFunction): Promise<void> => {
     const model = models.disc;
     const response = await model.findAll({
         attributes: {

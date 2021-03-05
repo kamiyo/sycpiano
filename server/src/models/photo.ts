@@ -13,7 +13,7 @@ export class photo extends Model {
     readonly updatedAt?: Date | string;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof photo => {
     photo.init({
         id: {
             type: dataTypes.UUID,

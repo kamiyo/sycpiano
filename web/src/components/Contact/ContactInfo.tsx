@@ -38,11 +38,15 @@ const SubInfoTitle = styled.div`
     margin-bottom: 0.6rem;
 `;
 
-const PersonalInfo: React.FC<PersonalInfoShape> = (props) => (
-    <div className={props.className}>
-        <NameContainer>{props.name}</NameContainer>
+const PersonalInfo: React.FC<PersonalInfoShape> = ({
+    className,
+    name,
+    position,
+}) => (
+    <div className={className}>
+        <NameContainer>{name}</NameContainer>
 
-        {props.position.map((pos) => (
+        {position.map((pos) => (
             <SubInfo key={pos.title}>
                 <SubInfoTitle><strong>{pos.title}</strong></SubInfoTitle>
                 {pos.organization && (
@@ -81,11 +85,16 @@ const ContactMethod = styled.div`
     margin-bottom: 0.5rem;
 `;
 
-const PersonalContact: React.FC<PersonalContactShape> = (props) => (
-    <div className={props.className}>
-        {props.phone && <ContactMethod>{props.phone}</ContactMethod>}
+const PersonalContact: React.FC<PersonalContactShape> = ({
+    className,
+    phone,
+    email,
+    website,
+}) => (
+    <div className={className}>
+        {phone && <ContactMethod>{phone}</ContactMethod>}
 
-        {props.email.map((em) => (
+        {email.map((em) => (
             <ContactMethod key={em}>
                 <div>
                     <a href={`mailto:${em}`} css={link(contactPageLinkColor)}>
@@ -94,17 +103,17 @@ const PersonalContact: React.FC<PersonalContactShape> = (props) => (
                 </div>
             </ContactMethod>
         ))}
-        {(props.website) && (
+        {(website) && (
             <ContactMethod>
-                <a href={props.website} css={link(contactPageLinkColor)}>
-                    {props.website}
+                <a href={website} css={link(contactPageLinkColor)}>
+                    {website}
                 </a>
             </ContactMethod>
         )}
     </div>
 );
 
-const StyledPersonalContact = styled(React.memo(PersonalContact))`
+const StyledPersonalContact = styled(PersonalContact)`
     flex: 1 0 auto;
     font-family: ${lato3};
     display: flex;
@@ -123,7 +132,7 @@ const InfoContainer = styled.div`
 
 type ContactInfoProps = PersonalContactShape & PersonalInfoShape;
 
-const ContactInfo = React.memo((props: ContactInfoProps) => (
+const ContactInfo: React.FC<ContactInfoProps> = (props) => (
     <InfoContainer>
         <StyledPersonalInfo
             name={props.name}
@@ -138,6 +147,6 @@ const ContactInfo = React.memo((props: ContactInfoProps) => (
             website={props.website}
         />
     </InfoContainer>
-));
+);
 
 export { ContactInfo };

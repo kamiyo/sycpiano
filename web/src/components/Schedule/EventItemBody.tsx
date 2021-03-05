@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import {
@@ -45,7 +45,7 @@ const Connector = styled.div`
         );
 `;
 
-type EventItemBodyProps = DayItem & { className?: string, isMobile?: boolean; permaLink: string; listType: EventListName };
+type EventItemBodyProps = DayItem & { className?: string; isMobile?: boolean; permaLink: string; listType: EventListName };
 
 const detailSectionMargin = (extra?: number) => css` margin-bottom: ${20 + (extra || 0)}px; `;
 

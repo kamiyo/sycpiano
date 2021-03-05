@@ -2,7 +2,7 @@ import svgToMiniDataURI from 'mini-svg-data-uri';
 import * as React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 const previewStyle = css`
@@ -97,10 +97,10 @@ const mobileSVGString = ReactDOMServer.renderToStaticMarkup(
     ),
 );
 
-export const DesktopBackgroundPreview: React.FC<{}> = () => (
+export const DesktopBackgroundPreview: React.FC<Record<string, unknown>> = () => (
     <DesktopImg src={svgToMiniDataURI(desktopSVGString)} />
 );
 
-export const MobileBackgroundPreview: React.FC<{}> = () => (
+export const MobileBackgroundPreview: React.FC<Record<string, unknown>> = () => (
     <MobileImg src={svgToMiniDataURI(mobileSVGString)} />
 );

@@ -1,17 +1,36 @@
 import moment from 'moment-timezone';
 import { lighten } from 'polished';
 import * as React from 'react';
-import ClampLines, { ClampLinesProps } from 'react-clamp-lines';
+import ClampLines from 'react-clamp-lines';
 import { RouteComponentProps, withRouter } from 'react-router';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { VideoItemShape } from 'src/components/Media/Videos/types';
 import { lightBlue, playlistBackground } from 'src/styles/colors';
 import { lato1, lato2 } from 'src/styles/fonts';
 
-type VideoPlaylistItemProps = RouteComponentProps<{}> & {
+// Helper functions
+
+function videoDurationToDisplay(durationString: string) {
+    const duration = moment.duration(durationString);
+    const s = duration.seconds();
+    const m = duration.minutes();
+    const h = duration.hours();
+
+    const sString = `${s < 10 ? '0' : ''}${s}`;
+    const mString = `${m < 10 ? '0' : ''}${m}`;
+    const hString = h > 0 ? `${h}:` : '';
+
+    return `${hString}${mString}:${sString}`;
+}
+
+function publishedDateToDisplay(publishedAt: string) {
+    return moment(publishedAt).format('MMM D, YYYY');
+}
+
+type VideoPlaylistItemProps = RouteComponentProps<unknown> & {
     readonly item: VideoItemShape;
     readonly currentItemId: number | string;
     readonly onClick: (isMobile: boolean, id?: string) => void;
@@ -39,7 +58,7 @@ const ImageContainer = styled.div`
     }
 `;
 
-const StyledVideoItem = styled.li<{ active: boolean; }>(
+const StyledVideoItem = styled.li<{ active: boolean }>(
     props => props.active && css`
         ${`${ImageContainer} img`} {
             filter: brightness(60%);
@@ -71,7 +90,7 @@ const StyledVideoItem = styled.li<{ active: boolean; }>(
     `,
 );
 
-const Duration = styled.span<{ active: boolean; children: string; }>(props => css`
+const Duration = styled.span<{ active: boolean; children: string }>(props => css`
     position: absolute;
     right: 0;
     bottom: 0;
@@ -95,7 +114,7 @@ const h4style = css`
     color: black;
 `;
 
-const TextTop = styled<typeof ClampLines, ClampLinesProps>(ClampLines)`
+const TextTop = styled(ClampLines)`
     ${h4style}
     padding-top: 5;
     font-size: 1rem;
@@ -139,22 +158,3 @@ const VideoPlaylistItem: React.FC<VideoPlaylistItemProps> = ({ item, currentItem
 );
 
 export default withRouter(VideoPlaylistItem);
-
-// Helper functions
-
-function videoDurationToDisplay(durationString: string) {
-    const duration = moment.duration(durationString);
-    const s = duration.seconds();
-    const m = duration.minutes();
-    const h = duration.hours();
-
-    const sString = `${s < 10 ? '0' : ''}${s}`;
-    const mString = `${m < 10 ? '0' : ''}${m}`;
-    const hString = h > 0 ? `${h}:` : '';
-
-    return `${hString}${mString}:${sString}`;
-}
-
-function publishedDateToDisplay(publishedAt: string) {
-    return moment(publishedAt).format('MMM D, YYYY');
-}
