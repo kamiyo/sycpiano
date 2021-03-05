@@ -1,6 +1,6 @@
 import { ModelMap } from 'types';
 
-export const up = async (models: ModelMap) => {
+export const up = async (models: ModelMap): Promise<void> => {
     const model = models.bio;
     const texts = [
         `Hailed as a charismatic rising star with “an exceptional ability to connect with an audience combined with an easy virtuosity” (Huffington Post), ##-year-old American pianist Sean Chen, third prize winner at the 2013 Van Cliburn International Piano Competition and recipient of the DeHaan Classical Fellowship as the winner of the 2013 American Pianists Awards, has continued to earn accolades for “alluring, colorfully shaded renditions” (New York Times) and “genuinely sensitive” (LA Times) playing. He was named a 2015 fellow by the prestigious Leonore Annenberg Fellowship Fund for the Performing Arts.`,
@@ -20,10 +20,9 @@ export const up = async (models: ModelMap) => {
         }
     ));
 
-    return model.bulkCreate(data);
-
+    await model.bulkCreate(data);
 };
 
-export const down = async (models: ModelMap) => {
+export const down = async (models: ModelMap): Promise<number> => {
     return models.bio.destroy({ truncate: true });
 };

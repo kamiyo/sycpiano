@@ -32,7 +32,7 @@ const getMusicInstancesOfType = (type: string) => {
     });
 };
 
-const musicHandler = async (_: Request, res: Response, __: NextFunction) => {
+const musicHandler = async (_: Request, res: Response, __: NextFunction): Promise<void> => {
     const [solo, concerto, chamber, composition, videogame] = await Promise.all([
         getMusicInstancesOfType('solo'),
         getMusicInstancesOfType('concerto'),

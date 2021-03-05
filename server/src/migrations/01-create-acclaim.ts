@@ -1,7 +1,7 @@
 import { DataTypes, QueryInterface } from 'sequelize';
 import { acclaim } from 'models/acclaim';
 
-export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
+export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes): Promise<void> => {
     await queryInterface.createTable<acclaim>('acclaim', {
         id: {
             allowNull: false,
@@ -28,6 +28,6 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
     });
 };
 
-export const down = async (queryInterface: QueryInterface) => {
+export const down = async (queryInterface: QueryInterface): Promise<void> => {
     await queryInterface.dropTable('acclaim');
 };

@@ -19,7 +19,7 @@ export class musicFile extends Model {
     readonly music: music;
 }
 
-const hookFn = async (mFile: musicFile, _: {}) => {
+const hookFn = async (mFile: musicFile, _: any) => {
     console.log(`[musicFile Hook beforeCreate/Update]`);
     try {
         if (mFile.musicId) {
@@ -34,7 +34,7 @@ const hookFn = async (mFile: musicFile, _: {}) => {
     console.log(`[End Hook]\n`);
 };
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof musicFile => {
     musicFile.init({
         id: {
             allowNull: false,

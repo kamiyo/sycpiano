@@ -1,5 +1,3 @@
-import * as Promise from 'bluebird';
-
 import { extractEventDescription, getCalendarEvents } from '../gapi/calendar';
 
 import {
@@ -9,7 +7,7 @@ import {
 
 import db from '../models';
 
-export const up = async (models: ModelMap) => {
+export const up = async (models: ModelMap): Promise<void> => {
     try {
         let responseItems: GCalEvent[] = [];
         let nextPageToken: string;
@@ -20,7 +18,7 @@ export const up = async (models: ModelMap) => {
             nextPageToken = response.data.nextPageToken;
             syncToken = response.data.nextSyncToken;
         } while (!!nextPageToken && !syncToken);
-        console.log(syncToken);
+        // console.log(syncToken);
         const calendarModel = models.calendar;
         const pieceModel = models.piece;
         const collaboratorModel = models.collaborator;
@@ -88,10 +86,11 @@ export const up = async (models: ModelMap) => {
     }
 };
 
-export const down = async (models: ModelMap) => {
-    await models.calendar.destroy({ where: {}, cascade: true });
-    await models.collaborator.destroy({ where: {}, cascade: true });
-    await models.piece.destroy({ where: {}, cascade: true });
-    await models.token.destroy({ where: {}, cascade: true });
-    return;
+export const down = async (models: ModelMap): Promise<void> => {
+    await Promise.all([
+        models.calendar.destroy({ where: {}, cascade: true }),
+        models.collaborator.destroy({ where: {}, cascade: true }),
+        models.piece.destroy({ where: {}, cascade: true }),
+        models.token.destroy({ where: {}, cascade: true }),
+    ]);
 };

@@ -1,6 +1,6 @@
 import { DataTypes, QueryInterface } from 'sequelize';
 
-export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
+export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes): Promise<void> => {
     const acclaim = await queryInterface.describeTable('acclaim');
     if (!Object.prototype.hasOwnProperty.call(acclaim, 'website')) {
         await queryInterface.addColumn('acclaim',
@@ -43,7 +43,7 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
     }
 };
 
-export const down = async (queryInterface: QueryInterface) => {
+export const down = async (queryInterface: QueryInterface): Promise<void> => {
     const acclaim = await queryInterface.describeTable('acclaim');
     Object.prototype.hasOwnProperty.call(acclaim, 'website') && await queryInterface.removeColumn('acclaim', 'website');
     Object.prototype.hasOwnProperty.call(acclaim, 'has_full_date') && await queryInterface.removeColumn('acclaim', 'has_full_date');

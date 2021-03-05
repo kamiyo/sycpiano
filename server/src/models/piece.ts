@@ -11,7 +11,7 @@ export class piece extends Model {
     countCalendars: BelongsToManyCountAssociationsMixin;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof piece => {
     piece.init({
         id: {
             allowNull: false,

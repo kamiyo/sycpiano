@@ -4,7 +4,7 @@ import * as moment from 'moment-timezone';
 import db from '../models';
 const models = db.models;
 
-const getBio = async (_: Request, res: Response, __: NextFunction) => {
+const getBio = async (_: Request, res: Response, __: NextFunction): Promise<void> => {
     const bio = await models.bio.findAll({
         attributes: ['paragraph', 'text'],
         order: [['paragraph', 'ASC']],

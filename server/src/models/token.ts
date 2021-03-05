@@ -9,7 +9,7 @@ export class token extends Model {
     readonly updatedAt?: Date | string;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof token => {
     token.init({
         id: {
             type: dataTypes.STRING,

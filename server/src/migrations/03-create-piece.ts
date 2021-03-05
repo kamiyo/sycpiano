@@ -1,7 +1,7 @@
 import { DataTypes, QueryInterface } from 'sequelize';
 import { piece } from 'models/piece';
 
-export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes) => {
+export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataTypes): Promise<void> => {
     await queryInterface.createTable<piece>('piece', {
         id: {
             allowNull: false,
@@ -22,6 +22,6 @@ export const up = async (queryInterface: QueryInterface, dataTypes: typeof DataT
     });
 };
 
-export const down = async (queryInterface: QueryInterface) => {
+export const down = async (queryInterface: QueryInterface): Promise<void> => {
     await queryInterface.dropTable('piece');
 };

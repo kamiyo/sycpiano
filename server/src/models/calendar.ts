@@ -184,7 +184,7 @@ const beforeUpdateHook = async (c: calendar, _: any) => {
     console.log(`[End Hook]\n`);
 };
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof calendar => {
     calendar.init({
         id: {
             autoIncrement: false,

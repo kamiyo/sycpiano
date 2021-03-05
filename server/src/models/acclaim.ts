@@ -13,7 +13,7 @@ export class acclaim extends Model {
     readonly website: string;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof acclaim => {
     acclaim.init({
         id: {
             type: dataTypes.INTEGER,

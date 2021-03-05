@@ -22,7 +22,7 @@ const authorize = async () => {
     }
 };
 
-export const getToken = async (sequelize: Sequelize) => {
+export const getToken = async (sequelize: Sequelize): Promise<string> => {
     const tokenModel = (sequelize.models as ModelMap).token;
     const tokenInstance = await tokenModel.findByPk('access_token');
     if (tokenInstance) {

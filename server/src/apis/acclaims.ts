@@ -10,7 +10,7 @@ interface RequestWithCount extends Request {
     };
 }
 
-const getAcclaims = async (req: RequestWithCount, res: Response, _: NextFunction) => {
+const getAcclaims = async (req: RequestWithCount, res: Response, _: NextFunction): Promise<void> => {
     const params: Sequelize.FindOptions = {
         attributes: {
             exclude: ['short', 'shortAuthor', 'created_at', 'updated_at'],

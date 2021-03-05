@@ -8,7 +8,7 @@ export class bio extends Model {
     readonly updatedAt?: Date | string;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof bio => {
     bio.init({
         paragraph: {
             type: dataTypes.INTEGER,

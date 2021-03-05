@@ -11,7 +11,7 @@ const searchObjects: {
 };
 
 // CREATE EXTENSION unaccent <= must run as root
-export const up = async (queryInterface: QueryInterface) => {
+export const up = async (queryInterface: QueryInterface): Promise<void> => {
     await queryInterface.sequelize.transaction(async (t) => {
         try {
             await queryInterface.sequelize.query(`
@@ -42,7 +42,7 @@ export const up = async (queryInterface: QueryInterface) => {
     });
 };
 
-export const down = async (queryInterface: QueryInterface) => {
+export const down = async (queryInterface: QueryInterface): Promise<void> => {
     await queryInterface.sequelize.transaction(async (t) => {
         try {
             await queryInterface.sequelize.query(`

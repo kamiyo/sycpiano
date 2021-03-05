@@ -22,7 +22,7 @@ export class customer extends Model implements CustomerAttributes {
     countProducts: BelongsToManyCountAssociationsMixin;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof customer => {
     customer.init({
             id: {
                 type: dataTypes.UUID,

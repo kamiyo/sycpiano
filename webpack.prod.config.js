@@ -24,7 +24,7 @@ const config = merge(common.config, {
     plugins: [
         new webpack.DefinePlugin({
             MUSIC_PATH: JSON.stringify(common.staticPrefix + '/music'),
-            GAPI_KEY: JSON.stringify('AIzaSyAD_AhLWUhbUCnLBu4VHZR3ecakL2IbhqU'), // restricted key, okay to publish
+            GAPI_KEY: JSON.stringify(process.env.GAPI_KEY_APP), // restricted key, okay to publish
         }),
         new webpack.NormalModuleReplacementPlugin(
             /data[\\\/]packed[\\\/]latest.json$/,

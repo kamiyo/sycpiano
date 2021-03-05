@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -29,48 +29,41 @@ interface HighlightProps {
     readonly link: LinkShape;
 }
 
-const HighlightDiv = styled.div<{ active: boolean; isHome: boolean }>`
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    padding: 0;
-    margin-top: ${navBarMarginTop}px;
-    opacity: ${props => props.active ? 1 : 0};
-    height: 5px;
-    z-index: -1;
-    background-color: ${props => props.isHome ? 'white' : lightBlue};
-`;
-
-const MobileHighlight = styled.div<{ active: boolean; isHome: boolean }>({
-    flex: '0 0 5px',
-    // display: 'inline-block',
+const HighlightDiv = styled.div<{ active: boolean; isHome: boolean }>({
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    padding: 0,
+    marginTop: navBarMarginTop,
+    height: 5,
+    zIndex: -1,
 }, ({ active, isHome }) => ({
     opacity: active ? 1 : 0,
     backgroundColor: isHome ? 'white' : lightBlue,
 }));
 
-const HyperlinkText = styled.div`
-    height: ${navBarHeight.desktop - navBarMarginTop}px;
-    padding: 20px 10px 0 10px;
-    margin-top: ${navBarMarginTop}px;
+const MobileHighlight = styled.div<{ active: boolean; isHome: boolean }>({
+    flex: '0 0 5px',
+}, ({ active, isHome }) => ({
+    opacity: active ? 1 : 0,
+    backgroundColor: isHome ? 'white' : lightBlue,
+}));
 
-    ${screenMorPortrait} {
-        margin-top: unset;
-        height: unset;
-        line-height: 1.5rem;
-        padding: 1rem 0.8rem;
-        flex: 0 0 auto;
-    }
-`;
+const HyperlinkText = styled.div({
+    height: navBarHeight.desktop - navBarMarginTop,
+    padding: '20px 10px 0 10px',
+    marginTop: navBarMarginTop,
 
-// const CollapseIcon = styled.div<{ expanded: boolean }>({
-//     display: 'inline-block',
-//     padding: '0.5rem',
-// }, (props) => ({
-//     opacity: props.expanded ? 1 : 0,
-// }));
+    [screenMorPortrait]: {
+        marginTop: 'unset',
+        height: 'unset',
+        lineHeight: '1.5rem',
+        padding: '1rem 0.8rem',
+        flex: '0 0 auto',
+    },
+});
 
-const Highlight = ({ active, isHome, link, isMobile }: HighlightProps) => (
+const Highlight: React.FC<HighlightProps> = ({ active, isHome, link, isMobile }) => (
     <React.Fragment>
         {!isMobile && <HighlightDiv active={active} isHome={isHome} />}
         <HyperlinkText>{link.name}</HyperlinkText>
@@ -78,7 +71,7 @@ const Highlight = ({ active, isHome, link, isMobile }: HighlightProps) => (
     </React.Fragment>
 );
 
-interface NavBarLinkOwnProps {
+interface NavBarLinkProps {
     readonly className?: string;
     readonly active: boolean;
     readonly isHome: boolean;
@@ -87,65 +80,51 @@ interface NavBarLinkOwnProps {
     readonly isMobile: boolean;
 }
 
-interface NavBarLinkStateToProps {
-    readonly isExpanded: boolean;
-    readonly showSubs: string[];
-}
+const linkStyle = css(
+    noHighlight,
+    {
+        color: navFontColor,
+        textDecoration: 'none',
+        cursor: 'pointer',
+        transition: 'all 0.5s',
+        WebkitTapHighlightColor: 'transparent',
 
-interface NavBarLinkDispatchToProps {
-    readonly toggleSubNav: typeof toggleSubNav;
-    readonly toggleExpanded: typeof toggleExpanded;
-}
+        '&:hover': {
+            color: mix(0.5, logoBlue, '#444'),
+        },
+    },
+);
 
-type NavBarLinkProps = NavBarLinkOwnProps & NavBarLinkDispatchToProps & NavBarLinkStateToProps;
+const linkActiveStyle = css({ color: lightBlue });
 
-const linkStyle = css`
-    ${noHighlight}
-    color: ${navFontColor};
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.5s;
-    -webkit-tap-highlight-color: transparent;
+const linkHomeStyle = css({
+    color: 'white',
+    textShadow: '0 0 1px rgba(0, 0, 0, 0.8)',
+    '&:hover': {
+        color: 'white',
+        textShadow: '0 0 1px rgba(255, 255, 255, 1)',
+    },
+});
 
-    &:hover {
-        color: ${mix(0.5, logoBlue, '#444')};
-    }
-`;
-
-const linkActiveStyle = css`
-    color: ${lightBlue};
-`;
-
-const linkHomeStyle = css`
-    color: white;
-    text-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
-
-    &:hover {
-        color: white;
-        text-shadow: 0 0 1px rgba(255, 255, 255, 1);
-    }
-`;
-
-const linkHomeActiveStyle = css`
-    text-shadow: 0 0 1px rgba(255, 255, 255, 1);
-`;
+const linkHomeActiveStyle = css({
+    textShadow: '0 0 1px rgba(255, 255, 255, 1)'
+});
 
 const mobileLinkStyle = css({
     display: 'flex',
     justifyContent: 'flex-end',
 });
 
-const SubNavContainer = styled.div`
-    visibility: hidden;
-
-    ${screenMorPortrait} {
-        visibility: unset;
-        height: 0;
-        overflow: hidden;
-        display: flex;
-        margin-right: 1rem;
-    }
-`;
+const SubNavContainer = styled.div({
+    visibility: 'hidden',
+    [screenMorPortrait]: {
+        visibility: 'unset',
+        height: 0,
+        overflow: 'hidden',
+        display: 'flex',
+        marginRight: '1rem',
+    },
+});
 
 const SubNavLine = styled.div<{ isHome: boolean }>({
     flex: '0 0 1px',
@@ -177,27 +156,27 @@ const exitAnimation = (el: HTMLElement, isMobile: boolean, path: string) => {
     }
 };
 
-const StyledLi = styled.li<{ isHome: boolean }>`
-    font-size: 1.4rem;
-    position: relative;
-    font-family: ${lato2};
-    letter-spacing: 0;
-    display: inline-block;
-    padding: 0 1px 0 1px;
-    vertical-align: top;
-    text-align: center;
+const StyledLi = styled.li<{ isHome: boolean }>({
+    fontSize: '1.4rem',
+    position: 'relative',
+    fontFamily: lato2,
+    letterSpacing: 0,
+    display: 'inline-block',
+    padding: '0 1px 0 1px',
+    verticalAlign: 'top',
+    textAlign: 'center',
 
-    &:last-child {
-        margin-right: 0;
-    }
-
-    ${screenMorPortrait} {
-        font-family: ${({ isHome }) => isHome ? lato2 : lato3};
-        text-align: right;
-        visibility: hidden;
-        opacity: 0;
-    }
-`;
+    '&:last-child': {
+        marginRight: 0,
+    },
+}, ({ isHome }) => ({
+    [screenMorPortrait]: {
+        textAlign: 'right',
+        visibility: 'hidden',
+        opacity: 0,
+        fontFamily: isHome ? lato2 : lato3,
+    },
+}));
 
 interface AorLink {
     href?: string;
@@ -205,16 +184,16 @@ interface AorLink {
     to?: string;
 }
 
-const NavBarLink = ({
+const NavBarLink: React.FC<NavBarLinkProps> = ({
     active,
     isHome,
     isMobile,
     link,
     subNavLinks,
-    showSubs,
-    toggleExpanded: expand,
-    toggleSubNav: toggle,
-}: NavBarLinkProps) => {
+}) => {
+    const showSubs = useSelector(({ navbar }: GlobalStateShape) => navbar.showSubs);
+    const dispatch = useDispatch();
+
     // css attr is common
     const attr: AorLink = {};
     const style = css(
@@ -224,21 +203,31 @@ const NavBarLink = ({
         active && isHome && !isMobile && linkHomeActiveStyle,
         isMobile && mobileLinkStyle,
     );
+
     // add attr's conditionally
     if (link.name === 'blog') {
         attr.href = link.path;
     } else if (subNavLinks) {
         attr.onClick = () => {
-            toggle(link.name);
+            dispatch(toggleSubNav(link.name));
         };
     } else {
         attr.to = link.path;
         attr.onClick = () => {
-            toggle('');
-            isMobile && expand(false);
+            dispatch(toggleSubNav(''));
+            isMobile && dispatch(toggleExpanded(false));
         };
     }
-    const HighlightComponent = <Highlight active={active} isHome={isHome} link={link} isMobile={isMobile} expanded={showSubs.includes(link.name)} />;
+
+    const HighlightComponent =
+        <Highlight
+            active={active}
+            isHome={isHome}
+            link={link}
+            isMobile={isMobile}
+            expanded={showSubs.includes(link.name)}
+        />;
+
     return (
         <StyledLi className="navlink-entry" isHome={isHome}>
             {(subNavLinks || link.name === 'blog') ? (
@@ -263,13 +252,13 @@ const NavBarLink = ({
                             basePath={link}
                             links={subNavLinks}
                             onClick={() => {
-                                toggle('');
-                                isMobile && expand(false);
+                                dispatch(toggleSubNav(''));
+                                isMobile && dispatch(toggleExpanded(false));
                             }}
                             isHome={isHome}
                             isMobile={isMobile}
                         />
-                        {isMobile && <SubNavLine isHome={isHome}/>}
+                        {isMobile && <SubNavLine isHome={isHome} />}
                     </SubNavContainer>
                 </Transition>
             )}
@@ -277,16 +266,4 @@ const NavBarLink = ({
     );
 };
 
-const mapStateToProps = ({ navbar }: GlobalStateShape) => ({
-    showSubs: navbar.showSubs,
-    isExpanded: navbar.isExpanded,
-});
-
-export default connect<NavBarLinkStateToProps, NavBarLinkDispatchToProps, NavBarLinkOwnProps>(
-    mapStateToProps,
-    {
-        toggleSubNav,
-        toggleExpanded,
-    },
-// )(React.memo(NavBarLink, subsAreEqual));
-)(NavBarLink);
+export default NavBarLink;

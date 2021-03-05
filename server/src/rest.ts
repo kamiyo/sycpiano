@@ -332,7 +332,7 @@ adminRest.post('/forest/actions/populate-test-data', forest.ensureAuthenticated,
                     images,
                     type: metadata.type,
                     sample: metadata.sample,
-                    price_id: pp.id, /* eslint-disable-line @typescript-eslint/camelcase */
+                    price_id: pp.id,
                 };
             } catch (e) {
                 console.log(e);

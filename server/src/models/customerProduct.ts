@@ -13,7 +13,7 @@ export class customerProduct extends Model implements CustomerProductAttributes 
     readonly updatedAt?: Date | string;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof customerProduct => {
     customerProduct.init({
         id: {
             allowNull: false,

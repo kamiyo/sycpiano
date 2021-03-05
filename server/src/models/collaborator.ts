@@ -11,7 +11,7 @@ export class collaborator extends Model {
     countCalendars: BelongsToManyCountAssociationsMixin;
 }
 
-export default (sequelize: Sequelize, dataTypes: typeof DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: typeof DataTypes): typeof collaborator => {
     collaborator.init({
         id: {
             allowNull: false,
