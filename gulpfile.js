@@ -4,17 +4,11 @@ const gulp = require('gulp');
 const fancyLog = require('fancy-log');
 const PluginError = require('plugin-error');
 const ts = require('gulp-typescript');
-const geslint = require('gulp-eslint');
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
 const del = require('del');
 const generateTzData = require('./generateTzData');
-const glob = require('glob');
-const chalk = require('chalk');
-const stylelint = require('stylelint');
-const stylelintFormatter = require('stylelint-formatter-pretty');
-const cliProgress = require('cli-progress');
 const { Transform } = require('stream');
 const { spawn } = require('child_process');
 const treeKill = require('tree-kill');
@@ -24,7 +18,16 @@ let reporter;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-const { ESLint } = isProduction ? { ESLint: undefined } : require('eslint');
+let ESLint, geslint, stylelint, stylelintFormatter, chalk, glob;
+
+if (isProduction) {
+    ESLint = require('eslint');
+    geslint = require('gulp-eslint');
+    stylelint = require('stylelint');
+    stylelintFormatter = require('stylelint-formatter-pretty');
+    chalk = require('chalk');
+    glob = require('glob');
+}
 
 const devWebpackConfig = require('./webpack.dev.config.js');
 
