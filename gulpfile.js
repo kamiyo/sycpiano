@@ -20,7 +20,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 let ESLint, geslint, stylelint, stylelintFormatter, chalk, glob;
 
-if (isProduction) {
+if (!isProduction) {
     ESLint = require('eslint');
     geslint = require('gulp-eslint');
     stylelint = require('stylelint');
