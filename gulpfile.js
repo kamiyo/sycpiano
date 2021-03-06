@@ -29,7 +29,7 @@ if (!isProduction) {
     glob = require('glob');
 }
 
-const devWebpackConfig = require('./webpack.dev.config.js');
+const devWebpackConfig = isProduction ? () => {} : require('./webpack.dev.config.js');
 
 const prodWebpackConfig = require('./webpack.prod.config.js');
 
