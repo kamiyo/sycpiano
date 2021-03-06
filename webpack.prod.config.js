@@ -28,7 +28,7 @@ const config = merge(common.config, {
         }),
         new webpack.NormalModuleReplacementPlugin(
             /data[\\\/]packed[\\\/]latest.json$/,
-            path.resolve(__dirname, './web/assets/data/tz-2000-2050.json'),
+            path.resolve(__dirname, './web/assets/data/tz-data.json'),
         ),
     ],
 });
